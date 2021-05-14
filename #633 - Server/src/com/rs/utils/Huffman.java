@@ -1,9 +1,8 @@
-package com.rs.utils.huffman;
+package com.rs.utils;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.io.OutputStream;
-import com.rs.utils.Utils;
 
 public final class Huffman {
 

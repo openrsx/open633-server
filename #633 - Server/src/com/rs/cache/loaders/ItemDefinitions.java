@@ -8,12 +8,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.alex.utils.Constants;
 import com.rs.cache.Cache;
 import com.rs.game.item.Item;
-import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Skills;
 import com.rs.io.InputStream;
 import com.rs.utils.EquipData;
 import com.rs.utils.ItemBonuses;
+
+import player.CombatDefinitions;
 
 @SuppressWarnings("unused")
 public final class ItemDefinitions {

@@ -1,11 +1,9 @@
-package com.rs.game.player.content;
+package com.rs.game.item;
 
 import com.rs.Settings;
 import com.rs.cache.loaders.ItemDefinitions;
-import com.rs.game.item.Item;
 import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.player.Player;
-import com.rs.game.player.QuestManager.Quests;
 import com.rs.game.player.Skills;
 
 public class ItemConstants {
@@ -219,12 +217,6 @@ public class ItemConstants {
 								"You need to have killed the Queen Black Dragon atleast once to use this cape.");
 				return false;
 			}
-			if (!player.getQuestManager().completedQuest(Quests.NOMADS_REQUIEM)) {
-				player.getPackets()
-						.sendGameMessage(
-								"You need to have completed Nomad's Requiem miniquest to use this cape.");
-				return false;
-			}
 		} else if (item.getId() == 6570 || item.getId() == 10566
 				|| item.getId() == 10637) { // temporary
 			if (!player.isCompletedFightCaves()) {
@@ -238,22 +230,6 @@ public class ItemConstants {
 				player.getPackets()
 						.sendGameMessage(
 								"You may not equip this shield outside of the catapult room in the Warrior's Guild.");
-				return false;
-			}
-		} else if (item.getId() == 19784) {
-			if (!player.getQuestManager().completedQuest(
-					Quests.VOID_STARES_BACK)) {
-				player.getPackets()
-						.sendGameMessage(
-								"You must have completed the void stares back in order to equip a korasi.");
-				return false;
-			}
-		} else if (item.getId() == 15433 || item.getId() == 15435
-				|| item.getId() == 15432 || item.getId() == 15434) {
-			if (!player.getQuestManager().completedQuest(Quests.NOMADS_REQUIEM)) {
-				player.getPackets()
-						.sendGameMessage(
-								"You need to have completed Nomad's Requiem miniquest to use this cape.");
 				return false;
 			}
 		}

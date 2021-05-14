@@ -6,13 +6,13 @@ import com.rs.game.ForceMovement;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
-import com.rs.game.player.content.Combat;
 import com.rs.utils.MapAreas;
 import com.rs.utils.Utils;
 
 import npc.NPC;
 import npc.familiar.Familiar;
 import npc.godwars.zaros.Nex;
+import player.Combat;
 
 public final class NPCCombat {
 

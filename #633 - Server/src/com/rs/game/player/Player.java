@@ -30,16 +30,17 @@ import com.rs.game.player.content.Notes;
 import com.rs.game.player.content.Pots;
 import com.rs.game.player.content.SkillCapeCustomizer;
 import com.rs.game.player.content.pet.PetManager;
+import com.rs.game.player.controllers.ControlerManager;
 import com.rs.game.player.controllers.Controller;
-import com.rs.game.player.controllers.CorpBeastControler;
-import com.rs.game.player.controllers.FightCaves;
 import com.rs.game.player.controllers.GodWars;
 import com.rs.game.player.controllers.JailControler;
 import com.rs.game.player.controllers.QueenBlackDragonController;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.player.controllers.ZGDControler;
+import com.rs.game.route.RouteEvent;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
+import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.decoders.handlers.ButtonHandler;
@@ -54,6 +55,7 @@ import npc.NPC;
 import npc.familiar.Familiar;
 import npc.godwars.zaros.Nex;
 import npc.others.Pet;
+import player.CombatDefinitions;
 import player.PlayerCombat;
 
 public class Player extends Entity {
@@ -138,7 +140,6 @@ public class Player extends Entity {
 	private FriendsIgnores friendsIgnores;
 	private Familiar familiar;
 	private AuraManager auraManager;
-	private QuestManager questManager;
 	private PetManager petManager;
 	private byte runEnergy;
 	private boolean allowChatEffects;
@@ -289,7 +290,6 @@ public class Player extends Entity {
 		friendsIgnores = new FriendsIgnores();
 		charges = new ChargesManager();
 		auraManager = new AuraManager();
-		questManager = new QuestManager();
 		petManager = new PetManager();
 		runEnergy = 100;
 		allowChatEffects = true;
@@ -312,8 +312,6 @@ public class Player extends Entity {
 		// temporary deleted after reset all chars
 		if (auraManager == null)
 			auraManager = new AuraManager();
-		if (questManager == null)
-			questManager = new QuestManager();
 		if (petManager == null)
 			petManager = new PetManager();
 		if (notes == null)
@@ -354,7 +352,6 @@ public class Player extends Entity {
 		friendsIgnores.setPlayer(this);
 		auraManager.setPlayer(this);
 		charges.setPlayer(this);
-		questManager.setPlayer(this);
 		petManager.setPlayer(this);
 		setDirection(Utils.getFaceDirection(0, -1));
 		temporaryMovementType = -1;
@@ -748,7 +745,6 @@ public class Player extends Entity {
 		getPackets().sendGameBarStages();
 		musicsManager.init();
 		emotesManager.init();
-		questManager.init();
 		notes.init();
 		toolbelt.init();
 		sendUnlockedObjectConfigs();
@@ -2665,11 +2661,9 @@ public class Player extends Entity {
 
 	public boolean canSpawn() {
 		if (Wilderness.isAtWild(this)
-				|| getControlerManager().getControler() instanceof CorpBeastControler
 				|| getControlerManager().getControler() instanceof ZGDControler
 				|| getControlerManager().getControler() instanceof GodWars
 				|| getControlerManager().getControler() instanceof DuelArena
-				|| getControlerManager().getControler() instanceof FightCaves
 				|| getControlerManager().getControler() instanceof QueenBlackDragonController
 				|| getControlerManager().getControler() instanceof JailControler) {
 			return false;
@@ -2891,11 +2885,7 @@ public class Player extends Entity {
 	public IsaacKeyPair getIsaacKeyPair() {
 		return isaacKeyPair;
 	}
-
-	public QuestManager getQuestManager() {
-		return questManager;
-	}
-
+	
 	public boolean isCompletedFightCaves() {
 		return completedFightCaves;
 	}

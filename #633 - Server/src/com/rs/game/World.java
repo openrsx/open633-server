@@ -12,16 +12,15 @@ import com.rs.Settings;
 import com.rs.cores.CoresManager;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
+import com.rs.game.item.ItemConstants;
 import com.rs.game.minigames.GodWarsBosses;
 import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.minigames.ZarosGodwars;
-import com.rs.game.minigames.duel.DuelControler;
 import com.rs.game.player.OwnedObjectManager;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.game.player.content.ItemConstants;
 import com.rs.game.player.content.LivingRockCavern;
-import com.rs.game.player.controllers.JadinkoLair;
+import com.rs.game.player.controllers.DuelControler;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.route.Flags;
 import com.rs.utils.AntiFlood;
@@ -44,8 +43,6 @@ import npc.godwars.zammorak.KrilTstsaroth;
 import npc.godwars.zaros.Nex;
 import npc.godwars.zaros.NexMinion;
 import npc.godwars.zaros.ZarosMinion;
-import npc.nomad.FlameVortex;
-import npc.nomad.Nomad;
 import npc.others.AbyssalDemon;
 import npc.others.BanditCampBandits;
 import npc.others.Bork;
@@ -79,7 +76,6 @@ public final class World {
 			.synchronizedMap(new HashMap<Integer, Region>());
 
 	public static final void init() {
-		addWorldAnnouncementTask();
 		addRestoreRunEnergyTask();
 		addDrainPrayerTask();
 		addRestoreHitPointsTask();
@@ -87,12 +83,8 @@ public final class World {
 		addRestoreSpecialAttackTask();
 		addRestoreShopItemsTask();
 		addOwnedObjectsTask();
-		if (Settings.XP_BONUS_ENABLED)
-			addIncreaseElapsedBonusMinutesTak();
 		LivingRockCavern.init();
 		WarriorsGuild.init();
-		JadinkoLair.init();
-		// SlaughterFieldsControler.load();
 	}
 
 	private static void addWorldAnnouncementTask() {
@@ -350,9 +342,6 @@ public final class World {
 		else if (id == 7134)
 			n = new Bork(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea,
 					spawned);
-		else if (id == 9441)
-			n = new FlameVortex(id, tile, mapAreaNameHash,
-					canBeAttackFromOutOfArea, spawned);
 		else if (id >= 8832 && id <= 8834)
 			n = new LivingRock(id, tile, mapAreaNameHash,
 					canBeAttackFromOutOfArea, spawned);
@@ -362,9 +351,6 @@ public final class World {
 		else if (id == 1158 || id == 1160)
 			n = new KalphiteQueen(id, tile, mapAreaNameHash,
 					canBeAttackFromOutOfArea, spawned);
-		else if (id >= 8528 && id <= 8532)
-			n = new Nomad(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea,
-					spawned);
 		else if (id == 13456 || id == 13457 || id == 13458 || id == 13459)
 			n = new ZarosMinion(id, tile, mapAreaNameHash,
 					canBeAttackFromOutOfArea);

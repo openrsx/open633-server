@@ -1,4 +1,4 @@
-package com.rs.game.player;
+package com.rs.net;
 
 import com.rs.io.InputStream;
 

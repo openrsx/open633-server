@@ -4,12 +4,12 @@ import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.World;
 import com.rs.game.player.Player;
-import com.rs.game.player.content.Combat;
 import com.rs.utils.Utils;
 
 import npc.NPC;
 import npc.combat.CombatScript;
 import npc.combat.NPCCombatDefinitions;
+import player.Combat;
 
 public class MetalDragonCombat extends CombatScript {
 

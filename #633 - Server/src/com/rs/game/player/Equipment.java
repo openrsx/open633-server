@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
+import com.rs.game.item.ItemConstants;
 import com.rs.game.item.ItemsContainer;
-import com.rs.game.player.content.ItemConstants;
 import com.rs.utils.ItemExamines;
 
 public final class Equipment implements Serializable {

@@ -20,6 +20,7 @@ import com.rs.net.ServerChannelHandler;
 import com.rs.utils.Censor;
 import com.rs.utils.DisplayNames;
 import com.rs.utils.EquipData;
+import com.rs.utils.Huffman;
 import com.rs.utils.ItemBonuses;
 import com.rs.utils.ItemDestroys;
 import com.rs.utils.ItemExamines;
@@ -36,7 +37,6 @@ import com.rs.utils.ObjectSpawns;
 import com.rs.utils.SerializableFilesManager;
 import com.rs.utils.ShopsHandler;
 import com.rs.utils.Utils;
-import com.rs.utils.huffman.Huffman;
 
 import npc.combat.CombatScriptsHandler;
 

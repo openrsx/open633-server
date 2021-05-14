@@ -1,11 +1,10 @@
-package com.rs.game.player;
+package com.rs.game.route;
 
 import com.rs.game.Entity;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
-import com.rs.game.route.RouteFinder;
-import com.rs.game.route.RouteStrategy;
+import com.rs.game.player.Player;
 import com.rs.game.route.strategy.EntityStrategy;
 import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.game.route.strategy.FloorItemStrategy;

@@ -14,13 +14,11 @@ import com.rs.game.Region;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
-import com.rs.game.player.CombatDefinitions;
+import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.player.actions.Action;
-import com.rs.game.player.content.Combat;
-import com.rs.game.player.content.ItemConstants;
 import com.rs.game.player.content.Magic;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
@@ -50,6 +48,7 @@ public class PlayerCombat extends Action {
 	private int spellcasterGloves;
 	private int spell_type = -1;
 
+	@SuppressWarnings({ "unused"})
 	private static final int AIR_SPELL = 0, WATER_SPELL = 1, EARTH_SPELL = 2,
 			FIRE_SPELL = 3;
 

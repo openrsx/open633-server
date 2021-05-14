@@ -24,9 +24,9 @@ import com.rs.game.player.QuickChatMessage;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.io.OutputStream;
 import com.rs.net.Session;
+import com.rs.utils.Huffman;
 import com.rs.utils.MapArchiveKeys;
 import com.rs.utils.Utils;
-import com.rs.utils.huffman.Huffman;
 
 import npc.NPC;
 

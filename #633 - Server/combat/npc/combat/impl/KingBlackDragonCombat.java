@@ -5,7 +5,6 @@ import com.rs.game.Entity;
 import com.rs.game.Graphics;
 import com.rs.game.World;
 import com.rs.game.player.Player;
-import com.rs.game.player.content.Combat;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.Utils;
@@ -13,6 +12,7 @@ import com.rs.utils.Utils;
 import npc.NPC;
 import npc.combat.CombatScript;
 import npc.combat.NPCCombatDefinitions;
+import player.Combat;
 
 public class KingBlackDragonCombat extends CombatScript {
 

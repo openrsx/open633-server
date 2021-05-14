@@ -6,16 +6,17 @@ import java.util.TimerTask;
 import com.rs.Settings;
 import com.rs.cores.CoresManager;
 import com.rs.game.item.Item;
-import com.rs.game.player.CombatDefinitions;
+import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.game.player.content.ItemConstants;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.io.InputStream;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
+
+import player.CombatDefinitions;
 
 public class ButtonHandler {
 
@@ -58,7 +59,9 @@ public class ButtonHandler {
 			System.out.println(packetId + "," + interfaceId + "," + componentId
 					+ "," + slotId + "," + slotId2);
 		}
-
+		if (interfaceId == 182) {
+			player.logout(false);
+		}
 		if (Settings.DEBUG)
 			Logger.log("ButtonHandler", "InterfaceId " + interfaceId
 					+ ", componentId " + componentId + ", slotId " + slotId

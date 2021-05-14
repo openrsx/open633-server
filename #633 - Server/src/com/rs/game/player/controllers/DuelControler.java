@@ -1,8 +1,8 @@
-package com.rs.game.minigames.duel;
+package com.rs.game.player.controllers;
 
 import com.rs.game.WorldTile;
+import com.rs.game.minigames.duel.DuelRules;
 import com.rs.game.player.Player;
-import com.rs.game.player.controllers.Controller;
 
 public class DuelControler extends Controller {
 

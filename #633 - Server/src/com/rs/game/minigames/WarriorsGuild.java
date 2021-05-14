@@ -13,7 +13,6 @@ import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
-import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
@@ -25,6 +24,7 @@ import com.rs.utils.Utils;
 
 import npc.NPC;
 import npc.others.AnimatedArmor;
+import player.CombatDefinitions;
 import player.PlayerCombat;
 
 public class WarriorsGuild extends Controller {

@@ -8,10 +8,8 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.player.ChatMessage;
 import com.rs.game.player.Inventory;
-import com.rs.game.player.LogicPacket;
 import com.rs.game.player.Player;
 import com.rs.game.player.QuickChatMessage;
-import com.rs.game.player.RouteEvent;
 import com.rs.game.player.Skills;
 import com.rs.game.player.actions.PlayerFollow;
 import com.rs.game.player.content.Commands;
@@ -19,11 +17,12 @@ import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Magic;
 import com.rs.game.player.content.Shop;
 import com.rs.game.player.content.SkillCapeCustomizer;
-import com.rs.game.player.content.Vote;
 import com.rs.game.player.content.pet.Pets;
+import com.rs.game.route.RouteEvent;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.io.InputStream;
+import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.decoders.handlers.ButtonHandler;
 import com.rs.net.decoders.handlers.InventoryOptionsHandler;
@@ -31,10 +30,10 @@ import com.rs.net.decoders.handlers.NPCHandler;
 import com.rs.net.decoders.handlers.ObjectHandler;
 import com.rs.utils.DisplayNames;
 import com.rs.utils.Encrypt;
+import com.rs.utils.Huffman;
 import com.rs.utils.Logger;
 import com.rs.utils.ReportAbuse;
 import com.rs.utils.Utils;
-import com.rs.utils.huffman.Huffman;
 
 import npc.NPC;
 import npc.familiar.Familiar;
@@ -1266,9 +1265,6 @@ public final class WorldPacketsDecoder extends Decoder {
 				player.getPackets().sendGameMessage(
 						"You have changed your password! Your new password is \""
 								+ value + "\".");
-			} else if (player.getTemporaryAttributtes()
-					.remove("vote_enterauth") == Boolean.TRUE) {
-				Vote.checkVoteAuth(value, player);
 			} else if (player.getTemporaryAttributtes().remove(
 					"change_troll_name") == Boolean.TRUE) {
 				value = Utils.formatPlayerNameForDisplay(value);

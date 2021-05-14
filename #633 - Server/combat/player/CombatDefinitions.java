@@ -1,11 +1,11 @@
-package com.rs.game.player;
+package player;
 
 import java.io.Serializable;
 
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
-
-import player.PlayerCombat;
+import com.rs.game.player.Player;
+import com.rs.game.player.Skills;
 
 public final class CombatDefinitions implements Serializable {
 

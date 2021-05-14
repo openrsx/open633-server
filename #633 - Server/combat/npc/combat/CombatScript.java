@@ -3,16 +3,16 @@ package npc.combat;
 import com.rs.game.Entity;
 import com.rs.game.Hit;
 import com.rs.game.Hit.HitLook;
-import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.game.player.content.Combat;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.Utils;
 
 import npc.NPC;
 import npc.familiar.Steeltitan;
+import player.Combat;
+import player.CombatDefinitions;
 import player.PlayerCombat;
 
 public abstract class CombatScript {

@@ -6,6 +6,7 @@ import com.rs.Settings;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
+import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Player;
 import com.rs.utils.ItemExamines;
 import com.rs.utils.ItemSetsKeyGenerator;

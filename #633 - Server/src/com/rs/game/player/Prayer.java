@@ -5,10 +5,10 @@ import java.io.Serializable;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
-import com.rs.game.player.QuestManager.Quests;
 import com.rs.utils.Utils;
 
 import npc.NPC;
+import player.CombatDefinitions;
 
 public class Prayer implements Serializable {
 
@@ -476,26 +476,7 @@ public class Prayer implements Serializable {
 	private boolean usePrayer(int prayerId) {
 		if (prayerId < 0 || prayerId >= prayerLvls[getPrayerBook()].length)
 			return false;
-		if (getPrayerBook() == 0) {
-			if (prayerId == 25) {
-				if (!player.getQuestManager().completedQuest(
-						Quests.KINGS_RANSOM)) {
-					player.getPackets()
-							.sendGameMessage(
-									"You need a Prayer level of 60, a Defence level of 65 and have completed the King's Ransom quest's Knight Wave reward to use Chivalry.");
-					return false;
-				}
-			} else if (prayerId == 27) {
-				if (!player.getQuestManager().completedQuest(
-						Quests.KINGS_RANSOM)
-						|| player.getSkills().getLevelForXp(Skills.DEFENCE) < 70) {
-					player.getPackets()
-							.sendGameMessage(
-									"You need a Prayer level of 70, a Defence level of 70 and have completed the King's Ransom quest's Knight Wave reward to use Piety.");
-					return false;
-				}
-			}
-		} else if (getPrayerBook() == 1) {
+		if (getPrayerBook() == 1) {
 			if (player.getSkills().getLevelForXp(Skills.DEFENCE) < 30) {
 				player.getPackets()
 						.sendGameMessage(

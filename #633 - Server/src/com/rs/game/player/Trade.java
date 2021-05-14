@@ -3,8 +3,8 @@ package com.rs.game.player;
 import java.util.Arrays;
 
 import com.rs.game.item.Item;
+import com.rs.game.item.ItemConstants;
 import com.rs.game.item.ItemsContainer;
-import com.rs.game.player.content.ItemConstants;
 import com.rs.utils.ItemExamines;
 import com.rs.utils.Logger;
 
