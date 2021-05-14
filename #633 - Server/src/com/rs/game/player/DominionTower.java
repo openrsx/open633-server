@@ -19,7 +19,6 @@ import com.rs.game.player.cutscenes.Cutscene;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.net.decoders.WorldPacketsDecoder;
-import com.rs.utils.DTRank;
 import com.rs.utils.ItemExamines;
 import com.rs.utils.Utils;
 
@@ -417,7 +416,7 @@ public final class DominionTower implements Serializable {
 	    dominionFactor = MAX_FACTOR;
 	    player.getPackets().sendGameMessage("You've reached the maximum Dominion Factor you can get so you should spend it!");
 	}
-	DTRank.checkRank(player, mode, /* BOSSES[getNextBossIndex()].name */getMap().getStringValue(2095));
+//	DTRank.checkRank(player, mode, /* BOSSES[getNextBossIndex()].name */getMap().getStringValue(2095));
 	nextBossIndex = -1;
 	player.lock();
 	player.setNextWorldTile(new WorldTile(getBaseX() + 35, getBaseY() + 31, 2));
@@ -696,7 +695,7 @@ public final class DominionTower implements Serializable {
     }
 
     public void viewScoreBoard() {
-	DTRank.showRanks(player);
+//	DTRank.showRanks(player);
     }
 
     public boolean isTalkedWithFace() {

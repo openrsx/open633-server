@@ -3,7 +3,6 @@ package com.rs.game.player.content;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
 import com.rs.game.player.Player;
-import com.rs.game.player.content.grandExchange.GrandExchange;
 import com.rs.utils.ItemSetsKeyGenerator;
 
 public class PartyRoom {
@@ -41,7 +40,7 @@ public class PartyRoom {
 	for (Item item : items.getItems()) {
 	    if (item == null)
 		continue;
-	    price += GrandExchange.getPrice(item.getId());
+//	    price += GrandExchange.getPrice(item.getId());
 	}
 	return price;
     }

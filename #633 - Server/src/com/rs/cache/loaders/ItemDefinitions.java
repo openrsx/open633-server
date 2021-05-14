@@ -12,7 +12,6 @@ import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Skills;
 import com.rs.io.InputStream;
-import com.rs.utils.AttackSpeeds;
 import com.rs.utils.EquipData;
 import com.rs.utils.ItemBonuses;
 
@@ -286,10 +285,6 @@ public final class ItemDefinitions {
 		if (specialBar != null && specialBar instanceof Integer)
 			return (Integer) specialBar == 1;
 		return false;
-	}
-
-	public int getAttackSpeed() {
-		return AttackSpeeds.getAttackSpeed(id);
 	}
 
 	public int getStabAttack() {
@@ -792,5 +787,14 @@ public final class ItemDefinitions {
 
 	public int getEquipType() {
 		return equipType;
+	}
+
+	public int getAttackSpeed() {
+		if (clientScriptData == null)
+			return 4;
+		Object attackSpeed = clientScriptData.get(14);
+		if (attackSpeed != null && attackSpeed instanceof Integer)
+			return (int) attackSpeed;
+		return 4;
 	}
 }

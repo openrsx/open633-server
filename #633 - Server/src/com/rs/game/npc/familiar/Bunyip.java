@@ -1,14 +1,9 @@
 package com.rs.game.npc.familiar;
 
-import com.rs.game.Animation;
 import com.rs.game.Graphics;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
-import com.rs.game.player.actions.Cooking.Cookables;
-import com.rs.game.player.actions.Fishing.Fish;
-import com.rs.game.player.content.Foods.Food;
 import com.rs.game.player.content.Summoning.Pouch;
 
 public class Bunyip extends Familiar {
@@ -61,20 +56,20 @@ public class Bunyip extends Familiar {
 	Item item = getOwner().getInventory().getItem((Integer) object);
 	if (item == null)
 	    return false;
-	for (Fish fish : Fish.values()) {
-	    if (fish.getId() == item.getId()) {
-		if (getOwner().getSkills().getLevel(Skills.COOKING) < fish.getLevel()) {
-		    getOwner().getPackets().sendGameMessage("Your cooking level is not high enough for the bunyip to eat this fish.");
-		    return false;
-		} else {
-		    getOwner().setNextGraphics(new Graphics(1316));
-		    getOwner().setNextAnimation(new Animation(7660));
-		    getOwner().heal(Food.forId(Cookables.forId((short) item.getId()).getProduct().getId()).getHeal() * 10);
-		    getOwner().getInventory().deleteItem(item.getId(), item.getAmount());
-		    return true;// stop here
-		}
-	    }
-	}
+//	for (Fish fish : Fish.values()) {
+//	    if (fish.getId() == item.getId()) {
+//		if (getOwner().getSkills().getLevel(Skills.COOKING) < fish.getLevel()) {
+//		    getOwner().getPackets().sendGameMessage("Your cooking level is not high enough for the bunyip to eat this fish.");
+//		    return false;
+//		} else {
+//		    getOwner().setNextGraphics(new Graphics(1316));
+//		    getOwner().setNextAnimation(new Animation(7660));
+////		    getOwner().heal(Food.forId(Cookables.forId((short) item.getId()).getProduct().getId()).getHeal() * 10);
+//		    getOwner().getInventory().deleteItem(item.getId(), item.getAmount());
+//		    return true;// stop here
+//		}
+//	    }
+//	}
 	getOwner().getPackets().sendGameMessage("Your bunyip cannot eat this.");
 	return false;
     }

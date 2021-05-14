@@ -5,7 +5,6 @@ import java.util.Arrays;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
 import com.rs.game.player.content.ItemConstants;
-import com.rs.game.player.content.grandExchange.GrandExchange;
 import com.rs.utils.ItemExamines;
 import com.rs.utils.Logger;
 
@@ -198,8 +197,8 @@ public class Trade {
 	    player.getPackets().sendGameMessage("That item isn't tradeable.");
 	    return;
 	}
-	int price = GrandExchange.getPrice(item.getId());
-	player.getPackets().sendGameMessage(item.getDefinitions().getName() + ": market price is " + price + " coins.");
+//	int price = GrandExchange.getPrice(item.getId());
+//	player.getPackets().sendGameMessage(item.getDefinitions().getName() + ": market price is " + price + " coins.");
     }
 
     public void sendValue(int slot) {
@@ -210,8 +209,8 @@ public class Trade {
 	    player.getPackets().sendGameMessage("That item isn't tradeable.");
 	    return;
 	}
-	int price = GrandExchange.getPrice(item.getId());
-	player.getPackets().sendGameMessage(item.getDefinitions().getName() + ": market price is " + price + " coins.");
+//	int price = GrandExchange.getPrice(item.getId());
+//	player.getPackets().sendGameMessage(item.getDefinitions().getName() + ": market price is " + price + " coins.");
     }
 
     public void sendExamine(int slot, boolean traders) {
@@ -278,7 +277,7 @@ public class Trade {
 	for (Item item : items.getItems()) {
 	    if (item == null)
 		continue;
-	    wealth += GrandExchange.getPrice(item.getId()) * item.getAmount();
+//	    wealth += GrandExchange.getPrice(item.getId()) * item.getAmount();
 	}
 	return wealth;
     }

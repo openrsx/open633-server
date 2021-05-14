@@ -5,7 +5,6 @@ import java.io.Serializable;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
-import com.rs.game.player.actions.Bonfire;
 import com.rs.game.player.content.ItemConstants;
 import com.rs.utils.ItemExamines;
 
@@ -127,7 +126,7 @@ public final class Equipment implements Serializable {
 	}
 	if (player.getLastBonfire() > 0) {
 	    int maxhp = player.getSkills().getLevel(Skills.HITPOINTS) * 10;
-	    hpIncrease += (maxhp * Bonfire.getBonfireBoostMultiplier(player)) - maxhp;
+//	    hpIncrease += (maxhp * Bonfire.getBonfireBoostMultiplier(player)) - maxhp;
 	}
 	if (player.getHpBoostMultiplier() != 0) {
 	    int maxhp = player.getSkills().getLevel(Skills.HITPOINTS) * 10;

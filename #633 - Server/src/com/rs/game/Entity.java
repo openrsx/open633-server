@@ -17,8 +17,6 @@ import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.qbd.TorturedSoul;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.game.player.content.Magic;
-import com.rs.game.player.controllers.events.DeathEvent;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.EntityStrategy;
 import com.rs.game.route.strategy.ObjectStrategy;
@@ -215,8 +213,8 @@ public abstract class Entity extends WorldTile {
 				} else if (player.getEquipment().getAmuletId() != 11090
 						&& player.getEquipment().getRingId() == 11090
 						&& player.getHitpoints() <= player.getMaxHitpoints() * 0.1) {
-					Magic.sendNormalTeleportSpell(player, 1, 0,
-							DeathEvent.getRespawnHub(player));
+//					Magic.sendNormalTeleportSpell(player, 1, 0,
+//							DeathEvent.getRespawnHub(player));
 					player.getEquipment().deleteItem(11090, 1);
 					player.getPackets()
 							.sendGameMessage(

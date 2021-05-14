@@ -6,11 +6,9 @@ import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
-import com.rs.game.player.actions.HerbCleaning.Herbs;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
-import com.rs.utils.Utils;
 
 public class Macaw extends Familiar {
 
@@ -82,12 +80,12 @@ public class Macaw extends Familiar {
 		}, 3);
 	    }
 	}, 2);
-	Herbs herb;
-	if (Utils.getRandom(100) >= 5)
-	    herb = Herbs.values()[Utils.random(Herbs.values().length)];
-	else
-	    herb = Herbs.values()[Utils.getRandom(3)];
-	World.addGroundItem(new Item(herb.getHerbId(), 1), tile, getOwner(), true, 180);
+//	Herbs herb;
+//	if (Utils.getRandom(100) >= 5)
+//	    herb = Herbs.values()[Utils.random(Herbs.values().length)];
+//	else
+//	    herb = Herbs.values()[Utils.getRandom(3)];
+//	World.addGroundItem(new Item(herb.getHerbId(), 1), tile, getOwner(), true, 180);
 	return true;
     }
 }

@@ -13,8 +13,6 @@ import com.rs.game.item.Item;
 import com.rs.game.map.MapBuilder;
 import com.rs.game.npc.qbd.QueenBlackDragon;
 import com.rs.game.player.content.FadingScreen;
-import com.rs.game.player.content.Magic;
-import com.rs.game.player.controllers.events.DeathEvent;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.Logger;
@@ -122,7 +120,7 @@ public final class QueenBlackDragonController extends Controller {
 	    return false;
 	}
 	if (object.getId() == 70813) {
-	    Magic.sendObjectTeleportSpell(player, true, DeathEvent.HUBS[2]);
+//	    Magic.sendObjectTeleportSpell(player, true, DeathEvent.HUBS[2]);
 	    return false;
 	}
 	if (object.getId() == 70814) {

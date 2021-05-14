@@ -23,8 +23,6 @@ import com.rs.game.player.Player;
 import com.rs.game.player.PublicChatMessage;
 import com.rs.game.player.QuickChatMessage;
 import com.rs.game.player.content.FriendChatsManager;
-import com.rs.game.player.content.clans.ClansManager;
-import com.rs.game.player.content.grandExchange.Offer;
 import com.rs.io.OutputStream;
 import com.rs.net.Session;
 import com.rs.utils.MapArchiveKeys;
@@ -857,22 +855,22 @@ public class WorldPacketsEncoder extends Encoder {
 		// ////session.write(stream);
 	}
 
-	public void sendGrandExchangeOffer(Offer offer) {
-		OutputStream stream = new OutputStream(21);
-		stream.writePacket(player, 53);
-		stream.writeByte(offer.getSlot());
-		stream.writeByte(offer.getStage());
-		if (offer.forceRemove())
-			stream.skip(18);
-		else {
-			stream.writeShort(offer.getId());
-			stream.writeInt(offer.getPrice());
-			stream.writeInt(offer.getAmount());
-			stream.writeInt(offer.getTotalAmmountSoFar());
-			stream.writeInt(offer.getTotalPriceSoFar());
-		}
-		// ////session.write(stream);
-	}
+//	public void sendGrandExchangeOffer(Offer offer) {
+//		OutputStream stream = new OutputStream(21);
+//		stream.writePacket(player, 53);
+//		stream.writeByte(offer.getSlot());
+//		stream.writeByte(offer.getStage());
+//		if (offer.forceRemove())
+//			stream.skip(18);
+//		else {
+//			stream.writeShort(offer.getId());
+//			stream.writeInt(offer.getPrice());
+//			stream.writeInt(offer.getAmount());
+//			stream.writeInt(offer.getTotalAmmountSoFar());
+//			stream.writeInt(offer.getTotalPriceSoFar());
+//		}
+//		// ////session.write(stream);
+//	}
 
 	public void sendIComponentSprite(int interfaceId, int componentId,
 			int spriteId) {
@@ -1026,27 +1024,27 @@ public class WorldPacketsEncoder extends Encoder {
 		// ////session.write(stream);
 	}
 
-	public void sendClanChannel(ClansManager manager, boolean myClan) {
-		OutputStream stream = new OutputStream(manager == null ? 4
-				: manager.getClanChannelDataBlock().length + 4);
-		stream.writePacketVarShort(player, 85);
-		stream.writeByte(myClan ? 1 : 0);
-		if (manager != null)
-			stream.writeBytes(manager.getClanChannelDataBlock());
-		stream.endPacketVarShort();
-		// ////session.write(stream);
-	}
+//	public void sendClanChannel(ClansManager manager, boolean myClan) {
+//		OutputStream stream = new OutputStream(manager == null ? 4
+//				: manager.getClanChannelDataBlock().length + 4);
+//		stream.writePacketVarShort(player, 85);
+//		stream.writeByte(myClan ? 1 : 0);
+//		if (manager != null)
+//			stream.writeBytes(manager.getClanChannelDataBlock());
+//		stream.endPacketVarShort();
+//		// ////session.write(stream);
+//	}
 
-	public void sendClanSettings(ClansManager manager, boolean myClan) {
-		OutputStream stream = new OutputStream(manager == null ? 4
-				: manager.getClanSettingsDataBlock().length + 4);
-		stream.writePacketVarShort(player, 133);
-		stream.writeByte(myClan ? 1 : 0);
-		if (manager != null)
-			stream.writeBytes(manager.getClanSettingsDataBlock());
-		stream.endPacketVarShort();
-		// ////session.write(stream);
-	}
+//	public void sendClanSettings(ClansManager manager, boolean myClan) {
+//		OutputStream stream = new OutputStream(manager == null ? 4
+//				: manager.getClanSettingsDataBlock().length + 4);
+//		stream.writePacketVarShort(player, 133);
+//		stream.writeByte(myClan ? 1 : 0);
+//		if (manager != null)
+//			stream.writeBytes(manager.getClanSettingsDataBlock());
+//		stream.endPacketVarShort();
+//		// ////session.write(stream);
+//	}
 
 	public void sendFriends() {
 		OutputStream stream = new OutputStream();

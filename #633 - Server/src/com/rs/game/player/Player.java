@@ -3,7 +3,6 @@ package com.rs.game.player;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,26 +22,18 @@ import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
-import com.rs.game.item.Item;
 import com.rs.game.minigames.WarriorsGuild;
-import com.rs.game.minigames.clanwars.FfaZone;
-import com.rs.game.minigames.clanwars.WarControler;
 import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.minigames.duel.DuelRules;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.godwars.zaros.Nex;
-import com.rs.game.npc.others.GraveStone;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.actions.PlayerCombat;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Notes;
 import com.rs.game.player.content.Pots;
 import com.rs.game.player.content.SkillCapeCustomizer;
-import com.rs.game.player.content.clans.ClansManager;
-import com.rs.game.player.content.construction.House;
-import com.rs.game.player.content.dungeoneering.DungeonConstants;
-import com.rs.game.player.content.grandExchange.GrandExchange;
 import com.rs.game.player.content.pet.PetManager;
 import com.rs.game.player.controllers.Controller;
 import com.rs.game.player.controllers.CorpBeastControler;
@@ -56,11 +47,6 @@ import com.rs.game.player.controllers.NomadsRequiem;
 import com.rs.game.player.controllers.QueenBlackDragonController;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.player.controllers.ZGDControler;
-import com.rs.game.player.controllers.castlewars.CastleWarsPlaying;
-import com.rs.game.player.controllers.castlewars.CastleWarsWaiting;
-import com.rs.game.player.controllers.fightpits.FightPitsArena;
-import com.rs.game.player.controllers.pestcontrol.PestControlGame;
-import com.rs.game.player.controllers.pestcontrol.PestControlLobby;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.net.Session;
@@ -70,7 +56,6 @@ import com.rs.net.encoders.WorldPacketsEncoder;
 import com.rs.utils.IsaacKeyPair;
 import com.rs.utils.Logger;
 import com.rs.utils.MachineInformation;
-import com.rs.utils.PkRank;
 import com.rs.utils.SerializableFilesManager;
 import com.rs.utils.Utils;
 
@@ -96,7 +81,6 @@ public class Player extends Entity {
 	private transient PriceCheckManager priceCheckManager;
 	private transient RouteEvent routeEvent;
 	private transient FriendChatsManager currentFriendChat;
-	private transient ClansManager clanManager, guestClanManager;
 	private transient boolean toogleLootShare;
 	private transient Trade trade;
 	private transient DuelRules lastDuelRules;
@@ -158,13 +142,9 @@ public class Player extends Entity {
 	private FriendsIgnores friendsIgnores;
 	private DominionTower dominionTower;
 	private Familiar familiar;
-	private FarmingManager farmingManager;
 	private AuraManager auraManager;
 	private QuestManager questManager;
 	private PetManager petManager;
-	private GrandExchangeManager geManager;
-	private SlayerManager slayerManager;
-	private House house;
 	private byte runEnergy;
 	private boolean allowChatEffects;
 	private boolean acceptAid;
@@ -317,10 +297,6 @@ public class Player extends Entity {
 		auraManager = new AuraManager();
 		questManager = new QuestManager();
 		petManager = new PetManager();
-		farmingManager = new FarmingManager();
-		geManager = new GrandExchangeManager();
-		slayerManager = new SlayerManager();
-		house = new House();
 		runEnergy = 100;
 		allowChatEffects = true;
 		mouseButtons = true;
@@ -329,7 +305,6 @@ public class Player extends Entity {
 		resetBarrows();
 		shosRewards = new boolean[4];
 		warriorPoints = new double[6];
-		resetDungeoneering();
 		SkillCapeCustomizer.resetSkillCapes(this);
 		ownedObjectsManagerKeys = new LinkedList<String>();
 		passwordList = new ArrayList<String>();
@@ -349,22 +324,10 @@ public class Player extends Entity {
 			questManager = new QuestManager();
 		if (petManager == null)
 			petManager = new PetManager();
-		if (geManager == null)
-			geManager = new GrandExchangeManager();
-		if (house == null)
-			house = new House();
 		if (notes == null)
 			notes = new Notes();
 		if (toolbelt == null)
 			toolbelt = new Toolbelt();
-		if (farmingManager == null)
-			farmingManager = new FarmingManager();
-		if (currentDungProgress == null)
-			resetDungeoneering();
-		if (slayerManager == null) {
-			skills.resetSkillNoRefresh(Skills.SLAYER);
-			slayerManager = new SlayerManager();
-		}
 		if (shosRewards == null)
 			shosRewards = new boolean[4];
 		this.session = session;
@@ -403,10 +366,6 @@ public class Player extends Entity {
 		charges.setPlayer(this);
 		questManager.setPlayer(this);
 		petManager.setPlayer(this);
-		house.setPlayer(this);
-		farmingManager.setPlayer(this);
-		geManager.setPlayer(this);
-		slayerManager.setPlayer(this);
 		setDirection(Utils.getFaceDirection(0, -1));
 		temporaryMovementType = -1;
 		logicPackets = new ConcurrentLinkedQueue<LogicPacket>();
@@ -622,7 +581,6 @@ public class Player extends Entity {
 		auraManager.process();
 		prayer.processPrayer();
 		controlerManager.process();
-		farmingManager.process();
 		cutscenesManager.process();
 		if (isDead())
 			return;
@@ -803,20 +761,12 @@ public class Player extends Entity {
 		emotesManager.init();
 		questManager.init();
 		notes.init();
-		house.init();
-		farmingManager.init();
 		toolbelt.init();
-		geManager.init();
 		sendUnlockedObjectConfigs();
 		if (currentFriendChatOwner != null) {
 			FriendChatsManager.joinChat(currentFriendChatOwner, this);
 			if (currentFriendChat == null) // failed
 				currentFriendChatOwner = null;
-		}
-		// connect to current clan
-		if (clanName != null) {
-			if (!ClansManager.connectToClan(this, clanName, false))
-				clanName = null;
 		}
 		if (familiar != null)
 			familiar.respawnFamiliar(this);
@@ -1031,21 +981,13 @@ public class Player extends Entity {
 		cutscenesManager.logout();
 		// login
 		running = false;
-		house.finish();
 		friendsIgnores.sendFriendsMyStatus(false);
-		GrandExchange.unlinkOffers(this);
 		if (currentFriendChat != null)
 			currentFriendChat.leaveChat(this, true);
-		if (clanManager != null)
-			clanManager.disconnect(this, false);
-		if (guestClanManager != null)
-			guestClanManager.disconnect(this, true);
 		if (familiar != null && !familiar.isFinished())
 			familiar.dissmissFamiliar(true);
 		else if (pet != null)
 			pet.finish();
-		if (slayerManager.getSocialPlayer() != null)
-			slayerManager.resetSocialGroup(true);
 		setFinished(true);
 		session.setDecoder(-1);
 		SerializableFilesManager.savePlayer(this);
@@ -2036,10 +1978,10 @@ public class Player extends Entity {
 	 * default items on death, now only used for wilderness
 	 */
 	public void sendItemsOnDeath(Player killer, boolean dropItems) {
-		Integer[][] slots = GraveStone.getItemSlotsKeptOnDeath(this, true,
-				dropItems, getPrayer().isProtectingItem());
-		sendItemsOnDeath(killer, new WorldTile(this), new WorldTile(this),
-				true, slots);
+//		Integer[][] slots = GraveStone.getItemSlotsKeptOnDeath(this, true,
+//				dropItems, getPrayer().isProtectingItem());
+//		sendItemsOnDeath(killer, new WorldTile(this), new WorldTile(this),
+//				true, slots);
 	}
 
 	/*
@@ -2055,44 +1997,44 @@ public class Player extends Entity {
 			return;
 		charges.die(slots[1], slots[3]); // degrades droped and lost items only
 		auraManager.removeAura();
-		Item[][] items = GraveStone.getItemsKeptOnDeath(this, slots);
+//		Item[][] items = GraveStone.getItemsKeptOnDeath(this, slots);
 		inventory.reset();
 		equipment.reset();
 		appearence.generateAppearenceData();
-		for (Item item : items[0])
-			inventory.addItemDrop(item.getId(), item.getAmount(), respawnTile);
-		if (items[1].length != 0) {
-			if (wilderness) {
-				for (Item item : items[1])
-					World.addGroundItem(item, deathTile, killer == null ? this
-							: killer, true, 60, 0);
-			} else
-				new GraveStone(this, deathTile, items[1]);
-			if (killer != null)
-				Logger.globalLog(
-						username,
-						session.getIP(),
-						new String(killer.getUsername()
-								+ " has killed "
-								+ username
-								+ " with the ip: "
-								+ killer.getSession().getIP()
-								+ " items are as follows:"
-								+ Arrays.toString(items[1])
-										.replace("null,", "") + " ."));
-			else
-				Logger.globalLog(username, session.getIP(), new String(
-						"has died "
-								+ username
-								+ " items are as follows:"
-								+ Arrays.toString(items[1])
-										.replace("null,", "") + "."));
-		}
+//		for (Item item : items[0])
+//			inventory.addItemDrop(item.getId(), item.getAmount(), respawnTile);
+//		if (items[1].length != 0) {
+//			if (wilderness) {
+//				for (Item item : items[1])
+//					World.addGroundItem(item, deathTile, killer == null ? this
+//							: killer, true, 60, 0);
+//			} else
+//				new GraveStone(this, deathTile, items[1]);
+//			if (killer != null)
+//				Logger.globalLog(
+//						username,
+//						session.getIP(),
+//						new String(killer.getUsername()
+//								+ " has killed "
+//								+ username
+//								+ " with the ip: "
+//								+ killer.getSession().getIP()
+//								+ " items are as follows:"
+//								+ Arrays.toString(items[1])
+//										.replace("null,", "") + " ."));
+//			else
+//				Logger.globalLog(username, session.getIP(), new String(
+//						"has died "
+//								+ username
+//								+ " items are as follows:"
+//								+ Arrays.toString(items[1])
+//										.replace("null,", "") + "."));
+//		}
 	}
 
 	public boolean increaseKillCount(Player killed) {
 		killed.deathCount++;
-		PkRank.checkRank(killed);
+//		PkRank.checkRank(killed);
 		if (killed.getSession().getIP().equals(getSession().getIP()))
 			return false;
 		if ((Utils.currentTimeMillis() - lastKilledTime) > 300000) { // give
@@ -2111,7 +2053,7 @@ public class Player extends Entity {
 		getPackets().sendGameMessage(
 				"<col=ff0000>You have killed " + killed.getDisplayName()
 						+ ", you have now " + killCount + " kills.");
-		PkRank.checkRank(this);
+//		PkRank.checkRank(this);
 		return true;
 	}
 
@@ -2455,12 +2397,7 @@ public class Player extends Entity {
 		// use
 		barrowsKillCount = 0;
 	}
-
-	public void resetDungeoneering() {
-		currentDungProgress = new boolean[DungeonConstants.FLOORS_COUNT];
-		previousDungProgress = new boolean[DungeonConstants.FLOORS_COUNT];
-	}
-
+	
 	public int getVotes() {
 		return votes;
 	}
@@ -2577,12 +2514,6 @@ public class Player extends Entity {
 		return cutscenesManager;
 	}
 
-	public void kickPlayerFromClanChannel(String name) {
-		if (clanManager == null)
-			return;
-		clanManager.kickPlayerFromChat(this, name);
-	}
-
 	public void kickPlayerFromFriendsChannel(String name) {
 		if (currentFriendChat == null)
 			return;
@@ -2593,30 +2524,6 @@ public class Player extends Entity {
 		if (currentFriendChat == null)
 			return;
 		currentFriendChat.sendMessage(this, message);
-	}
-
-	public void sendClanChannelMessage(ChatMessage message) {
-		if (clanManager == null)
-			return;
-		clanManager.sendMessage(this, message);
-	}
-
-	public void sendGuestClanChannelMessage(ChatMessage message) {
-		if (guestClanManager == null)
-			return;
-		guestClanManager.sendMessage(this, message);
-	}
-
-	public void sendClanChannelQuickMessage(QuickChatMessage message) {
-		if (clanManager == null)
-			return;
-		clanManager.sendQuickMessage(this, message);
-	}
-
-	public void sendGuestClanChannelQuickMessage(QuickChatMessage message) {
-		if (guestClanManager == null)
-			return;
-		guestClanManager.sendQuickMessage(this, message);
 	}
 
 	public void sendFriendsChannelQuickMessage(QuickChatMessage message) {
@@ -2778,22 +2685,15 @@ public class Player extends Entity {
 
 	public boolean canSpawn() {
 		if (Wilderness.isAtWild(this)
-				|| getControlerManager().getControler() instanceof FightPitsArena
 				|| getControlerManager().getControler() instanceof CorpBeastControler
-				|| getControlerManager().getControler() instanceof PestControlLobby
-				|| getControlerManager().getControler() instanceof PestControlGame
 				|| getControlerManager().getControler() instanceof ZGDControler
 				|| getControlerManager().getControler() instanceof GodWars
 				|| getControlerManager().getControler() instanceof DTControler
 				|| getControlerManager().getControler() instanceof DuelArena
-				|| getControlerManager().getControler() instanceof CastleWarsPlaying
-				|| getControlerManager().getControler() instanceof CastleWarsWaiting
 				|| getControlerManager().getControler() instanceof FightCaves
 				|| getControlerManager().getControler() instanceof FightKiln
-				|| FfaZone.inPvpArea(this)
 				|| getControlerManager().getControler() instanceof NomadsRequiem
 				|| getControlerManager().getControler() instanceof QueenBlackDragonController
-				|| getControlerManager().getControler() instanceof WarControler
 				|| getControlerManager().getControler() instanceof JailControler) {
 			return false;
 		}
@@ -3228,10 +3128,6 @@ public class Player extends Entity {
 		return creationDate;
 	}
 
-	public House getHouse() {
-		return house;
-	}
-
 	public boolean isAcceptingAid() {
 		return acceptAid;
 	}
@@ -3250,10 +3146,6 @@ public class Player extends Entity {
 
 	public void removeCannonBalls() {
 		this.cannonBalls = 0;
-	}
-
-	public FarmingManager getFarmingManager() {
-		return farmingManager;
 	}
 
 	public Toolbelt getToolbelt() {
@@ -3307,22 +3199,6 @@ public class Player extends Entity {
 		varsManager.forceSendVarBit(4071, toogleLootShare ? 1 : 0);
 	}
 
-	public ClansManager getClanManager() {
-		return clanManager;
-	}
-
-	public void setClanManager(ClansManager clanManager) {
-		this.clanManager = clanManager;
-	}
-
-	public ClansManager getGuestClanManager() {
-		return guestClanManager;
-	}
-
-	public void setGuestClanManager(ClansManager guestClanManager) {
-		this.guestClanManager = guestClanManager;
-	}
-
 	public String getClanName() {
 		return clanName;
 	}
@@ -3369,15 +3245,6 @@ public class Player extends Entity {
 		return voted > Utils.currentTimeMillis() ? Settings.DROP_RATE
 				: Settings.DROP_RATE - 0.25;
 	}
-
-	public GrandExchangeManager getGeManager() {
-		return geManager;
-	}
-
-	public SlayerManager getSlayerManager() {
-		return slayerManager;
-	}
-
 	/*
 	 * started now
 	 */

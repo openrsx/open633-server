@@ -13,9 +13,6 @@ import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.rs.game.player.Player;
-import com.rs.game.player.content.clans.Clan;
-import com.rs.game.player.content.grandExchange.Offer;
-import com.rs.game.player.content.grandExchange.OfferHistory;
 
 public class SerializableFilesManager {
 
@@ -72,96 +69,6 @@ public class SerializableFilesManager {
 		return new File(CLAN_PATH + name + ".c").exists();
 	}
 
-	public synchronized static Clan loadClan(String name) {
-		try {
-			return (Clan) loadSerializedFile(new File(CLAN_PATH + name + ".c"));
-		} catch (Throwable e) {
-			Logger.handle(e);
-		}
-		return null;
-	}
-
-	public synchronized static void saveClan(Clan clan) {
-		try {
-			storeSerializableClass(clan,
-					new File(CLAN_PATH + clan.getClanName() + ".c"));
-		} catch (Throwable e) {
-			Logger.handle(e);
-		}
-	}
-
-	public synchronized static void deleteClan(Clan clan) {
-		try {
-			new File(CLAN_PATH + clan.getClanName() + ".c").delete();
-		} catch (Throwable t) {
-			Logger.handle(t);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public static synchronized HashMap<Long, Offer> loadGEOffers() {
-		if (fileExists(GE_OFFERS)) {
-			try {
-				return (HashMap<Long, Offer>) SerializableFilesManager
-						.loadSerializedFile(new File(GE_OFFERS));
-			} catch (Throwable t) {
-				Logger.handle(t);
-				return null;
-			}
-		} else {
-			return new HashMap<Long, Offer>();
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public static synchronized ArrayList<OfferHistory> loadGEHistory() {
-		if (fileExists(GE_OFFERS_HISTORY)) {
-			try {
-				return (ArrayList<OfferHistory>) SerializableFilesManager
-						.loadSerializedFile(new File(GE_OFFERS_HISTORY));
-			} catch (Throwable t) {
-				Logger.handle(t);
-				return null;
-			}
-		} else {
-			return new ArrayList<OfferHistory>();
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public static synchronized HashMap<Integer, Integer> loadGEPrices() {
-		if (fileExists(GE_PRICES)) {
-			try {
-				return (HashMap<Integer, Integer>) SerializableFilesManager
-						.loadSerializedFile(new File(GE_PRICES));
-			} catch (Throwable t) {
-				Logger.handle(t);
-				return null;
-			}
-		} else {
-			return new HashMap<Integer, Integer>();
-		}
-	}
-
-	public static synchronized void saveGEOffers(HashMap<Long, Offer> offers) {
-		try {
-			SerializableFilesManager.storeSerializableClass(offers, new File(
-					GE_OFFERS));
-		} catch (Throwable t) {
-			Logger.handle(t);
-		}
-	}
-
-	public static synchronized void saveGEHistory(
-			ArrayList<OfferHistory> history) {
-		try {
-			SerializableFilesManager.storeSerializableClass(history, new File(
-					GE_OFFERS_HISTORY));
-		} catch (Throwable t) {
-			Logger.handle(t);
-		}
-	}
-
 	public static synchronized void saveGEPrices(
 			HashMap<Integer, Integer> prices) {
 		try {
@@ -190,28 +97,6 @@ public class SerializableFilesManager {
 		try {
 			SerializableFilesManager.storeSerializableClass(names, new File(
 					DISPLAY_NAMES));
-		} catch (Throwable t) {
-			Logger.handle(t);
-		}
-	}
-
-	public static synchronized DTRank[] loadDTRanks() {
-		File file = new File(DT_RANKS);
-		if (file.exists()) {
-			try {
-				return (DTRank[]) SerializableFilesManager
-						.loadSerializedFile(file);
-			} catch (Throwable e) {
-				Logger.handle(e);
-			}
-		}
-		return new DTRank[10];
-	}
-
-	public static synchronized void saveDTRanks(DTRank[] ranks) {
-		try {
-			SerializableFilesManager.storeSerializableClass(ranks, new File(
-					DT_RANKS));
 		} catch (Throwable t) {
 			Logger.handle(t);
 		}
@@ -266,31 +151,8 @@ public class SerializableFilesManager {
 		}
 	}
 
-	public static synchronized PkRank[] loadPKRanks() {
-		if (fileExists(PK_RANKS)) {
-			try {
-				return (PkRank[]) SerializableFilesManager
-						.loadSerializedFile(new File(PK_RANKS));
-			} catch (Throwable t) {
-				Logger.handle(t);
-				return null;
-			}
-		} else {
-			return new PkRank[300];
-		}
-	}
-
 	public synchronized static String[] getAllPlayers() {
 		return new File(ACCOUNTS_PATH).list(); // TODO
-	}
-
-	public static synchronized void savePkRanks(PkRank[] ranks) {
-		try {
-			SerializableFilesManager.storeSerializableClass(ranks, new File(
-					PK_RANKS));
-		} catch (Throwable t) {
-			Logger.handle(t);
-		}
 	}
 
 	public static final Object loadSerializedFile(File f) throws IOException,

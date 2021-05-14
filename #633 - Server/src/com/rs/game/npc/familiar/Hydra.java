@@ -44,7 +44,7 @@ public class Hydra extends Familiar {
 	Player player = (Player) object;
 	setNextGraphics(new Graphics(1487));
 	setNextAnimation(new Animation(7939));
-	player.getFarmingManager().resetTreeTrunks();
+//	player.getFarmingManager().resetTreeTrunks();
 	return false;
     }
 }

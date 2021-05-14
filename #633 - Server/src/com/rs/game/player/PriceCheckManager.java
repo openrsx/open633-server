@@ -3,7 +3,6 @@ package com.rs.game.player;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
 import com.rs.game.player.content.ItemConstants;
-import com.rs.game.player.content.grandExchange.GrandExchange;
 
 public class PriceCheckManager {
 
@@ -79,10 +78,10 @@ public class PriceCheckManager {
 	for (int index = 0; index < itemsBefore.length; index++) {
 	    Item item = pcInv.getItems()[index];
 	    if (item != null)
-		totalPrice += GrandExchange.getPrice(item.getId()) * item.getAmount();
+//		totalPrice += GrandExchange.getPrice(item.getId()) * item.getAmount();
 	    if (itemsBefore[index] != item) {
 		changedSlots[count++] = index;
-		player.getPackets().sendGlobalConfig(700 + index, item == null ? 0 : GrandExchange.getPrice(item.getId()));
+//		player.getPackets().sendGlobalConfig(700 + index, item == null ? 0 : GrandExchange.getPrice(item.getId()));
 	    }
 
 	}

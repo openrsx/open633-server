@@ -9,8 +9,6 @@ import com.rs.game.Graphics;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
-import com.rs.game.minigames.clanwars.FfaZone;
-import com.rs.game.minigames.clanwars.RequestController;
 import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
@@ -365,14 +363,14 @@ public class Magic {
 	final Item target = player.getInventory().getItem(slot);
 	player.stopAll();
 	switch (spellId) {
-	    case 29:
-	    case 41:
-	    case 53:
-	    case 61:
-	    case 76:
-	    case 88:
-		Enchanting.processMagicEnchantSpell(player, slot, Enchanting.getJewleryIndex(spellId));
-		break;
+//	    case 29:
+//	    case 41:
+//	    case 53:
+//	    case 61:
+//	    case 76:
+//	    case 88:
+//		Enchanting.processMagicEnchantSpell(player, slot, Enchanting.getJewleryIndex(spellId));
+//		break;
 	    case 38: // low alch
 	    case 59: // high alch
 		boolean highAlch = spellId == 59;
@@ -897,10 +895,10 @@ public class Magic {
 	    player.getControlerManager().startControler("Kalaboss");
 	else if (Wilderness.isAtWild(teleTile))
 	    player.getControlerManager().startControler("Wilderness");
-	else if (RequestController.inWarRequest(player))
-	    player.getControlerManager().startControler("clan_wars_request");
-	else if (FfaZone.inArea(player))
-	    player.getControlerManager().startControler("clan_wars_ffa");
+//	else if (RequestController.inWarRequest(player))
+//	    player.getControlerManager().startControler("clan_wars_request");
+//	else if (FfaZone.inArea(player))
+//	    player.getControlerManager().startControler("clan_wars_ffa");
     }
 
     private Magic() {

@@ -3,7 +3,6 @@ package com.rs.game.player.controllers;
 import com.rs.game.Animation;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
-import com.rs.game.player.controllers.events.DeathEvent;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 
@@ -46,7 +45,7 @@ public class CorpBeastControler extends Controller {
 		} else if (loop == 3) {
 		    player.sendItemsOnDeath(null);
 		    player.reset();
-		    player.setNextWorldTile(DeathEvent.getRespawnHub(player));
+//		    player.setNextWorldTile(DeathEvent.getRespawnHub(player));
 		    player.setNextAnimation(new Animation(-1));
 		} else if (loop == 4) {
 		    removeControler();

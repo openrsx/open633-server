@@ -8,11 +8,8 @@ import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.game.player.actions.Smithing;
-import com.rs.game.player.content.agility.Agility;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
-import com.rs.net.decoders.handlers.ObjectHandler;
 import com.rs.utils.Utils;
 
 public class GodWars extends Controller {
@@ -129,8 +126,8 @@ public class GodWars extends Controller {
 								"You don't have enough kills to enter the lair of Zaros.");
 			return false;
 		} else if (object.getId() == 57234) {
-			if (!Agility.hasLevel(player, 70))
-				return false;
+//			if (!Agility.hasLevel(player, 70))
+//				return false;
 			boolean travelingEast = player.getX() < 2863;
 			player.setNextAnimation(new Animation(1133));
 			final WorldTile tile = new WorldTile(
@@ -177,12 +174,12 @@ public class GodWars extends Controller {
 			player.useStairs(828, new WorldTile(2913, 3741, 0), 1, 2);
 			player.getControlerManager().forceStop();
 		} else if (object.getId() == 26384) { // bandos
-			if (!player.getInventory().containsItemToolBelt(Smithing.HAMMER)) {
-				player.getPackets()
-						.sendGameMessage(
-								"You look at the door but find no knob, maybe it opens some other way.");
-				return false;
-			}
+//			if (!player.getInventory().containsItemToolBelt(Smithing.HAMMER)) {
+//				player.getPackets()
+//						.sendGameMessage(
+//								"You look at the door but find no knob, maybe it opens some other way.");
+//				return false;
+//			}
 			if (player.getSkills().getLevel(Skills.STRENGTH) < 70) {
 				player.getPackets()
 						.sendGameMessage(
@@ -196,15 +193,15 @@ public class GodWars extends Controller {
 
 				@Override
 				public void run() {
-					ObjectHandler.handleDoor(player, object, 1000);
+//					ObjectHandler.handleDoor(player, object, 1000);
 					player.addWalkSteps(withinBandos ? 2851 : 2850, 5334, -1,
 							false);
 				}
 			}, withinBandos ? 0 : 1);
 			return false;
 		} else if (object.getId() == 26439) {
-			if (!Agility.hasLevel(player, 70))
-				return false;
+//			if (!Agility.hasLevel(player, 70))
+//				return false;
 			final boolean withinZamorak = inZamorakPrepare(player);
 			final WorldTile tile = new WorldTile(2887, withinZamorak ? 5336
 					: 5346, 0);
@@ -317,8 +314,8 @@ public class GodWars extends Controller {
 	public static void useAgilityStones(final Player player,
 			final WorldObject object, final WorldTile tile, int levelRequired,
 			final int emote, final int delay) {
-		if (!Agility.hasLevel(player, levelRequired))
-			return;
+//		if (!Agility.hasLevel(player, levelRequired))
+//			return;
 		player.faceObject(object);
 		player.addWalkSteps(object.getX(), object.getY());
 		WorldTasksManager.schedule(new WorldTask() {

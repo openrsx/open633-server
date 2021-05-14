@@ -10,7 +10,6 @@ import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.game.player.actions.Fishing;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
@@ -28,12 +27,12 @@ public class Granitelobster extends Familiar {
     @Override
     public void processNPC() {
 	super.processNPC();
-	boolean isFishing = getOwner().getActionManager().getAction() != null && getOwner().getActionManager().getAction() instanceof Fishing;
-	if (isFishing) {
-	    forageTicks++;
-	    if (forageTicks == 300)
-		giveReward();
-	}
+//	boolean isFishing = getOwner().getActionManager().getAction() != null && getOwner().getActionManager().getAction() instanceof Fishing;
+//	if (isFishing) {
+//	    forageTicks++;
+//	    if (forageTicks == 300)
+//		giveReward();
+//	}
     }
 
     private void giveReward() {

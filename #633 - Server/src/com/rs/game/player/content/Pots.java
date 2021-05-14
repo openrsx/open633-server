@@ -5,7 +5,6 @@ import com.rs.game.Graphics;
 import com.rs.game.Hit;
 import com.rs.game.Hit.HitLook;
 import com.rs.game.item.Item;
-import com.rs.game.minigames.clanwars.FfaZone;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
@@ -421,7 +420,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler || FfaZone.isOverloadChanged(player)) {
+		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -438,7 +437,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler || FfaZone.isOverloadChanged(player)) {
+		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -455,7 +454,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler || FfaZone.isOverloadChanged(player)) {
+		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -472,7 +471,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler || FfaZone.isOverloadChanged(player)) {
+		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -489,7 +488,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler || FfaZone.isOverloadChanged(player)) {
+		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -506,7 +505,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler || FfaZone.isOverloadChanged(player)) {
+		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -553,7 +552,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler || FfaZone.isOverloadChanged(player)) {
+		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -830,7 +829,7 @@ public final class Pots {
     }
 
     public static void applyOverLoadEffect(Player player) {
-	if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler || FfaZone.isOverloadChanged(player)) {
+	if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
 	    int actualLevel = player.getSkills().getLevel(Skills.ATTACK);
 	    int realLevel = player.getSkills().getLevelForXp(Skills.ATTACK);
 	    int level = actualLevel > realLevel ? realLevel : actualLevel;

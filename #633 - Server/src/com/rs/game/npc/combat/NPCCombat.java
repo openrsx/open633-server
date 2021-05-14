@@ -9,7 +9,6 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.fightkiln.HarAkenTentacle;
 import com.rs.game.npc.godwars.zaros.Nex;
-import com.rs.game.npc.pest.PestPortal;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Combat;
 import com.rs.utils.MapAreas;
@@ -299,7 +298,8 @@ public final class NPCCombat {
 	}
 
 	private boolean forceCheckClipAsRange(Entity target) {
-		return target instanceof PestPortal;
+//		return target instanceof PestPortal;
+		return target != null;
 	}
 
 	public void addCombatDelay(int delay) {

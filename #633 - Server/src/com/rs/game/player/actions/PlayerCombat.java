@@ -21,7 +21,6 @@ import com.rs.game.npc.fightkiln.HarAken;
 import com.rs.game.npc.fightkiln.HarAkenTentacle;
 import com.rs.game.npc.glacior.Glacyte;
 import com.rs.game.npc.godwars.zaros.NexMinion;
-import com.rs.game.npc.pest.PestPortal;
 import com.rs.game.npc.qbd.QueenBlackDragon;
 import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Equipment;
@@ -30,7 +29,6 @@ import com.rs.game.player.Skills;
 import com.rs.game.player.content.Combat;
 import com.rs.game.player.content.ItemConstants;
 import com.rs.game.player.content.Magic;
-import com.rs.game.player.content.Slayer;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.MapAreas;
@@ -76,7 +74,7 @@ public class PlayerCombat extends Action {
 	}
 
 	private boolean forceCheckClipAsRange(Entity target) {
-		return target instanceof PestPortal || target instanceof NexMinion
+		return target instanceof NexMinion
 				|| target instanceof HarAken
 				|| target instanceof HarAkenTentacle
 				|| target instanceof QueenBlackDragon;
@@ -1157,12 +1155,6 @@ public class PlayerCombat extends Action {
 			}
 		}
 		if (target instanceof NPC) {
-			if (player.getEquipment().getHatId() == 15488
-					|| Slayer.hasFullSlayerHelmet(player)) {
-				if (player.getSlayerManager().isValidTask(
-						((NPC) target).getName()))
-					boost += 0.125;
-			}
 		}
 		boost = magicPerc / 100 + 1;
 		max_hit *= boost;
@@ -2666,15 +2658,7 @@ public class PlayerCombat extends Action {
 				if (player.getEquipment().getAmuletId() == 10588
 						&& Combat.isUndead(target))
 					otherBonus += 0.2;
-				else {
-					int hatId = player.getEquipment().getHatId();
-					if ((hatId >= 8901 && hatId <= 8922)
-							|| Slayer.hasSlayerHelmet(player)) {
-						if (player.getSlayerManager().isValidTask(
-								((NPC) target).getName()))
-							otherBonus += 0.125;
-					}
-				}
+				
 			}
 			double effectiveStrength = 8 + Math.floor((strengthLvl * player
 					.getPrayer().getStrengthMultiplier()) + styleBonus);
@@ -2698,12 +2682,6 @@ public class PlayerCombat extends Action {
 			double styleBonus = attackStyle == 0 ? 3 : attackStyle == 1 ? 0 : 1;
 			double otherBonus = 1;
 			if (target instanceof NPC) {
-				if (player.getEquipment().getHatId() == 15490
-						|| Slayer.hasFullSlayerHelmet(player)) {
-					if (player.getSlayerManager().isValidTask(
-							((NPC) target).getName()))
-						otherBonus += 0.125;
-				}
 			}
 			double effectiveStrenght = Math.floor(rangedLvl
 					* player.getPrayer().getRangeMultiplier())
@@ -3663,13 +3641,6 @@ public class PlayerCombat extends Action {
 			} else {
 				if (!n.canBeAttackFromOutOfArea()
 						&& !MapAreas.isAtArea(n.getMapAreaNameHash(), player)) {
-					return false;
-				}
-				int slayerLevel = Slayer.getLevelRequirement(n.getName());
-				if (slayerLevel > player.getSkills().getLevel(Skills.SLAYER)) {
-					player.getPackets().sendGameMessage(
-							"You need a slayer level of " + slayerLevel
-									+ " to know how to wound this monster.");
 					return false;
 				}
 				if (n.getId() == 879) {

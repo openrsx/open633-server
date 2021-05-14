@@ -8,7 +8,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.rs.Settings;
 import com.rs.game.World;
-import com.rs.game.minigames.clanwars.ClanWars;
 import com.rs.game.player.ChatMessage;
 import com.rs.game.player.FriendsIgnores;
 import com.rs.game.player.Player;
@@ -29,7 +28,7 @@ public class FriendChatsManager {
     /**
      * The clan wars instance (if the clan is in a war).
      */
-    private ClanWars clanWars;
+//    private ClanWars clanWars;
 
     private static HashMap<String, FriendChatsManager> cachedFriendChats;
 
@@ -104,9 +103,9 @@ public class FriendChatsManager {
 		player.getPackets().sendGameMessage("You have left the channel.");
 		player.getPackets().sendFriendsChatChannel();
 	    }
-	    if (clanWars != null) {
-		clanWars.leave(player, false);
-	    }
+//	    if (clanWars != null) {
+//		clanWars.leave(player, false);
+//	    }
 	}
     }
 
@@ -358,22 +357,22 @@ public class FriendChatsManager {
 
     }
 
-    /**
-     * Gets the clanWars.
-     * 
-     * @return The clanWars.
-     */
-    public ClanWars getClanWars() {
-	return clanWars;
-    }
-
-    /**
-     * Sets the clanWars.
-     * 
-     * @param clanWars
-     *            The clanWars to set.
-     */
-    public void setClanWars(ClanWars clanWars) {
-	this.clanWars = clanWars;
-    }
+//    /**
+//     * Gets the clanWars.
+//     * 
+//     * @return The clanWars.
+//     */
+//    public ClanWars getClanWars() {
+//	return clanWars;
+//    }
+//
+//    /**
+//     * Sets the clanWars.
+//     * 
+//     * @param clanWars
+//     *            The clanWars to set.
+//     */
+//    public void setClanWars(ClanWars clanWars) {
+//	this.clanWars = clanWars;
+//    }
 }

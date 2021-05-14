@@ -21,7 +21,6 @@ import com.rs.game.npc.combat.NPCCombat;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
-import com.rs.game.player.SlayerManager;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.route.RouteFinder;
@@ -658,11 +657,6 @@ public class NPC extends Entity implements Serializable {
 		Player killer = getMostDamageReceivedSourcePlayer();
 		if (killer == null)
 			return;
-		Player otherPlayer = killer.getSlayerManager().getSocialPlayer();
-		SlayerManager manager = killer.getSlayerManager();
-		if (manager.isValidTask(getName()))
-			manager.checkCompletedTask(getDamageReceived(killer),
-					otherPlayer != null ? getDamageReceived(otherPlayer) : 0);
 		Drops drops = NPCDrops.getDrops(id);
 		if (drops == null)
 			return;

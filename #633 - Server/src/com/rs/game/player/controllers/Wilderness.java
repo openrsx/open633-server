@@ -8,8 +8,6 @@ import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.game.player.actions.thieving.Thieving;
-import com.rs.game.player.controllers.events.DeathEvent;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.Utils;
@@ -179,7 +177,7 @@ public class Wilderness extends Controller {
     @Override
     public boolean processObjectClick2(final WorldObject object) {
 	if (object.getId() == 2557 || object.getId() == 65717) {
-	    Thieving.pickDoor(player, object);
+//	    Thieving.pickDoor(player, object);
 	    return false;
 	}
 	return true;
@@ -213,7 +211,7 @@ public class Wilderness extends Controller {
 		    }
 		    player.sendItemsOnDeath(killer);
 		    player.reset();
-		    player.setNextWorldTile(DeathEvent.HUBS[2]); // edgevile
+//		    player.setNextWorldTile(DeathEvent.HUBS[2]); // edgevile
 		    player.setNextAnimation(new Animation(-1));
 		} else if (loop == 4) {
 		    removeIcon();

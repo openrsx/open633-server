@@ -3,7 +3,6 @@ package com.rs.game.player;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.rs.Settings;
-import com.rs.game.player.content.clans.ClansManager;
 
 public class InterfaceManager {
 
@@ -111,7 +110,6 @@ public class InterfaceManager {
 		player.getEmotesManager().unlockEmotesBook();
 		player.getInventory().unlockInventoryOptions();
 		player.getPrayer().unlockPrayerBookButtons();
-		ClansManager.unlockBanList(player);
 		if (player.getFamiliar() != null && player.isRunning())
 			player.getFamiliar().unlock();
 		player.getControlerManager().sendInterfaces();

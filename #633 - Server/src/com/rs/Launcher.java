@@ -14,21 +14,14 @@ import com.rs.game.World;
 import com.rs.game.map.MapBuilder;
 import com.rs.game.npc.combat.CombatScriptsHandler;
 import com.rs.game.player.Player;
-import com.rs.game.player.content.FishingSpotsHandler;
 import com.rs.game.player.content.FriendChatsManager;
-import com.rs.game.player.content.clans.ClansManager;
-import com.rs.game.player.content.grandExchange.GrandExchange;
 import com.rs.game.player.controllers.ControlerHandler;
 import com.rs.game.player.cutscenes.CutscenesHandler;
 import com.rs.game.player.dialogues.DialogueHandler;
 import com.rs.net.ServerChannelHandler;
-import com.rs.utils.AttackSpeeds;
 import com.rs.utils.Censor;
-import com.rs.utils.DTRank;
 import com.rs.utils.DisplayNames;
 import com.rs.utils.EquipData;
-import com.rs.utils.IPBanL;
-import com.rs.utils.IPMuteL;
 import com.rs.utils.ItemBonuses;
 import com.rs.utils.ItemDestroys;
 import com.rs.utils.ItemExamines;
@@ -42,12 +35,10 @@ import com.rs.utils.NPCCombatDefinitionsL;
 import com.rs.utils.NPCDrops;
 import com.rs.utils.NPCSpawns;
 import com.rs.utils.ObjectSpawns;
-import com.rs.utils.PkRank;
 import com.rs.utils.SerializableFilesManager;
 import com.rs.utils.ShopsHandler;
 import com.rs.utils.Utils;
 import com.rs.utils.huffman.Huffman;
-import com.webrs.responder.Responder;
 
 public class Launcher {
 
@@ -63,17 +54,11 @@ public class Launcher {
 		Logger.log("Launcher", "Initing Cache...");
 		Cache.init();
 		Huffman.init();
-		Logger.log("Launcher", "Initing scripts...");
 		Logger.log("Launcher", "Initing Data Files...");
 		EquipData.init();
-		AttackSpeeds.init();
 		ItemBonuses.init();
 		Censor.init();
 		DisplayNames.init();
-		IPBanL.init();
-		IPMuteL.init();
-		PkRank.init();
-		DTRank.init();
 		MapArchiveKeys.init();
 		MapAreas.init();
 		ObjectSpawns.init();
@@ -87,11 +72,8 @@ public class Launcher {
 		ItemSpawns.init();
 		MusicHints.init();
 		ShopsHandler.init();
-		GrandExchange.init();
 		Logger.log("Launcher", "Initing Controlers...");
 		ControlerHandler.init();
-		Logger.log("Launcher", "Initing Fishing Spots...");
-		FishingSpotsHandler.init();
 		Logger.log("Launcher", "Initing NPC Combat Scripts...");
 		CombatScriptsHandler.init();
 		Logger.log("Launcher", "Initing Dialogues...");
@@ -100,8 +82,6 @@ public class Launcher {
 		CutscenesHandler.init();
 		Logger.log("Launcher", "Initing Friend Chats Manager...");
 		FriendChatsManager.init();
-		Logger.log("Launcher", "Initing Clans Manager...");
-		ClansManager.init();
 		Logger.log("Launcher", "Initing Cores Manager...");
 		CoresManager.init();
 		Logger.log("Launcher", "Initing World...");
@@ -115,17 +95,6 @@ public class Launcher {
 			Logger.handle(e);
 			Logger.log("Launcher",
 					"Failed initing Server Channel Handler. Shutting down...");
-			System.exit(1);
-			return;
-		}
-		Logger.log("Launcher", "Initing Web responder...");
-		try {
-			if (!Settings.HOSTED)
-				Responder.init();
-		} catch (Throwable e) {
-			Logger.handle(e);
-			Logger.log("Launcher",
-					"Failed initing web responder... Shutting down...");
 			System.exit(1);
 			return;
 		}
@@ -178,7 +147,7 @@ public class Launcher {
 			@Override
 			public void run() {
 				try {
-					GrandExchange.recalcPrices();
+//					GrandExchange.recalcPrices();
 				} catch (Throwable e) {
 					Logger.handle(e);
 				}
@@ -193,17 +162,8 @@ public class Launcher {
 				continue;
 			SerializableFilesManager.savePlayer(player);
 		}
-		saveOtherFiles();
 	}
 
-	public static void saveOtherFiles() {
-		DisplayNames.save();
-		IPBanL.save();
-		IPMuteL.save();
-		PkRank.save();
-		DTRank.save();
-		GrandExchange.save();
-	}
 
 	public static void cleanMemory(boolean force) {
 		if (force) {
@@ -236,8 +196,6 @@ public class Launcher {
 	}
 
 	public static void closeServices() {
-		if (!Settings.HOSTED)
-			Responder.shutdown();
 		ServerChannelHandler.shutdown();
 		CoresManager.shutdown();
 	}
