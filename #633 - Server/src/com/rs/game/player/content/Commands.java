@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TimerTask;
 
-import javax.script.ScriptException;
-
 import com.rs.Settings;
 import com.rs.cache.loaders.AnimationDefinitions;
 import com.rs.cache.loaders.ItemDefinitions;
@@ -54,7 +52,6 @@ import com.rs.game.route.WalkRouteFinder;
 import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
-import com.rs.script.ScriptLoader;
 import com.rs.utils.Censor;
 import com.rs.utils.Encrypt;
 import com.rs.utils.IPBanL;
@@ -477,13 +474,6 @@ public final class Commands {
 			Player target;
 			WorldObject object;
 			switch (cmd[0].toLowerCase()) {
-			case "reloadscripts":
-				try {
-					ScriptLoader.getScriptLoader().reloadPlugins();
-				} catch (IOException | ScriptException e1) {
-					e1.printStackTrace();
-				}
-				return true;
 			case "sprite":
 				for (int i = 0; i < 100; i++)
 					player.getPackets().sendIComponentSprite(408, i, 1);

@@ -22,7 +22,6 @@ import com.rs.game.player.controllers.ControlerHandler;
 import com.rs.game.player.cutscenes.CutscenesHandler;
 import com.rs.game.player.dialogues.DialogueHandler;
 import com.rs.net.ServerChannelHandler;
-import com.rs.script.ScriptLoader;
 import com.rs.utils.AttackSpeeds;
 import com.rs.utils.Censor;
 import com.rs.utils.DTRank;
@@ -65,7 +64,6 @@ public class Launcher {
 		Cache.init();
 		Huffman.init();
 		Logger.log("Launcher", "Initing scripts...");
-		ScriptLoader.init();
 		Logger.log("Launcher", "Initing Data Files...");
 		EquipData.init();
 		AttackSpeeds.init();
