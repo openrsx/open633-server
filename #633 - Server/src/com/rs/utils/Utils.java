@@ -860,22 +860,22 @@ public final class Utils {
 			int value = player.getHitpoints();
 			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
 					(byte) (value >> 8), (byte) value };
-		} else if (fileId == 1108) {
-			int value = player.getDominionTower().getKilledBossesCount();
-			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
-					(byte) (value >> 8), (byte) value };
-		} else if (fileId == 1109) {
-			long value = player.getDominionTower().getTotalScore();
-			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
-					(byte) (value >> 8), (byte) value };
-		} else if (fileId == 1110) {
-			int value = player.getDominionTower().getMaxFloorClimber();
-			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
-					(byte) (value >> 8), (byte) value };
-		} else if (fileId == 1111) {
-			int value = player.getDominionTower().getMaxFloorEndurance();
-			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
-					(byte) (value >> 8), (byte) value };
+//		} else if (fileId == 1108) {
+//			int value = player.getDominionTower().getKilledBossesCount();
+//			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
+//					(byte) (value >> 8), (byte) value };
+//		} else if (fileId == 1109) {
+//			long value = player.getDominionTower().getTotalScore();
+//			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
+//					(byte) (value >> 8), (byte) value };
+//		} else if (fileId == 1110) {
+//			int value = player.getDominionTower().getMaxFloorClimber();
+//			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
+//					(byte) (value >> 8), (byte) value };
+//		} else if (fileId == 1111) {
+//			int value = player.getDominionTower().getMaxFloorEndurance();
+//			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
+//					(byte) (value >> 8), (byte) value };
 		} else if (fileId == 1134) {
 			int value = player.getCrucibleHighScore();
 			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),

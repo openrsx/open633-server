@@ -11,7 +11,6 @@ import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
-import com.rs.game.player.actions.PlayerCombat;
 import com.rs.game.player.content.Foods.Food;
 import com.rs.game.player.content.ItemConstants;
 import com.rs.game.player.content.Pots.Pot;
@@ -22,6 +21,8 @@ import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.decoders.handlers.ButtonHandler;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
+
+import player.PlayerCombat;
 
 public class DuelArena extends Controller {
 

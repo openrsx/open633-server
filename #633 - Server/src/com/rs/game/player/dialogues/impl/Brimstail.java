@@ -1,8 +1,9 @@
 package com.rs.game.player.dialogues.impl;
 
-import com.rs.game.npc.NPC;
 import com.rs.game.player.controllers.RuneEssenceController;
 import com.rs.game.player.dialogues.Dialogue;
+
+import npc.NPC;
 
 public class Brimstail extends Dialogue {
 

@@ -1,6 +1,6 @@
 package com.rs.game.minigames;
 
-import com.rs.game.npc.godwars.GodWarMinion;
+import npc.godwars.GodWarMinion;
 
 public final class GodWarsBosses {
 

@@ -5,14 +5,14 @@ import com.rs.game.Graphics;
 import com.rs.game.Hit;
 import com.rs.game.Hit.HitLook;
 import com.rs.game.item.Item;
-import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.game.player.controllers.CrucibleControler;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.Utils;
+
+import npc.familiar.Familiar;
 
 public final class Pots {
 
@@ -420,7 +420,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
+		if (player.getControlerManager().getControler() instanceof Wilderness) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -437,7 +437,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
+		if (player.getControlerManager().getControler() instanceof Wilderness) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -454,7 +454,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
+		if (player.getControlerManager().getControler() instanceof Wilderness) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -471,7 +471,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
+		if (player.getControlerManager().getControler() instanceof Wilderness) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -488,7 +488,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
+		if (player.getControlerManager().getControler() instanceof Wilderness) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -505,7 +505,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
+		if (player.getControlerManager().getControler() instanceof Wilderness) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -552,7 +552,7 @@ public final class Pots {
 
 	    @Override
 	    public boolean canDrink(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
+		if (player.getControlerManager().getControler() instanceof Wilderness) {
 		    player.getPackets().sendGameMessage("You cannot drink this potion here.");
 		    return false;
 		}
@@ -829,7 +829,7 @@ public final class Pots {
     }
 
     public static void applyOverLoadEffect(Player player) {
-	if (player.getControlerManager().getControler() instanceof Wilderness || player.getControlerManager().getControler() instanceof CrucibleControler) {
+	if (player.getControlerManager().getControler() instanceof Wilderness) {
 	    int actualLevel = player.getSkills().getLevel(Skills.ATTACK);
 	    int realLevel = player.getSkills().getLevelForXp(Skills.ATTACK);
 	    int level = actualLevel > realLevel ? realLevel : actualLevel;

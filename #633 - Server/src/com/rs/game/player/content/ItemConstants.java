@@ -189,21 +189,6 @@ public class ItemConstants {
 					return false;
 				}
 			}
-
-			if (item.getId() == 20771) {
-				if (player.getDominionTower().getKilledBossesCount() < 100) {
-					player.getPackets()
-							.sendGameMessage(
-									"You need to have kill atleast 100 bosses in the Dominion tower to use this cape.");
-					return false;
-				}
-				if (player.getFinishedCastleWars() < 50) {
-					player.getPackets()
-							.sendGameMessage(
-									"You need to have finished atleast 50 Castle Wars Games.");
-					return false;
-				}
-			}
 			if (!player.isCompletedStealingCreation()) {
 				player.getPackets()
 						.sendGameMessage(

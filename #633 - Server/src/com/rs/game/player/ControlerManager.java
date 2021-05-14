@@ -8,12 +8,13 @@ import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
-import com.rs.game.npc.NPC;
 import com.rs.game.player.content.Foods.Food;
 import com.rs.game.player.content.Pots.Pot;
 import com.rs.game.player.controllers.ControlerHandler;
 import com.rs.game.player.controllers.Controller;
 import com.rs.utils.Logger;
+
+import npc.NPC;
 
 public final class ControlerManager implements Serializable {
 

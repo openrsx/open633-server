@@ -25,11 +25,6 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.minigames.duel.DuelRules;
-import com.rs.game.npc.NPC;
-import com.rs.game.npc.familiar.Familiar;
-import com.rs.game.npc.godwars.zaros.Nex;
-import com.rs.game.npc.others.Pet;
-import com.rs.game.player.actions.PlayerCombat;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Notes;
 import com.rs.game.player.content.Pots;
@@ -37,13 +32,9 @@ import com.rs.game.player.content.SkillCapeCustomizer;
 import com.rs.game.player.content.pet.PetManager;
 import com.rs.game.player.controllers.Controller;
 import com.rs.game.player.controllers.CorpBeastControler;
-import com.rs.game.player.controllers.CrucibleControler;
-import com.rs.game.player.controllers.DTControler;
 import com.rs.game.player.controllers.FightCaves;
-import com.rs.game.player.controllers.FightKiln;
 import com.rs.game.player.controllers.GodWars;
 import com.rs.game.player.controllers.JailControler;
-import com.rs.game.player.controllers.NomadsRequiem;
 import com.rs.game.player.controllers.QueenBlackDragonController;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.player.controllers.ZGDControler;
@@ -58,6 +49,12 @@ import com.rs.utils.Logger;
 import com.rs.utils.MachineInformation;
 import com.rs.utils.SerializableFilesManager;
 import com.rs.utils.Utils;
+
+import npc.NPC;
+import npc.familiar.Familiar;
+import npc.godwars.zaros.Nex;
+import npc.others.Pet;
+import player.PlayerCombat;
 
 public class Player extends Entity {
 
@@ -77,7 +74,6 @@ public class Player extends Entity {
 	private transient DialogueManager dialogueManager;
 	private transient HintIconsManager hintIconsManager;
 	private transient ActionManager actionManager;
-	private transient CutscenesManager cutscenesManager;
 	private transient PriceCheckManager priceCheckManager;
 	private transient RouteEvent routeEvent;
 	private transient FriendChatsManager currentFriendChat;
@@ -140,7 +136,6 @@ public class Player extends Entity {
 	private Notes notes;
 	private Toolbelt toolbelt;
 	private FriendsIgnores friendsIgnores;
-	private DominionTower dominionTower;
 	private Familiar familiar;
 	private AuraManager auraManager;
 	private QuestManager questManager;
@@ -292,7 +287,6 @@ public class Player extends Entity {
 		notes = new Notes();
 		toolbelt = new Toolbelt();
 		friendsIgnores = new FriendsIgnores();
-		dominionTower = new DominionTower();
 		charges = new ChargesManager();
 		auraManager = new AuraManager();
 		questManager = new QuestManager();
@@ -316,8 +310,6 @@ public class Player extends Entity {
 			int screenWidth, int screenHeight,
 			MachineInformation machineInformation, IsaacKeyPair isaacKeyPair) {
 		// temporary deleted after reset all chars
-		if (dominionTower == null)
-			dominionTower = new DominionTower();
 		if (auraManager == null)
 			auraManager = new AuraManager();
 		if (questManager == null)
@@ -344,7 +336,6 @@ public class Player extends Entity {
 		localPlayerUpdate = new LocalPlayerUpdate(this);
 		localNPCUpdate = new LocalNPCUpdate(this);
 		actionManager = new ActionManager(this);
-		cutscenesManager = new CutscenesManager(this);
 		trade = new Trade(this);
 		varsManager = new VarsManager(this);
 		// loads player on saved instances
@@ -361,7 +352,6 @@ public class Player extends Entity {
 		notes.setPlayer(this);
 		toolbelt.setPlayer(this);
 		friendsIgnores.setPlayer(this);
-		dominionTower.setPlayer(this);
 		auraManager.setPlayer(this);
 		charges.setPlayer(this);
 		questManager.setPlayer(this);
@@ -581,7 +571,6 @@ public class Player extends Entity {
 		auraManager.process();
 		prayer.processPrayer();
 		controlerManager.process();
-		cutscenesManager.process();
 		if (isDead())
 			return;
 		if (musicsManager.musicEnded())
@@ -978,7 +967,6 @@ public class Player extends Entity {
 				" has logged out."));
 		stopAll();
 		controlerManager.logout(); // checks what to do on before logout for
-		cutscenesManager.logout();
 		// login
 		running = false;
 		friendsIgnores.sendFriendsMyStatus(false);
@@ -2510,10 +2498,6 @@ public class Player extends Entity {
 		this.lastPublicMessage = lastPublicMessage;
 	}
 
-	public CutscenesManager getCutscenesManager() {
-		return cutscenesManager;
-	}
-
 	public void kickPlayerFromFriendsChannel(String name) {
 		if (currentFriendChat == null)
 			return;
@@ -2590,10 +2574,6 @@ public class Player extends Entity {
 			}
 		}
 		logicPackets.add(packet);
-	}
-
-	public DominionTower getDominionTower() {
-		return dominionTower;
 	}
 
 	public void setPrayerRenewalDelay(int delay) {
@@ -2688,19 +2668,11 @@ public class Player extends Entity {
 				|| getControlerManager().getControler() instanceof CorpBeastControler
 				|| getControlerManager().getControler() instanceof ZGDControler
 				|| getControlerManager().getControler() instanceof GodWars
-				|| getControlerManager().getControler() instanceof DTControler
 				|| getControlerManager().getControler() instanceof DuelArena
 				|| getControlerManager().getControler() instanceof FightCaves
-				|| getControlerManager().getControler() instanceof FightKiln
-				|| getControlerManager().getControler() instanceof NomadsRequiem
 				|| getControlerManager().getControler() instanceof QueenBlackDragonController
 				|| getControlerManager().getControler() instanceof JailControler) {
 			return false;
-		}
-		if (getControlerManager().getControler() instanceof CrucibleControler) {
-			CrucibleControler controler = (CrucibleControler) getControlerManager()
-					.getControler();
-			return !controler.isInside();
 		}
 		return true;
 	}

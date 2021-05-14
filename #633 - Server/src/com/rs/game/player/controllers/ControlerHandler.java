@@ -2,7 +2,6 @@ package com.rs.game.player.controllers;
 
 import java.util.HashMap;
 
-import com.rs.game.minigames.BrimhavenAgility;
 import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.minigames.duel.DuelControler;
@@ -29,25 +28,15 @@ public class ControlerHandler {
 			handledControlers.put("DuelControler", value10);
 			Class<Controller> value11 = (Class<Controller>) Class.forName(CorpBeastControler.class.getCanonicalName());
 			handledControlers.put("CorpBeastControler", value11);
-			Class<Controller> value14 = (Class<Controller>) Class.forName(DTControler.class.getCanonicalName());
-			handledControlers.put("DTControler", value14);
 			Class<Controller> value15 = (Class<Controller>) Class.forName(JailControler.class.getCanonicalName());
 			handledControlers.put("JailControler", value15);
-			handledControlers.put("NomadsRequiem",
-					(Class<Controller>) Class.forName(NomadsRequiem.class.getCanonicalName()));
 			handledControlers.put("BorkControler",
 					(Class<Controller>) Class.forName(BorkControler.class.getCanonicalName()));
-			handledControlers.put("BrimhavenAgility",
-					(Class<Controller>) Class.forName(BrimhavenAgility.class.getCanonicalName()));
 			handledControlers.put("FightCavesControler",
 					(Class<Controller>) Class.forName(FightCaves.class.getCanonicalName()));
-			handledControlers.put("FightKilnControler",
-					(Class<Controller>) Class.forName(FightKiln.class.getCanonicalName()));
 			handledControlers.put("Barrows", (Class<Controller>) Class.forName(Barrows.class.getCanonicalName()));
 			handledControlers.put("QueenBlackDragonControler",
 					(Class<Controller>) Class.forName(QueenBlackDragonController.class.getCanonicalName()));
-			handledControlers.put("CrucibleControler",
-					(Class<Controller>) Class.forName(CrucibleControler.class.getCanonicalName()));
 			handledControlers.put("RuneEssenceController",
 					(Class<Controller>) Class.forName(RuneEssenceController.class.getCanonicalName()));
 			handledControlers.put("TerrorDogsTarnsLairController",

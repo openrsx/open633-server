@@ -11,9 +11,6 @@ import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.map.MapBuilder;
-import com.rs.game.npc.fightcaves.FightCavesNPC;
-import com.rs.game.npc.fightcaves.TzKekCaves;
-import com.rs.game.npc.fightcaves.TzTok_Jad;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning;
 import com.rs.game.player.content.pet.Pets;
@@ -21,6 +18,10 @@ import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
+
+import npc.fightcaves.FightCavesNPC;
+import npc.fightcaves.TzKekCaves;
+import npc.fightcaves.TzTok_Jad;
 
 public class FightCaves extends Controller {
 

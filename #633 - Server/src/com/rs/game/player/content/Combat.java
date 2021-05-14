@@ -2,9 +2,10 @@ package com.rs.game.player.content;
 
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Entity;
-import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.utils.Utils;
+
+import npc.NPC;
 
 public final class Combat {
 

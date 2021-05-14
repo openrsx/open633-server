@@ -1,9 +1,10 @@
 package com.rs.game.player.dialogues.impl;
 
-import com.rs.game.npc.NPC;
 import com.rs.game.player.controllers.RuneEssenceController;
 import com.rs.game.player.dialogues.Dialogue;
 import com.rs.utils.ShopsHandler;
+
+import npc.NPC;
 
 public class Aubury extends Dialogue {
 

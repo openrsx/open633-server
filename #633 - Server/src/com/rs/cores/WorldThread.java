@@ -2,11 +2,12 @@ package com.rs.cores;
 
 import com.rs.Settings;
 import com.rs.game.World;
-import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
+
+import npc.NPC;
 
 public final class WorldThread extends Thread {
 

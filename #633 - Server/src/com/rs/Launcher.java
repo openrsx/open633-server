@@ -12,11 +12,9 @@ import com.rs.cores.CoresManager;
 import com.rs.game.Region;
 import com.rs.game.World;
 import com.rs.game.map.MapBuilder;
-import com.rs.game.npc.combat.CombatScriptsHandler;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.controllers.ControlerHandler;
-import com.rs.game.player.cutscenes.CutscenesHandler;
 import com.rs.game.player.dialogues.DialogueHandler;
 import com.rs.net.ServerChannelHandler;
 import com.rs.utils.Censor;
@@ -39,6 +37,8 @@ import com.rs.utils.SerializableFilesManager;
 import com.rs.utils.ShopsHandler;
 import com.rs.utils.Utils;
 import com.rs.utils.huffman.Huffman;
+
+import npc.combat.CombatScriptsHandler;
 
 public class Launcher {
 
@@ -78,8 +78,6 @@ public class Launcher {
 		CombatScriptsHandler.init();
 		Logger.log("Launcher", "Initing Dialogues...");
 		DialogueHandler.init();
-		Logger.log("Launcher", "Initing Cutscenes...");
-		CutscenesHandler.init();
 		Logger.log("Launcher", "Initing Friend Chats Manager...");
 		FriendChatsManager.init();
 		Logger.log("Launcher", "Initing Cores Manager...");
