@@ -2,7 +2,6 @@ package com.rs.game.player.content;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.rs.Settings;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;

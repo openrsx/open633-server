@@ -76,6 +76,11 @@ public class Player extends Entity {
 	private transient Pet pet;
 	private transient VarsManager varsManager;
 
+	/**
+	 * The amount of authority this player has over others.
+	 */
+	public Rights rights = Rights.PLAYER;
+	
 	// used for packets logic
 	private transient ConcurrentLinkedQueue<LogicPacket> logicPackets;
 
@@ -103,7 +108,6 @@ public class Player extends Entity {
 
 	// saving stuff
 	private String password;
-	private int rights; //to redo
 	private String displayName;
 	private String lastIP;
 	private long creationDate;
@@ -523,7 +527,6 @@ public class Player extends Entity {
 			int delayPassed = (int) ((Utils.currentTimeMillis() - World.exiting_start) / 1000);
 			getPackets().sendSystemUpdate(World.exiting_delay - delayPassed);
 		}
-	//	ForumAuthManager.syncAuth(this);
 		lastIP = getSession().getIP();
 		interfaceManager.sendInterfaces();
 		getPackets().sendRunEnergy();
@@ -535,6 +538,10 @@ public class Player extends Entity {
 		refreshOtherChatsSetup();
 		sendRunButtonConfig();
 		getPackets().sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
+		Settings.STAFF.entrySet().forEach(staff -> {
+			if (getUsername().equalsIgnoreCase(staff.getKey()))
+				setRights(staff.getValue());
+		});
 		sendDefaultPlayersOptions();
 		checkMultiArea();
 		inventory.init();
@@ -776,18 +783,9 @@ public class Player extends Entity {
 		for (Integer group : groups)
 			groupIDS[write++] = group.intValue();
 	}
-	
-	public void setRights(int rights) {
-		this.rights = rights;
-	}
 
-	public int getRights() {
-		return rights;
-	}
-
-	@SuppressWarnings("unused")
 	public int getMessageIcon() {
-		return getRights() == 2 || getRights() == 1 ? getRights() : getRights();
+		return getRights() == Rights.ADMINISTRATOR ? 2 : getRights() == Rights.MODERATOR ? 1 : 0;
 	}
 
 	public WorldPacketsEncoder getPackets() {
@@ -1668,7 +1666,7 @@ public class Player extends Entity {
 
 	public void sendItemsOnDeath(Player killer, WorldTile deathTile,
 			WorldTile respawnTile, boolean wilderness, Integer[][] slots) {
-		if (getRights() == 2 && Settings.HOSTED)
+		if (getRights().isStaff() && Settings.HOSTED)
 			return;
 		charges.die(slots[1], slots[3]); // degrades droped and lost items only
 //		Item[][] items = GraveStone.getItemsKeptOnDeath(this, slots);
@@ -2515,5 +2513,21 @@ public class Player extends Entity {
 	private void warriorCheck() {
 		if (warriorPoints == null || warriorPoints.length != 6)
 			warriorPoints = new double[6];
+	}
+	
+	/**
+	 * Gets the amount of authority this player has over others.
+	 * @return the authority this player has.
+	 */
+	public Rights getRights() {
+		return rights;
+	}
+	
+	/**
+	 * Sets the value for {@link Player#rights}.
+	 * @param rights the new value to set.
+	 */
+	public void setRights(Rights rights) {
+		this.rights = rights;
 	}
 }

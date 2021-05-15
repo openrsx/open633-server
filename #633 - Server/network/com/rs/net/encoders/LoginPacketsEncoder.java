@@ -34,7 +34,7 @@ public final class LoginPacketsEncoder extends Encoder {
 		OutputStream bldr = new OutputStream(11);
 		bldr.writeByte(2);
 		bldr.writeByte(13); // length
-		bldr.writeByte(player.getRights());
+		bldr.writeByte(player.getRights().getValue());
 		bldr.writeByte(0);
 		bldr.writeByte(0);
 		bldr.writeByte(0);

@@ -4,6 +4,7 @@ import com.rs.Settings;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.player.Player;
+import com.rs.game.player.Rights;
 import com.rs.game.player.Skills;
 
 public class ItemConstants {
@@ -154,7 +155,7 @@ public class ItemConstants {
 	}
 
 	public static boolean canWear(Item item, Player player) {
-		if (player.getRights() == 2)
+		if (player.getRights() == Rights.ADMINISTRATOR)
 			return true;
 		if (!item.getDefinitions().isWearItem())
 			return false;

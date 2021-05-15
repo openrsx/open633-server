@@ -2,7 +2,9 @@ package com.rs;
 
 import java.math.BigInteger;
 
+import com.google.common.collect.ImmutableMap;
 import com.rs.game.WorldTile;
+import com.rs.game.player.Rights;
 
 public final class Settings {
 
@@ -35,6 +37,14 @@ public final class Settings {
 	public static final int DROP_QUANTITY_RATE = Config.get().getInteger("drop_quantity_rate");
 	public static final int DEGRADE_GEAR_RATE = Config.get().getInteger("degrade_rate");
 	public static boolean XP_BONUS_ENABLED = Config.get().getBoolean("bonus_exp_enabled");
+	
+	/**
+	 * An immutable map of Staff members
+	 */
+	public static final ImmutableMap<String, Rights> STAFF = ImmutableMap.of(
+			"Zed", Rights.ADMINISTRATOR,
+			"Jawarrior1", Rights.ADMINISTRATOR
+	);
 
 	/**
 	 * World settings

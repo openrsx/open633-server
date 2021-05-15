@@ -978,7 +978,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (forceRun)
 				player.setRun(forceRun);
 			player.stopAll();
-			if (player.getRights() >= 1)
+			if (player.getRights().isStaff())
 				player.getDialogueManager().startDialogue("ModReportD", p2);
 			else
 				ReportAbuse.report(player, p2.getDisplayName());

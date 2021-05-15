@@ -1633,7 +1633,7 @@ public final class World {
 	public static void sendWorldMessage(String message, boolean forStaff) {
 		for (Player p : World.getPlayers()) {
 			if (p == null || !p.isRunning() || p.isYellOff()
-					|| (forStaff && p.getRights() == 0)
+					|| (forStaff && !p.getRights().isStaff())
 					|| p.getInterfaceManager().containsReplacedChatBoxInter())
 				continue;
 			p.getPackets().sendGameMessage(message);
@@ -1646,7 +1646,7 @@ public final class World {
 			if (p == null
 					|| !p.isRunning()
 					|| p.isYellOff()
-					|| (forStaff && p.getRights() == 0)
+					|| (forStaff && !p.getRights().isStaff())
 					|| p.getFriendsIgnores().containsIgnore(
 							sender.getUsername())
 					|| p.getInterfaceManager().containsReplacedChatBoxInter())
