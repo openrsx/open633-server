@@ -247,8 +247,6 @@ public final class Skills implements Serializable {
 		player.getControlerManager().trackXP(skill, (int) exp);
 		if (player.isXpLocked())
 			return 0;
-		if (player.getAuraManager().usingWisdom())
-			exp *= 1.025;
 		if (Settings.XP_BONUS_ENABLED) {
 			double newexp = exp * getXpBonusMultiplier();
 			xpBonusTrack += newexp - exp;

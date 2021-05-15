@@ -48,8 +48,7 @@ public final class Poison implements Serializable {
 		// inter opened we dont poison while inter opened like at rs
 		if (player.getInterfaceManager().containsScreenInter())
 		    return;
-		if (player.getAuraManager().hasPoisonPurge())
-		    heal = true;
+		
 	    }
 	    entity.applyHit(new Hit(entity, poisonDamage, heal ? HitLook.HEALED_DAMAGE : HitLook.POISON_DAMAGE));
 	    poisonDamage -= 2;

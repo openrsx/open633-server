@@ -283,7 +283,7 @@ public final class Pots {
 
 	    @Override
 	    public void extra(Player player) {
-		player.getPrayer().restorePrayer((int) ((int) (player.getSkills().getLevelForXp(Skills.PRAYER) * 0.33 * 10) * player.getAuraManager().getPrayerPotsRestoreMultiplier()));
+		player.getPrayer().restorePrayer((int) ((int) (player.getSkills().getLevelForXp(Skills.PRAYER) * 0.33 * 10)));
 		player.addPoisonImmune(180000);
 		// TODO DISEASE HEALING
 	    }
@@ -391,7 +391,7 @@ public final class Pots {
 	PRAYER_POTION() {
 	    @Override
 	    public void extra(Player player) {
-		player.getPrayer().restorePrayer((int) ((int) (Math.floor(player.getSkills().getLevelForXp(Skills.PRAYER) * 2.5) + 70) * player.getAuraManager().getPrayerPotsRestoreMultiplier()));
+		player.getPrayer().restorePrayer((int) ((int) (Math.floor(player.getSkills().getLevelForXp(Skills.PRAYER) * 2.5) + 70)));
 	    }
 	},
 	SUPER_STR_POTION(Skills.STRENGTH) {
@@ -589,7 +589,7 @@ public final class Pots {
 	SUPER_PRAYER() {
 	    @Override
 	    public void extra(Player player) {
-		player.getPrayer().setPrayerpoints((int) ((int) (70 + (player.getSkills().getLevelForXp(Skills.PRAYER) * 3.43)) * player.getAuraManager().getPrayerPotsRestoreMultiplier()));
+		player.getPrayer().setPrayerpoints((int) ((int) (70 + (player.getSkills().getLevelForXp(Skills.PRAYER) * 3.43))));
 	    }
 	},
 	PRAYER_RENEWAL() {
@@ -611,7 +611,7 @@ public final class Pots {
 
 	    @Override
 	    public void extra(Player player) {
-		player.getPrayer().restorePrayer((int) ((int) (player.getSkills().getLevelForXp(Skills.PRAYER) * 0.33 * 10) * player.getAuraManager().getPrayerPotsRestoreMultiplier()));
+		player.getPrayer().restorePrayer((int) ((int) (player.getSkills().getLevelForXp(Skills.PRAYER) * 0.33 * 10)));
 	    }
 
 	},

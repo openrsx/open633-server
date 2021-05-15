@@ -122,8 +122,6 @@ public class InventoryOptionsHandler {
 		if (player.isLocked() || player.getEmotesManager().isDoingEmote())
 			return;
 		player.stopAll(false);
-		if (player.getToolbelt().addItem(slotId, item))
-			return;
 		
 	}
 

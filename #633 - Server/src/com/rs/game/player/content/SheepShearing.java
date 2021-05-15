@@ -14,7 +14,7 @@ public class SheepShearing {
 	public static final Animation SHEARING = new Animation(893);
 
 	public static void shearAttempt(final Player player, final NPC npc) {
-		if (!player.getInventory().containsItemToolBelt(1735)) {
+		if (!player.getInventory().containsItem(new Item(1735))) {
 			player.getPackets().sendGameMessage("You need a pair of shears in order to sheer the sheep.");
 			return;
 		}

@@ -2522,8 +2522,6 @@ public class PlayerCombat extends Action {
 				double m1 = (0.35 + specMultiplier);
 				att *= m1;
 			}
-			if (ranging)
-				att *= player.getAuraManager().getRangeAccurayMultiplier();
 			double def = 0;
 			if (target instanceof Player) {
 				Player p2 = (Player) target;
@@ -2601,17 +2599,6 @@ public class PlayerCombat extends Action {
 			// random, hit = at least half max hit + random
 			if (halfMaxhit > hit && m1 > Math.random() * 2)
 				hit = halfMaxhit + Utils.getRandom(halfMaxhit);
-		}
-
-		if (player.getAuraManager().usingEquilibrium()) {
-			int perc25MaxHit = (int) (max_hit * 0.25);
-			hit -= perc25MaxHit;
-			max_hit -= perc25MaxHit;
-			if (hit < 0)
-				hit = 0;
-			if (hit < perc25MaxHit)
-				hit += perc25MaxHit;
-
 		}
 		return hit;
 	}
@@ -3079,7 +3066,6 @@ public class PlayerCombat extends Action {
 					|| hit.getLook() == HitLook.MELEE_DAMAGE) {
 				double combatXp = damage / 2.5;
 				if (combatXp > 0) {
-					player.getAuraManager().checkSuccefulHits(hit.getDamage());
 					if (hit.getLook() == HitLook.RANGE_DAMAGE) {
 						if (attackStyle == 2) {
 							if (target instanceof Player) {
@@ -3151,7 +3137,6 @@ public class PlayerCombat extends Action {
 				}
 				double combatXp = base_mage_xp * 1 + (damage / 5);
 				if (combatXp > 0) {
-					player.getAuraManager().checkSuccefulHits(hit.getDamage());
 					if (player.getCombatDefinitions().isDefensiveCasting()
 							|| (hasPolyporeStaff(player) && player
 									.getCombatDefinitions().getAttackStyle() == 1)) {

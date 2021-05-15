@@ -86,16 +86,7 @@ public final class Inventory implements Serializable {
 		refreshItems(itemsBefore);
 		return true;
 	}
-
-	public boolean containsItemToolBelt(int id) {
-		return containsOneItem(id) || player.getToolbelt().containsItem(id);
-	}
-
-	public boolean containsItemToolBelt(int id, int amount) {
-		return containsItem(id, amount)
-				|| player.getToolbelt().containsItem(id);
-	}
-
+	
 	public boolean addItem(Item item) {
 		if (item.getId() < 0
 				|| item.getAmount() < 0
@@ -233,6 +224,10 @@ public final class Inventory implements Serializable {
 
 	public boolean containsItem(int itemId, int ammount) {
 		return items.contains(new Item(itemId, ammount));
+	}
+	
+	public boolean containsItem(Item item) {
+		return items.contains(item);
 	}
 
 	public int getCoinsAmount() {

@@ -135,10 +135,8 @@ public class Player extends Entity {
 	private MusicsManager musicsManager;
 	private EmotesManager emotesManager;
 	private Notes notes;
-	private Toolbelt toolbelt;
 	private FriendsIgnores friendsIgnores;
 	private Familiar familiar;
-	private AuraManager auraManager;
 	private PetManager petManager;
 	private byte runEnergy;
 	private boolean allowChatEffects;
@@ -280,10 +278,8 @@ public class Player extends Entity {
 		musicsManager = new MusicsManager();
 		emotesManager = new EmotesManager();
 		notes = new Notes();
-		toolbelt = new Toolbelt();
 		friendsIgnores = new FriendsIgnores();
 		charges = new ChargesManager();
-		auraManager = new AuraManager();
 		petManager = new PetManager();
 		runEnergy = 100;
 		allowChatEffects = true;
@@ -304,14 +300,10 @@ public class Player extends Entity {
 			int screenWidth, int screenHeight,
 			MachineInformation machineInformation, IsaacKeyPair isaacKeyPair) {
 		// temporary deleted after reset all chars
-		if (auraManager == null)
-			auraManager = new AuraManager();
 		if (petManager == null)
 			petManager = new PetManager();
 		if (notes == null)
 			notes = new Notes();
-		if (toolbelt == null)
-			toolbelt = new Toolbelt();
 		if (shosRewards == null)
 			shosRewards = new boolean[4];
 		this.session = session;
@@ -342,9 +334,7 @@ public class Player extends Entity {
 		musicsManager.setPlayer(this);
 		emotesManager.setPlayer(this);
 		notes.setPlayer(this);
-		toolbelt.setPlayer(this);
 		friendsIgnores.setPlayer(this);
-		auraManager.setPlayer(this);
 		charges.setPlayer(this);
 		petManager.setPlayer(this);
 		setDirection(Utils.getFaceDirection(0, -1));
@@ -559,7 +549,6 @@ public class Player extends Entity {
 			routeEvent = null;
 		super.processEntity();
 		charges.process();
-		auraManager.process();
 		prayer.processPrayer();
 		controlerManager.process();
 		if (isDead())
@@ -720,7 +709,6 @@ public class Player extends Entity {
 		musicsManager.init();
 		emotesManager.init();
 		notes.init();
-		toolbelt.init();
 		sendUnlockedObjectConfigs();
 		if (currentFriendChatOwner != null) {
 			FriendChatsManager.joinChat(currentFriendChatOwner, this);
@@ -1237,11 +1225,6 @@ public class Player extends Entity {
 		if (invulnerable) {
 			hit.setDamage(0);
 			return;
-		}
-		if (auraManager.usingPenance()) {
-			int amount = (int) (hit.getDamage() * 0.2);
-			if (amount > 0)
-				prayer.restorePrayer(amount);
 		}
 		Entity source = hit.getSource();
 		if (source == null)
@@ -1954,7 +1937,6 @@ public class Player extends Entity {
 		if (getRights() == 2 && Settings.HOSTED)
 			return;
 		charges.die(slots[1], slots[3]); // degrades droped and lost items only
-		auraManager.removeAura();
 //		Item[][] items = GraveStone.getItemsKeptOnDeath(this, slots);
 		inventory.reset();
 		equipment.reset();
@@ -2661,10 +2643,6 @@ public class Player extends Entity {
 		return switchItemCache;
 	}
 
-	public AuraManager getAuraManager() {
-		return auraManager;
-	}
-
 	public int getMovementType() {
 		if (getTemporaryMoveType() != -1)
 			return getTemporaryMoveType();
@@ -3082,10 +3060,6 @@ public class Player extends Entity {
 
 	public void removeCannonBalls() {
 		this.cannonBalls = 0;
-	}
-
-	public Toolbelt getToolbelt() {
-		return toolbelt;
 	}
 
 	public int getForumAuthID() {
