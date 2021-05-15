@@ -13,6 +13,7 @@ import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
+import com.rs.Config;
 import com.rs.Settings;
 import com.rs.cores.CoresManager;
 import com.rs.io.InputStream;
@@ -55,7 +56,7 @@ public final class ServerChannelHandler extends SimpleChannelHandler {
 	 * bootstrap.setOption("child.keepAlive", true);
 	 */
 
-	bootstrap.bind(new InetSocketAddress(Settings.PORT_ID));
+	bootstrap.bind(new InetSocketAddress(Config.get().getInteger("port")));
     }
 
     @Override

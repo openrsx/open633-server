@@ -1,8 +1,0 @@
-void script_1332() {
-	if (cs2method_10842() >= 2) {
-		script_1331(48890054);
-	} else {
-		script_1331(35913887);
-	}
-	return;
-}

@@ -1,6 +1,0 @@
-void script_82() {
-	if (cs2method_10651() > 0) {
-		script_89();
-	}
-	return;
-}

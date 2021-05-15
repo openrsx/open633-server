@@ -1,4 +1,0 @@
-void script_4631() {
-	script_4632(globalint_1519);
-	return;
-}

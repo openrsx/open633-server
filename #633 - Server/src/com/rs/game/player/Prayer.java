@@ -5,10 +5,9 @@ import java.io.Serializable;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
+import com.rs.game.npc.NPC;
+import com.rs.game.player.CombatDefinitions;
 import com.rs.utils.Utils;
-
-import npc.NPC;
-import player.CombatDefinitions;
 
 public class Prayer implements Serializable {
 

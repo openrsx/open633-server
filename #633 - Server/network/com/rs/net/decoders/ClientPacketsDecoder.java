@@ -47,7 +47,7 @@ public final class ClientPacketsDecoder extends Decoder {
 			return;
 		}
 		session.setEncoder(0);
-		if (stream.readInt() != Settings.CLIENT_BUILD /*
+		if (stream.readInt() != Settings.CLIENT_REVISION /*
 													 * || stream.readInt() !=
 													 * Settings
 													 * .CUSTOM_CLIENT_BUILD

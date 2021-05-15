@@ -1,6 +1,0 @@
-void script_4012() {
-	if (standart_config_2522 == 3) {
-		script_4015();
-	}
-	return;
-}

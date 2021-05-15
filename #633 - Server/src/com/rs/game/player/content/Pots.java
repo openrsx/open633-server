@@ -5,14 +5,13 @@ import com.rs.game.Graphics;
 import com.rs.game.Hit;
 import com.rs.game.Hit.HitLook;
 import com.rs.game.item.Item;
+import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.Utils;
-
-import npc.familiar.Familiar;
 
 public final class Pots {
 

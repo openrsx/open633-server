@@ -1,3 +1,0 @@
-int script_1718(int arg0,int arg1) {
-	return divide(multiply(cs2method_10453(arg0), arg1), 100);
-}

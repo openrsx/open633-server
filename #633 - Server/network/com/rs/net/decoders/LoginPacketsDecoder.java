@@ -34,7 +34,7 @@ public final class LoginPacketsDecoder extends Decoder {
 			session.getChannel().close();
 			return;
 		}
-		if (stream.readInt() != Settings.CLIENT_BUILD) {
+		if (stream.readInt() != Settings.CLIENT_REVISION) {
 			session.getLoginPackets().sendClientPacket(6);
 			return;
 		}

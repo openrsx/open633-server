@@ -1,3 +1,0 @@
-int script_6431() {
-	return multiply(cs2method_10391(5), 10);
-}

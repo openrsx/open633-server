@@ -2,18 +2,16 @@ package com.rs.game.player.controllers;
 
 import java.io.Serializable;
 
-import com.rs.Settings;
 import com.rs.game.Entity;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
+import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Foods.Food;
 import com.rs.game.player.content.Pots.Pot;
 import com.rs.utils.Logger;
-
-import npc.NPC;
 
 public final class ControlerManager implements Serializable {
 
@@ -25,12 +23,6 @@ public final class ControlerManager implements Serializable {
     private Object[] lastControlerArguments;
 
     private String lastControler;
-
-    public ControlerManager() {
-	lastControler = /* Settings.HOSTED ? */Settings.START_CONTROLER;// :
-									// "TutorialIsland";
-									// // se
-    }
 
     public void setPlayer(Player player) {
 	this.player = player;

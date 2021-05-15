@@ -1,3 +1,0 @@
-int script_5026(int arg0) {
-	return AND(arg0, 255);
-}

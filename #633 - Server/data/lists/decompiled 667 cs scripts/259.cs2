@@ -1,3 +1,0 @@
-int script_259(int arg0) {
-	return add(add(add(getItemAmtInContainer(93, arg0), getItemAmtInContainer(95, arg0)), getItemAmtInContainer(94, arg0)), getItemAmtInContainer(530, arg0));
-}

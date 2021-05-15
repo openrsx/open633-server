@@ -1,4 +1,0 @@
-void script_5681() {
-	script_5683(globalint_1753);
-	return;
-}

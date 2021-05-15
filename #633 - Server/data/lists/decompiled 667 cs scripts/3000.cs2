@@ -1,6 +1,0 @@
-void script_3000() {
-	if (cs2method_10620(cs2method_10878(), 50) == 0) {
-		script_3001();
-	}
-	return;
-}

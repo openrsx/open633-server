@@ -1,4 +1,0 @@
-void script_3113() {
-	cs2method_20219(3115, "", new WidgetPointer(910,0));
-	return;
-}

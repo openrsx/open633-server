@@ -4,12 +4,11 @@ import com.rs.Settings;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.npc.familiar.Familiar.SpecialAttack;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.utils.Logger;
-
-import npc.familiar.Familiar.SpecialAttack;
 
 public class InventoryOptionsHandler {
 

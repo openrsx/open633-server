@@ -12,16 +12,15 @@ import com.rs.Settings;
 import com.rs.cache.loaders.AnimationDefinitions;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.game.Hit.HitLook;
+import com.rs.game.npc.NPC;
+import com.rs.game.npc.familiar.Familiar;
+import com.rs.game.npc.qbd.TorturedSoul;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.EntityStrategy;
 import com.rs.game.route.strategy.ObjectStrategy;
 import com.rs.utils.Utils;
-
-import npc.NPC;
-import npc.familiar.Familiar;
-import npc.qbd.TorturedSoul;
 
 public abstract class Entity extends WorldTile {
 

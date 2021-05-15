@@ -1,5 +1,0 @@
-void script_2362() {
-	int ivar0;
-	ivar0 = 0;
-	return;
-}

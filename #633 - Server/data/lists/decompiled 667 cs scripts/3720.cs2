@@ -1,4 +1,0 @@
-void script_3720() {
-	script_304(46278466);
-	return;
-}

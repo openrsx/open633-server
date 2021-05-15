@@ -11,12 +11,11 @@ import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.map.MapBuilder;
+import com.rs.game.npc.qbd.QueenBlackDragon;
 import com.rs.game.player.content.FadingScreen;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.Logger;
-
-import npc.qbd.QueenBlackDragon;
 
 /**
  * The Queen Black Dragon controler.

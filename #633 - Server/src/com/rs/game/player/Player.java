@@ -25,6 +25,12 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.minigames.duel.DuelRules;
+import com.rs.game.npc.NPC;
+import com.rs.game.npc.familiar.Familiar;
+import com.rs.game.npc.godwars.zaros.Nex;
+import com.rs.game.npc.others.Pet;
+import com.rs.game.player.CombatDefinitions;
+import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Notes;
 import com.rs.game.player.content.Pots;
@@ -50,13 +56,6 @@ import com.rs.utils.Logger;
 import com.rs.utils.MachineInformation;
 import com.rs.utils.SerializableFilesManager;
 import com.rs.utils.Utils;
-
-import npc.NPC;
-import npc.familiar.Familiar;
-import npc.godwars.zaros.Nex;
-import npc.others.Pet;
-import player.CombatDefinitions;
-import player.PlayerCombat;
 
 public class Player extends Entity {
 
@@ -216,11 +215,6 @@ public class Player extends Entity {
 	// trimmed compcape
 	private int finishedCastleWars;
 
-	// dungeonering
-	private boolean[] currentDungProgress;
-	@SuppressWarnings("unused")
-	private boolean[] previousDungProgress;
-
 	// crucible
 	private boolean talkedWithMarv;
 	private int crucibleHighScore;
@@ -273,7 +267,7 @@ public class Player extends Entity {
 	// creates Player and saved classes
 	public Player(String password) {
 		super(/* Settings.HOSTED ? */Settings.START_PLAYER_LOCATION);
-		setHitpoints(Settings.START_PLAYER_HITPOINTS);
+		setHitpoints(100);
 		this.password = password;
 		appearence = new Appearence();
 		inventory = new Inventory();
@@ -705,27 +699,7 @@ public class Player extends Entity {
 		refreshPrivateChatSetup();
 		refreshOtherChatsSetup();
 		sendRunButtonConfig();
-		getPackets()
-				.sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
-		// getPackets().sendGameMessage(Settings.LASTEST_UPDATE);
-
-		if ((Settings.ECONOMY || Settings.ECONOMY_TEST)
-				&& getEconomyVersion() != Settings.ECONOMY_VERSION) {
-			inventory.reset();
-			equipment.reset();
-			toolbelt = new Toolbelt();
-			toolbelt.setPlayer(this);
-			familiar = null;
-			bank = new Bank();
-			bank.setPlayer(this);
-			controlerManager.removeControlerWithoutCheck();
-			controlerManager.setLastController(Settings.START_CONTROLER);
-			setNextWorldTile(Settings.START_PLAYER_LOCATION);
-			setEconomyVersion(Settings.ECONOMY_VERSION);
-			getPackets().sendGameMessage(
-					"Account reset sucessfull, current eco version:"
-							+ Settings.ECONOMY_VERSION);
-		}
+		getPackets().sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
 		sendDefaultPlayersOptions();
 		checkMultiArea();
 		inventory.init();

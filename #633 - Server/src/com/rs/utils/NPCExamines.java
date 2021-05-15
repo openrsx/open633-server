@@ -13,7 +13,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.util.HashMap;
 
-import npc.NPC;
+import com.rs.game.npc.NPC;
 
 public class NPCExamines {
 

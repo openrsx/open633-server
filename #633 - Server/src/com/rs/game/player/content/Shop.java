@@ -66,13 +66,7 @@ public class Shop {
 		player.getVarsManager().sendVar(532, money);
 		resetSelected(player);
 		sendStore(player);
-		player.getInterfaceManager().sendInterface(1265); // opens shop
-		if (money == Settings.VOTE_TOKENS_ITEM_ID) {
-			// since vote prices are custom
-			// the least we can do is disable price displaying on items
-			player.getPackets().sendHideIComponent(1265, 23, true);
-			player.getPackets().sendHideIComponent(1265, 24, true);
-		}
+		player.getInterfaceManager().sendInterface(1265); // opens sho
 		resetTransaction(player);
 		setBuying(player, true);
 		if (generalStock != null)
@@ -298,9 +292,7 @@ public class Shop {
 		if (item.getDefinitions().isNoted()
 				&& item.getDefinitions().getCertId() != -1)
 			item = new Item(item.getDefinitions().getCertId(), item.getAmount());
-		if (!ItemConstants.isTradeable(item)
-				|| money == Settings.VOTE_TOKENS_ITEM_ID
-				|| item.getId() == money) {
+		if (!ItemConstants.isTradeable(item) || item.getId() == money) {
 			player.getPackets().sendGameMessage("You can't sell this item.");
 			return;
 		}
@@ -335,8 +327,7 @@ public class Shop {
 			return;
 		if (item.getDefinitions().isNoted())
 			item = new Item(item.getDefinitions().getCertId(), item.getAmount());
-		if (!ItemConstants.isTradeable(item) || item.getId() == money
-				|| money == Settings.VOTE_TOKENS_ITEM_ID) {
+		if (!ItemConstants.isTradeable(item) || item.getId() == money) {
 			player.getPackets().sendGameMessage("You can't sell this item.");
 			return;
 		}
@@ -380,7 +371,7 @@ public class Shop {
 		if (item.getDefinitions().isNoted())
 			item = new Item(item.getDefinitions().getCertId(), item.getAmount());
 		if (inventory
-				&& (!ItemConstants.isTradeable(item) || item.getId() == money || money == Settings.VOTE_TOKENS_ITEM_ID)) {
+				&& (!ItemConstants.isTradeable(item) || item.getId() == money)) {
 			player.getPackets().sendGameMessage("You can't sell this item.");
 			resetSelected(player);
 			return;
@@ -431,11 +422,6 @@ public class Shop {
 
 	public int getBuyPrice(Item item, int dq) {
 		switch (money) {
-		case Settings.VOTE_TOKENS_ITEM_ID:
-			if (item.getId() < 0
-					|| item.getId() >= Settings.VOTE_SHOP_ITEM_PRICES.length)
-				return 1;
-			return Settings.VOTE_SHOP_ITEM_PRICES[item.getId()];
 		case 24444: // TROHPY
 			if (item.getId() >= 24450 && item.getId() <= 24454)
 				return 30 + (item.getId() - 24450) * 5;

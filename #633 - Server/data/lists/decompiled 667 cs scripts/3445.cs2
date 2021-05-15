@@ -1,4 +1,0 @@
-void script_3445(int arg0) {
-	cs2method_10306(2600, arg0);
-	return;
-}

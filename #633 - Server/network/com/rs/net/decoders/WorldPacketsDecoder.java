@@ -6,9 +6,13 @@ import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
+import com.rs.game.npc.NPC;
+import com.rs.game.npc.familiar.Familiar;
+import com.rs.game.npc.familiar.Familiar.SpecialAttack;
 import com.rs.game.player.ChatMessage;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
+import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.QuickChatMessage;
 import com.rs.game.player.Skills;
 import com.rs.game.player.actions.PlayerFollow;
@@ -34,11 +38,6 @@ import com.rs.utils.Huffman;
 import com.rs.utils.Logger;
 import com.rs.utils.ReportAbuse;
 import com.rs.utils.Utils;
-
-import npc.NPC;
-import npc.familiar.Familiar;
-import npc.familiar.Familiar.SpecialAttack;
-import player.PlayerCombat;
 
 public final class WorldPacketsDecoder extends Decoder {
 
@@ -1697,10 +1696,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			String unknown = stream.readString();
 			@SuppressWarnings("unused")
 			int flag = stream.readUnsignedByte();
-			if (type.equals("clan-forum"))
-				player.getPackets().sendOpenURL(
-						Settings.SHOWTHREAD_LINK
-								+ path.replace("threads.ws?threadid=", ""));
+			
 		} else if (packetId == GRAND_EXCHANGE_ITEM_SELECT_PACKET) {
 			int itemId = stream.readUnsignedShort();
 //			player.getGeManager().chooseItem(itemId);

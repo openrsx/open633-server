@@ -3,6 +3,7 @@ package com.rs.cache;
 import java.io.IOException;
 
 import com.alex.store.Store;
+import com.rs.Config;
 import com.rs.Settings;
 
 public final class Cache {
@@ -14,7 +15,7 @@ public final class Cache {
 	}
 
 	public static void init() throws IOException {
-		STORE = new Store(Settings.CACHE_PATH);
+		STORE = new Store(Config.get().getString("cache"));
 	}
 
 	public static final byte[] generateUkeysFile() {

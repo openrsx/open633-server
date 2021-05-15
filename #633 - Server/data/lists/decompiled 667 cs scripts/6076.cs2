@@ -1,3 +1,0 @@
-int script_6076(int arg0,int arg1) {
-	return multiply(script_6077(arg0), arg1);
-}
