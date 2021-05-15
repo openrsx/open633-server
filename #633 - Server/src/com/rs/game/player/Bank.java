@@ -1,12 +1,9 @@
 package com.rs.game.player;
 
-import java.io.Serializable;
-
 import com.rs.Settings;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.npc.familiar.Familiar;
-import com.rs.utils.ItemExamines;
 import com.rs.utils.Utils;
 
 public class Bank {
@@ -443,7 +440,7 @@ public class Bank {
 		if (slot == null)
 			return;
 		Item item = bankTabs[slot[0]][slot[1]];
-		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
+//		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
 	}
 
 	public void depositItem(int invSlot, int quantity, boolean refresh) {

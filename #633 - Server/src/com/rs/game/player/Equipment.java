@@ -4,7 +4,6 @@ import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.item.ItemsContainer;
-import com.rs.utils.ItemExamines;
 
 public final class Equipment {
 
@@ -66,7 +65,7 @@ public final class Equipment {
 		Item item = items.get(slotId);
 		if (item == null)
 			return;
-		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
+//		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
 	}
 
 	public void refreshConfigs(boolean init) {

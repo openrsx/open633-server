@@ -1,13 +1,11 @@
 package com.rs.game.player;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
-import com.rs.utils.ItemExamines;
 import com.rs.utils.Utils;
 
 public final class Inventory {
@@ -247,7 +245,7 @@ public final class Inventory {
 		Item item = items.get(slotId);
 		if (item == null)
 			return;
-		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
+//		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
 	}
 
 	public void refresh() {

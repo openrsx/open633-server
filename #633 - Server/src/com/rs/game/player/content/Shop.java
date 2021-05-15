@@ -7,7 +7,6 @@ import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Player;
-import com.rs.utils.ItemExamines;
 import com.rs.utils.ItemSetsKeyGenerator;
 
 public class Shop {
@@ -384,8 +383,7 @@ public class Shop {
 						: MAIN_STOCK_ITEMS_KEY); // inv key
 		player.getVarsManager().sendVar(2562, item.getId());
 		player.getVarsManager().sendVar(2563, slotId);
-		player.getPackets()
-				.sendGlobalString(362, ItemExamines.getExamine(item));
+//		player.getPackets().sendGlobalString(362, ItemExamines.getExamine(item));
 		player.getPackets().sendGlobalConfig(1876,
 				item.getDefinitions().isWearItem() ? 0 : -1); // TODO item pos
 																// or usage if
@@ -471,7 +469,7 @@ public class Shop {
 				- mainStock.length] : mainStock[slotId];
 		if (item == null)
 			return;
-		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
+//		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
 	}
 
 	public void refreshShop() {
