@@ -238,8 +238,7 @@ public final class Skills implements Serializable {
 				|| skill == HITPOINTS || skill == MAGIC || skill == RANGE
 				|| skill == SUMMONING ? Settings.COMBAT_XP_RATE
 				: Settings.XP_RATE;
-		exp *= player.isExtremeDonator() ? rate + 2
-				: player.isDonator() ? rate + 1 : rate;
+		exp *= rate;
 		return addXpNormal(skill, exp);
 	}
 

@@ -5,9 +5,7 @@ import java.io.Serializable;
 import com.rs.Settings;
 import com.rs.utils.Utils;
 
-public class WorldTile implements Serializable {
-
-    private static final long serialVersionUID = -6567346497259686765L;
+public class WorldTile {
 
     private short x, y;
     private byte plane;

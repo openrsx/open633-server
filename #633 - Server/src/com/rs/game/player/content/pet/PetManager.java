@@ -18,12 +18,7 @@ import com.rs.game.player.Player;
  * @author Emperor
  * 
  */
-public final class PetManager implements Serializable {
-
-    /**
-     * The serial UID.
-     */
-    private static final long serialVersionUID = -3379270918966667109L;
+public final class PetManager {
 
     /**
      * The pet details mapping, sorted by item id.
@@ -116,16 +111,6 @@ public final class PetManager implements Serializable {
      */
     private boolean hasRequirements(Pets pet) {
 	switch (pet) {
-	    case TZREK_JAD:
-		if (!player.isCompletedFightCaves()) {
-		    player.getPackets().sendGameMessage("You need to complete at least one fight cave minigame to use this pet.");
-		    return false;
-		}
-		if (!player.isWonFightPits()) {
-		    player.getPackets().sendGameMessage("You need to win at least one fight pits minigame to use this pet.");
-		    return false;
-		}
-		return true;
 	    case SARADOMIN_OWL:
 	    case GUTHIX_RAPTOR:
 	    case ZAMORAK_HAWK:

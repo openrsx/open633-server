@@ -16,8 +16,8 @@ public class Jadinko extends NPC {
     public void sendDeath(Entity source) {
 	super.sendDeath(source);
 	if (source instanceof Player) {
-	    Player player = (Player) source;
-	    player.setFavorPoints((getId() == 13820 ? 3 : getId() == 13821 ? 7 : 10) + player.getFavorPoints());
+//	    Player player = (Player) source;
+//	    player.setFavorPoints((getId() == 13820 ? 3 : getId() == 13821 ? 7 : 10) + player.getFavorPoints());
 	}
     }
 }

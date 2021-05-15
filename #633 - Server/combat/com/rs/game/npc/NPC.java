@@ -660,8 +660,7 @@ public class NPC extends Entity implements Serializable {
 		Drops drops = NPCDrops.getDrops(id);
 		if (drops == null)
 			return;
-		List<Drop> dropL = drops.generateDrops(killer.getDropRate()
-				+ dropRateFactor);
+		List<Drop> dropL = drops.generateDrops(dropRateFactor);
 		drops.addCharms(dropL, getSize());
 		List<Player> players = FriendChatsManager.getLootSharingPeople(killer);
 		if (players == null || players.size() == 1) {

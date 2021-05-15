@@ -57,7 +57,6 @@ public class Shop {
 						.remove("ShopSelectedInventory");
 			}
 		});
-		player.refreshVerboseShopDisplayMode();
 		player.getVarsManager().sendVar(118,
 				generalStock != null ? 139 : MAIN_STOCK_ITEMS_KEY);
 		player.getVarsManager().sendVar(1496, -1); // sample items container id

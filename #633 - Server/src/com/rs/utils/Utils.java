@@ -852,11 +852,11 @@ public final class Utils {
 		else if (fileId == 990)
 			data = new byte[] { (byte) player.getSkills().getLevelForXp(
 					Skills.DUNGEONEERING) };
-		else if (fileId == 611) {
-			int value = player.getStealingCreationPoints();
-			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
-					(byte) (value >> 8), (byte) value };
-		} else if (fileId == 965) {
+//		else if (fileId == 611) {
+//			int value = player.getStealingCreationPoints();
+//			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
+//					(byte) (value >> 8), (byte) value };
+		 else if (fileId == 965) {
 			int value = player.getHitpoints();
 			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
 					(byte) (value >> 8), (byte) value };
@@ -876,10 +876,10 @@ public final class Utils {
 //			int value = player.getDominionTower().getMaxFloorEndurance();
 //			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
 //					(byte) (value >> 8), (byte) value };
-		} else if (fileId == 1134) {
-			int value = player.getCrucibleHighScore();
-			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
-					(byte) (value >> 8), (byte) value };
+//		} else if (fileId == 1134) {
+//			int value = player.getCrucibleHighScore();
+//			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
+//					(byte) (value >> 8), (byte) value };
 		}
 
 		else if (Settings.DEBUG)

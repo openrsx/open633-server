@@ -10,7 +10,6 @@ import com.rs.utils.AntiFlood;
 import com.rs.utils.Encrypt;
 import com.rs.utils.IsaacKeyPair;
 import com.rs.utils.Logger;
-import com.rs.utils.MachineInformation;
 import com.rs.utils.Utils;
 
 public final class LoginPacketsDecoder extends Decoder {
@@ -85,17 +84,14 @@ public final class LoginPacketsDecoder extends Decoder {
 		String username = Utils
 				.formatPlayerNameForProtocol(stream.readString());
 		int idk = stream.readUnsignedByte();
-		int displayMode = stream.readUnsignedByte();
-		int screenWidth = stream.readUnsignedShort();
-		int screenHeight = stream.readUnsignedShort();
+		byte displayMode = (byte) stream.readUnsignedByte();
+		short screenWidth = (short) stream.readUnsignedShort();
+		short screenHeight = (short) stream.readUnsignedShort();
 		stream.readUnsignedByte(); // ?
 		stream.skip(24); // 24bytes directly from a file, no idea whats there
 		String settings = stream.readString();
 		int affid = stream.readInt();
 		stream.skip(stream.readUnsignedByte()); // useless settings
-
-		//machine information around 31 bytes
-		MachineInformation mInformation = null;
 
 		if (Utils.invalidAccountName(username)) {
 			session.getLoginPackets().sendClientPacket(3);
@@ -141,7 +137,7 @@ public final class LoginPacketsDecoder extends Decoder {
 			}
 
 			player.init(session, username, displayMode, screenWidth,
-					screenHeight, mInformation, new IsaacKeyPair(isaacKeys));
+					screenHeight, new IsaacKeyPair(isaacKeys));
 		}
 		session.getLoginPackets().sendLoginDetails(player);
 		session.setDecoder(3, player);

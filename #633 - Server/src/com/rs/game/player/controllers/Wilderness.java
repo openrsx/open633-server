@@ -206,7 +206,6 @@ public class Wilderness extends Controller {
 		    Player killer = player.getMostDamageReceivedSourcePlayer();
 		    if (killer != null) {
 			killer.removeDamage(player);
-			killer.increaseKillCount(player);
 			killer.setAttackedByDelay(Utils.currentTimeMillis() + 8000); // imunity
 		    }
 		    player.sendItemsOnDeath(killer);

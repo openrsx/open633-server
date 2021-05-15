@@ -375,7 +375,6 @@ public class DuelArena extends Controller {
 	    battleTeleport(player, target);
 	player.stopAll();
 	player.lock(2); // fixes mass click steps
-	player.setLastBonfire(0);
 	player.reset();
 	player.getTemporaryAttributtes().put("startedDuel", true);
 	player.getTemporaryAttributtes().put("canFight", false);

@@ -20,10 +20,6 @@ import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.familiar.Steeltitan;
 import com.rs.game.npc.glacior.Glacyte;
 import com.rs.game.npc.godwars.zaros.NexMinion;
-import com.rs.game.npc.qbd.QueenBlackDragon;
-import com.rs.game.player.Equipment;
-import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.actions.Action;
 import com.rs.game.player.content.Magic;
 import com.rs.game.tasks.WorldTask;
@@ -72,8 +68,7 @@ public class PlayerCombat extends Action {
 	}
 
 	private boolean forceCheckClipAsRange(Entity target) {
-		return target instanceof NexMinion
-				|| target instanceof QueenBlackDragon;
+		return target instanceof NexMinion;
 	}
 
 	@Override
@@ -2020,7 +2015,7 @@ public class PlayerCombat extends Action {
 				if (target instanceof Player) {
 					final Player other = (Player) target;
 					other.lock();
-					other.addFoodDelay(3000);
+//					other.addFoodDelay(3000);
 					other.setDisableEquip(true);
 					WorldTasksManager.schedule(new WorldTask() {
 						@Override
@@ -3228,12 +3223,6 @@ public class PlayerCombat extends Action {
 										if (Utils.getRandom(8) == 0)
 											target.getPoison().makePoisoned(48);
 									}
-									if (target instanceof Player) {
-										if (((Player) target).getPolDelay() >= Utils
-												.currentTimeMillis())
-											target.setNextGraphics(new Graphics(
-													2320));
-									}
 								}
 							}
 						}
@@ -3749,13 +3738,6 @@ public class PlayerCombat extends Action {
 		} else {
 			player.resetWalkSteps();
 		}
-		if (player.getPolDelay() >= Utils.currentTimeMillis()
-				&& !(player.getEquipment().getWeaponId() == 15486
-						|| player.getEquipment().getWeaponId() == 22207
-						|| player.getEquipment().getWeaponId() == 22209
-						|| player.getEquipment().getWeaponId() == 22211 || player
-						.getEquipment().getWeaponId() == 22213))
-			player.setPolDelay(0);
 		return true;
 	}
 

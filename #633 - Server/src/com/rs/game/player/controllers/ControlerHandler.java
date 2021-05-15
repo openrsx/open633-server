@@ -25,8 +25,6 @@ public class ControlerHandler {
 			handledControlers.put("DuelControler", value10);
 			Class<Controller> value15 = (Class<Controller>) Class.forName(JailControler.class.getCanonicalName());
 			handledControlers.put("JailControler", value15);
-			handledControlers.put("QueenBlackDragonControler",
-					(Class<Controller>) Class.forName(QueenBlackDragonController.class.getCanonicalName()));
 			handledControlers.put("WarriorsGuild",
 					(Class<Controller>) Class.forName(WarriorsGuild.class.getCanonicalName()));
 			// handledControlers.put("SlaughterFieldsControler",
