@@ -1,16 +1,12 @@
 package com.rs.game.player;
 
-import java.io.Serializable;
-
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.item.ItemsContainer;
 import com.rs.utils.ItemExamines;
 
-public final class Equipment implements Serializable {
-
-	private static final long serialVersionUID = -4147163237095647617L;
+public final class Equipment {
 
 	public static final byte SLOT_HAT = 0, SLOT_CAPE = 1, SLOT_AMULET = 2, SLOT_WEAPON = 3, SLOT_CHEST = 4,
 			SLOT_SHIELD = 5, SLOT_LEGS = 7, SLOT_HANDS = 9, SLOT_FEET = 10, SLOT_RING = 12, SLOT_ARROWS = 13,

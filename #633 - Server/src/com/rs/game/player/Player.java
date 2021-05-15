@@ -111,7 +111,7 @@ public class Player extends Entity {
 	private String displayName;
 	private String lastIP;
 	private long creationDate;
-	private Appearence appearence;
+	private Appearance appearence;
 	private Inventory inventory;
 	private Equipment equipment;
 	private Skills skills;
@@ -175,7 +175,7 @@ public class Player extends Entity {
 		super(Settings.START_PLAYER_LOCATION);
 		setHitpoints(100);
 		this.password = password;
-		appearence = new Appearence();
+		appearence = new Appearance();
 		inventory = new Inventory();
 		equipment = new Equipment();
 		skills = new Skills();
@@ -810,7 +810,7 @@ public class Player extends Entity {
 		return displayName != null;
 	}
 
-	public Appearence getAppearence() {
+	public Appearance getAppearence() {
 		return appearence;
 	}
 
@@ -818,7 +818,7 @@ public class Player extends Entity {
 		return equipment;
 	}
 
-	public int getTemporaryMoveType() {
+	public byte getTemporaryMoveType() {
 		return temporaryMovementType;
 	}
 
@@ -834,7 +834,7 @@ public class Player extends Entity {
 		return localNPCUpdate;
 	}
 
-	public int getDisplayMode() {
+	public byte getDisplayMode() {
 		return displayMode;
 	}
 

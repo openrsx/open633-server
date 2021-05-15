@@ -9,12 +9,7 @@ import com.rs.game.npc.familiar.Familiar;
 import com.rs.utils.ItemExamines;
 import com.rs.utils.Utils;
 
-public class Bank implements Serializable {
-
-	/**
-     * 
-     */
-	private static final long serialVersionUID = 1551246756081236625L;
+public class Bank {
 
 	// tab, items
 	private Item[][] bankTabs;

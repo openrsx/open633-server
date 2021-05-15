@@ -1,20 +1,16 @@
 package com.rs.game.player;
 
-import java.io.Serializable;
-
 import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.game.World;
 import com.rs.game.item.Item;
 import com.rs.io.OutputStream;
 import com.rs.utils.Utils;
 
-public class Appearence implements Serializable {
-
-	private static final long serialVersionUID = 7655608569741626586L;
+public class Appearance {
 
 	private transient int renderEmote;
 	private int title;
-	private int[] lookI;
+	private short[] lookI;
 	private byte[] colour;
 	private boolean male;
 	private transient boolean glowRed;
@@ -27,7 +23,7 @@ public class Appearence implements Serializable {
 
 	private transient Player player;
 
-	public Appearence() {
+	public Appearance() {
 		male = true;
 		renderEmote = -1;
 		title = -1;
@@ -205,7 +201,7 @@ public class Appearence implements Serializable {
 	}
 
 	public void resetAppearence() {
-		lookI = new int[7];
+		lookI = new short[7];
 		colour = new byte[5];
 		male();
 	}
@@ -252,11 +248,11 @@ public class Appearence implements Serializable {
 		return male;
 	}
 
-	public void setLook(int i, int i2) {
+	public void setLook(int i, short i2) {
 		lookI[i] = i2;
 	}
 
-	public void setColor(int i, int i2) {
+	public void setColor(int i, short i2) {
 		colour[i] = (byte) i2;
 	}
 
@@ -264,15 +260,15 @@ public class Appearence implements Serializable {
 		this.male = male;
 	}
 
-	public void setHairStyle(int i) {
+	public void setHairStyle(short i) {
 		lookI[0] = i;
 	}
 
-	public void setTopStyle(int i) {
+	public void setTopStyle(short i) {
 		lookI[2] = i;
 	}
 
-	public void setBootsStyle(int i) {
+	public void setBootsStyle(short i) {
 		lookI[6] = i;
 	}
 
@@ -280,15 +276,15 @@ public class Appearence implements Serializable {
 		return lookI[2];
 	}
 
-	public void setArmsStyle(int i) {
+	public void setArmsStyle(short i) {
 		lookI[3] = i;
 	}
 
-	public void setWristsStyle(int i) {
+	public void setWristsStyle(short i) {
 		lookI[4] = i;
 	}
 
-	public void setLegsStyle(int i) {
+	public void setLegsStyle(short i) {
 		lookI[5] = i;
 	}
 
@@ -296,7 +292,7 @@ public class Appearence implements Serializable {
 		return lookI[0];
 	}
 
-	public void setBeardStyle(int i) {
+	public void setBeardStyle(short i) {
 		lookI[1] = i;
 	}
 

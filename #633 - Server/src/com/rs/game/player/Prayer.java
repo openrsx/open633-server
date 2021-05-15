@@ -9,13 +9,8 @@ import com.rs.game.npc.NPC;
 import com.rs.game.player.CombatDefinitions;
 import com.rs.utils.Utils;
 
-public class Prayer implements Serializable {
-
-	/**
-     * 
-     */
-	private static final long serialVersionUID = -2082861520556582824L;
-
+public class Prayer {
+	
 	private final static int[][] prayerLvls = {
 			// normal prayer book
 			{ 1, 4, 7, 8, 9, 10, 13, 16, 19, 22, 25, 26, 27, 28, 31, 34, 35,
