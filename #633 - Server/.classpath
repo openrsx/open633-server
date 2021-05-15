@@ -10,7 +10,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="data/libs/netty-3.6.6.Final.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-core-2.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/groovy-all-2.1.6.jar"/>
+	<classpathentry kind="lib" path="data/libs/gson-2.8.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

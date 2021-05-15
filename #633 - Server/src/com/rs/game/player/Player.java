@@ -29,8 +29,6 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.godwars.zaros.Nex;
 import com.rs.game.npc.others.Pet;
-import com.rs.game.player.CombatDefinitions;
-import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Notes;
 import com.rs.game.player.content.Pots;
@@ -54,7 +52,6 @@ import com.rs.net.encoders.WorldPacketsEncoder;
 import com.rs.utils.IsaacKeyPair;
 import com.rs.utils.Logger;
 import com.rs.utils.MachineInformation;
-import com.rs.utils.SerializableFilesManager;
 import com.rs.utils.Utils;
 
 public class Player extends Entity {
@@ -936,7 +933,7 @@ public class Player extends Entity {
 			pet.finish();
 		setFinished(true);
 		session.setDecoder(-1);
-		SerializableFilesManager.savePlayer(this);
+		AccountCreation.savePlayer(this);
 		World.updateEntityRegion(this);
 		World.removePlayer(this);
 		if (Settings.DEBUG)

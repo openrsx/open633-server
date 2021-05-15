@@ -33,7 +33,7 @@ public final class PetManager implements Serializable {
     /**
      * The player.
      */
-    private Player player;
+    private transient Player player;
 
     /**
      * The current NPC id.

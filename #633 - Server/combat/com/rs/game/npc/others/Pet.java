@@ -25,7 +25,7 @@ public final class Pet extends NPC {
     /**
      * The owner.
      */
-    private final Player owner;
+    private transient final Player owner;
 
     /**
      * The "near" directions.

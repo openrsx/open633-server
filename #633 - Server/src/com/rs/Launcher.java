@@ -13,13 +13,13 @@ import com.rs.game.Region;
 import com.rs.game.World;
 import com.rs.game.map.MapBuilder;
 import com.rs.game.npc.combat.CombatScriptsHandler;
+import com.rs.game.player.AccountCreation;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.controllers.ControlerHandler;
 import com.rs.game.player.dialogues.DialogueHandler;
 import com.rs.net.ServerChannelHandler;
 import com.rs.utils.Censor;
-import com.rs.utils.DisplayNames;
 import com.rs.utils.EquipData;
 import com.rs.utils.Huffman;
 import com.rs.utils.ItemBonuses;
@@ -35,9 +35,9 @@ import com.rs.utils.NPCCombatDefinitionsL;
 import com.rs.utils.NPCDrops;
 import com.rs.utils.NPCSpawns;
 import com.rs.utils.ObjectSpawns;
-import com.rs.utils.SerializableFilesManager;
 import com.rs.utils.ShopsHandler;
 import com.rs.utils.Utils;
+import com.rs.utils.json.GsonHandler;
 
 public class Launcher {
 
@@ -59,7 +59,6 @@ public class Launcher {
 		EquipData.init();
 		ItemBonuses.init();
 		Censor.init();
-		DisplayNames.init();
 		MapArchiveKeys.init();
 		MapAreas.init();
 		ObjectSpawns.init();
@@ -72,6 +71,7 @@ public class Launcher {
 		ItemSpawns.init();
 		MusicHints.init();
 		ShopsHandler.init();
+		GsonHandler.initialize();
 		Logger.log("Launcher", "Initing Controlers...");
 		ControlerHandler.init();
 		Logger.log("Launcher", "Initing NPC Combat Scripts...");
@@ -158,7 +158,7 @@ public class Launcher {
 		for (Player player : World.getPlayers()) {
 			if (player == null || !player.hasStarted() || player.hasFinished())
 				continue;
-			SerializableFilesManager.savePlayer(player);
+			AccountCreation.savePlayer(player);
 		}
 	}
 

@@ -32,7 +32,6 @@ import com.rs.net.decoders.handlers.ButtonHandler;
 import com.rs.net.decoders.handlers.InventoryOptionsHandler;
 import com.rs.net.decoders.handlers.NPCHandler;
 import com.rs.net.decoders.handlers.ObjectHandler;
-import com.rs.utils.DisplayNames;
 import com.rs.utils.Encrypt;
 import com.rs.utils.Huffman;
 import com.rs.utils.Logger;
@@ -1300,21 +1299,6 @@ public final class WorldPacketsDecoder extends Decoder {
 									+ player.getYellColor() + ">"
 									+ player.getYellColor() + "</col>.");
 				}
-			} else if (player.getTemporaryAttributtes().remove("setdisplay") == Boolean.TRUE) {
-				if (Utils.invalidAccountName(Utils
-						.formatPlayerNameForProtocol(value))) {
-					player.getPackets()
-							.sendGameMessage(
-									"Name contains invalid characters or is too short/long.");
-					return;
-				}
-				if (!DisplayNames.setDisplayName(player, value)) {
-					player.getPackets().sendGameMessage(
-							"This name is already in use.");
-					return;
-				}
-				player.getPackets().sendGameMessage(
-						"Your display name was successfully changed.");
 			}
 		} else if (packetId == ENTER_INTEGER_PACKET) {
 			if (!player.isRunning() || player.isDead())

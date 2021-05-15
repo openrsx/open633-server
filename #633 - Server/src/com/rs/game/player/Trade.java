@@ -10,7 +10,7 @@ import com.rs.utils.Logger;
 
 public class Trade {
 
-    private Player player, target;
+    private transient Player player, target;
     private ItemsContainer<Item> items;
     private boolean tradeModified;
     private boolean accepted;
