@@ -81,7 +81,7 @@ public class LeatherCraftingD extends Dialogue {
 		    player.getPackets().sendGameMessage("You need a thread in order to bind the tanned hides together.");
 		    return false;
 		}
-		if (!player.getInventory().containsItemToolBelt(1733)) {
+		if (!player.getInventory().containsItem(new Item(1733))) {
 		    player.getPackets().sendGameMessage("You need a needle in order to bind the tanned hides together.");
 		    return false;
 		}

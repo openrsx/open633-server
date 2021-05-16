@@ -1,4 +1,0 @@
-void script_1338(int arg0,object arg1,object arg2) {
-	requestOpenURL(arg0, arg1, arg2);
-	return;
-}

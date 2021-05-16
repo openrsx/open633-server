@@ -1,3 +1,0 @@
-WidgetPointer script_623(int arg0) {
-	return getDataByKey('i', 'I', 1073, arg0);
-}

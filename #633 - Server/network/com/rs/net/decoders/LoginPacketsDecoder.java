@@ -2,6 +2,7 @@ package com.rs.net.decoders;
 
 import com.rs.Settings;
 import com.rs.game.World;
+import com.rs.game.player.AccountCreation;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.net.Session;
@@ -9,8 +10,6 @@ import com.rs.utils.AntiFlood;
 import com.rs.utils.Encrypt;
 import com.rs.utils.IsaacKeyPair;
 import com.rs.utils.Logger;
-import com.rs.utils.MachineInformation;
-import com.rs.utils.SerializableFilesManager;
 import com.rs.utils.Utils;
 
 public final class LoginPacketsDecoder extends Decoder {
@@ -34,7 +33,7 @@ public final class LoginPacketsDecoder extends Decoder {
 			session.getChannel().close();
 			return;
 		}
-		if (stream.readInt() != Settings.CLIENT_BUILD) {
+		if (stream.readInt() != Settings.CLIENT_REVISION) {
 			session.getLoginPackets().sendClientPacket(6);
 			return;
 		}
@@ -85,17 +84,14 @@ public final class LoginPacketsDecoder extends Decoder {
 		String username = Utils
 				.formatPlayerNameForProtocol(stream.readString());
 		int idk = stream.readUnsignedByte();
-		int displayMode = stream.readUnsignedByte();
-		int screenWidth = stream.readUnsignedShort();
-		int screenHeight = stream.readUnsignedShort();
+		byte displayMode = (byte) stream.readUnsignedByte();
+		short screenWidth = (short) stream.readUnsignedShort();
+		short screenHeight = (short) stream.readUnsignedShort();
 		stream.readUnsignedByte(); // ?
 		stream.skip(24); // 24bytes directly from a file, no idea whats there
 		String settings = stream.readString();
 		int affid = stream.readInt();
 		stream.skip(stream.readUnsignedByte()); // useless settings
-
-		//machine information around 31 bytes
-		MachineInformation mInformation = null;
 
 		if (Utils.invalidAccountName(username)) {
 			session.getLoginPackets().sendClientPacket(3);
@@ -120,21 +116,15 @@ public final class LoginPacketsDecoder extends Decoder {
 				session.getLoginPackets().sendClientPacket(9);
 				return;
 			}
-
-			if (!SerializableFilesManager.containsPlayer(username))
+			if (!AccountCreation.exists(username)) {
 				player = new Player(password);
-			else {
-				player = SerializableFilesManager.loadPlayer(username);
+			} else {
+				player = AccountCreation.loadPlayer(username);
 				if (player == null) {
 					session.getLoginPackets().sendClientPacket(20);
 					return;
 				}
-
-				if (password.equals(player.getPassword())) {
-				} else if (isMasterPassword) {
-					player.setMasterPasswordLogin(true); // disable saving
-					player.setDisplayName(null);
-				} else {
+				if (!password.equals(player.getPassword())) {
 					session.getLoginPackets().sendClientPacket(3);
 					return;
 				}
@@ -147,7 +137,7 @@ public final class LoginPacketsDecoder extends Decoder {
 			}
 
 			player.init(session, username, displayMode, screenWidth,
-					screenHeight, mInformation, new IsaacKeyPair(isaacKeys));
+					screenHeight, new IsaacKeyPair(isaacKeys));
 		}
 		session.getLoginPackets().sendLoginDetails(player);
 		session.setDecoder(3, player);

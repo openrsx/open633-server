@@ -17,7 +17,7 @@ public final class LocalPlayerUpdate {
 	 */
 	private static final int MAX_PLAYER_ADD = 15;
 
-	private Player player;
+	private transient Player player;
 
 	private byte[] slotFlags;
 

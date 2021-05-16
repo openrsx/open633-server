@@ -1,5 +1,0 @@
-void script_1153() {
-	cs2method_10874(0);
-	script_1156();
-	return;
-}

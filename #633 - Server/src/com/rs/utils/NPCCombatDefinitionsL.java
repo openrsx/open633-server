@@ -11,7 +11,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.util.HashMap;
 
-import npc.combat.NPCCombatDefinitions;
+import com.rs.game.npc.combat.NPCCombatDefinitions;
 
 public final class NPCCombatDefinitionsL {
 

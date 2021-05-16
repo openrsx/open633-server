@@ -1,3 +1,0 @@
-int script_3460(int arg0,int arg1,int arg2) {
-	return cs2method_10273(arg2, arg0, 0, arg1);
-}

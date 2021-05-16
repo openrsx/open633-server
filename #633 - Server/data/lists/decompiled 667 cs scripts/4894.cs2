@@ -1,5 +1,0 @@
-void script_4894() {
-	bitconfig_9549 = 0;
-	script_5975();
-	return;
-}

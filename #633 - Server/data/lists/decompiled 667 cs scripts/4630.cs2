@@ -1,4 +1,0 @@
-void script_4630() {
-	script_4465((object)globalstring_126);
-	return;
-}

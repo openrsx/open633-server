@@ -25,16 +25,17 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.minigames.duel.DuelRules;
+import com.rs.game.npc.NPC;
+import com.rs.game.npc.familiar.Familiar;
+import com.rs.game.npc.godwars.zaros.Nex;
+import com.rs.game.npc.others.Pet;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Notes;
-import com.rs.game.player.content.Pots;
-import com.rs.game.player.content.SkillCapeCustomizer;
 import com.rs.game.player.content.pet.PetManager;
 import com.rs.game.player.controllers.ControlerManager;
 import com.rs.game.player.controllers.Controller;
 import com.rs.game.player.controllers.GodWars;
 import com.rs.game.player.controllers.JailControler;
-import com.rs.game.player.controllers.QueenBlackDragonController;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.player.controllers.ZGDControler;
 import com.rs.game.route.RouteEvent;
@@ -47,31 +48,20 @@ import com.rs.net.decoders.handlers.ButtonHandler;
 import com.rs.net.encoders.WorldPacketsEncoder;
 import com.rs.utils.IsaacKeyPair;
 import com.rs.utils.Logger;
-import com.rs.utils.MachineInformation;
-import com.rs.utils.SerializableFilesManager;
 import com.rs.utils.Utils;
-
-import npc.NPC;
-import npc.familiar.Familiar;
-import npc.godwars.zaros.Nex;
-import npc.others.Pet;
-import player.CombatDefinitions;
-import player.PlayerCombat;
 
 public class Player extends Entity {
 
-	public static final int TELE_MOVE_TYPE = 127, WALK_MOVE_TYPE = 1,
+	public static final byte TELE_MOVE_TYPE = 127, WALK_MOVE_TYPE = 1,
 			RUN_MOVE_TYPE = 2;
-
-	private static final long serialVersionUID = 2011932556974180375L;
 
 	// transient stuff
 	private transient String username;
 	private transient Session session;
 	private transient boolean clientLoadedMapRegion;
-	private transient int displayMode;
-	private transient int screenWidth;
-	private transient int screenHeight;
+	private transient byte displayMode;
+	private transient short screenWidth;
+	private transient short screenHeight;
 	private transient InterfaceManager interfaceManager;
 	private transient DialogueManager dialogueManager;
 	private transient HintIconsManager hintIconsManager;
@@ -86,6 +76,11 @@ public class Player extends Entity {
 	private transient Pet pet;
 	private transient VarsManager varsManager;
 
+	/**
+	 * The amount of authority this player has over others.
+	 */
+	public Rights rights = Rights.PLAYER;
+	
 	// used for packets logic
 	private transient ConcurrentLinkedQueue<LogicPacket> logicPackets;
 
@@ -93,39 +88,30 @@ public class Player extends Entity {
 	private transient LocalPlayerUpdate localPlayerUpdate;
 	private transient LocalNPCUpdate localNPCUpdate;
 
-	private int temporaryMovementType;
+	private byte temporaryMovementType;
 	private boolean updateMovementType;
 
 	// player stages
 	private transient boolean started;
 	private transient boolean running;
 
-	private transient int resting;
+	private transient byte resting;
 	private transient boolean canPvp;
 	private transient boolean cantTrade;
 	private transient long lockDelay; // used for doors and stuff like that
-	private transient long foodDelay;
-	private transient long potDelay;
 	private transient Runnable closeInterfacesEvent;
 	private transient long lastPublicMessage;
-	private transient long polDelay;
 	private transient List<Integer> switchItemCache;
 	private transient boolean disableEquip;
-	private transient MachineInformation machineInformation;
-	private transient boolean castedVeng;
 	private transient boolean invulnerable;
-	private transient double hpBoostMultiplier;
-	private transient int cannonBalls;
-
 	// interface
 
 	// saving stuff
 	private String password;
-	private int rights;
 	private String displayName;
 	private String lastIP;
 	private long creationDate;
-	private Appearence appearence;
+	private Appearance appearence;
 	private Inventory inventory;
 	private Equipment equipment;
 	private Skills skills;
@@ -136,37 +122,26 @@ public class Player extends Entity {
 	private MusicsManager musicsManager;
 	private EmotesManager emotesManager;
 	private Notes notes;
-	private Toolbelt toolbelt;
 	private FriendsIgnores friendsIgnores;
 	private Familiar familiar;
-	private AuraManager auraManager;
 	private PetManager petManager;
 	private byte runEnergy;
 	private boolean allowChatEffects;
 	private boolean acceptAid;
 	private boolean mouseButtons;
 	private boolean profanityFilter;
-	private int privateChatSetup;
-	private int friendChatSetup;
-	private int clanChatSetup;
-	private int guestChatSetup;
-	private int skullDelay;
-	private int skullId;
+	private byte privateChatSetup;
+	private byte friendChatSetup;
+	private byte clanChatSetup;
+	private byte guestChatSetup;
+	private int skullDelay; //to redo
+	private int skullId; //to redo
 	private boolean forceNextMapLoadRefresh;
-	private long poisonImmune;
-	private long fireImmune;
-	private boolean killedQueenBlackDragon;
-	private int runeSpanPoints;
-	private int pestPoints;
-	private int stealingCreationPoints;
-	private int favorPoints;
+	private long poisonImmune; //to redo
+	private long fireImmune; //to redo
 	private double[] warriorPoints;
-	// shop
-	private boolean verboseShopDisplayMode;
 
-	private int lastBonfire;
-	private int[] pouches;
-	private long displayTime;
+	private byte[] pouches;
 	private long muted;
 	private long jailed;
 	private long banned;
@@ -175,107 +150,32 @@ public class Player extends Entity {
 	private boolean xpLocked;
 	private boolean yellOff;
 	// game bar status
-	private int publicStatus;
-	private int clanStatus;
-	private int tradeStatus;
-	private int assistStatus;
-
-	private boolean donator;
-	private boolean extremeDonator;
-
-	// Recovery ques. & ans.
-	private String recovQuestion;
-	private String recovAnswer;
+	private byte publicStatus;
+	private byte clanStatus;
+	private byte tradeStatus;
+	private byte assistStatus;
 
 	// Used for storing recent ips and password
 	private ArrayList<String> passwordList = new ArrayList<String>();
 	private ArrayList<String> ipList = new ArrayList<String>();
 
-	// honor
-	private int killCount, deathCount;
-	private long lastKilledTime;
 	private ChargesManager charges;
-	// barrows
-	private boolean[] killedBarrowBrothers;
-	private int hiddenBrother;
-	private int barrowsKillCount;
-	// strongholdofsecurity rewards
-	private boolean[] shosRewards;
-	private boolean killedLostCityTree;
-
-	// skill capes customizing
-	private int[] maxedCapeCustomized;
-	private int[] completionistCapeCustomized;
-
-	// completionistcape reqs
-	private boolean completedFightCaves;
-	private boolean completedFightKiln;
-	private boolean wonFightPits;
-	private boolean completedStealingCreation;
-	private boolean capturedCastleWarsFlag;
-	// trimmed compcape
-	private int finishedCastleWars;
-
-	// dungeonering
-	private boolean[] currentDungProgress;
-	@SuppressWarnings("unused")
-	private boolean[] previousDungProgress;
-
-	// crucible
-	private boolean talkedWithMarv;
-	private int crucibleHighScore;
-
-	// gravestone
-	private int graveStone;
-
-	private int overloadDelay;
-	private int prayerRenewalDelay;
 
 	private String currentFriendChatOwner;
 	private String clanName;// , guestClanChat;
 	private boolean connectedClanChannel;
 
-	private int summoningLeftClickOption;
+	private byte summoningLeftClickOption;
 	private List<String> ownedObjectsManagerKeys;
-
-	// objects
-	private boolean khalphiteLairEntranceSetted;
-	private boolean khalphiteLairSetted;
-
-	// supportteam
-	private boolean isSupporter;
 
 	private String yellColor = "ff0000";
 
-	private long voted;
-
-	// voting variables
-	private int votes;
-	@SuppressWarnings("unused")
-	private int votePoints; // not used
-	@SuppressWarnings("unused")
-	private long abilityToUseVoteItems;
-
-	private boolean isGraphicDesigner;
-
-	@SuppressWarnings("unused")
-	private boolean isForumModerator;
-
-	private int forumAuthID = -1;
-
-	private int economyVersion = 0;
-
-	/**
-	 * If it's master password login, it will not save
-	 */
-	private transient boolean isMasterPasswordLogin = false;
-
 	// creates Player and saved classes
 	public Player(String password) {
-		super(/* Settings.HOSTED ? */Settings.START_PLAYER_LOCATION);
-		setHitpoints(Settings.START_PLAYER_HITPOINTS);
+		super(Settings.START_PLAYER_LOCATION);
+		setHitpoints(100);
 		this.password = password;
-		appearence = new Appearence();
+		appearence = new Appearance();
 		inventory = new Inventory();
 		equipment = new Equipment();
 		skills = new Skills();
@@ -286,46 +186,33 @@ public class Player extends Entity {
 		musicsManager = new MusicsManager();
 		emotesManager = new EmotesManager();
 		notes = new Notes();
-		toolbelt = new Toolbelt();
 		friendsIgnores = new FriendsIgnores();
 		charges = new ChargesManager();
-		auraManager = new AuraManager();
 		petManager = new PetManager();
 		runEnergy = 100;
 		allowChatEffects = true;
 		mouseButtons = true;
 		profanityFilter = true;
-		pouches = new int[4];
-		resetBarrows();
-		shosRewards = new boolean[4];
+		pouches = new byte[4];
 		warriorPoints = new double[6];
-		SkillCapeCustomizer.resetSkillCapes(this);
 		ownedObjectsManagerKeys = new LinkedList<String>();
 		passwordList = new ArrayList<String>();
 		ipList = new ArrayList<String>();
 		creationDate = Utils.currentTimeMillis();
 	}
 
-	public void init(Session session, String username, int displayMode,
-			int screenWidth, int screenHeight,
-			MachineInformation machineInformation, IsaacKeyPair isaacKeyPair) {
+	public void init(Session session, String username, byte displayMode,
+			short screenWidth, short screenHeight, IsaacKeyPair isaacKeyPair) {
 		// temporary deleted after reset all chars
-		if (auraManager == null)
-			auraManager = new AuraManager();
 		if (petManager == null)
 			petManager = new PetManager();
 		if (notes == null)
 			notes = new Notes();
-		if (toolbelt == null)
-			toolbelt = new Toolbelt();
-		if (shosRewards == null)
-			shosRewards = new boolean[4];
 		this.session = session;
 		this.username = username;
 		this.displayMode = displayMode;
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
-		this.machineInformation = machineInformation;
 		this.isaacKeyPair = isaacKeyPair;
 		interfaceManager = new InterfaceManager(this);
 		dialogueManager = new DialogueManager(this);
@@ -348,9 +235,7 @@ public class Player extends Entity {
 		musicsManager.setPlayer(this);
 		emotesManager.setPlayer(this);
 		notes.setPlayer(this);
-		toolbelt.setPlayer(this);
 		friendsIgnores.setPlayer(this);
-		auraManager.setPlayer(this);
 		charges.setPlayer(this);
 		petManager.setPlayer(this);
 		setDirection(Utils.getFaceDirection(0, -1));
@@ -497,13 +382,8 @@ public class Player extends Entity {
 		combatDefinitions.resetSpells(true);
 		resting = 0;
 		skullDelay = 0;
-		foodDelay = 0;
-		potDelay = 0;
 		poisonImmune = 0;
 		fireImmune = 0;
-		overloadDelay = 0;
-		prayerRenewalDelay = 0;
-		castedVeng = false;
 		setRunEnergy(100);
 		appearence.generateAppearenceData();
 	}
@@ -565,7 +445,6 @@ public class Player extends Entity {
 			routeEvent = null;
 		super.processEntity();
 		charges.process();
-		auraManager.process();
 		prayer.processPrayer();
 		controlerManager.process();
 		if (isDead())
@@ -576,52 +455,6 @@ public class Player extends Entity {
 			skullDelay--;
 			if (!hasSkull())
 				appearence.generateAppearenceData();
-		}
-		if (polDelay != 0 && polDelay <= Utils.currentTimeMillis()) {
-			getPackets()
-					.sendGameMessage(
-							"The power of the light fades. Your resistance to melee attacks return to normal.");
-			polDelay = 0;
-		}
-		if (overloadDelay > 0) {
-			if (overloadDelay == 1 || isDead()) {
-				Pots.resetOverLoadEffect(this);
-				return;
-			} else if ((overloadDelay - 1) % 25 == 0)
-				Pots.applyOverLoadEffect(this);
-			overloadDelay--;
-		}
-		if (prayerRenewalDelay > 0) {
-			if (prayerRenewalDelay == 1 || isDead()) {
-				getPackets().sendGameMessage(
-						"<col=0000FF>Your prayer renewal has ended.");
-				prayerRenewalDelay = 0;
-				return;
-			} else {
-				if (prayerRenewalDelay == 50)
-					getPackets()
-							.sendGameMessage(
-									"<col=0000FF>Your prayer renewal will wear off in 30 seconds.");
-				if (!prayer.hasFullPrayerpoints()) {
-					getPrayer().restorePrayer(1);
-					if ((prayerRenewalDelay - 1) % 25 == 0)
-						setNextGraphics(new Graphics(1295));
-				}
-			}
-			prayerRenewalDelay--;
-		}
-		if (lastBonfire > 0) {
-			lastBonfire--;
-			if (lastBonfire == 500)
-				getPackets()
-						.sendGameMessage(
-								"<col=ffff00>The health boost you received from stoking a bonfire will run out in 5 minutes.");
-			else if (lastBonfire == 0) {
-				getPackets()
-						.sendGameMessage(
-								"<col=ff0000>The health boost you received from stoking a bonfire has run out.");
-				equipment.refreshConfigs(false);
-			}
 		}
 	}
 
@@ -694,7 +527,6 @@ public class Player extends Entity {
 			int delayPassed = (int) ((Utils.currentTimeMillis() - World.exiting_start) / 1000);
 			getPackets().sendSystemUpdate(World.exiting_delay - delayPassed);
 		}
-	//	ForumAuthManager.syncAuth(this);
 		lastIP = getSession().getIP();
 		interfaceManager.sendInterfaces();
 		getPackets().sendRunEnergy();
@@ -705,27 +537,11 @@ public class Player extends Entity {
 		refreshPrivateChatSetup();
 		refreshOtherChatsSetup();
 		sendRunButtonConfig();
-		getPackets()
-				.sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
-		// getPackets().sendGameMessage(Settings.LASTEST_UPDATE);
-
-		if ((Settings.ECONOMY || Settings.ECONOMY_TEST)
-				&& getEconomyVersion() != Settings.ECONOMY_VERSION) {
-			inventory.reset();
-			equipment.reset();
-			toolbelt = new Toolbelt();
-			toolbelt.setPlayer(this);
-			familiar = null;
-			bank = new Bank();
-			bank.setPlayer(this);
-			controlerManager.removeControlerWithoutCheck();
-			controlerManager.setLastController(Settings.START_CONTROLER);
-			setNextWorldTile(Settings.START_PLAYER_LOCATION);
-			setEconomyVersion(Settings.ECONOMY_VERSION);
-			getPackets().sendGameMessage(
-					"Account reset sucessfull, current eco version:"
-							+ Settings.ECONOMY_VERSION);
-		}
+		getPackets().sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
+		Settings.STAFF.entrySet().forEach(staff -> {
+			if (getUsername().equalsIgnoreCase(staff.getKey()))
+				setRights(staff.getValue());
+		});
 		sendDefaultPlayersOptions();
 		checkMultiArea();
 		inventory.init();
@@ -746,7 +562,6 @@ public class Player extends Entity {
 		musicsManager.init();
 		emotesManager.init();
 		notes.init();
-		toolbelt.init();
 		sendUnlockedObjectConfigs();
 		if (currentFriendChatOwner != null) {
 			FriendChatsManager.joinChat(currentFriendChatOwner, this);
@@ -762,16 +577,9 @@ public class Player extends Entity {
 		appearence.generateAppearenceData();
 		controlerManager.login(); // checks what to do on login after welcome
 		OwnedObjectManager.linkKeys(this);
-		// screen
-		if (machineInformation != null)
-			machineInformation.sendSuggestions(this);
 	}
 
 	private void sendUnlockedObjectConfigs() {
-		refreshKalphiteLairEntrance();
-		refreshKalphiteLair();
-		refreshLodestoneNetwork();
-		refreshFightKilnEntrance();
 		refreshLairofTarnRazorlorEntrance();
 		refreshTreeofJadinko();
 	}
@@ -782,72 +590,6 @@ public class Player extends Entity {
 
 	private void refreshLairofTarnRazorlorEntrance() {
 		getVarsManager().sendVar(382, 11);
-	}
-
-	private void refreshLodestoneNetwork() {
-		// unlocks bandit camp lodestone
-		getVarsManager().sendVarBit(358, 15);
-		// unlocks lunar isle lodestone
-		getVarsManager().sendVarBit(2448, 190);
-		// unlocks alkarid lodestone
-		getVarsManager().sendVarBit(10900, 1);
-		// unlocks ardougne lodestone
-		getVarsManager().sendVarBit(10901, 1);
-		// unlocks burthorpe lodestone
-		getVarsManager().sendVarBit(10902, 1);
-		// unlocks catherbay lodestone
-		getVarsManager().sendVarBit(10903, 1);
-		// unlocks draynor lodestone
-		getVarsManager().sendVarBit(10904, 1);
-		// unlocks edgeville lodestone
-		getVarsManager().sendVarBit(10905, 1);
-		// unlocks falador lodestone
-		getVarsManager().sendVarBit(10906, 1);
-		// unlocks lumbridge lodestone
-		getVarsManager().sendVarBit(10907, 1);
-		// unlocks port sarim lodestone
-		getVarsManager().sendVarBit(10908, 1);
-		// unlocks seers village lodestone
-		getVarsManager().sendVarBit(10909, 1);
-		// unlocks taverley lodestone
-		getVarsManager().sendVarBit(10910, 1);
-		// unlocks varrock lodestone
-		getVarsManager().sendVarBit(10911, 1);
-		// unlocks yanille lodestone
-		getVarsManager().sendVarBit(10912, 1);
-	}
-
-	private void refreshKalphiteLair() {
-		if (khalphiteLairSetted)
-			getVarsManager().sendVarBit(7263, 1);
-	}
-
-	public void setKalphiteLair() {
-		khalphiteLairSetted = true;
-		refreshKalphiteLair();
-	}
-
-	private void refreshFightKilnEntrance() {
-		if (completedFightCaves)
-			getVarsManager().sendVarBit(10838, 1);
-	}
-
-	private void refreshKalphiteLairEntrance() {
-		if (khalphiteLairEntranceSetted)
-			getVarsManager().sendVarBit(7262, 1);
-	}
-
-	public void setKalphiteLairEntrance() {
-		khalphiteLairEntranceSetted = true;
-		refreshKalphiteLairEntrance();
-	}
-
-	public boolean isKalphiteLairEntranceSetted() {
-		return khalphiteLairEntranceSetted;
-	}
-
-	public boolean isKalphiteLairSetted() {
-		return khalphiteLairSetted;
 	}
 
 	public void updateIPnPass() {
@@ -974,7 +716,7 @@ public class Player extends Entity {
 			pet.finish();
 		setFinished(true);
 		session.setDecoder(-1);
-		SerializableFilesManager.savePlayer(this);
+		AccountCreation.savePlayer(this);
 		World.updateEntityRegion(this);
 		World.removePlayer(this);
 		if (Settings.DEBUG)
@@ -1040,50 +782,10 @@ public class Player extends Entity {
 		int write = 0;
 		for (Integer group : groups)
 			groupIDS[write++] = group.intValue();
-		syncRanksFromForumGroups(groupIDS);
 	}
 
-	public void syncRanksFromForumGroups(int[] groupIDS) {
-		setRights(0);
-		setGraphicDesigner(false);
-		setDonator(false);
-		setExtremeDonator(false);
-		setSupporter(false);
-		/*
-		 * Administrator - 5, 6, 51 Global modetator - 7 Game moderator - 25
-		 * Graphics designer - 10 Support member - 52 Donator - 53 Extreme
-		 * donator - 54
-		 */
-		for (int forumGroupID : groupIDS) {
-			if (forumGroupID == 5 || forumGroupID == 6 || forumGroupID == 51) {
-				setRights(2);
-			} else if (forumGroupID == 7 || forumGroupID == 25) {
-				setRights(1);
-			} else if (forumGroupID == 10) {
-				setGraphicDesigner(true);
-			} else if (forumGroupID == 52) {
-				setSupporter(true);
-			} else if (forumGroupID == 53 || forumGroupID == 15) {
-				setDonator(true);
-			} else if (forumGroupID == 54 || forumGroupID == 14) {
-				setExtremeDonator(true);
-			}
-		}
-	}
-
-	public void setRights(int rights) {
-		this.rights = rights;
-	}
-
-	public int getRights() {
-		return rights;
-	}
-
-	@SuppressWarnings("unused")
 	public int getMessageIcon() {
-		return getRights() == 2 || getRights() == 1 ? getRights() : false ? 10
-				: isGraphicDesigner() ? 9 : isExtremeDonator() ? 11
-						: isDonator() ? 8 : getRights();
+		return getRights() == Rights.ADMINISTRATOR ? 2 : getRights() == Rights.MODERATOR ? 1 : 0;
 	}
 
 	public WorldPacketsEncoder getPackets() {
@@ -1108,7 +810,7 @@ public class Player extends Entity {
 		return displayName != null;
 	}
 
-	public Appearence getAppearence() {
+	public Appearance getAppearence() {
 		return appearence;
 	}
 
@@ -1116,11 +818,11 @@ public class Player extends Entity {
 		return equipment;
 	}
 
-	public int getTemporaryMoveType() {
+	public byte getTemporaryMoveType() {
 		return temporaryMovementType;
 	}
 
-	public void setTemporaryMoveType(int temporaryMovementType) {
+	public void setTemporaryMoveType(byte temporaryMovementType) {
 		this.temporaryMovementType = temporaryMovementType;
 	}
 
@@ -1132,7 +834,7 @@ public class Player extends Entity {
 		return localNPCUpdate;
 	}
 
-	public int getDisplayMode() {
+	public byte getDisplayMode() {
 		return displayMode;
 	}
 
@@ -1144,7 +846,7 @@ public class Player extends Entity {
 		return session;
 	}
 
-	public void setScreenWidth(int screenWidth) {
+	public void setScreenWidth(short screenWidth) {
 		this.screenWidth = screenWidth;
 	}
 
@@ -1152,7 +854,7 @@ public class Player extends Entity {
 		return screenWidth;
 	}
 
-	public void setScreenHeight(int screenHeight) {
+	public void setScreenHeight(short screenHeight) {
 		this.screenHeight = screenHeight;
 	}
 
@@ -1168,7 +870,7 @@ public class Player extends Entity {
 		clientLoadedMapRegion = true;
 	}
 
-	public void setDisplayMode(int displayMode) {
+	public void setDisplayMode(byte displayMode) {
 		this.displayMode = displayMode;
 	}
 
@@ -1201,7 +903,7 @@ public class Player extends Entity {
 		return resting != 0;
 	}
 
-	public void setResting(int resting) {
+	public void setResting(byte resting) {
 		this.resting = resting;
 		sendRunButtonConfig();
 	}
@@ -1264,16 +966,9 @@ public class Player extends Entity {
 			hit.setDamage(0);
 			return;
 		}
-		if (auraManager.usingPenance()) {
-			int amount = (int) (hit.getDamage() * 0.2);
-			if (amount > 0)
-				prayer.restorePrayer(amount);
-		}
 		Entity source = hit.getSource();
 		if (source == null)
 			return;
-		if (polDelay > Utils.currentTimeMillis())
-			hit.setDamage((int) (hit.getDamage() * 0.5));
 		if (prayer.hasPrayersOn() && hit.getDamage() != 0) {
 			if (hit.getLook() == HitLook.MAGIC_DAMAGE) {
 				if (prayer.usingPrayer(0, 17))
@@ -1365,12 +1060,6 @@ public class Player extends Entity {
 				hit.setDamage((int) (hit.getDamage() * 0.70));
 				prayer.drainPrayer(drain);
 			}
-		}
-		if (castedVeng && hit.getDamage() >= 4) {
-			castedVeng = false;
-			setNextForceTalk(new ForceTalk("Taste vengeance!"));
-			source.applyHit(new Hit(this, (int) (hit.getDamage() * 0.75),
-					HitLook.REGULAR_DAMAGE));
 		}
 		if (source instanceof Player) {
 			final Player p2 = (Player) source;
@@ -1977,10 +1666,9 @@ public class Player extends Entity {
 
 	public void sendItemsOnDeath(Player killer, WorldTile deathTile,
 			WorldTile respawnTile, boolean wilderness, Integer[][] slots) {
-		if (getRights() == 2 && Settings.HOSTED)
+		if (getRights().isStaff() && Settings.HOSTED)
 			return;
 		charges.die(slots[1], slots[3]); // degrades droped and lost items only
-		auraManager.removeAura();
 //		Item[][] items = GraveStone.getItemsKeptOnDeath(this, slots);
 		inventory.reset();
 		equipment.reset();
@@ -2016,30 +1704,6 @@ public class Player extends Entity {
 //		}
 	}
 
-	public boolean increaseKillCount(Player killed) {
-		killed.deathCount++;
-//		PkRank.checkRank(killed);
-		if (killed.getSession().getIP().equals(getSession().getIP()))
-			return false;
-		if ((Utils.currentTimeMillis() - lastKilledTime) > 300000) { // give
-			// spin
-			// only if
-			// 5
-			// minutes
-			// passed,
-			// this is
-			// to
-			// prevent
-			// farming
-			lastKilledTime = Utils.currentTimeMillis();
-		}
-		killCount++;
-		getPackets().sendGameMessage(
-				"<col=ff0000>You have killed " + killed.getDisplayName()
-						+ ", you have now " + killCount + " kills.");
-//		PkRank.checkRank(this);
-		return true;
-	}
 
 	public void sendRandomJail(Player p) {
 		p.resetWalkSteps();
@@ -2197,19 +1861,19 @@ public class Player extends Entity {
 		getVarsManager().forceSendVarBit(9191, guestChatSetup);
 	}
 
-	public void setPrivateChatSetup(int privateChatSetup) {
+	public void setPrivateChatSetup(byte privateChatSetup) {
 		this.privateChatSetup = privateChatSetup;
 	}
 
-	public void setClanChatSetup(int clanChatSetup) {
+	public void setClanChatSetup(byte clanChatSetup) {
 		this.clanChatSetup = clanChatSetup;
 	}
 
-	public void setGuestChatSetup(int guestChatSetup) {
+	public void setGuestChatSetup(byte guestChatSetup) {
 		this.guestChatSetup = guestChatSetup;
 	}
 
-	public void setFriendChatSetup(int friendChatSetup) {
+	public void setFriendChatSetup(byte friendChatSetup) {
 		this.friendChatSetup = friendChatSetup;
 	}
 
@@ -2238,22 +1902,6 @@ public class Player extends Entity {
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
-	}
-
-	public void addPotDelay(long time) {
-		potDelay = time + Utils.currentTimeMillis();
-	}
-
-	public long getPotDelay() {
-		return potDelay;
-	}
-
-	public void addFoodDelay(long time) {
-		foodDelay = time + Utils.currentTimeMillis();
-	}
-
-	public long getFoodDelay() {
-		return foodDelay;
 	}
 
 	public void addPoisonImmune(long time) {
@@ -2285,38 +1933,6 @@ public class Player extends Entity {
 
 	public HintIconsManager getHintIconsManager() {
 		return hintIconsManager;
-	}
-
-	public boolean isCastVeng() {
-		return castedVeng;
-	}
-
-	public void setCastVeng(boolean castVeng) {
-		this.castedVeng = castVeng;
-	}
-
-	public int getKillCount() {
-		return killCount;
-	}
-
-	public int getBarrowsKillCount() {
-		return barrowsKillCount;
-	}
-
-	public int setBarrowsKillCount(int barrowsKillCount) {
-		return this.barrowsKillCount = barrowsKillCount;
-	}
-
-	public int setKillCount(int killCount) {
-		return this.killCount = killCount;
-	}
-
-	public int getDeathCount() {
-		return deathCount;
-	}
-
-	public int setDeathCount(int deathCount) {
-		return this.deathCount = deathCount;
 	}
 
 	public void setCloseInterfacesEvent(Runnable closeInterfacesEvent) {
@@ -2363,75 +1979,7 @@ public class Player extends Entity {
 		this.password = password;
 	}
 
-	public boolean[] getKilledBarrowBrothers() {
-		return killedBarrowBrothers;
-	}
-
-	public void setHiddenBrother(int hiddenBrother) {
-		this.hiddenBrother = hiddenBrother;
-	}
-
-	public int getHiddenBrother() {
-		return hiddenBrother;
-	}
-
-	public void resetBarrows() {
-		hiddenBrother = -1;
-		killedBarrowBrothers = new boolean[7]; // includes new bro for future
-		// use
-		barrowsKillCount = 0;
-	}
-	
-	public int getVotes() {
-		return votes;
-	}
-
-	public void setVotes(int votes) {
-		this.votes = votes;
-		voted = Utils.currentTimeMillis() + (24 * 60 * 60 * 1000);
-	}
-
-	public boolean isDonator() {
-		return isExtremeDonator() || donator;
-	}
-
-	public boolean isExtremeDonator() {
-		return extremeDonator || rights >= 1;
-	}
-
-	public void setExtremeDonator(boolean extremeDonator) {
-		this.extremeDonator = extremeDonator;
-	}
-
-	public boolean isGraphicDesigner() {
-		return isGraphicDesigner;
-	}
-
-	public void setGraphicDesigner(boolean isGraphicDesigner) {
-		this.isGraphicDesigner = isGraphicDesigner;
-	}
-
-	public void setDonator(boolean donator) {
-		this.donator = donator;
-	}
-
-	public String getRecovQuestion() {
-		return recovQuestion;
-	}
-
-	public void setRecovQuestion(String recovQuestion) {
-		this.recovQuestion = recovQuestion;
-	}
-
-	public String getRecovAnswer() {
-		return recovAnswer;
-	}
-
-	public void setRecovAnswer(String recovAnswer) {
-		this.recovAnswer = recovAnswer;
-	}
-
-	public int[] getPouches() {
+	public byte[] getPouches() {
 		return pouches;
 	}
 
@@ -2457,29 +2005,6 @@ public class Player extends Entity {
 
 	public PriceCheckManager getPriceCheckManager() {
 		return priceCheckManager;
-	}
-
-	public void setPestPoints(int pestPoints) {
-		if (pestPoints >= 500) {
-			this.pestPoints = 500;
-			getPackets()
-					.sendGameMessage(
-							"You have reached the maximum amount of commendation points, you may only have 500 at one time.");
-			return;
-		}
-		this.pestPoints = pestPoints;
-	}
-
-	public int getPestPoints() {
-		return pestPoints;
-	}
-
-	public void increaseStealingCreationPoints(int scPoints) {
-		stealingCreationPoints += scPoints;
-	}
-
-	public int getStealingCreationPoints() {
-		return stealingCreationPoints;
 	}
 
 	public boolean isUpdateMovementType() {
@@ -2530,22 +2055,6 @@ public class Player extends Entity {
 		}
 	}
 
-	public int[] getCompletionistCapeCustomized() {
-		return completionistCapeCustomized;
-	}
-
-	public void setCompletionistCapeCustomized(int[] skillcapeCustomized) {
-		this.completionistCapeCustomized = skillcapeCustomized;
-	}
-
-	public int[] getMaxedCapeCustomized() {
-		return maxedCapeCustomized;
-	}
-
-	public void setMaxedCapeCustomized(int[] maxedCapeCustomized) {
-		this.maxedCapeCustomized = maxedCapeCustomized;
-	}
-
 	public void setSkullId(int skullId) {
 		this.skullId = skullId;
 	}
@@ -2570,18 +2079,6 @@ public class Player extends Entity {
 			}
 		}
 		logicPackets.add(packet);
-	}
-
-	public void setPrayerRenewalDelay(int delay) {
-		this.prayerRenewalDelay = delay;
-	}
-
-	public int getOverloadDelay() {
-		return overloadDelay;
-	}
-
-	public void setOverloadDelay(int overloadDelay) {
-		this.overloadDelay = overloadDelay;
 	}
 
 	public Trade getTrade() {
@@ -2641,7 +2138,7 @@ public class Player extends Entity {
 		return summoningLeftClickOption;
 	}
 
-	public void setSummoningLeftClickOption(int summoningLeftClickOption) {
+	public void setSummoningLeftClickOption(byte summoningLeftClickOption) {
 		this.summoningLeftClickOption = summoningLeftClickOption;
 	}
 
@@ -2664,31 +2161,14 @@ public class Player extends Entity {
 				|| getControlerManager().getControler() instanceof ZGDControler
 				|| getControlerManager().getControler() instanceof GodWars
 				|| getControlerManager().getControler() instanceof DuelArena
-				|| getControlerManager().getControler() instanceof QueenBlackDragonController
 				|| getControlerManager().getControler() instanceof JailControler) {
 			return false;
 		}
 		return true;
 	}
 
-	public long getPolDelay() {
-		return polDelay;
-	}
-
-	public void addPolDelay(long delay) {
-		polDelay = delay + Utils.currentTimeMillis();
-	}
-
-	public void setPolDelay(long delay) {
-		this.polDelay = delay;
-	}
-
 	public List<Integer> getSwitchItemCache() {
 		return switchItemCache;
-	}
-
-	public AuraManager getAuraManager() {
-		return auraManager;
 	}
 
 	public int getMovementType() {
@@ -2816,17 +2296,6 @@ public class Player extends Entity {
 			}, 4, 2);
 			combatDefinitions.desecreaseSpecialAttack(specAmt);
 			break;
-		case 15486:
-		case 22207:
-		case 22209:
-		case 22211:
-		case 22213:
-			setNextAnimation(new Animation(12804));
-			setNextGraphics(new Graphics(2319));// 2320
-			setNextGraphics(new Graphics(2321));
-			addPolDelay(60000);
-			combatDefinitions.desecreaseSpecialAttack(specAmt);
-			break;
 		}
 	}
 
@@ -2837,20 +2306,12 @@ public class Player extends Entity {
 	public boolean isEquipDisabled() {
 		return disableEquip;
 	}
-
-	public void addDisplayTime(long i) {
-		this.displayTime = i + Utils.currentTimeMillis();
-	}
-
-	public long getDisplayTime() {
-		return displayTime;
-	}
-
+	
 	public int getPublicStatus() {
 		return publicStatus;
 	}
 
-	public void setPublicStatus(int publicStatus) {
+	public void setPublicStatus(byte publicStatus) {
 		this.publicStatus = publicStatus;
 	}
 
@@ -2858,7 +2319,7 @@ public class Player extends Entity {
 		return clanStatus;
 	}
 
-	public void setClanStatus(int clanStatus) {
+	public void setClanStatus(byte clanStatus) {
 		this.clanStatus = clanStatus;
 	}
 
@@ -2866,7 +2327,7 @@ public class Player extends Entity {
 		return tradeStatus;
 	}
 
-	public void setTradeStatus(int tradeStatus) {
+	public void setTradeStatus(byte tradeStatus) {
 		this.tradeStatus = tradeStatus;
 	}
 
@@ -2874,7 +2335,7 @@ public class Player extends Entity {
 		return assistStatus;
 	}
 
-	public void setAssistStatus(int assistStatus) {
+	public void setAssistStatus(byte assistStatus) {
 		this.assistStatus = assistStatus;
 	}
 
@@ -2884,41 +2345,6 @@ public class Player extends Entity {
 
 	public IsaacKeyPair getIsaacKeyPair() {
 		return isaacKeyPair;
-	}
-	
-	public boolean isCompletedFightCaves() {
-		return completedFightCaves;
-	}
-
-	public void setCompletedFightCaves() {
-		if (!completedFightCaves) {
-			completedFightCaves = true;
-			refreshFightKilnEntrance();
-		}
-	}
-
-	public boolean isCompletedFightKiln() {
-		return completedFightKiln;
-	}
-
-	public void setCompletedFightKiln() {
-		completedFightKiln = true;
-	}
-
-	public boolean isCompletedStealingCreation() {
-		return completedStealingCreation;
-	}
-
-	public void setCompletedStealingCreation() {
-		completedStealingCreation = true;
-	}
-
-	public boolean isWonFightPits() {
-		return wonFightPits;
-	}
-
-	public void setWonFightPits() {
-		wonFightPits = true;
 	}
 
 	public boolean isCantTrade() {
@@ -2956,14 +2382,6 @@ public class Player extends Entity {
 		this.pet = pet;
 	}
 
-	public boolean isSupporter() {
-		return isSupporter;
-	}
-
-	public void setSupporter(boolean isSupporter) {
-		this.isSupporter = isSupporter;
-	}
-
 	/**
 	 * Gets the petManager.
 	 * 
@@ -2991,15 +2409,6 @@ public class Player extends Entity {
 		this.xpLocked = locked;
 	}
 
-	public int getLastBonfire() {
-		return lastBonfire;
-	}
-
-	public void setLastBonfire(int lastBonfire) {
-		this.lastBonfire = lastBonfire;
-		equipment.refreshConfigs(false);
-	}
-
 	public boolean isYellOff() {
 		return yellOff;
 	}
@@ -3012,78 +2421,12 @@ public class Player extends Entity {
 		this.invulnerable = invulnerable;
 	}
 
-	public double getHpBoostMultiplier() {
-		return hpBoostMultiplier;
-	}
-
-	public void setHpBoostMultiplier(double hpBoostMultiplier) {
-		this.hpBoostMultiplier = hpBoostMultiplier;
-	}
-
-	/**
-	 * Gets the killedQueenBlackDragon.
-	 * 
-	 * @return The killedQueenBlackDragon.
-	 */
-	public boolean isKilledQueenBlackDragon() {
-		return killedQueenBlackDragon;
-	}
-
-	/**
-	 * Sets the killedQueenBlackDragon.
-	 * 
-	 * @param killedQueenBlackDragon
-	 *            The killedQueenBlackDragon to set.
-	 */
-	public void setKilledQueenBlackDragon(boolean killedQueenBlackDragon) {
-		this.killedQueenBlackDragon = killedQueenBlackDragon;
-	}
-	/**
-	 * @return the runeSpanPoint
-	 */
-	public int getRuneSpanPoints() {
-		return runeSpanPoints;
-	}
-
-	/**
-	 * @param runeSpanPoints
-	 *            the runeSpanPoint to set
-	 */
-	public void setRuneSpanPoint(int runeSpanPoints) {
-		this.runeSpanPoints = runeSpanPoints;
-	}
-
-	/**
-	 * Adds points
-	 * 
-	 * @param points
-	 */
-	public void addRunespanPoints(int points) {
-		this.runeSpanPoints += points;
-	}
-
 	public DuelRules getLastDuelRules() {
 		return lastDuelRules;
 	}
 
 	public void setLastDuelRules(DuelRules duelRules) {
 		this.lastDuelRules = duelRules;
-	}
-
-	public boolean isTalkedWithMarv() {
-		return talkedWithMarv;
-	}
-
-	public void setTalkedWithMarv() {
-		talkedWithMarv = true;
-	}
-
-	public int getCrucibleHighScore() {
-		return crucibleHighScore;
-	}
-
-	public void increaseCrucibleHighScore() {
-		crucibleHighScore++;
 	}
 
 	public long getCreationDate() {
@@ -3098,48 +2441,8 @@ public class Player extends Entity {
 		return profanityFilter;
 	}
 
-	public int getCannonBalls() {
-		return cannonBalls;
-	}
-
-	public void addCannonBalls(int cannonBalls) {
-		this.cannonBalls += cannonBalls;
-	}
-
-	public void removeCannonBalls() {
-		this.cannonBalls = 0;
-	}
-
-	public Toolbelt getToolbelt() {
-		return toolbelt;
-	}
-
-	public int getForumAuthID() {
-		return forumAuthID;
-	}
-
-	public void setForumAuthID(int forumAuthID) {
-		this.forumAuthID = forumAuthID;
-	}
-
 	public VarsManager getVarsManager() {
 		return varsManager;
-	}
-
-	public int getFinishedCastleWars() {
-		return finishedCastleWars;
-	}
-
-	public boolean isCapturedCastleWarsFlag() {
-		return capturedCastleWarsFlag;
-	}
-
-	public void setCapturedCastleWarsFlag() {
-		capturedCastleWarsFlag = true;
-	}
-
-	public void increaseFinishedCastleWars() {
-		finishedCastleWars++;
 	}
 
 	public boolean isToogleLootShare() {
@@ -3177,62 +2480,11 @@ public class Player extends Entity {
 		this.connectedClanChannel = connectedClanChannel;
 	}
 
-	public void setVerboseShopDisplayMode(boolean verboseShopDisplayMode) {
-		this.verboseShopDisplayMode = verboseShopDisplayMode;
-		refreshVerboseShopDisplayMode();
-	}
-
-	public void refreshVerboseShopDisplayMode() {
-		varsManager.sendVarBit(11055, verboseShopDisplayMode ? 0 : 1);
-	}
-
-	public int getEconomyVersion() {
-		return economyVersion;
-	}
-
-	public void setEconomyVersion(int economyVersion) {
-		this.economyVersion = economyVersion;
-	}
-
-	public int getGraveStone() {
-		return graveStone;
-	}
-
-	public void setGraveStone(int graveStone) {
-		this.graveStone = graveStone;
-	}
-
-	public double getDropRate() {
-		// 25% less chance if didnt vote
-		return voted > Utils.currentTimeMillis() ? Settings.DROP_RATE
-				: Settings.DROP_RATE - 0.25;
-	}
 	/*
 	 * started now
 	 */
 	public boolean isStarter() {
-		return false;// creationDate != 0 && creationDate + 30 * 60 * 1000 >
-						// Utils.currentTimeMillis();
-	}
-
-	public boolean isMasterPasswordLogin() {
-		return isMasterPasswordLogin;
-	}
-
-	public void setMasterPasswordLogin(boolean isMasterPasswordLogin) {
-		this.isMasterPasswordLogin = isMasterPasswordLogin;
-	}
-
-	public boolean[] getShosRewards() {
-		return shosRewards;
-	}
-
-	public boolean isKilledLostCityTree() {
-		return killedLostCityTree;
-	}
-
-	public void setKilledLostCityTree(boolean killedLostCityTree) {
-		this.killedLostCityTree = killedLostCityTree;
+		return false;
 	}
 
 	public double[] getWarriorPoints() {
@@ -3262,23 +2514,20 @@ public class Player extends Entity {
 		if (warriorPoints == null || warriorPoints.length != 6)
 			warriorPoints = new double[6];
 	}
-
-	public int getFavorPoints() {
-		return favorPoints;
+	
+	/**
+	 * Gets the amount of authority this player has over others.
+	 * @return the authority this player has.
+	 */
+	public Rights getRights() {
+		return rights;
 	}
-
-	public void setFavorPoints(int points) {
-		if (points + favorPoints >= 2000) {
-			points = 2000;
-			getPackets()
-					.sendGameMessage(
-							"The offering stone is full! The jadinkos won't deposite any more rewards until you have taken some.");
-		}
-		this.favorPoints = points;
-		refreshFavorPoints();
-	}
-
-	public void refreshFavorPoints() {
-		varsManager.sendVarBit(9511, favorPoints);
+	
+	/**
+	 * Sets the value for {@link Player#rights}.
+	 * @param rights the new value to set.
+	 */
+	public void setRights(Rights rights) {
+		this.rights = rights;
 	}
 }

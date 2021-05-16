@@ -1,3 +1,0 @@
-int script_5034(int arg0) {
-	return AND(arg0, 63);
-}

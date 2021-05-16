@@ -1,3 +1,0 @@
-int script_5020(int arg0) {
-	return cs2method_10004(AND(arg0, 127), 1);
-}

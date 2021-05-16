@@ -1,3 +1,0 @@
-int script_5925(int arg0) {
-	return getDataByKey('i', '\u00ab', arg0, cs2method_10869(cs2method_10624(arg0)));
-}

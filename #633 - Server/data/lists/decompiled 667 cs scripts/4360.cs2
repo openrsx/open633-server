@@ -1,6 +1,0 @@
-void script_4360(int arg0) {
-	if (cs2method_10907() == 1) {
-		script_4361(arg0);
-	}
-	return;
-}

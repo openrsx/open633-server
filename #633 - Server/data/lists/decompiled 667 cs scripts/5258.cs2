@@ -1,4 +1,0 @@
-void script_5258() {
-	script_5259(add(bitconfig_9763, bitconfig_9771));
-	return;
-}

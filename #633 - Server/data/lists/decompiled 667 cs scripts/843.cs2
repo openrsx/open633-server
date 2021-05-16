@@ -1,4 +1,0 @@
-void script_843() {
-	script_846(bitconfig_4398, 3);
-	return;
-}

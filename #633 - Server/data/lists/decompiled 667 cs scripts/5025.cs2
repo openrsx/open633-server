@@ -1,3 +1,0 @@
-int script_5025(int arg0) {
-	return divide(arg0, cs2method_10206(2, 14));
-}

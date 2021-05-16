@@ -1,4 +1,0 @@
-void script_3934(int arg0) {
-	script_3213(arg0, (object)"");
-	return;
-}

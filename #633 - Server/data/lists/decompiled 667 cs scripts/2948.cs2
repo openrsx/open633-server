@@ -1,3 +1,0 @@
-int script_2948() {
-	return cs2method_10311();
-}

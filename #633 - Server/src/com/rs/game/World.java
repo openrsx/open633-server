@@ -16,6 +16,40 @@ import com.rs.game.item.ItemConstants;
 import com.rs.game.minigames.GodWarsBosses;
 import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.minigames.ZarosGodwars;
+import com.rs.game.npc.NPC;
+import com.rs.game.npc.corp.CorporealBeast;
+import com.rs.game.npc.dragons.KingBlackDragon;
+import com.rs.game.npc.godwars.GodWarMinion;
+import com.rs.game.npc.godwars.armadyl.GodwarsArmadylFaction;
+import com.rs.game.npc.godwars.armadyl.KreeArra;
+import com.rs.game.npc.godwars.bandos.GeneralGraardor;
+import com.rs.game.npc.godwars.bandos.GodwarsBandosFaction;
+import com.rs.game.npc.godwars.saradomin.CommanderZilyana;
+import com.rs.game.npc.godwars.saradomin.GodwarsSaradominFaction;
+import com.rs.game.npc.godwars.zammorak.GodwarsZammorakFaction;
+import com.rs.game.npc.godwars.zammorak.KrilTstsaroth;
+import com.rs.game.npc.godwars.zaros.Nex;
+import com.rs.game.npc.godwars.zaros.NexMinion;
+import com.rs.game.npc.godwars.zaros.ZarosMinion;
+import com.rs.game.npc.others.AbyssalDemon;
+import com.rs.game.npc.others.BanditCampBandits;
+import com.rs.game.npc.others.Bork;
+import com.rs.game.npc.others.Cyclopse;
+import com.rs.game.npc.others.HarpieBug;
+import com.rs.game.npc.others.Jadinko;
+import com.rs.game.npc.others.KalphiteQueen;
+import com.rs.game.npc.others.Kurask;
+import com.rs.game.npc.others.LivingRock;
+import com.rs.game.npc.others.Lucien;
+import com.rs.game.npc.others.MasterOfFear;
+import com.rs.game.npc.others.MercenaryMage;
+import com.rs.game.npc.others.MiladeDeath;
+import com.rs.game.npc.others.Revenant;
+import com.rs.game.npc.others.RockCrabs;
+import com.rs.game.npc.others.Sheep;
+import com.rs.game.npc.others.Strykewyrm;
+import com.rs.game.npc.others.TormentedDemon;
+import com.rs.game.npc.others.Werewolf;
 import com.rs.game.player.OwnedObjectManager;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
@@ -27,41 +61,6 @@ import com.rs.utils.AntiFlood;
 import com.rs.utils.Logger;
 import com.rs.utils.ShopsHandler;
 import com.rs.utils.Utils;
-
-import npc.NPC;
-import npc.corp.CorporealBeast;
-import npc.dragons.KingBlackDragon;
-import npc.godwars.GodWarMinion;
-import npc.godwars.armadyl.GodwarsArmadylFaction;
-import npc.godwars.armadyl.KreeArra;
-import npc.godwars.bandos.GeneralGraardor;
-import npc.godwars.bandos.GodwarsBandosFaction;
-import npc.godwars.saradomin.CommanderZilyana;
-import npc.godwars.saradomin.GodwarsSaradominFaction;
-import npc.godwars.zammorak.GodwarsZammorakFaction;
-import npc.godwars.zammorak.KrilTstsaroth;
-import npc.godwars.zaros.Nex;
-import npc.godwars.zaros.NexMinion;
-import npc.godwars.zaros.ZarosMinion;
-import npc.others.AbyssalDemon;
-import npc.others.BanditCampBandits;
-import npc.others.Bork;
-import npc.others.Cyclopse;
-import npc.others.HarpieBug;
-import npc.others.Jadinko;
-import npc.others.KalphiteQueen;
-import npc.others.Kurask;
-import npc.others.LivingRock;
-import npc.others.Lucien;
-import npc.others.MasterOfFear;
-import npc.others.MercenaryMage;
-import npc.others.MiladeDeath;
-import npc.others.Revenant;
-import npc.others.RockCrabs;
-import npc.others.Sheep;
-import npc.others.Strykewyrm;
-import npc.others.TormentedDemon;
-import npc.others.Werewolf;
 
 public final class World {
 
@@ -86,26 +85,7 @@ public final class World {
 		LivingRockCavern.init();
 		WarriorsGuild.init();
 	}
-
-	private static void addWorldAnnouncementTask() {
-		if (Settings.ANNOUNCEMENT_TEXTS.length > 0) {
-			CoresManager.slowExecutor.scheduleWithFixedDelay(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						World.sendWorldMessage(
-								"<img=7><col=D80000> News: "
-										+ Settings.ANNOUNCEMENT_TEXTS[Utils
-												.random(Settings.ANNOUNCEMENT_TEXTS.length)],
-								false);
-					} catch (Throwable e) {
-						Logger.handle(e);
-					}
-				}
-			}, 0, 60 * 5, TimeUnit.SECONDS);
-		}
-	}
-
+	
 	private static void addRestoreShopItemsTask() {
 		CoresManager.slowExecutor.scheduleWithFixedDelay(new Runnable() {
 			@Override
@@ -1653,7 +1633,7 @@ public final class World {
 	public static void sendWorldMessage(String message, boolean forStaff) {
 		for (Player p : World.getPlayers()) {
 			if (p == null || !p.isRunning() || p.isYellOff()
-					|| (forStaff && p.getRights() == 0)
+					|| (forStaff && !p.getRights().isStaff())
 					|| p.getInterfaceManager().containsReplacedChatBoxInter())
 				continue;
 			p.getPackets().sendGameMessage(message);
@@ -1666,7 +1646,7 @@ public final class World {
 			if (p == null
 					|| !p.isRunning()
 					|| p.isYellOff()
-					|| (forStaff && p.getRights() == 0)
+					|| (forStaff && !p.getRights().isStaff())
 					|| p.getFriendsIgnores().containsIgnore(
 							sender.getUsername())
 					|| p.getInterfaceManager().containsReplacedChatBoxInter())

@@ -12,6 +12,8 @@ import com.rs.Settings;
 import com.rs.cache.loaders.AnimationDefinitions;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.game.Hit.HitLook;
+import com.rs.game.npc.NPC;
+import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.route.RouteFinder;
@@ -19,13 +21,8 @@ import com.rs.game.route.strategy.EntityStrategy;
 import com.rs.game.route.strategy.ObjectStrategy;
 import com.rs.utils.Utils;
 
-import npc.NPC;
-import npc.familiar.Familiar;
-import npc.qbd.TorturedSoul;
-
 public abstract class Entity extends WorldTile {
 
-	private static final long serialVersionUID = -3372926325008880753L;
 	private final static AtomicInteger hashCodeGenerator = new AtomicInteger();
 
 	// transient stuff
@@ -357,12 +354,6 @@ public abstract class Entity extends WorldTile {
 			if (((Player) this).getEmotesManager().getNextEmoteEnd() >= Utils
 					.currentTimeMillis())
 				return;
-		}
-		if (this instanceof TorturedSoul) { // waste of process power personaly
-											// but meh.
-			if (((TorturedSoul) this).switchWalkStep()) {
-				return;
-			}
 		}
 		if (this instanceof Player && ((Player) this).getRunEnergy() <= 0)
 			setRun(false);

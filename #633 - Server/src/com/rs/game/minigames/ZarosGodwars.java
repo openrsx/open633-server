@@ -11,14 +11,13 @@ import com.rs.game.ForceTalk;
 import com.rs.game.Graphics;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
+import com.rs.game.npc.godwars.zaros.Nex;
+import com.rs.game.npc.godwars.zaros.NexMinion;
+import com.rs.game.npc.godwars.zaros.Nex.NexPhase;
 import com.rs.game.player.Player;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.Utils;
-
-import npc.godwars.zaros.Nex;
-import npc.godwars.zaros.NexMinion;
-import npc.godwars.zaros.Nex.NexPhase;
 
 public class ZarosGodwars {
 

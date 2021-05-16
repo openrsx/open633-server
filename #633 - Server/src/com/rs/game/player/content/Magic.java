@@ -462,7 +462,7 @@ public class Magic {
 			player.getTemporaryAttributtes().put("LAST_VENG", Utils.currentTimeMillis());
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			((Player) target).setNextGraphics(new Graphics(725, 0, 100));
-			((Player) target).setCastVeng(true);
+//			((Player) target).setCastVeng(true);
 			((Player) target).getPackets().sendGameMessage("You have the power of vengeance!");
 			break;
 		}
@@ -487,7 +487,7 @@ public class Magic {
 				return;
 			player.setNextGraphics(new Graphics(726, 0, 100));
 			player.setNextAnimation(new Animation(4410));
-			player.setCastVeng(true);
+//			player.setCastVeng(true);
 			player.getTemporaryAttributtes().put("LAST_VENG", Utils.currentTimeMillis());
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			break;
@@ -524,7 +524,7 @@ public class Magic {
 						continue;
 					}
 					p2.setNextGraphics(new Graphics(725, 0, 100));
-					p2.setCastVeng(true);
+//					p2.setCastVeng(true);
 					p2.getPackets().sendGameMessage("You have the power of vengeance!");
 					affectedPeopleCount++;
 				}

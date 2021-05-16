@@ -1,5 +1,0 @@
-void script_592() {
-	standart_config_1113 = 0;
-	script_621();
-	return;
-}

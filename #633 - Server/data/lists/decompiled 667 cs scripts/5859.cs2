@@ -1,4 +1,0 @@
-void script_5859(int arg0,int arg1) {
-	script_311(arg0, arg1, (object)getGeneralRequirementAttribute(7276, 596));
-	return;
-}

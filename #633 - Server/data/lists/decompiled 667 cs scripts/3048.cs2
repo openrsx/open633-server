@@ -1,4 +1,0 @@
-void script_3048() {
-	script_3015(1, (object)"Add friend", (object)"", (object)"", (object)"");
-	return;
-}

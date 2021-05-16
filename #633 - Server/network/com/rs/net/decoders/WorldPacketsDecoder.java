@@ -6,9 +6,13 @@ import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
+import com.rs.game.npc.NPC;
+import com.rs.game.npc.familiar.Familiar;
+import com.rs.game.npc.familiar.Familiar.SpecialAttack;
 import com.rs.game.player.ChatMessage;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
+import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.QuickChatMessage;
 import com.rs.game.player.Skills;
 import com.rs.game.player.actions.PlayerFollow;
@@ -16,7 +20,6 @@ import com.rs.game.player.content.Commands;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Magic;
 import com.rs.game.player.content.Shop;
-import com.rs.game.player.content.SkillCapeCustomizer;
 import com.rs.game.player.content.pet.Pets;
 import com.rs.game.route.RouteEvent;
 import com.rs.game.route.RouteFinder;
@@ -28,17 +31,11 @@ import com.rs.net.decoders.handlers.ButtonHandler;
 import com.rs.net.decoders.handlers.InventoryOptionsHandler;
 import com.rs.net.decoders.handlers.NPCHandler;
 import com.rs.net.decoders.handlers.ObjectHandler;
-import com.rs.utils.DisplayNames;
 import com.rs.utils.Encrypt;
 import com.rs.utils.Huffman;
 import com.rs.utils.Logger;
 import com.rs.utils.ReportAbuse;
 import com.rs.utils.Utils;
-
-import npc.NPC;
-import npc.familiar.Familiar;
-import npc.familiar.Familiar.SpecialAttack;
-import player.PlayerCombat;
 
 public final class WorldPacketsDecoder extends Decoder {
 
@@ -981,7 +978,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (forceRun)
 				player.setRun(forceRun);
 			player.stopAll();
-			if (player.getRights() >= 1)
+			if (player.getRights().isStaff())
 				player.getDialogueManager().startDialogue("ModReportD", p2);
 			else
 				ReportAbuse.report(player, p2.getDisplayName());
@@ -1151,9 +1148,9 @@ public final class WorldPacketsDecoder extends Decoder {
 			@SuppressWarnings("unused")
 			boolean inScreen = stream.readByte() == 1;
 		} else if (packetId == SCREEN_PACKET) {
-			int displayMode = stream.readUnsignedByte();
-			player.setScreenWidth(stream.readUnsignedShort());
-			player.setScreenHeight(stream.readUnsignedShort());
+			byte displayMode = (byte) stream.readUnsignedByte();
+			player.setScreenWidth((short) stream.readUnsignedShort());
+			player.setScreenHeight((short) stream.readUnsignedShort());
 			@SuppressWarnings("unused")
 			boolean switchScreenMode = stream.readUnsignedByte() == 1;
 			if (!player.hasStarted() || player.hasFinished()
@@ -1301,21 +1298,6 @@ public final class WorldPacketsDecoder extends Decoder {
 									+ player.getYellColor() + ">"
 									+ player.getYellColor() + "</col>.");
 				}
-			} else if (player.getTemporaryAttributtes().remove("setdisplay") == Boolean.TRUE) {
-				if (Utils.invalidAccountName(Utils
-						.formatPlayerNameForProtocol(value))) {
-					player.getPackets()
-							.sendGameMessage(
-									"Name contains invalid characters or is too short/long.");
-					return;
-				}
-				if (!DisplayNames.setDisplayName(player, value)) {
-					player.getPackets().sendGameMessage(
-							"This name is already in use.");
-					return;
-				}
-				player.getPackets().sendGameMessage(
-						"Your display name was successfully changed.");
 			}
 		} else if (packetId == ENTER_INTEGER_PACKET) {
 			if (!player.isRunning() || player.isDead())
@@ -1670,9 +1652,9 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (!player.hasStarted())
 				return;
 			int colorId = stream.readUnsignedShort();
-			if (player.getTemporaryAttributtes().get("SkillcapeCustomize") != null)
-				SkillCapeCustomizer.handleSkillCapeCustomizerColor(player,
-						colorId);
+//			if (player.getTemporaryAttributtes().get("SkillcapeCustomize") != null)
+//				SkillCapeCustomizer.handleSkillCapeCustomizerColor(player,
+//						colorId);
 //			else if (player.getTemporaryAttributtes().get("MottifCustomize") != null)
 //				ClansManager.setMottifColor(player, colorId);
 		} else if (packetId == REPORT_ABUSE_PACKET) {
@@ -1697,10 +1679,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			String unknown = stream.readString();
 			@SuppressWarnings("unused")
 			int flag = stream.readUnsignedByte();
-			if (type.equals("clan-forum"))
-				player.getPackets().sendOpenURL(
-						Settings.SHOWTHREAD_LINK
-								+ path.replace("threads.ws?threadid=", ""));
+			
 		} else if (packetId == GRAND_EXCHANGE_ITEM_SELECT_PACKET) {
 			int itemId = stream.readUnsignedShort();
 //			player.getGeManager().chooseItem(itemId);

@@ -13,19 +13,18 @@ import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.npc.NPC;
+import com.rs.game.npc.others.AnimatedArmor;
+import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
+import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.Skills;
 import com.rs.game.player.controllers.Controller;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.net.decoders.handlers.ButtonHandler;
 import com.rs.utils.Utils;
-
-import npc.NPC;
-import npc.others.AnimatedArmor;
-import player.CombatDefinitions;
-import player.PlayerCombat;
 
 public class WarriorsGuild extends Controller {
 
@@ -661,7 +660,7 @@ public class WarriorsGuild extends Controller {
 	    @Override
 	    public void run() {
 		if (kegCount == 0)
-		    player.getAppearence().setRenderEmote(2671);
+		    player.getAppearence().setRenderEmote((short) 2671);
 		kegCount++;
 		player.getVarsManager().sendVarBit(object.getDefinitions().configFileId, 1);
 		player.getEquipment().getItems().set(Equipment.SLOT_HAT, new Item(8859 + kegCount));
@@ -690,7 +689,7 @@ public class WarriorsGuild extends Controller {
 	    player.getEquipment().getItems().set(Equipment.SLOT_HAT, null);
 	    player.getEquipment().refresh(Equipment.SLOT_HAT);
 	    player.getAppearence().generateAppearenceData();
-	    player.getAppearence().setRenderEmote(-1);
+	    player.getAppearence().setRenderEmote((short) -1);
 	}
 	kegCount = 0;
 	kegTicks = 0;

@@ -4,12 +4,11 @@ import com.rs.game.Animation;
 import com.rs.game.ForceTalk;
 import com.rs.game.Graphics;
 import com.rs.game.WorldTile;
+import com.rs.game.npc.NPC;
 import com.rs.game.player.content.FadingScreen;
 import com.rs.game.player.dialogues.Dialogue;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
-
-import npc.NPC;
 
 public class PiratePete extends Dialogue {
 

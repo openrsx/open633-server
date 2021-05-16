@@ -12,6 +12,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Player;
+import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.content.Foods.Food;
 import com.rs.game.player.content.Pots.Pot;
 import com.rs.game.player.controllers.Controller;
@@ -21,8 +22,6 @@ import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.decoders.handlers.ButtonHandler;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
-
-import player.PlayerCombat;
 
 public class DuelArena extends Controller {
 
@@ -376,7 +375,6 @@ public class DuelArena extends Controller {
 	    battleTeleport(player, target);
 	player.stopAll();
 	player.lock(2); // fixes mass click steps
-	player.setLastBonfire(0);
 	player.reset();
 	player.getTemporaryAttributtes().put("startedDuel", true);
 	player.getTemporaryAttributtes().put("canFight", false);

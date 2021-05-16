@@ -5,13 +5,12 @@ import com.rs.game.Entity;
 import com.rs.game.ForceMovement;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
+import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.Utils;
-
-import npc.NPC;
 
 public class Wilderness extends Controller {
 
@@ -207,7 +206,6 @@ public class Wilderness extends Controller {
 		    Player killer = player.getMostDamageReceivedSourcePlayer();
 		    if (killer != null) {
 			killer.removeDamage(player);
-			killer.increaseKillCount(player);
 			killer.setAttackedByDelay(Utils.currentTimeMillis() + 8000); // imunity
 		    }
 		    player.sendItemsOnDeath(killer);

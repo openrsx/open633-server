@@ -1,4 +1,0 @@
-void script_3050() {
-	script_3015(2, (object)"Add ignore", (object)"", (object)"", (object)"");
-	return;
-}

@@ -10,9 +10,7 @@ import com.rs.game.World;
 import com.rs.utils.MusicHints;
 import com.rs.utils.Utils;
 
-public final class MusicsManager implements Serializable {
-
-	private static final long serialVersionUID = 1020415702861567375L;
+public final class MusicsManager {
 
 	private static final int[] CONFIG_IDS = new int[] { 20, 21, 22, 23, 24, 25,
 			298, 311, 346, 414, 464, 598, 662, 721, 906, 1009, 1104, 1136,

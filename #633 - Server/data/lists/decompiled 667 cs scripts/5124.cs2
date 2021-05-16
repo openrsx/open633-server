@@ -1,4 +1,0 @@
-void script_5124() {
-	setWidgetText(new WidgetPointer(1119,6), (object)getDataByKey('i', 's', 3725, globalint_696));
-	return;
-}

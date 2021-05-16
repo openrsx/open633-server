@@ -1,4 +1,0 @@
-void script_1588() {
-	script_1592(26279942, 26279960, (object)globalstring_220);
-	return;
-}

@@ -1,21 +1,12 @@
 package com.rs.game.player;
 
-import java.io.Serializable;
-
 import com.rs.Settings;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
-import com.rs.utils.ItemExamines;
+import com.rs.game.npc.familiar.Familiar;
 import com.rs.utils.Utils;
 
-import npc.familiar.Familiar;
-
-public class Bank implements Serializable {
-
-	/**
-     * 
-     */
-	private static final long serialVersionUID = 1551246756081236625L;
+public class Bank {
 
 	// tab, items
 	private Item[][] bankTabs;
@@ -449,7 +440,7 @@ public class Bank implements Serializable {
 		if (slot == null)
 			return;
 		Item item = bankTabs[slot[0]][slot[1]];
-		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
+//		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
 	}
 
 	public void depositItem(int invSlot, int quantity, boolean refresh) {

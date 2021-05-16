@@ -1,18 +1,14 @@
 package com.rs.game.player;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
-import com.rs.utils.ItemExamines;
 import com.rs.utils.Utils;
 
-public final class Inventory implements Serializable {
-
-	private static final long serialVersionUID = 8842800123753277093L;
+public final class Inventory {
 
 	private ItemsContainer<Item> items;
 
@@ -86,16 +82,7 @@ public final class Inventory implements Serializable {
 		refreshItems(itemsBefore);
 		return true;
 	}
-
-	public boolean containsItemToolBelt(int id) {
-		return containsOneItem(id) || player.getToolbelt().containsItem(id);
-	}
-
-	public boolean containsItemToolBelt(int id, int amount) {
-		return containsItem(id, amount)
-				|| player.getToolbelt().containsItem(id);
-	}
-
+	
 	public boolean addItem(Item item) {
 		if (item.getId() < 0
 				|| item.getAmount() < 0
@@ -234,6 +221,10 @@ public final class Inventory implements Serializable {
 	public boolean containsItem(int itemId, int ammount) {
 		return items.contains(new Item(itemId, ammount));
 	}
+	
+	public boolean containsItem(Item item) {
+		return items.contains(item);
+	}
 
 	public int getCoinsAmount() {
 		int coins = items.getNumberOf(995);
@@ -254,7 +245,7 @@ public final class Inventory implements Serializable {
 		Item item = items.get(slotId);
 		if (item == null)
 			return;
-		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
+//		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
 	}
 
 	public void refresh() {

@@ -1,4 +1,0 @@
-void script_1605() {
-	setWidgetRGB(16776960, 35979391);
-	return;
-}

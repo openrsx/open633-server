@@ -12,37 +12,17 @@ import com.rs.cores.CoresManager;
 import com.rs.game.Region;
 import com.rs.game.World;
 import com.rs.game.map.MapBuilder;
+import com.rs.game.player.AccountCreation;
 import com.rs.game.player.Player;
-import com.rs.game.player.content.FriendChatsManager;
-import com.rs.game.player.controllers.ControlerHandler;
-import com.rs.game.player.dialogues.DialogueHandler;
 import com.rs.net.ServerChannelHandler;
-import com.rs.utils.Censor;
-import com.rs.utils.DisplayNames;
-import com.rs.utils.EquipData;
-import com.rs.utils.Huffman;
-import com.rs.utils.ItemBonuses;
-import com.rs.utils.ItemDestroys;
-import com.rs.utils.ItemExamines;
-import com.rs.utils.ItemSpawns;
 import com.rs.utils.Logger;
-import com.rs.utils.MapArchiveKeys;
-import com.rs.utils.MapAreas;
-import com.rs.utils.MusicHints;
-import com.rs.utils.NPCBonuses;
-import com.rs.utils.NPCCombatDefinitionsL;
-import com.rs.utils.NPCDrops;
-import com.rs.utils.NPCSpawns;
-import com.rs.utils.ObjectSpawns;
-import com.rs.utils.SerializableFilesManager;
-import com.rs.utils.ShopsHandler;
 import com.rs.utils.Utils;
-
-import npc.combat.CombatScriptsHandler;
 
 public class Launcher {
 
 	public static void main(String[] args) throws Exception {
+		Config.get().load();
+		
 		if (args.length < 3) {
 			System.out
 					.println("USE: guimode(boolean) debug(boolean) hosted(boolean)");
@@ -51,57 +31,15 @@ public class Launcher {
 		Settings.HOSTED = Boolean.parseBoolean(args[2]);
 		Settings.DEBUG = Boolean.parseBoolean(args[1]);
 		long currentTime = Utils.currentTimeMillis();
-		Logger.log("Launcher", "Initing Cache...");
-		Cache.init();
-		Huffman.init();
-		Logger.log("Launcher", "Initing Data Files...");
-		EquipData.init();
-		ItemBonuses.init();
-		Censor.init();
-		DisplayNames.init();
-		MapArchiveKeys.init();
-		MapAreas.init();
-		ObjectSpawns.init();
-		NPCSpawns.init();
-		NPCCombatDefinitionsL.init();
-		NPCBonuses.init();
-		NPCDrops.init();
-		// NPCExamines.init();
-		ItemExamines.init();
-		ItemDestroys.init();
-		ItemSpawns.init();
-		MusicHints.init();
-		ShopsHandler.init();
-		Logger.log("Launcher", "Initing Controlers...");
-		ControlerHandler.init();
-		Logger.log("Launcher", "Initing NPC Combat Scripts...");
-		CombatScriptsHandler.init();
-		Logger.log("Launcher", "Initing Dialogues...");
-		DialogueHandler.init();
-		Logger.log("Launcher", "Initing Friend Chats Manager...");
-		FriendChatsManager.init();
-		Logger.log("Launcher", "Initing Cores Manager...");
-		CoresManager.init();
-		Logger.log("Launcher", "Initing World...");
-		World.init();
-		Logger.log("Launcher", "Initing Region Builder...");
-		MapBuilder.init();
-		Logger.log("Launcher", "Initing Server Channel Handler...");
-		try {
-			ServerChannelHandler.init();
-		} catch (Throwable e) {
-			Logger.handle(e);
-			Logger.log("Launcher",
-					"Failed initing Server Channel Handler. Shutting down...");
-			System.exit(1);
-			return;
-		}
+		
+		GameLoader.get().load();
+		
 		Logger.log("Launcher", "Server took "
 				+ (Utils.currentTimeMillis() - currentTime)
 				+ " milli seconds to launch.");
-		addFilesSavingTask();
+//		addFilesSavingTask();
 		addCleanMemoryTask();
-		addrecalcPricesTask();
+//		addrecalcPricesTask();
 	}
 
 	private static void addCleanMemoryTask() {
@@ -158,7 +96,7 @@ public class Launcher {
 		for (Player player : World.getPlayers()) {
 			if (player == null || !player.hasStarted() || player.hasFinished())
 				continue;
-			SerializableFilesManager.savePlayer(player);
+			AccountCreation.savePlayer(player);
 		}
 	}
 

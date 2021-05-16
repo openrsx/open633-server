@@ -30,14 +30,14 @@ public class ReportAbuse {
 	}
 	if (name != null)
 	    player.getPackets().sendGlobalString(24, name);
-	if (player.getRights() > 0)
+	if (player.getRights().isStaff())
 	    player.getPackets().sendHideIComponent(594, 8, false);
 	player.getInterfaceManager().sendInterface(594);
 
     }
 
     public static void report(Player player, String displayName, int type, boolean mute) {
-	if (mute && player.getRights() < 1)
+	if (mute && !player.getRights().isStaff())
 	    return;
 	Player reported = World.getPlayerByDisplayName(displayName);
 	if (reported == null)

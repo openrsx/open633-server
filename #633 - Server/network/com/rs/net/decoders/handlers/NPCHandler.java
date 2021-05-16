@@ -3,12 +3,11 @@ package com.rs.net.decoders.handlers;
 import com.rs.Settings;
 import com.rs.game.World;
 import com.rs.game.item.Item;
+import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.utils.Logger;
 import com.rs.utils.NPCExamines;
-
-import npc.NPC;
 
 public class NPCHandler {
 

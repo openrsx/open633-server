@@ -57,7 +57,7 @@ public class CombinationsD extends Dialogue {
 		    return false;
 		}
 		for (Item item : combination.getRequirements()) {
-		    if (!player.getInventory().containsItemToolBelt(item.getId(), item.getAmount())) {
+		    if (!player.getInventory().containsItem(new Item(item.getId(), item.getAmount()))) {
 			String requirmentMessage = "";
 			if (combination.getType() == PUT || combination.getType() == COMBINE || combination.getType() == CUTT)
 			    requirmentMessage = "You have run out of " + item.getName().toLowerCase() + ".";

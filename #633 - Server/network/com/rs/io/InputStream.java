@@ -197,7 +197,7 @@ public final class InputStream extends Stream {
 	@SuppressWarnings("unused")
 	public int readBigSmart() {
 
-		if (Settings.CLIENT_BUILD < 670)
+		if (Settings.CLIENT_REVISION < 670)
 			return readUnsignedShort();
 
 		if ((buffer[offset] ^ 0xffffffff) <= -1) {

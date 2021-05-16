@@ -16,19 +16,19 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
 import com.rs.game.item.ItemsContainerNew;
+import com.rs.game.npc.NPC;
 import com.rs.game.player.ChatMessage;
 import com.rs.game.player.HintIcon;
 import com.rs.game.player.Player;
 import com.rs.game.player.PublicChatMessage;
 import com.rs.game.player.QuickChatMessage;
+import com.rs.game.player.Rights;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.io.OutputStream;
 import com.rs.net.Session;
 import com.rs.utils.Huffman;
 import com.rs.utils.MapArchiveKeys;
 import com.rs.utils.Utils;
-
-import npc.NPC;
 
 public class WorldPacketsEncoder extends Encoder {
 
@@ -341,7 +341,7 @@ public class WorldPacketsEncoder extends Encoder {
 	}
 
 	public void sendPanelBoxMessage(String text) {
-		sendMessage(player.getRights() == 2 ? 99 : 0, text, null);
+		sendMessage(player.getRights() == Rights.ADMINISTRATOR ? 99 : 0, text, null);
 	}
 
 	public void sendTradeRequestMessage(Player p) {

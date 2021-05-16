@@ -254,7 +254,7 @@ public class GodWars extends Controller {
 					|| player.withinArea(2863, 5352, 2878, 5375)
 					|| player.withinArea(2916, 5317, 2937, 5332)
 					|| player.withinArea(2915, 5242, 2931, 5256);
-			int requiredKc = player.isDonator() ? 10 : 15;
+			int requiredKc = 15;
 			if (returning || killCount[index] >= requiredKc) {
 				if (returning && object.getId() == 26428)
 					sendInterfaces(1);

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import npc.Drop;
-import npc.Drops;
+import com.rs.game.npc.Drop;
+import com.rs.game.npc.Drops;
 
 public class NPCDrops {
 

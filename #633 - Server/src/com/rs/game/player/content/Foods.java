@@ -537,15 +537,15 @@ public class Foods {
 	Food food = Food.forId(item.getId());
 	if (food == null)
 	    return false;
-	if (player.getFoodDelay() > Utils.currentTimeMillis() || player.getPotDelay() > Utils.currentTimeMillis())
-	    return true;
+//	if (player.getFoodDelay() > Utils.currentTimeMillis() || player.getPotDelay() > Utils.currentTimeMillis())
+//	    return true;
 	if (!player.getControlerManager().canEat(food))
 	    return true;
 	String name = ItemDefinitions.getItemDefinitions(food.getId()).getName().toLowerCase();
 	player.getPackets().sendGameMessage("You eat the " + name + ".");
 	player.setNextAnimationNoPriority(EAT_ANIM);
 	long foodDelay = name.contains("half") ? 600 : 1800;
-	player.addFoodDelay(foodDelay);
+//	player.addFoodDelay(foodDelay);
 	player.getActionManager().addActionDelay(3);
 	//player.getActionManager().setActionDelay(player.getActionManager().getActionDelay() + 3);
 	player.getInventory().getItems().set(slot, food.getNewId() == 0 ? null : new Item(food.getNewId(), 1));

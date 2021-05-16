@@ -4,6 +4,7 @@ import com.rs.Settings;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.player.Player;
+import com.rs.game.player.Rights;
 import com.rs.game.player.Skills;
 
 public class ItemConstants {
@@ -154,7 +155,7 @@ public class ItemConstants {
 	}
 
 	public static boolean canWear(Item item, Player player) {
-		if (player.getRights() == 2)
+		if (player.getRights() == Rights.ADMINISTRATOR)
 			return true;
 		if (!item.getDefinitions().isWearItem())
 			return false;
@@ -187,44 +188,14 @@ public class ItemConstants {
 					return false;
 				}
 			}
-			if (!player.isCompletedStealingCreation()) {
-				player.getPackets()
-						.sendGameMessage(
-								"You need to complete at least once stealing creation minigame to use this cape.");
-				return false;
-			}
-			if (!player.isCapturedCastleWarsFlag()) {
-				player.getPackets()
-						.sendGameMessage(
-								"You need to capture Castle Wars Flag at least once to use this cape.");
-				return false;
-			}
-			if (!player.isCompletedFightKiln()) {
-				player.getPackets()
-						.sendGameMessage(
-								"You need to complete at least once fight kiln minigame to use this cape.");
-				return false;
-			}
-			if (!player.isWonFightPits()) {
-				player.getPackets()
-						.sendGameMessage(
-								"You need to win at least once fight pits minigame to use this cape.");
-				return false;
-			}
-			if (!player.isKilledQueenBlackDragon()) {
-				player.getPackets()
-						.sendGameMessage(
-								"You need to have killed the Queen Black Dragon atleast once to use this cape.");
-				return false;
-			}
 		} else if (item.getId() == 6570 || item.getId() == 10566
 				|| item.getId() == 10637) { // temporary
-			if (!player.isCompletedFightCaves()) {
-				player.getPackets()
-						.sendGameMessage(
-								"You need to complete at least once fight cave minigame to use this cape.");
-				return false;
-			}
+//			if (!player.isCompletedFightCaves()) {
+//				player.getPackets()
+//						.sendGameMessage(
+//								"You need to complete at least once fight cave minigame to use this cape.");
+//				return false;
+//			}
 		} else if (item.getId() == 8856) {
 			if (!WarriorsGuild.inCatapultArea(player)) {
 				player.getPackets()

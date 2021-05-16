@@ -1,4 +1,0 @@
-void script_456() {
-	cs2method_10375(1, 66781200, (object)"Exit Tutorial");
-	return;
-}

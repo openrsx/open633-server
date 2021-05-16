@@ -1,12 +1,8 @@
 package com.rs.game.player;
 
-import java.io.Serializable;
-
 import com.rs.Settings;
 
-public final class Skills implements Serializable {
-
-	private static final long serialVersionUID = -7086829989489745985L;
+public final class Skills {
 
 	public static final double MAXIMUM_EXP = 200000000;
 	public static final int ATTACK = 0, DEFENCE = 1, STRENGTH = 2,
@@ -238,8 +234,7 @@ public final class Skills implements Serializable {
 				|| skill == HITPOINTS || skill == MAGIC || skill == RANGE
 				|| skill == SUMMONING ? Settings.COMBAT_XP_RATE
 				: Settings.XP_RATE;
-		exp *= player.isExtremeDonator() ? rate + 2
-				: player.isDonator() ? rate + 1 : rate;
+		exp *= rate;
 		return addXpNormal(skill, exp);
 	}
 
@@ -247,8 +242,6 @@ public final class Skills implements Serializable {
 		player.getControlerManager().trackXP(skill, (int) exp);
 		if (player.isXpLocked())
 			return 0;
-		if (player.getAuraManager().usingWisdom())
-			exp *= 1.025;
 		if (Settings.XP_BONUS_ENABLED) {
 			double newexp = exp * getXpBonusMultiplier();
 			xpBonusTrack += newexp - exp;
