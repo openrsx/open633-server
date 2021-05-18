@@ -6,7 +6,7 @@
 [license]: https://github.com/rsmod/rsmod/blob/master/LICENSE.md
 [discord]: https://discord.gg/GkYq6tSb6e
 [patch]: https://oldschool.runescape.wiki/w/Update:God_Wars_Instancing_and_Soul_Wars_Improvements
-[rev-badge]: https://img.shields.io/badge/revision-667-important
+[rev-badge]: https://img.shields.io/badge/revision-633-important
 [license-badge]: https://img.shields.io/badge/license-ISC-informational
 [discord-badge]: https://img.shields.io/discord/238151952121331712?color=%237289da&logo=discord
 
