@@ -1,1 +1,0 @@
-//use: Object type rotation - x y plane boolean clip
