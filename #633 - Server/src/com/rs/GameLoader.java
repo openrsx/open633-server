@@ -13,6 +13,7 @@ import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.controllers.ControlerHandler;
 import com.rs.game.player.dialogues.DialogueHandler;
 import com.rs.net.ServerChannelHandler;
+import com.rs.plugin.InventoryDispatcher;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utils.Censor;
 import com.rs.utils.EquipData;
@@ -113,6 +114,7 @@ public class GameLoader {
 		getBackgroundLoader().submit(() -> {
 			GsonHandler.initialize();
 			RSInterfaceDispatcher.load();
+			InventoryDispatcher.load();
 			return null;
 		});
 	}

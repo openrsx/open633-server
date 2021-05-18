@@ -38,14 +38,15 @@ import com.rs.game.player.controllers.GodWars;
 import com.rs.game.player.controllers.JailControler;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.player.controllers.ZGDControler;
+import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.decoders.WorldPacketsDecoder;
-import com.rs.net.decoders.handlers.ButtonHandler;
 import com.rs.net.encoders.WorldPacketsEncoder;
+import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utils.IsaacKeyPair;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
@@ -75,6 +76,7 @@ public class Player extends Entity {
 	private transient IsaacKeyPair isaacKeyPair;
 	private transient Pet pet;
 	private transient VarsManager varsManager;
+	private transient CoordsEvent coordsEvent;
 
 	/**
 	 * The amount of authority this player has over others.
@@ -364,6 +366,7 @@ public class Player extends Entity {
 		if (stopInterfaces)
 			closeInterfaces();
 		if (stopWalk) {
+			coordsEvent = null;
 			resetWalkSteps();
 		}
 		if (stopActions)
@@ -449,13 +452,15 @@ public class Player extends Entity {
 		controlerManager.process();
 		if (isDead())
 			return;
-		if (musicsManager.musicEnded())
-			musicsManager.replayMusic();
-		if (hasSkull()) {
-			skullDelay--;
-			if (!hasSkull())
-				appearence.generateAppearenceData();
-		}
+//		if (musicsManager.musicEnded())
+//			musicsManager.replayMusic();
+//		if (hasSkull()) {
+//			skullDelay--;
+//			if (!hasSkull())
+//				appearence.generateAppearenceData();
+//		}
+		if (coordsEvent != null && coordsEvent.processEvent(this))
+			coordsEvent = null;
 	}
 
 	@Override
@@ -2215,7 +2220,7 @@ public class Player extends Entity {
 			return;
 		}
 		if (this.getSwitchItemCache().size() > 0) {
-			ButtonHandler.submitSpecialRequest(this);
+			RSInterfaceDispatcher.submitSpecialRequest(this);
 			return;
 		}
 		switch (weaponId) {
@@ -2528,5 +2533,9 @@ public class Player extends Entity {
 	 */
 	public void setRights(Rights rights) {
 		this.rights = rights;
+	}
+
+	public void setCoordsEvent(CoordsEvent coordsEvent) {
+		this.coordsEvent = coordsEvent;
 	}
 }
