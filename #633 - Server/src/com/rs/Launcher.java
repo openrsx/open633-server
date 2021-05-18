@@ -32,7 +32,7 @@ public class Launcher {
 		Settings.DEBUG = Boolean.parseBoolean(args[1]);
 		long currentTime = Utils.currentTimeMillis();
 		
-		GameLoader.get().load();
+		GameLoader.get().getBackgroundLoader().waitForPendingTasks().shutdown();
 		
 		Logger.log("Launcher", "Server took "
 				+ (Utils.currentTimeMillis() - currentTime)

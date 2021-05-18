@@ -538,10 +538,9 @@ public class Player extends Entity {
 		refreshOtherChatsSetup();
 		sendRunButtonConfig();
 		getPackets().sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
-		Settings.STAFF.entrySet().forEach(staff -> {
-			if (getUsername().equalsIgnoreCase(staff.getKey()))
-				setRights(staff.getValue());
-		});
+		
+		Settings.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> setRights(staff.getValue()));
+		
 		sendDefaultPlayersOptions();
 		checkMultiArea();
 		inventory.init();

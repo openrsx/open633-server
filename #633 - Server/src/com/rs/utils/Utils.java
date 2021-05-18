@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import com.rs.Settings;
@@ -21,6 +22,10 @@ import com.rs.cache.Cache;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
+import com.rs.plugin.listener.RSInterface;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 
 public final class Utils {
 
@@ -962,4 +967,25 @@ public final class Utils {
 		return true;
 	}
 
+		/**
+	 * Gets all of the classes in a directory
+	 * @param directory The directory to iterate through
+	 * @return The list of classes
+	 */
+	public static ObjectList<Object> getClassesInDirectory(String directory) {
+		ObjectList<Object> classes = new ObjectArrayList<>();
+		for(File file : new File("./bin/" + directory.replace(".", "/")).listFiles()) {
+			if(file.getName().contains("$")) {
+				continue;
+			}
+			try {
+				@SuppressWarnings("deprecation")
+				Object objectEvent = (Class.forName(directory + "." + file.getName().replace(".class", "")).newInstance());
+				classes.add(objectEvent);
+			} catch(InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+				//e.printStackTrace();
+			}
+		}
+		return classes;
+	}
 }

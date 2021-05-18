@@ -3,7 +3,6 @@ package com.rs.net.decoders.handlers;
 import java.util.HashMap;
 import java.util.TimerTask;
 
-import com.rs.Settings;
 import com.rs.cores.CoresManager;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
@@ -13,60 +12,10 @@ import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
-import com.rs.io.InputStream;
 import com.rs.utils.Logger;
-import com.rs.utils.Utils;
 
 public class ButtonHandler {
-
-	public static void handleButtons(final Player player, InputStream stream,
-			final int packetId) {
-		int interfaceHash = stream.readInt();
-		int interfaceId = interfaceHash >> 16;
-		if (Utils.getInterfaceDefinitionsSize() <= interfaceId) {
-			// hack, or server error or client error
-			// player.getSession().getChannel().close();
-			if (Settings.DEBUG) {
-				System.out.println("BLOCK 1 " + packetId + "," + interfaceId
-						+ "," + (interfaceHash & 0xFFFF));
-			}
-			return;
-		}
-		// cant use inter while locked, temporarly
-		if (player.isDead() || player.isLocked()
-				|| !player.getInterfaceManager().containsInterface(interfaceId)) {
-			if (Settings.DEBUG) {
-				System.out.println("BLOCK 2 " + packetId + "," + interfaceId
-						+ "," + (interfaceHash & 0xFFFF));
-			}
-			return;
-		}
-		final int componentId = interfaceHash - (interfaceId << 16);
-		if (componentId != 65535
-				&& Utils.getInterfaceDefinitionsComponentsSize(interfaceId) <= componentId) {
-			// hack, or server error or client error
-			// player.getSession().getChannel().close();
-			if (Settings.DEBUG) {
-				System.out.println("BLOCK 3 " + packetId + "," + interfaceId
-						+ "," + componentId);
-			}
-			return;
-		}
-		final int slotId2 = stream.readUnsignedShortLE128();// item slot?
-		final int slotId = stream.readUnsignedShortLE128();
-		if (Settings.DEBUG) {
-			System.out.println(packetId + "," + interfaceId + "," + componentId
-					+ "," + slotId + "," + slotId2);
-		}
-		if (interfaceId == 182) {
-			player.logout(false);
-		}
-		if (Settings.DEBUG)
-			Logger.log("ButtonHandler", "InterfaceId " + interfaceId
-					+ ", componentId " + componentId + ", slotId " + slotId
-					+ ", slotId2 " + slotId2 + ", PacketId: " + packetId);
-	}
-
+	
 	public static void sendRemove(Player player, int slotId) {
 		if (slotId >= 15)
 			return;

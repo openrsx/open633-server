@@ -27,10 +27,10 @@ import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.io.InputStream;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
-import com.rs.net.decoders.handlers.ButtonHandler;
 import com.rs.net.decoders.handlers.InventoryOptionsHandler;
 import com.rs.net.decoders.handlers.NPCHandler;
 import com.rs.net.decoders.handlers.ObjectHandler;
+import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utils.Encrypt;
 import com.rs.utils.Huffman;
 import com.rs.utils.Logger;
@@ -1214,18 +1214,10 @@ public final class WorldPacketsDecoder extends Decoder {
 						-1, true);
 				player.getVarsManager().sendVar(1159, coordinateHash);
 			}
-		} else if (packetId == ACTION_BUTTON1_PACKET
-				|| packetId == ACTION_BUTTON2_PACKET
-				|| packetId == ACTION_BUTTON4_PACKET
-				|| packetId == ACTION_BUTTON5_PACKET
-				|| packetId == ACTION_BUTTON6_PACKET
-				|| packetId == ACTION_BUTTON7_PACKET
-				|| packetId == ACTION_BUTTON8_PACKET
-				|| packetId == ACTION_BUTTON3_PACKET
-				|| packetId == ACTION_BUTTON9_PACKET
-				|| packetId == ACTION_BUTTON10_PACKET) {
-			ButtonHandler.handleButtons(player, stream, packetId);
-		} else if (packetId == ENTER_NAME_PACKET) {
+		} else if (packetId == ACTION_BUTTON1_PACKET || packetId == ACTION_BUTTON2_PACKET || packetId == ACTION_BUTTON4_PACKET || packetId == ACTION_BUTTON5_PACKET || packetId == ACTION_BUTTON6_PACKET || packetId == ACTION_BUTTON7_PACKET || packetId == ACTION_BUTTON8_PACKET || packetId == ACTION_BUTTON3_PACKET || packetId == ACTION_BUTTON9_PACKET || packetId == ACTION_BUTTON10_PACKET) {
+			RSInterfaceDispatcher.handleButtons(player, stream, packetId);
+		} 
+		else if (packetId == ENTER_NAME_PACKET) {
 			if (!player.isRunning() || player.isDead())
 				return;
 			String value = stream.readString();
