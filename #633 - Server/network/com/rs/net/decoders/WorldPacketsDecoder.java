@@ -30,7 +30,7 @@ import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.decoders.handlers.InventoryOptionsHandler;
 import com.rs.net.decoders.handlers.NPCHandler;
-import com.rs.net.decoders.handlers.ObjectHandler;
+import com.rs.plugin.ObjectDispatcher;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utils.Encrypt;
 import com.rs.utils.Huffman;
@@ -820,7 +820,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				player.setRun(forceRun);
 			switch (interfaceId) {
 			case Inventory.INVENTORY_INTERFACE: // inventory
-				ObjectHandler.handleItemOnObject(player, object, interfaceId,
+				ObjectDispatcher.handleItemOnObject(player, object, interfaceId,
 						item);
 				break;
 			}
@@ -1053,22 +1053,21 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == NPC_CLICK1_PACKET)
 			NPCHandler.handleOption1(player, stream);
 		else if (packetId == NPC_CLICK2_PACKET)
-			System.out.println("hi");
-//			NPCHandler.handleOption2(player, stream);
+			NPCHandler.handleOption2(player, stream);
 		else if (packetId == NPC_CLICK3_PACKET)
 			NPCHandler.handleOption3(player, stream);
 		else if (packetId == NPC_CLICK4_PACKET)
 			NPCHandler.handleOption4(player, stream);
 		else if (packetId == OBJECT_CLICK1_PACKET)
-			ObjectHandler.handleOption(player, stream, 1);
+			ObjectDispatcher.handleOption(player, stream, 1);
 		else if (packetId == OBJECT_CLICK2_PACKET)
-			ObjectHandler.handleOption(player, stream, 2);
+			ObjectDispatcher.handleOption(player, stream, 2);
 		else if (packetId == OBJECT_CLICK3_PACKET)
-			ObjectHandler.handleOption(player, stream, 3);
+			ObjectDispatcher.handleOption(player, stream, 3);
 		else if (packetId == OBJECT_CLICK4_PACKET)
-			ObjectHandler.handleOption(player, stream, 4);
+			ObjectDispatcher.handleOption(player, stream, 4);
 		else if (packetId == OBJECT_CLICK5_PACKET)
-			ObjectHandler.handleOption(player, stream, 5);
+			ObjectDispatcher.handleOption(player, stream, 5);
 		else if (packetId == ITEM_TAKE_PACKET) {
 			if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
 					|| player.isDead())
@@ -1482,7 +1481,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.addLogicPacketToQueue(new LogicPacket(packetId, length,
 					stream));
 		else if (packetId == OBJECT_EXAMINE_PACKET) {
-			ObjectHandler.handleOption(player, stream, -1);
+			ObjectDispatcher.handleOption(player, stream, -1);
 		} else if (packetId == NPC_EXAMINE_PACKET) {
 			NPCHandler.handleExamine(player, stream);
 		} else if (packetId == JOIN_FRIEND_CHAT_PACKET) {

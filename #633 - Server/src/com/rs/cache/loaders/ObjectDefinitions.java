@@ -3,11 +3,15 @@ package com.rs.cache.loaders;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
+import com.rs.plugin.listener.ObjectType;
+import com.rs.plugin.wrapper.ObjectSignature;
 import com.rs.utils.Utils;
 
 @SuppressWarnings("unused")
@@ -819,6 +823,14 @@ public class ObjectDefinitions {
 			return Arrays.toString((Object[]) field.get(this));
 		}
 		return field.get(this);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public boolean getNameContaining(String value) {
+		return getName().equalsIgnoreCase(value);
 	}
 
 }
