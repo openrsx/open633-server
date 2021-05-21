@@ -15,9 +15,11 @@ import com.rs.io.InputStream;
 import com.rs.utils.ItemSpawns;
 import com.rs.utils.Logger;
 import com.rs.utils.MapArchiveKeys;
-import com.rs.utils.NPCSpawns;
+import com.rs.utils.NPCSpawning;
 import com.rs.utils.ObjectSpawns;
 import com.rs.utils.Utils;
+import com.rs.utils.json.GsonHandler;
+import com.rs.utils.json.impl.NPCAutoSpawn;
 
 public class Region {
 	public static final int[] OBJECT_SLOTS = new int[] { 0, 0, 0, 0, 1, 1, 1,
@@ -66,7 +68,7 @@ public class Region {
 							setLoadedObjectSpawns(true);
 						}
 						if (!isLoadedNPCSpawns()) {
-							loadNPCSpawns();
+							loadNPCSpawns(regionId);
 							setLoadedNPCSpawns(true);
 						}
 						if (!isLoadedItemSpawns()) {
@@ -81,8 +83,15 @@ public class Region {
 		}
 	}
 
-	private void loadNPCSpawns() {
-		NPCSpawns.loadNPCSpawns(regionId);
+	public static final void loadNPCSpawns(int regionId) {
+		NPCAutoSpawn autoSpawn = GsonHandler.getJsonLoader(NPCAutoSpawn.class);
+		List<NPCSpawning> spawns = autoSpawn.getSpawns(regionId);
+		if (spawns == null) {
+			return;
+		}
+		for (NPCSpawning spawn : spawns) {
+			World.spawnNPC(spawn.getId(), spawn.getTile(), -1, true);
+		}
 	}
 
 	private void loadObjectSpawns() {

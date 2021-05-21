@@ -542,6 +542,8 @@ public class Player extends Entity {
 		refreshPrivateChatSetup();
 		refreshOtherChatsSetup();
 		sendRunButtonConfig();
+		World.spawnNPC(1, this,
+				-1, false);
 		getPackets().sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
 		
 		Settings.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> setRights(staff.getValue()));

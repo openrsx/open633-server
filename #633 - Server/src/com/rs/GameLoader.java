@@ -28,7 +28,6 @@ import com.rs.utils.MusicHints;
 import com.rs.utils.NPCBonuses;
 import com.rs.utils.NPCCombatDefinitionsL;
 import com.rs.utils.NPCDrops;
-import com.rs.utils.NPCSpawns;
 import com.rs.utils.ObjectSpawns;
 import com.rs.utils.ShopsHandler;
 import com.rs.utils.json.GsonHandler;
@@ -91,7 +90,6 @@ public class GameLoader {
 			ItemBonuses.init();
 			Censor.init();
 			ObjectSpawns.init();
-			NPCSpawns.init();
 			NPCCombatDefinitionsL.init();
 			NPCBonuses.init();
 			NPCDrops.init();

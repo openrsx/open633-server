@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.rs.utils.json.impl.NPCAutoSpawn;
+
 /**
  * @author Tyluur <itstyluur@gmail.com>
  * @since Mar 1, 2014
@@ -45,8 +47,9 @@ public class GsonHandler {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
+	@SuppressWarnings("deprecation")
 	public static void addJsonLoaders() throws InstantiationException, IllegalAccessException {
-//		CLASSES.add(NPCAutoSpawn.class.newInstance());
+		CLASSES.add(NPCAutoSpawn.class.newInstance());
 	}
 
 	/**
