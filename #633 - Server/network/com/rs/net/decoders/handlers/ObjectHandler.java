@@ -2,23 +2,16 @@ package com.rs.net.decoders.handlers;
 
 import com.rs.Settings;
 import com.rs.cache.loaders.ObjectDefinitions;
-import com.rs.game.Animation;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
-import com.rs.utils.Logger;
 import com.rs.utils.Utils;
 
 public final class ObjectHandler {
-
-	private ObjectHandler() {
-
-	}
 
 	public static void handleOption(final Player player, InputStream stream,
 			int option) {
@@ -29,22 +22,27 @@ public final class ObjectHandler {
 				|| player.getEmotesManager().getNextEmoteEnd() >= Utils
 						.currentTimeMillis())
 			return;
-		boolean forceRun = stream.readUnsignedByte128() == 1;
-		final int id = stream.readIntLE();
+
+		/**
+		 * This order matters, like "H", then "e, "l," "l", "o".
+		 * Otherwise it won't make sense. So keep in mind never to 
+		 * change this order.
+		 */
 		int x = stream.readUnsignedShortLE();
-		int y = stream.readUnsignedShortLE128();
+        int y = stream.readUnsignedShortLE();
+        boolean forceRun = stream.readUnsignedByte128() == 1;
+        final int id = stream.readUnsignedShortLE();
+        
+        if (Settings.DEBUG)
+        	System.out.println("id " + id +" x " + x + " y " + y + " run? " + forceRun);
 		final WorldTile tile = new WorldTile(x, y, player.getPlane());
-		final int regionId = tile.getRegionId();
-		player.getPackets().sendMessage(0, "First option click packet! (Tile: " + tile.getX() + " " + tile.getY() + " " + regionId + ")", player);
-		if (player.getMapRegionsIds().contains(regionId)) {
-			System.out.println("no");
-			return;
-		}
-			
+		
 		WorldObject mapObject = World.getObjectWithId(tile, id);
 		if (mapObject == null || mapObject.getId() != id)
 			return;
+		
 		final WorldObject object = mapObject;
+		
 		player.stopAll();
 		if (forceRun)
 			player.setRun(forceRun);
@@ -64,14 +62,13 @@ public final class ObjectHandler {
 		case 5:
 			handleOption5(player, object);
 			break;
-		case -1:
-			handleOptionExamine(player, object);
+		case -1: //No option is registered, maybe a packet is sent or something.
+			handleOptionExamine(player, stream, object);
 			break;
 		}
 	}
 
-	private static void handleOption1(final Player player,
-			final WorldObject object) {
+	private static void handleOption1(final Player player, final WorldObject object) {
 		final ObjectDefinitions objectDef = object.getDefinitions();
 		final int id = object.getId();
 		final int x = object.getX();
@@ -87,19 +84,8 @@ public final class ObjectHandler {
 			}, true));
 			return;
 		}
-	}
-
-	public static void renewSummoningPoints(Player player) {
-		int summonLevel = player.getSkills().getLevelForXp(Skills.SUMMONING);
-		if (player.getSkills().getLevel(Skills.SUMMONING) < summonLevel) {
-			player.lock(3);
-			player.setNextAnimation(new Animation(8502));
-			player.getSkills().set(Skills.SUMMONING, summonLevel);
-			player.getPackets().sendGameMessage(
-					"You have recharged your Summoning points.", true);
-		} else
-			player.getPackets().sendGameMessage(
-					"You already have full Summoning points.");
+		if (object.getDefinitions().name.equalsIgnoreCase("Staircase"))
+			System.out.println("HEY");
 	}
 
 	private static void handleOption2(final Player player,
@@ -128,30 +114,16 @@ public final class ObjectHandler {
 
 	}
 
-	private static void handleOptionExamine(final Player player,
-			final WorldObject object) {
-		player.getPackets().sendObjectMessage(0, 15263739, object,
-				"It's a " + object.getDefinitions().name + ".");
+	private static void handleOptionExamine(final Player player, InputStream stream, WorldObject object) {
+		System.out.println("?");
+		
+		int x = stream.readUnsignedShortLE();
+        int y = stream.readUnsignedShortLE();
+        boolean forceRun = stream.readUnsignedByte128() == 1;
+        final int id = stream.readUnsignedShortLE();
+        
+		player.getPackets().sendGameMessage("It's a " + ObjectDefinitions.getObjectDefinitions(id).name + ".");
 		player.getPackets().sendResetMinimapFlag();
-		if (Settings.DEBUG)
-			Logger.log(
-					"ObjectHandler",
-					"examined object id : " + object.getId() + ", "
-							+ object.getX() + ", " + object.getY() + ", "
-							+ object.getPlane() + ", " + object.getType()
-							+ ", " + object.getRotation() + ", "
-							+ object.getDefinitions().name);
-	}
-
-	private static void slashWeb(Player player, WorldObject object) {
-		if (Utils.getRandom(1) == 0) {
-			World.spawnObjectTemporary(new WorldObject(object.getId() + 1,
-					object.getType(), object.getRotation(), object.getX(),
-					object.getY(), object.getPlane()), 60000);
-			player.getPackets().sendGameMessage("You slash through the web!");
-		} else
-			player.getPackets().sendGameMessage(
-					"You fail to cut through the web.");
 	}
 	
 	public static void handleItemOnObject(final Player player,
