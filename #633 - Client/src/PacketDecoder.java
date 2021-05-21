@@ -229,7 +229,7 @@ final class PacketDecoder extends Class11_Sub30 implements ImageProducer {
 									.method1369((byte) 26, (long) i_5_));
 							if (class11_sub25 != null) {
 								Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
-								NPCDefinitions class215 = (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501);
+								NPCDefinitions class215 = (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions);
 								if (((NPCDefinitions) class215).anIntArray2950 != null)
 									class215 = (class215.method1375((byte) 29, Class11_Sub26.aClass97_6296));
 								if (class215 != null) {
@@ -931,7 +931,7 @@ final class PacketDecoder extends Class11_Sub30 implements ImageProducer {
 			if (class42 == null) {
 				if (class376_sub7_sub5_sub5_sub2 != null) {
 					((Class11_Sub19) class11_sub19).aClass376_Sub7_Sub5_Sub5_Sub2_5844 = class376_sub7_sub5_sub5_sub2;
-					NPCDefinitions class215 = (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501);
+					NPCDefinitions class215 = (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions);
 					if (((NPCDefinitions) class215).anIntArray2950 != null) {
 						((Class11_Sub19) class11_sub19).aBool5831 = true;
 						class215 = class215.method1375((byte) 29, Class11_Sub26.aClass97_6296);

@@ -488,7 +488,7 @@ final class Class124 {
 					Class11_Sub3.aClass25_5113, Class11_Sub15.aClass370_5605,
 					(byte) -89);
 			((Class11_Sub10) class11_sub10).aClass11_Sub20_Sub1_5397.writeByte(
-					0, -1528071456);
+					i, -1528071456);
 			Class79.method541(class11_sub10, -20);
 		} catch (RuntimeException runtimeexception) {
 			throw Class205.method1298(runtimeexception, "dv.I(" + i + ')');

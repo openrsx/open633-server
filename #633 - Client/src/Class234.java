@@ -105,14 +105,14 @@ abstract class Class234 {
 		int i = 10;
 		int i_4_ = 30;
 		if (Class316.anInt4186 != 0 && Class91_Sub2.aClass107_7701 != null) {
-			Class87.aClass163_1210.K(Applet_Sub1.anIntArray10472);
+			Class87.aClass163_1210.K(RSApplet.anIntArray10472);
 			for (int i_5_ = 0; i_5_ < Class11_Sub45_Sub1_Sub2.anIntArray9878.length; i_5_++)
 				Class87.aClass163_1210
 						.method1022(
 								121,
 								(Class11_Sub45_Sub1_Sub2.anIntArray9878[i_5_] + Class2_Sub8.anIntArray6861[i_5_]),
-								Applet_Sub1.anIntArray10472[1],
-								(Applet_Sub1.anIntArray10472[3] - Applet_Sub1.anIntArray10472[1]),
+								RSApplet.anIntArray10472[1],
+								(RSApplet.anIntArray10472[3] - RSApplet.anIntArray10472[1]),
 								-256);
 			for (int i_6_ = 0; i_6_ < Class108_Sub16.anInt6551; i_6_++) {
 				Class203 class203 = Class93.aClass203Array1248[i_6_];

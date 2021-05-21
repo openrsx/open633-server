@@ -117,7 +117,7 @@ final class Class183 {
 								if (class376_sub7_sub5_sub5_sub2
 										.method4007(92160000)
 										&& ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).aByte7047) == (((Class376_Sub7) (Class11_Sub2_Sub8.myPlayer)).aByte7047))) {
-									NPCDefinitions class215 = (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501);
+									NPCDefinitions class215 = (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions);
 									if (class215 != null
 											&& (((NPCDefinitions) class215).anIntArray2950) != null)
 										class215 = (class215.method1375(

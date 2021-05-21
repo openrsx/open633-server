@@ -616,7 +616,7 @@ final class IncomingPacketDecoder {
 				Class236_Sub9.incomingPacket = null;
 				return true;
 			}
-			if (Class236_Sub9.incomingPacket == Applet_Sub1.aClass160_10466) {
+			if (Class236_Sub9.incomingPacket == RSApplet.aClass160_10466) {
 				int i_74_ = Class3.packetStream.readUnsignedShort((byte) -65);
 				String string = Class3.packetStream.readString(-1);
 				Class245.method1545(false);
@@ -1037,7 +1037,7 @@ final class IncomingPacketDecoder {
 				Class236_Sub9.incomingPacket = null;
 				return true;
 			}
-			if (Class236_Sub9.incomingPacket == Applet_Sub1.aClass160_10462) {
+			if (Class236_Sub9.incomingPacket == RSApplet.aClass160_10462) {
 				Class195_Sub1.decodeReceivedMapRegions(28123);
 				Class236_Sub9.incomingPacket = null;
 				return false;

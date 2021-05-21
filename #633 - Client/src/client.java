@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
-public final class client extends Applet_Sub1 {
+public final class client extends RSApplet {
 	static OutgoingPacket aClass370_10513 = new OutgoingPacket(47, 3);
 	static int anInt10514;
 	static int anInt10515;
@@ -1453,7 +1453,7 @@ public final class client extends Applet_Sub1 {
 			for (int i_99_ = 0; ((Class108_Sub17.anInt6619 ^ 0xffffffff) < (i_99_ ^ 0xffffffff)); i_99_++) {
 				Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_99_]).mob);
 				if (class376_sub7_sub5_sub5_sub2 != null) {
-					byte i_100_ = (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).aByte2926);
+					byte i_100_ = (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).aByte2926);
 					if ((0x1 & i_100_) != 0) {
 						int i_101_ = class376_sub7_sub5_sub5_sub2
 								.method3968((byte) 127);
@@ -1713,7 +1713,7 @@ public final class client extends Applet_Sub1 {
 			Class286.method1766(-3053);
 			Class11_Sub45.method3185(0);
 			Class38.method336((byte) -121);
-			Applet_Sub1.method4003((byte) -49);
+			RSApplet.method4003((byte) -49);
 			Class264.method1676((byte) 125);
 			Class307.method1884(-25086);
 			Class347.method2095(-12320);
@@ -3074,7 +3074,7 @@ public final class client extends Applet_Sub1 {
 					.method1369((byte) 26,
 							(long) Class11_Sub52.anIntArray8054[i_142_]))).mob);
 			if (!class376_sub7_sub5_sub5_sub2.method4007(92160000)
-					|| !((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501
+					|| !((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions
 							.method1383(0, Class11_Sub26.aClass97_6296))
 				((Actor) class376_sub7_sub5_sub5_sub2).anInt10346 = -1;
 			else {
@@ -3093,19 +3093,19 @@ public final class client extends Applet_Sub1 {
 					i_143_ += 5 - class376_sub7_sub5_sub5_sub2
 							.method3968((byte) 127) << 2;
 					if (Class373.anInt4881 == 0) {
-						if (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).aBool2909)
+						if (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).aBool2909)
 							i_143_ += 64;
 						else
 							i_143_ += 128;
 					} else if (Class373.anInt4881 == 1) {
-						if (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).aBool2909)
+						if (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).aBool2909)
 							i_143_ += 32;
 						else
 							i_143_ += 64;
 					}
-					if (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).aBool2946)
+					if (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).aBool2946)
 						i_143_ += 1024;
-					else if (!((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).aBool2954)
+					else if (!((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).aBool2954)
 						i_143_ += 256;
 					((Actor) class376_sub7_sub5_sub5_sub2).anInt10346 = i_143_ + 1;
 				}

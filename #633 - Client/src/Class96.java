@@ -81,7 +81,7 @@ final class Class96 {
 			PacketDecoder.anInt8963 = 0;
 			Class11_Sub6_Sub2.anInt8910 = 0;
 			Class163_Sub2_Sub1.anInt8595 = 0;
-			Applet_Sub1.anInt10469 = 0;
+			RSApplet.anInt10469 = 0;
 			Class204.anInt2738 = 0;
 			Class94.anInt1253 = 0;
 			Class131.anInt1832 = 0;
@@ -144,7 +144,7 @@ final class Class96 {
 			Class243.anInt3298 = 0;
 			Class58_Sub1.anInt7288 = 0;
 			Class163_Sub3.anInt8106 = 0;
-			Applet_Sub1.anInt10442 = 0;
+			RSApplet.anInt10442 = 0;
 			Class163_Sub3.anInt8155 = 0;
 			Class338.anInt4480 = 0;
 			Class11_Sub46_Sub1.anInt8829 = 0;
@@ -497,7 +497,7 @@ final class Class96 {
 			Class2_Sub1.anInt5059 = 0;
 			Stream.anInt5916 = 0;
 			Class163_Sub3.anInt8148 = 0;
-			Applet_Sub1.anInt10468 = 0;
+			RSApplet.anInt10468 = 0;
 			Class11_Sub2_Sub5.anInt8556 = 0;
 			Class11_Sub27.anInt6553 = 0;
 			Class234_Sub1_Sub1.anInt9725 = 0;
@@ -685,7 +685,7 @@ final class Class96 {
 			Class11_Sub2_Sub38.anInt9793 = 0;
 			Class71.anInt992 = 0;
 			Class108_Sub11.anInt6145 = 0;
-			Applet_Sub1.anInt10440 = 0;
+			RSApplet.anInt10440 = 0;
 			Class33_Sub3.anInt7178 = 0;
 			Class142.anInt1923 = 0;
 			Class76.anInt1039 = 0;
@@ -694,7 +694,7 @@ final class Class96 {
 			Class11_Sub45_Sub12.anInt9182 = 0;
 			Class154.anInt2031 = 0;
 			Class207.anInt2793 = 0;
-			Applet_Sub1.anInt10434 = 0;
+			RSApplet.anInt10434 = 0;
 			Class92.anInt1244 = 0;
 			Class378.anInt4943 = 0;
 			Class2_Sub10.anInt7922 = 0;
@@ -809,7 +809,7 @@ final class Class96 {
 			Class124.anInt1670 = 0;
 			Class108_Sub18.anInt6931 = 0;
 			Class11_Sub44.anInt7772 = 0;
-			Applet_Sub1.anInt10448 = 0;
+			RSApplet.anInt10448 = 0;
 			Class335_Sub3_Sub1.anInt9413 = 0;
 			Class321_Sub1.anInt6629 = 0;
 			Class11_Sub2_Sub18.anInt9053 = 0;
@@ -823,7 +823,7 @@ final class Class96 {
 			Class237.anInt3231 = 0;
 			NPCDefinitions.anInt2955 = 0;
 			Class75_Sub1.anInt5515 = 0;
-			Applet_Sub1.anInt10436 = 0;
+			RSApplet.anInt10436 = 0;
 			Class12_Sub1.anInt5132 = 0;
 			Class163_Sub3.anInt8223 = 0;
 			Class11_Sub51.anInt8037 = 0;
@@ -957,7 +957,7 @@ final class Class96 {
 			Stream.anInt5955 = 0;
 			Class108_Sub12.anInt6227 = 0;
 			Class89.anInt1222 = 0;
-			Applet_Sub1.anInt10461 = 0;
+			RSApplet.anInt10461 = 0;
 			Class216.anInt3001 = 0;
 			Class11_Sub45_Sub21.anInt9778 = 0;
 			Class11_Sub16.anInt5671 = 0;
@@ -1208,7 +1208,7 @@ final class Class96 {
 			Class322.anInt4306 = 0;
 			Class101.anInt1348 = 0;
 			Class223.anInt3049 = 0;
-			Applet_Sub1.anInt10439 = 0;
+			RSApplet.anInt10439 = 0;
 			Class243.anInt3299 = 0;
 			IncomingPacket.anInt2076 = 0;
 			Class115.anInt1572 = 0;
@@ -1277,7 +1277,7 @@ final class Class96 {
 			Class108_Sub23.anInt7763 = 0;
 			Class163_Sub3.anInt8255 = 0;
 			Class338.anInt4460 = 0;
-			Applet_Sub1.anInt10451 = 0;
+			RSApplet.anInt10451 = 0;
 			Class98.anInt1307 = 0;
 			Class65.anInt929 = 0;
 			Class108_Sub4.anInt5382 = 0;
@@ -1337,7 +1337,7 @@ final class Class96 {
 			Class245.anInt3316 = 0;
 			Class11_Sub45_Sub14.anInt9310 = 0;
 			Class337.anInt4455 = 0;
-			Applet_Sub1.anInt10460 = 0;
+			RSApplet.anInt10460 = 0;
 			Class124.anInt1675 = 0;
 			Class307.anInt4118 = 0;
 			Class251_Sub2.anInt5431 = 0;
@@ -1495,7 +1495,7 @@ final class Class96 {
 			Class343.anInt4560 = 0;
 			Class321_Sub3_Sub1.anInt9262 = 0;
 			Class121.anInt1638 = 0;
-			Applet_Sub1.anInt10447 = 0;
+			RSApplet.anInt10447 = 0;
 			Class163_Sub2_Sub1.anInt8601 = 0;
 			Class206.anInt2770 = 0;
 			Class376_Sub7_Sub2.anInt9240 = 0;
@@ -1511,7 +1511,7 @@ final class Class96 {
 			Class206_Sub2.anInt6418 = 0;
 			Class376_Sub7_Sub4_Sub2.anInt10039 = 0;
 			Class323.anInt4317 = 0;
-			Applet_Sub1.anInt10455 = 0;
+			RSApplet.anInt10455 = 0;
 			Class11.anInt87 = 0;
 			Class11_Sub43.anInt7333 = 0;
 			Class321_Sub3.anInt7026 = 0;
@@ -1738,7 +1738,7 @@ final class Class96 {
 			Class91_Sub3_Sub1.anInt9336 = 0;
 			IncomingPacketDecoder.anInt2091 = 0;
 			Class171.anInt2196 = 0;
-			Applet_Sub1.anInt10457 = 0;
+			RSApplet.anInt10457 = 0;
 			Class163_Sub2_Sub1.anInt8597 = 0;
 			Class108_Sub13.anInt6255 = 0;
 			Class280.anInt3777 = 0;
@@ -1847,7 +1847,7 @@ final class Class96 {
 			Class163_Sub3.anInt8079 = 0;
 			Class333.anInt4410 = 0;
 			Class201.anInt2712 = 0;
-			Applet_Sub1.anInt10441 = 0;
+			RSApplet.anInt10441 = 0;
 			Class376_Sub7_Sub3.anInt9272 = 0;
 			Class33_Sub3.anInt7177 = 0;
 			Class163_Sub3.anInt8111 = 0;
@@ -1879,12 +1879,12 @@ final class Class96 {
 				aClass234_1289 = null;
 			Class146.anInt1986 = 0;
 			Class11_Sub12_Sub1.anInt8826 = 0;
-			Applet_Sub1.anInt10463 = 0;
+			RSApplet.anInt10463 = 0;
 			Class187.anInt2392 = 0;
 			Class163_Sub2.anInt7517 = 0;
 			Class163_Sub2.anInt7511 = 0;
 			Class376_Sub7_Sub3_Sub2.anInt10150 = 0;
-			Applet_Sub1.anInt10459 = 0;
+			RSApplet.anInt10459 = 0;
 			Class33_Sub3.anInt7189 = 0;
 			Class146.anInt1973 = 0;
 			Class11_Sub2_Sub7.anInt8736 = 0;
@@ -1928,7 +1928,7 @@ final class Class96 {
 			Class108_Sub4.anInt5380 = 0;
 			Class71.anInt993 = 0;
 			Stream.anInt5904 = 0;
-			Applet_Sub1.anInt10470 = 0;
+			RSApplet.anInt10470 = 0;
 			Stream.anInt5914 = 0;
 			Class163_Sub3.anInt8074 = 0;
 			Class163_Sub2.anInt7532 = 0;
@@ -2571,7 +2571,7 @@ final class Class96 {
 			Class11_Sub35.anInt7013 = 0;
 			Class19_Sub1.anInt5753 = 0;
 			Class79.anInt1069 = 0;
-			Applet_Sub1.anInt10458 = 0;
+			RSApplet.anInt10458 = 0;
 			Class108_Sub20.anInt7232 = 0;
 			Class239_Sub2.anInt7914 = 0;
 			Class4.anInt31 = 0;
@@ -2643,7 +2643,7 @@ final class Class96 {
 			Class11_Sub2_Sub2.anInt8456 = 0;
 			Class163_Sub2_Sub1.anInt8582 = 0;
 			Class236_Sub2.anInt6213 = 0;
-			Applet_Sub1.anInt10452 = 0;
+			RSApplet.anInt10452 = 0;
 			Class26.anInt271 = 0;
 			Class91.anInt1236 = 0;
 			Class108_Sub12.anInt6223 = 0;
@@ -2705,7 +2705,7 @@ final class Class96 {
 			Class149.anInt1999 = 0;
 			Class340.anInt4491 = 0;
 			Class258.anInt3524 = 0;
-			Applet_Sub1.anInt10465 = 0;
+			RSApplet.anInt10465 = 0;
 			Class239_Sub2.anInt7913 = 0;
 			Class206_Sub2.anInt6435 = 0;
 			Class251_Sub2.anInt5428 = 0;
@@ -2782,12 +2782,12 @@ final class Class96 {
 			Class12_Sub3.anInt6450 = 0;
 			Class332.anInt4406 = 0;
 			Class245.anInt3315 = 0;
-			Applet_Sub1.anInt10446 = 0;
+			RSApplet.anInt10446 = 0;
 			Class235.anInt3213 = 0;
 			anInt1283 = 0;
 			Class94_Sub1.anInt5227 = 0;
 			Class163_Sub3.anInt8162 = 0;
-			Applet_Sub1.anInt10435 = 0;
+			RSApplet.anInt10435 = 0;
 			Class163_Sub2.anInt7443 = 0;
 			Class273.anInt3682 = 0;
 			Class191.anInt2454 = 0;
@@ -2853,7 +2853,7 @@ final class Class96 {
 			Class365.anInt4796 = 0;
 			Class378.anInt4945 = 0;
 			Class108_Sub5.anInt5408 = 0;
-			Applet_Sub1.anInt10433 = 0;
+			RSApplet.anInt10433 = 0;
 			Stream.anInt5896 = 0;
 			Class236_Sub6.anInt6969 = 0;
 			Class11_Sub2.anInt5040 = 0;
@@ -3164,7 +3164,7 @@ final class Class96 {
 			Class332.anInt4405 = 0;
 			Class376_Sub7_Sub1.anInt8792 = 0;
 			Class163_Sub2.anInt7487 = 0;
-			Applet_Sub1.anInt10456 = 0;
+			RSApplet.anInt10456 = 0;
 			Class301.anInt4055 = 0;
 			Stream.anInt5897 = 0;
 			Class11_Sub46.anInt7979 = 0;
@@ -3196,10 +3196,10 @@ final class Class96 {
 			Class86.anInt1187 = 0;
 			Npc.anInt10504 = 0;
 			Class335.anInt4426 = 0;
-			Applet_Sub1.anInt10450 = 0;
+			RSApplet.anInt10450 = 0;
 			Class146.anInt1989 = 0;
 			Class180.anInt2330 = 0;
-			Applet_Sub1.anInt10432 = 0;
+			RSApplet.anInt10432 = 0;
 			Class131.anInt1826 = 0;
 			Player.anInt10387 = 0;
 			Stream.anInt5918 = 0;
@@ -3356,7 +3356,7 @@ final class Class96 {
 			Class208.anInt2806 = 0;
 			Class12_Sub3.anInt6468 = 0;
 			Class321_Sub3.anInt7027 = 0;
-			Applet_Sub1.anInt10438 = 0;
+			RSApplet.anInt10438 = 0;
 			Class163_Sub3.anInt8077 = 0;
 			Class108_Sub23.anInt7768 = 0;
 			Class33_Sub1.anInt6194 = 0;
@@ -3395,7 +3395,7 @@ final class Class96 {
 			Class124.anInt1669 = 0;
 			Class195.anInt2651 = 0;
 			Class203.anInt2721 = 0;
-			Applet_Sub1.anInt10445 = 0;
+			RSApplet.anInt10445 = 0;
 			Class321.anInt4279 = 0;
 			Class221.anInt3038 = 0;
 			Class28.anInt383 = 0;
@@ -3503,12 +3503,12 @@ final class Class96 {
 			Class75_Sub2.anInt7163 = 0;
 			Class108_Sub14.anInt6277 = 0;
 			Class11_Sub2_Sub3.anInt8479 = 0;
-			Applet_Sub1.anInt10444 = 0;
+			RSApplet.anInt10444 = 0;
 			Class180.anInt2325 = 0;
 			Class11_Sub11.anInt5402 = 0;
 			Class33_Sub1.anInt6195 = 0;
 			NPCDefinitions.anInt2907 = 0;
-			Applet_Sub1.anInt10443 = 0;
+			RSApplet.anInt10443 = 0;
 			Class11_Sub6_Sub5.anInt9585 = 0;
 			Class163_Sub3.anInt8192 = 0;
 			Class224.anInt3074 = 0;
@@ -3593,7 +3593,7 @@ final class Class96 {
 			Class11_Sub48.anInt7995 = 0;
 			client.anInt10524 = 0;
 			Class58_Sub2.anInt7843 = 0;
-			Applet_Sub1.anInt10464 = 0;
+			RSApplet.anInt10464 = 0;
 			Class58_Sub2.anInt7844 = 0;
 			Class163_Sub3.anInt8139 = 0;
 			Class374.anInt4889 = 0;
@@ -3739,7 +3739,7 @@ final class Class96 {
 			Class380.anInt4958 = 0;
 			Class346.anInt4586 = 0;
 			Class108_Sub12.anInt6231 = 0;
-			Applet_Sub1.anInt10453 = 0;
+			RSApplet.anInt10453 = 0;
 			Class199.anInt2690 = 0;
 			Class2.anInt11 = 0;
 			Class119.anInt1614 = 0;
@@ -3787,7 +3787,7 @@ final class Class96 {
 			Class11_Sub2_Sub16.anInt9035 = 0;
 			Class163_Sub3.anInt8059 = 0;
 			Class33_Sub2.anInt6664 = 0;
-			Applet_Sub1.anInt10437 = 0;
+			RSApplet.anInt10437 = 0;
 			Class376_Sub7_Sub5_Sub1.anInt9895 = 0;
 			Class11_Sub39.anInt7201 = 0;
 			Class358.anInt4672 = 0;
@@ -3978,7 +3978,7 @@ final class Class96 {
 			Class376_Sub7_Sub5_Sub2.anInt9983 = 0;
 			Stream.anInt5940 = 0;
 			Class163_Sub2.anInt7452 = 0;
-			Applet_Sub1.anInt10467 = 0;
+			RSApplet.anInt10467 = 0;
 			Class108_Sub28.anInt7898 = 0;
 			Class376_Sub7_Sub2_Sub1.anInt10203 = 0;
 			Class111.anInt1514 = 0;

@@ -155,15 +155,15 @@ final class Class11_Sub47 extends Class11 {
 						Class108_Sub29.method3231(npc, i_22_, is, (byte) 99);
 					}
 					if ((0x8 & mask ^ 0xffffffff) != -1) { //12 transform
-						if (npc.aClass215_10501.method1376(106)) {
+						if (npc.mobDefinitions.method1376(106)) {
 							Class82.method566(-119, npc);
 						}
 						npc.method4005(-1, (Class11_Sub19.aClass318_5817
 								.getNPCDefinitions(Class3.packetStream
 										.readUnsignedShort128(true), false)));
-						npc.method3954(-21, npc.aClass215_10501.anInt2975);
-						npc.anInt10320 = npc.aClass215_10501.anInt2959 << 3;
-						if (((Npc) npc).aClass215_10501.method1376(116))
+						npc.method3954(-21, npc.mobDefinitions.anInt2975);
+						npc.anInt10320 = npc.mobDefinitions.anInt2959 << 3;
+						if (((Npc) npc).mobDefinitions.method1376(116))
 							PacketDecoder
 									.method3530(
 											null,

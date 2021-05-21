@@ -64,7 +64,7 @@ final class Class48 implements Interface14 {
 			if (bool != false)
 				return null;
 			if (Class11_Sub39.aClass79_7216 == class79
-					|| Applet_Sub1.aClass79_10471 == class79) {
+					|| RSApplet.aClass79_10471 == class79) {
 				Class249 class249 = Packet.aClass223_8723.method1430((int) l,
 						false);
 				return ((Class249) class249).aString3359;

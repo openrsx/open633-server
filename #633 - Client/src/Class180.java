@@ -134,7 +134,7 @@ final class Class180 {
 					Class57_Sub1.aClass79_5886, Class338.aClass79_4478,
 					Class11_Sub2_Sub6.aClass79_8699, Class272.aClass79_3671,
 					Class11_Sub45_Sub15.aClass79_9370,
-					Applet_Sub1.aClass79_10471, Class217_Sub1.aClass79_5526,
+					RSApplet.aClass79_10471, Class217_Sub1.aClass79_5526,
 					Class376_Sub7_Sub4.aClass79_9537,
 					Class11_Sub20_Sub2.aClass79_9500, Class286.aClass79_3868,
 					Class108_Sub5.aClass79_5403 });

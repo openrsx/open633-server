@@ -44,8 +44,8 @@ final class Class280 {
 				Npc npc = class11_sub25.mob;
 				Class11_Sub52.anIntArray8054[Class23.anInt249++] = i_0_;
 				npc.anInt10322 = Class147.anInt1994;
-				if (((Npc) npc).aClass215_10501 != null
-						&& ((Npc) npc).aClass215_10501
+				if (((Npc) npc).mobDefinitions != null
+						&& ((Npc) npc).mobDefinitions
 								.method1376(112))
 					Class82.method566(-107, npc);
 				int i_1_ = Class3.packetStream.readBits(1, (byte) 108);
@@ -68,8 +68,8 @@ final class Class280 {
 				npc
 						.method3954(
 								101,
-								((NPCDefinitions) (((Npc) npc).aClass215_10501)).anInt2975);
-				npc.anInt10320 = ((NPCDefinitions) (((Npc) npc).aClass215_10501)).anInt2959 << 3;
+								((NPCDefinitions) (((Npc) npc).mobDefinitions)).anInt2975);
+				npc.anInt10320 = ((NPCDefinitions) (((Npc) npc).mobDefinitions)).anInt2959 << 3;
 				if (bool)
 					npc.method3961(true, -122, i_3_);
 				npc
@@ -83,7 +83,7 @@ final class Class280 {
 								(byte) 75,
 								(((Actor) Class11_Sub2_Sub8.myPlayer).anIntArray10370[0])
 										- -i_4_);
-				if (((Npc) npc).aClass215_10501
+				if (((Npc) npc).mobDefinitions
 						.method1376(96))
 					PacketDecoder
 							.method3530(

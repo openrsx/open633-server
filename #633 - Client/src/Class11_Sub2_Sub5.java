@@ -221,8 +221,8 @@ final class Class11_Sub2_Sub5 extends Class11_Sub2 {
 		}
 		if (Class376_Sub1.aBool5098) {
 			Class11_Sub12_Sub3.anIntArray9225 = Class87.aClass163_1210.Y();
-			Class87.aClass163_1210.K(Applet_Sub1.anIntArray10472);
-			int i_44_ = ((Applet_Sub1.anIntArray10472[2] - Applet_Sub1.anIntArray10472[0]) / Class205.anInt2763);
+			Class87.aClass163_1210.K(RSApplet.anIntArray10472);
+			int i_44_ = ((RSApplet.anIntArray10472[2] - RSApplet.anIntArray10472[0]) / Class205.anInt2763);
 			for (int i_45_ = 0; i_45_ < Class205.anInt2763 - 1; i_45_++)
 				Class11_Sub45_Sub1_Sub2.anIntArray9878[i_45_] = i_44_
 						* (i_45_ + 1) + Class2_Sub8.anIntArray6861[i_45_];
@@ -254,10 +254,10 @@ final class Class11_Sub2_Sub5 extends Class11_Sub2 {
 				Class11_Sub2_Sub25.aBoolArrayArrayArray9331[i_49_] = Class108_Sub13.aBoolArrayArrayArray6263[i_49_];
 			if (Class68.anInt974 == 2) {
 				if (Class220_Sub1.aLongArray7154[0] < Class220_Sub1.aLongArray7154[1]) {
-					if ((Class11_Sub45_Sub1_Sub2.anIntArray9878[0] + Class2_Sub8.anIntArray6861[0]) > Applet_Sub1.anIntArray10472[0])
+					if ((Class11_Sub45_Sub1_Sub2.anIntArray9878[0] + Class2_Sub8.anIntArray6861[0]) > RSApplet.anIntArray10472[0])
 						Class2_Sub8.anIntArray6861[0]++;
 				} else if ((Class220_Sub1.aLongArray7154[0] > Class220_Sub1.aLongArray7154[1])
-						&& ((Class11_Sub45_Sub1_Sub2.anIntArray9878[0] + Class2_Sub8.anIntArray6861[0]) < Applet_Sub1.anIntArray10472[2]))
+						&& ((Class11_Sub45_Sub1_Sub2.anIntArray9878[0] + Class2_Sub8.anIntArray6861[0]) < RSApplet.anIntArray10472[2]))
 					Class2_Sub8.anIntArray6861[0]--;
 			}
 		}

@@ -56,7 +56,7 @@ final class Exception_Sub1 extends Exception {
 				method3735((byte) -97);
 			if (class376_sub7_sub5_sub5 instanceof Npc) {
 				Npc class376_sub7_sub5_sub5_sub2 = (Npc) class376_sub7_sub5_sub5;
-				if (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501 != null)
+				if (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions != null)
 					Class163_Sub2_Sub1
 							.method3403(
 									class376_sub7_sub5_sub5_sub2,

@@ -338,7 +338,7 @@ final class Class376_Sub7_Sub2_Sub1 extends Class376_Sub7_Sub2 implements
 						int i_10_ = 16;
 						boolean bool_11_ = true;
 						if (class376_sub7_sub5_sub5 instanceof Npc)
-							bool_11_ = ((NPCDefinitions) (((Npc) (Npc) class376_sub7_sub5_sub5).aClass215_10501)).aBool2969;
+							bool_11_ = ((NPCDefinitions) (((Npc) (Npc) class376_sub7_sub5_sub5).mobDefinitions)).aBool2969;
 						if (bool_11_) {
 							int i_12_ = (((Actor) class376_sub7_sub5_sub5).anInt10363 + -(((Class173) (((Actor) class376_sub7_sub5_sub5).aClass173_10278)).anInt2220));
 							if ((i_12_ ^ 0xffffffff) != -1

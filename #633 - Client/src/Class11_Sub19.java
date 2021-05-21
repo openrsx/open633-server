@@ -86,7 +86,7 @@ final class Class11_Sub19 extends Class11 {
 									(((Class11_Sub19) this).aClass376_Sub7_Sub5_Sub5_Sub2_5844)));
 					if (i_1_ != i_0_) {
 						((Class11_Sub19) this).anInt5842 = i_1_;
-						NPCDefinitions class215 = (((Npc) (((Class11_Sub19) this).aClass376_Sub7_Sub5_Sub5_Sub2_5844)).aClass215_10501);
+						NPCDefinitions class215 = (((Npc) (((Class11_Sub19) this).aClass376_Sub7_Sub5_Sub5_Sub2_5844)).mobDefinitions);
 						if (((NPCDefinitions) class215).anIntArray2950 != null)
 							class215 = class215.method1375((byte) 29,
 									(Class11_Sub26.aClass97_6296));
@@ -98,7 +98,7 @@ final class Class11_Sub19 extends Class11 {
 							((Class11_Sub19) this).anInt5835 = ((NPCDefinitions) class215).anInt2927;
 						} else {
 							((Class11_Sub19) this).anInt5835 = 256;
-							((Class11_Sub19) this).aBool5834 = ((NPCDefinitions) (((Npc) (((Class11_Sub19) this).aClass376_Sub7_Sub5_Sub5_Sub2_5844)).aClass215_10501)).aBool2936;
+							((Class11_Sub19) this).aBool5834 = ((NPCDefinitions) (((Npc) (((Class11_Sub19) this).aClass376_Sub7_Sub5_Sub5_Sub2_5844)).mobDefinitions)).aBool2936;
 							((Class11_Sub19) this).anInt5836 = ((Class11_Sub19) this).anInt5821 = 0;
 							((Class11_Sub19) this).anInt5826 = 256;
 						}

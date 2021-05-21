@@ -85,13 +85,13 @@ final class Class27 {
 							class376_sub7_sub5_sub5_sub2
 									.method3954(
 											109,
-											((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975);
-							((Actor) class376_sub7_sub5_sub5_sub2).anInt10320 = (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2959 << 3);
+											((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975);
+							((Actor) class376_sub7_sub5_sub5_sub2).anInt10320 = (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2959 << 3);
 							class376_sub7_sub5_sub5_sub2
 									.method3961(
 											true,
 											100,
-											(0x24e00007 & ((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).aByte2943 + 4) << 11);
+											(0x24e00007 & ((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).aByte2943 + 4) << 11);
 							class376_sub7_sub5_sub5_sub2.method4009(true,
 									class376_sub7_sub5_sub5_sub2
 											.method3968((byte) 127), i_8_,

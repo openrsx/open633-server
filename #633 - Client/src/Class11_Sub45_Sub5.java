@@ -219,14 +219,14 @@ final class Class11_Sub45_Sub5 extends Class11_Sub45 {
 											Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 											if (((Class11_Sub25.anInt6279 ^ 0xffffffff) != ((((Actor) class376_sub7_sub5_sub5_sub2).anInt10300) ^ 0xffffffff))
 													&& (((Actor) class376_sub7_sub5_sub5_sub2).aBool10331)) {
-												int i_34_ = ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045) + -((-1 + (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975)) << 8));
-												int i_35_ = (-((-1 + (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975)) << 8) + (((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7031));
+												int i_34_ = ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045) + -((-1 + (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975)) << 8));
+												int i_35_ = (-((-1 + (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975)) << 8) + (((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7031));
 												if (i_31_ <= i_34_
-														&& (((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975) ^ 0xffffffff) >= (((class376_sub7_sub5_sub5_sub1
+														&& (((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975) ^ 0xffffffff) >= (((class376_sub7_sub5_sub5_sub1
 																.method3968((byte) 127)) + -(-i_31_
 																+ i_34_ >> 9)) ^ 0xffffffff))
 														&& i_35_ >= i_32_
-														&& ((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975) <= (-(-i_32_
+														&& ((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975) <= (-(-i_32_
 																+ i_35_ >> 9) + (class376_sub7_sub5_sub5_sub1
 																	.method3968((byte) 127))))) {
 													Class163_Sub2_Sub1
@@ -282,13 +282,13 @@ final class Class11_Sub45_Sub5 extends Class11_Sub45 {
 							}
 							if ((((Class376_Sub5) class376_sub5).aClass376_Sub7_6917) instanceof Npc) {
 								Npc class376_sub7_sub5_sub5_sub2 = ((Npc) (((Class376_Sub5) class376_sub5).aClass376_Sub7_6917));
-								if ((((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501) != null) {
-									if ((((0x1 & ((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975) ^ 0xffffffff) == -1
+								if ((((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions) != null) {
+									if ((((0x1 & ((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975) ^ 0xffffffff) == -1
 											&& ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045) & 0x1ff ^ 0xffffffff) == -1 && ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7031) & 0x1ff ^ 0xffffffff) == -1)
-											|| ((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975 & 0x1) == 1
+											|| ((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975 & 0x1) == 1
 													&& ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045) & 0x1ff ^ 0xffffffff) == -257 && ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7031) & 0x1ff) == 256)) {
-										int i_41_ = (-((-1 + (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975)) << 8) + (((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045));
-										int i_42_ = ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7031) + -((-1 + (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975)) << 8));
+										int i_41_ = (-((-1 + (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975)) << 8) + (((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045));
+										int i_42_ = ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7031) + -((-1 + (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975)) << 8));
 										for (int i_43_ = 0; i_43_ < Class23.anInt249; i_43_++) {
 											Class11_Sub25 class11_sub25 = ((Class11_Sub25) (Class11_Sub2_Sub25.aClass213_9322
 													.method1369(
@@ -299,12 +299,12 @@ final class Class11_Sub45_Sub5 extends Class11_Sub45 {
 												if ((Class11_Sub25.anInt6279 != (((Actor) class376_sub7_sub5_sub5_sub2_44_).anInt10300))
 														&& (class376_sub7_sub5_sub5_sub2_44_ != class376_sub7_sub5_sub5_sub2)
 														&& (((Actor) class376_sub7_sub5_sub5_sub2_44_).aBool10331)) {
-													int i_45_ = ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2_44_).anInt7045) + -((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2_44_).aClass215_10501)).anInt2975) - 1 << 8));
-													int i_46_ = (-((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2_44_).aClass215_10501)).anInt2975) - 1 << 8) + (((Class376_Sub7) class376_sub7_sub5_sub5_sub2_44_).anInt7031));
+													int i_45_ = ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2_44_).anInt7045) + -((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2_44_).mobDefinitions)).anInt2975) - 1 << 8));
+													int i_46_ = (-((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2_44_).mobDefinitions)).anInt2975) - 1 << 8) + (((Class376_Sub7) class376_sub7_sub5_sub5_sub2_44_).anInt7031));
 													if (((i_41_ ^ 0xffffffff) >= (i_45_ ^ 0xffffffff))
-															&& ((((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975) + -((-i_41_ + i_45_) >> 9)) ^ 0xffffffff) <= ((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2_44_).aClass215_10501)).anInt2975) ^ 0xffffffff))
+															&& ((((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975) + -((-i_41_ + i_45_) >> 9)) ^ 0xffffffff) <= ((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2_44_).mobDefinitions)).anInt2975) ^ 0xffffffff))
 															&& i_46_ >= i_42_
-															&& ((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2_44_).aClass215_10501)).anInt2975) <= (-((i_46_ + -i_42_) >> 9) + (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975)))) {
+															&& ((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2_44_).mobDefinitions)).anInt2975) <= (-((i_46_ + -i_42_) >> 9) + (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975)))) {
 														Class163_Sub2_Sub1
 																.method3403(
 																		class376_sub7_sub5_sub5_sub2_44_,
@@ -328,12 +328,12 @@ final class Class11_Sub45_Sub5 extends Class11_Sub45 {
 														.method3968((byte) 127))) << 8));
 												if (((i_41_ ^ 0xffffffff) >= (i_49_ ^ 0xffffffff))
 														&& ((class376_sub7_sub5_sub5_sub1
-																.method3968((byte) 127)) <= ((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975) + -(-i_41_
+																.method3968((byte) 127)) <= ((((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975) + -(-i_41_
 																+ i_49_ >> 9)))
 														&& ((i_42_ ^ 0xffffffff) >= (i_50_ ^ 0xffffffff))
 														&& (((class376_sub7_sub5_sub5_sub1
 																.method3968((byte) 127)) ^ 0xffffffff) >= ((-(i_50_
-																- i_42_ >> 9) + (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975)) ^ 0xffffffff))) {
+																- i_42_ >> 9) + (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975)) ^ 0xffffffff))) {
 													Class11_Sub49
 															.method3224(
 																	(((((Class376_Sub7) (Class11_Sub2_Sub8.myPlayer)).aByte7047) ^ 0xffffffff) != ((((Class376_Sub7) (((Class376_Sub5) class376_sub5).aClass376_Sub7_6917)).aByte7047) ^ 0xffffffff)),

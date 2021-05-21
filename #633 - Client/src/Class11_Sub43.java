@@ -435,7 +435,7 @@ final class Class11_Sub43 extends Class11 {
 			throw Class205.method1298(runtimeexception, "sq.<init>("
 					+ (is != null ? "{...}" : "null") + ')');
 		}
-		if (Applet_Sub1.aBool10473)
+		if (RSApplet.aBool10473)
 			client.aBool10531 = true;
 	}
 }

@@ -36,7 +36,7 @@ final class Class116 {
 						&& Class236_Sub4.method2768(i_2_, (byte) -120))
 					Class11_Sub18.method2477((byte) 78);
 				if ((((Actor) class376_sub7_sub5_sub5_sub2).anInt10322) != Class147.anInt1994) {
-					if (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501
+					if (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions
 							.method1376(90))
 						Class82.method566(-123, class376_sub7_sub5_sub5_sub2);
 					class376_sub7_sub5_sub5_sub2.method4005(-1, null);

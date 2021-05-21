@@ -20,7 +20,7 @@ final class Class112 {
 	static IComponentDefinitions aClass192_1539;
 	static int anInt1540;
 	static OutgoingPacket aClass370_1541;
-	static Applet_Sub1 anApplet_Sub1_1542 = null;
+	static RSApplet anApplet_Sub1_1542 = null;
 	static Class40 aClass40_1543;
 
 	static final void method749(boolean bool, String string, byte i) {

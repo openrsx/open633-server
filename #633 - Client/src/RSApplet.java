@@ -18,7 +18,7 @@ import java.net.URL;
 
 import jagex3.jagmisc.jagmisc;
 
-public abstract class Applet_Sub1 extends Applet implements Runnable,
+public abstract class RSApplet extends Applet implements Runnable,
 		FocusListener, WindowListener {
 	static int anInt10432;
 	static int anInt10433;

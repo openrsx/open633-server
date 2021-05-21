@@ -175,7 +175,7 @@ final class Class9 {
 			Npc class376_sub7_sub5_sub5_sub2) {
 		try {
 			anInt71++;
-			NPCDefinitions class215 = (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501);
+			NPCDefinitions class215 = (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions);
 			if (((NPCDefinitions) class215).anIntArray2950 != null) {
 				class215 = class215.method1375((byte) 29,
 						Class11_Sub26.aClass97_6296);

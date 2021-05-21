@@ -236,7 +236,7 @@ final class Class11_Sub17 extends Class11 {
 							.method114(
 									(byte) -113,
 									(((Class11_Sub19) class11_sub19).aClass376_Sub7_Sub5_Sub5_Sub2_5844)));
-					NPCDefinitions class215 = (((Npc) (((Class11_Sub19) class11_sub19).aClass376_Sub7_Sub5_Sub5_Sub2_5844)).aClass215_10501);
+					NPCDefinitions class215 = (((Npc) (((Class11_Sub19) class11_sub19).aClass376_Sub7_Sub5_Sub5_Sub2_5844)).mobDefinitions);
 					if (((NPCDefinitions) class215).anIntArray2950 != null)
 						class215 = class215.method1375((byte) 29,
 								Class11_Sub26.aClass97_6296);

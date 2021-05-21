@@ -130,7 +130,7 @@ final class Class164 implements Runnable {
 						Class119.method778(
 								-18081,
 								class376_sub7_sub5_sub5_sub2,
-								((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).anInt2975);
+								((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions)).anInt2975);
 					}
 				}
 				anInt2124++;

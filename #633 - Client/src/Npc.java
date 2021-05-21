@@ -12,7 +12,7 @@ final class Npc extends Actor {
 	static int anInt10498;
 	static int anInt10499;
 	static int anInt10500;
-	NPCDefinitions aClass215_10501;
+	NPCDefinitions mobDefinitions;
 	static int anInt10502;
 	static int anInt10503;
 	static int anInt10504;
@@ -28,15 +28,15 @@ final class Npc extends Actor {
 	final int method3964(int i) {
 		try {
 			anInt10510++;
-			if (((NPCDefinitions) (((Npc) this).aClass215_10501)).anIntArray2950 != null) {
-				NPCDefinitions class215 = ((Npc) this).aClass215_10501
+			if (((NPCDefinitions) (((Npc) this).mobDefinitions)).anIntArray2950 != null) {
+				NPCDefinitions class215 = ((Npc) this).mobDefinitions
 						.method1375((byte) 29, Class11_Sub26.aClass97_6296);
 				if (class215 != null && ((NPCDefinitions) class215).anInt2921 != -1)
 					return ((NPCDefinitions) class215).anInt2921;
 			}
 			if (i != 2)
 				return 52;
-			return (((NPCDefinitions) ((Npc) this).aClass215_10501).anInt2921);
+			return (((NPCDefinitions) ((Npc) this).mobDefinitions).anInt2921);
 		} catch (RuntimeException runtimeexception) {
 			throw Class205.method1298(runtimeexception, "vaa.O(" + i + ')');
 		}
@@ -66,7 +66,7 @@ final class Npc extends Actor {
 				i |= 0x80000;
 			int i_5_ = ((Actor) this).aClass173_10278
 					.method1140(i_0_ ^ 0xffffffff);
-			Class206 class206 = (((Actor) this).aClass206Array10371[0] = (((Npc) this).aClass215_10501
+			Class206 class206 = (((Actor) this).aClass206Array10371[0] = (((Npc) this).mobDefinitions
 					.method1381(
 							((Actor) this).anInt10282,
 							Class108_Sub23.aClass198_7760,
@@ -310,7 +310,7 @@ final class Npc extends Actor {
 	final void method4005(int i, NPCDefinitions class215) {
 		do {
 			try {
-				((Npc) this).aClass215_10501 = class215;
+				((Npc) this).mobDefinitions = class215;
 				anInt10506++;
 				if (i != -1)
 					((Npc) this).anInt10505 = -35;
@@ -329,17 +329,17 @@ final class Npc extends Actor {
 	final int method3957(int i) {
 		try {
 			anInt10508++;
-			if (((NPCDefinitions) (((Npc) this).aClass215_10501)).anIntArray2950 != null) {
-				NPCDefinitions class215 = ((Npc) this).aClass215_10501
+			if (((NPCDefinitions) (((Npc) this).mobDefinitions)).anIntArray2950 != null) {
+				NPCDefinitions class215 = ((Npc) this).mobDefinitions
 						.method1375((byte) 29, Class11_Sub26.aClass97_6296);
 				if (class215 != null && ((NPCDefinitions) class215).anInt2922 != -1)
 					return ((NPCDefinitions) class215).anInt2922;
 			}
 			if (i != 0)
 				method4005(-93, null);
-			if (((NPCDefinitions) (((Npc) this).aClass215_10501)).anInt2922 == -1)
+			if (((NPCDefinitions) (((Npc) this).mobDefinitions)).anInt2922 == -1)
 				return super.method3957(0);
-			return (((NPCDefinitions) ((Npc) this).aClass215_10501).anInt2922);
+			return (((NPCDefinitions) ((Npc) this).mobDefinitions).anInt2922);
 		} catch (RuntimeException runtimeexception) {
 			throw Class205.method1298(runtimeexception, "vaa.KA(" + i + ')');
 		}
@@ -350,13 +350,13 @@ final class Npc extends Actor {
 			anInt10509++;
 			if (i != 72)
 				return 75;
-			if (((NPCDefinitions) (((Npc) this).aClass215_10501)).anIntArray2950 != null) {
-				NPCDefinitions class215 = ((Npc) this).aClass215_10501
+			if (((NPCDefinitions) (((Npc) this).mobDefinitions)).anIntArray2950 != null) {
+				NPCDefinitions class215 = ((Npc) this).mobDefinitions
 						.method1375((byte) 29, Class11_Sub26.aClass97_6296);
 				if (class215 != null && ((NPCDefinitions) class215).anInt2968 != -1)
 					return ((NPCDefinitions) class215).anInt2968;
 			}
-			return (((NPCDefinitions) ((Npc) this).aClass215_10501).anInt2968);
+			return (((NPCDefinitions) ((Npc) this).mobDefinitions).anInt2968);
 		} catch (RuntimeException runtimeexception) {
 			throw Class205.method1298(runtimeexception, "vaa.Q(" + i + ')');
 		}
@@ -382,9 +382,9 @@ final class Npc extends Actor {
 			anInt10498++;
 			if (i <= 72)
 				method4008(39);
-			if (((Npc) this).aClass215_10501 == null)
+			if (((Npc) this).mobDefinitions == null)
 				return 0;
-			return (((NPCDefinitions) ((Npc) this).aClass215_10501).anInt2924);
+			return (((NPCDefinitions) ((Npc) this).mobDefinitions).anInt2924);
 		} catch (RuntimeException runtimeexception) {
 			throw Class205.method1298(runtimeexception, "vaa.TA(" + i + ')');
 		}
@@ -473,7 +473,7 @@ final class Npc extends Actor {
 	final Class376_Sub5 method2876(byte i, Class163 class163) {
 		try {
 			anInt10494++;
-			if (((Npc) this).aClass215_10501 == null
+			if (((Npc) this).mobDefinitions == null
 					|| !method4004(2048, class163, 0))
 				return null;
 			Class33 class33 = class163.method1048();
@@ -494,9 +494,9 @@ final class Npc extends Actor {
 							+ (((Class376_Sub7) this).anInt7036 - (((Actor) this).anInt10307)),
 					((Class376_Sub7) this).anInt7031);
 			Class39 class39 = this.method3960(21816);
-			NPCDefinitions class215 = (((NPCDefinitions) (((Npc) this).aClass215_10501)).anIntArray2950 != null ? ((Npc) this).aClass215_10501
+			NPCDefinitions class215 = (((NPCDefinitions) (((Npc) this).mobDefinitions)).anIntArray2950 != null ? ((Npc) this).mobDefinitions
 					.method1375((byte) 29, Class11_Sub26.aClass97_6296)
-					: ((Npc) this).aClass215_10501);
+					: ((Npc) this).mobDefinitions);
 			((Actor) this).aBool10378 = false;
 			Class376_Sub5 class376_sub5 = null;
 			if ((((Class11_Sub17) Class376_Sub7_Sub3_Sub1.aClass11_Sub17_9847).aClass108_Sub21_5700
@@ -513,17 +513,17 @@ final class Npc extends Actor {
 								(byte) -96)));
 				Class206 class206 = (Class11_Sub45_Sub3
 						.method3386(
-								((NPCDefinitions) (((Npc) this).aClass215_10501)).aByte2951 & 0xff,
+								((NPCDefinitions) (((Npc) this).mobDefinitions)).aByte2951 & 0xff,
 								((Actor) this).anInt10309,
 								((Actor) this).anInt10302,
 								((Actor) this).anInt10318,
-								((NPCDefinitions) (((Npc) this).aClass215_10501)).aByte2931 & 0xff,
+								((NPCDefinitions) (((Npc) this).mobDefinitions)).aByte2931 & 0xff,
 								class163,
 								21525,
 								(((Actor) this).aClass206Array10371[0]),
-								(0xffff & ((NPCDefinitions) (((Npc) this).aClass215_10501)).aShort2930),
-								((NPCDefinitions) (((Npc) this).aClass215_10501)).anInt2975,
-								((NPCDefinitions) (((Npc) this).aClass215_10501)).aShort2945 & 0xffff,
+								(0xffff & ((NPCDefinitions) (((Npc) this).mobDefinitions)).aShort2930),
+								((NPCDefinitions) (((Npc) this).mobDefinitions)).anInt2975,
+								((NPCDefinitions) (((Npc) this).mobDefinitions)).aShort2945 & 0xffff,
 								(class281_38_ != null ? ((Actor) this).anInt10267
 										: ((Actor) this).anInt10326),
 								class281_38_ != null ? class281_38_ : class281,
@@ -609,9 +609,9 @@ final class Npc extends Actor {
 	final boolean method4007(int i) {
 		try {
 			if (i != 92160000)
-				((Npc) this).aClass215_10501 = null;
+				((Npc) this).mobDefinitions = null;
 			anInt10504++;
-			if (((Npc) this).aClass215_10501 == null)
+			if (((Npc) this).mobDefinitions == null)
 				return false;
 			return true;
 		} catch (RuntimeException runtimeexception) {
@@ -624,7 +624,7 @@ final class Npc extends Actor {
 			anInt10492++;
 			if (i != -19066)
 				return true;
-			return (((NPCDefinitions) ((Npc) this).aClass215_10501).aBool2970);
+			return (((NPCDefinitions) ((Npc) this).mobDefinitions).aBool2970);
 		} catch (RuntimeException runtimeexception) {
 			throw Class205.method1298(runtimeexception, "vaa.A(" + i + ')');
 		}
@@ -646,7 +646,7 @@ final class Npc extends Actor {
 		try {
 			anInt10503++;
 			int i_42_ = 102 / ((18 - i) / 40);
-			if (((Npc) this).aClass215_10501 != null
+			if (((Npc) this).mobDefinitions != null
 					&& (((Actor) this).aBool10377 || method4004(
 							0, class163, 0))) {
 				Class33 class33 = class163.method1048();
@@ -750,7 +750,7 @@ final class Npc extends Actor {
 	final boolean method2873(Class163 class163, int i, int i_50_, int i_51_) {
 		try {
 			anInt10500++;
-			if (((Npc) this).aClass215_10501 == null
+			if (((Npc) this).mobDefinitions == null
 					|| !method4004(131072, class163, 0))
 				return false;
 			Class33 class33 = class163.method1048();
@@ -763,8 +763,8 @@ final class Npc extends Actor {
 			boolean bool = false;
 			for (int i_53_ = i; ((((Actor) this).aClass206Array10371.length ^ 0xffffffff) < (i_53_ ^ 0xffffffff)); i_53_++) {
 				if (((Actor) this).aClass206Array10371[i_53_] != null) {
-					boolean bool_54_ = (((NPCDefinitions) (((Npc) this).aClass215_10501)).anInt2924 > 0 || ((((NPCDefinitions) ((Npc) this).aClass215_10501).anInt2908 == -1) ? (((NPCDefinitions) ((Npc) this).aClass215_10501).anInt2975 ^ 0xffffffff) == -2
-							: (((NPCDefinitions) ((Npc) this).aClass215_10501).anInt2908 ^ 0xffffffff) == -2));
+					boolean bool_54_ = (((NPCDefinitions) (((Npc) this).mobDefinitions)).anInt2924 > 0 || ((((NPCDefinitions) ((Npc) this).mobDefinitions).anInt2908 == -1) ? (((NPCDefinitions) ((Npc) this).mobDefinitions).anInt2975 ^ 0xffffffff) == -2
+							: (((NPCDefinitions) ((Npc) this).mobDefinitions).anInt2908 ^ 0xffffffff) == -2));
 					boolean bool_55_;
 					if (!Class11_Sub45_Sub1.aBool8490)
 						bool_55_ = (((Actor) this).aClass206Array10371[i_53_]
@@ -773,7 +773,7 @@ final class Npc extends Actor {
 										i_50_,
 										class33,
 										bool_54_,
-										((NPCDefinitions) (((Npc) this).aClass215_10501)).anInt2924));
+										((NPCDefinitions) (((Npc) this).mobDefinitions)).anInt2924));
 					else
 						bool_55_ = (((Actor) this).aClass206Array10371[i_53_]
 								.method1305(
@@ -781,7 +781,7 @@ final class Npc extends Actor {
 										i_50_,
 										class33,
 										bool_54_,
-										((NPCDefinitions) ((Npc) this).aClass215_10501).anInt2924,
+										((NPCDefinitions) ((Npc) this).mobDefinitions).anInt2924,
 										Class117.anInt1597));
 					if (bool_55_) {
 						bool = true;

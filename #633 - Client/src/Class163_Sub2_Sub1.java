@@ -562,7 +562,7 @@ final class Class163_Sub2_Sub1 extends Class163_Sub2 {
 		try {
 			anInt8631++;
 			if ((Class52.anInt802 ^ 0xffffffff) > -401) {
-				NPCDefinitions class215 = (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501);
+				NPCDefinitions class215 = (((Npc) class376_sub7_sub5_sub5_sub2).mobDefinitions);
 				if (((NPCDefinitions) class215).anIntArray2950 != null) {
 					class215 = class215.method1375((byte) 29,
 							Class11_Sub26.aClass97_6296);
@@ -1334,7 +1334,7 @@ final class Class163_Sub2_Sub1 extends Class163_Sub2 {
 			try {
 				do {
 					if (Class168.aClass174_2155 != class174) {
-						int i_58_ = Applet_Sub1
+						int i_58_ = RSApplet
 								.method3999((byte) -71, class174);
 						OpenGL.glTexGeni(8192, 9472, i_58_);
 						OpenGL.glEnable(3168);

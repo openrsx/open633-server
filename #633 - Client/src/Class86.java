@@ -5714,7 +5714,7 @@ final class Class86 {
 				return;
 			}
 			if (i == 6406) {
-				anIntArray1195[anInt1197++] = Applet_Sub1.method3992(5) ? 1 : 0;
+				anIntArray1195[anInt1197++] = RSApplet.method3992(5) ? 1 : 0;
 				return;
 			}
 		} else if (i < 6600) {

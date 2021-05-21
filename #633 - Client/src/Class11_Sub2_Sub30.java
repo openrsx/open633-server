@@ -104,7 +104,7 @@ final class Class11_Sub2_Sub30 extends Class11_Sub2 {
 				Class11_Sub7.method2325(-125);
 				if (!bool)
 					Class91_Sub3_Sub1.method3650((byte) 121);
-				Applet_Sub1.method3986(103);
+				RSApplet.method3986(103);
 				Class194.method1269(false, true, i_9_, i, i_6_, i_8_);
 				i_9_ = Class233.anInt3201;
 				i_6_ = IComponentDefinitions.anInt2624;
