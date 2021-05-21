@@ -13,6 +13,7 @@ import com.rs.game.player.ChatMessage;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
+import com.rs.game.player.PublicChatMessage;
 import com.rs.game.player.QuickChatMessage;
 import com.rs.game.player.Skills;
 import com.rs.game.player.actions.PlayerFollow;
@@ -41,6 +42,7 @@ public final class WorldPacketsDecoder extends Decoder {
 
 	/**
 	 * The packet sizes.
+	 * TODO: fix packet reading, etc..
 	 */
 	public static final byte[] PACKET_SIZES = new byte[256];
 
@@ -73,7 +75,7 @@ public final class WorldPacketsDecoder extends Decoder {
 	private final static int CLOSE_INTERFACE_PACKET = 50;
 	private final static int SCREEN_PACKET = 3445;
 	private final static int MOUVE_MOUSE_PACKET = 44588;
-	private final static int KEY_TYPED_PACKET = 89545;
+	private final static int KEY_TYPED_PACKET = 1;
 	private final static int OBJECT_CLICK1_PACKET = 75;
 	private final static int ITEM_TAKE_PACKET = 24;
 	private final static int NPC_CLICK1_PACKET = 22;
@@ -127,7 +129,7 @@ public final class WorldPacketsDecoder extends Decoder {
 	}
 
 	public static void loadPacketSizes() {
-		PACKET_SIZES[17] = -1;
+		PACKET_SIZES[17] = 0;
 		PACKET_SIZES[76] = 3;
 		PACKET_SIZES[46] = 3;
 		PACKET_SIZES[82] = -1;
@@ -135,7 +137,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		PACKET_SIZES[28] = -1;
 		PACKET_SIZES[35] = -1;
 		PACKET_SIZES[10] = 16;
-		PACKET_SIZES[1] = -1;
+		PACKET_SIZES[1] = 1;
 		PACKET_SIZES[5] = 4;
 		PACKET_SIZES[69] = -1;
 		PACKET_SIZES[62] = 6;
@@ -154,7 +156,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		PACKET_SIZES[16] = 1;
 		PACKET_SIZES[19] = 8;
 		PACKET_SIZES[61] = 6;
-		PACKET_SIZES[7] = -1;
+		PACKET_SIZES[7] = 2;
 		PACKET_SIZES[32] = 8;
 		PACKET_SIZES[56] = 4;
 		PACKET_SIZES[41] = 2;
@@ -184,7 +186,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		PACKET_SIZES[79] = -1;
 		PACKET_SIZES[80] = 3;
 		PACKET_SIZES[60] = 4;
-		PACKET_SIZES[2] = 11;
+		PACKET_SIZES[2] = 9;
 		PACKET_SIZES[51] = 3;
 		PACKET_SIZES[30] = 7;
 		PACKET_SIZES[55] = 6;
@@ -266,7 +268,7 @@ public final class WorldPacketsDecoder extends Decoder {
 	public static void decodeLogicPacket(final Player player, LogicPacket packet) {
 		int packetId = packet.getId();
 		InputStream stream = new InputStream(packet.getData());
-		System.out.println("packet: " + packetId);
+//		System.out.println("packet: " + packetId);
 		if (packetId == WALKING_PACKET || packetId == MINI_WALKING_PACKET) {
 			if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
 					|| player.isDead())
@@ -1475,11 +1477,11 @@ public final class WorldPacketsDecoder extends Decoder {
 				|| packetId == OBJECT_CLICK3_PACKET
 				|| packetId == OBJECT_CLICK4_PACKET
 				|| packetId == OBJECT_CLICK5_PACKET
+				|| packetId == 3 || packetId == 2 || packetId == 8 || packetId == 0
 				|| packetId == INTERFACE_ON_OBJECT)
 			player.addLogicPacketToQueue(new LogicPacket(packetId, length,
 					stream));
 		else if (packetId == OBJECT_EXAMINE_PACKET) {
-			System.out.println("examine packet");
 			ObjectHandler.handleOption(player, stream, -1);
 		} else if (packetId == NPC_EXAMINE_PACKET) {
 			NPCHandler.handleExamine(player, stream);
@@ -1598,12 +1600,10 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == CHAT_PACKET) {
 			if (!player.hasStarted())
 				return;
-			if (player.getLastPublicMessage() > Utils.currentTimeMillis())
-				return;
-			player.setLastPublicMessage(Utils.currentTimeMillis() + 300);
-			int colorEffect = stream.readUnsignedByte();
-			int moveEffect = stream.readUnsignedByte();
+			int effects = stream.readUnsignedByte();
+			int numChars = stream.readUnsignedByte();
 			String message = Huffman.readEncryptedMessage(200, stream);
+			System.out.println(message);
 			if (message == null || message.replaceAll(" ", "").equals(""))
 				return;
 			if (message.startsWith("::") || message.startsWith(";;")) {
@@ -1618,7 +1618,6 @@ public final class WorldPacketsDecoder extends Decoder {
 						"You temporary muted. Recheck in 48 hours.");
 				return;
 			}
-			int effects = (colorEffect << 8) | (moveEffect & 0xff);
 //			if (chatType == 1)
 //				player.sendFriendsChannelMessage(new ChatMessage(message));
 //			else if (chatType == 2)
@@ -1626,8 +1625,7 @@ public final class WorldPacketsDecoder extends Decoder {
 //			else if (chatType == 3)
 //				player.sendGuestClanChannelMessage(new ChatMessage(message));
 //			else
-//				player.sendPublicChatMessage(new PublicChatMessage(message,
-//						effects));
+				player.sendPublicChatMessage(new PublicChatMessage(message, effects));
 			if (Settings.DEBUG)
 				Logger.log(this, "Chat type: " + chatType);
 		} else if (packetId == COMMANDS_PACKET) {
