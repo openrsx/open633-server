@@ -592,7 +592,7 @@ final class Player extends Actor {
 											(byte) 26,
 											(long) ((Class275) class275).anInt3707)));
 							if (class11_sub25 != null) {
-								Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+								Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 								int i_53_ = (((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045 - (((Class376_Sub7) (Class11_Sub2_Sub8.myPlayer)).anInt7045));
 								int i_54_ = (-(((Class376_Sub7) (Class11_Sub2_Sub8.myPlayer)).anInt7031) + (((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7031));
 								if (!Class11_Sub45_Sub1.aBool8490)

@@ -31,7 +31,7 @@ final class Class116 {
 				int i_2_ = Class236_Sub1.anIntArray6080[i_1_];
 				Class11_Sub25 class11_sub25 = (Class11_Sub25) Class11_Sub2_Sub25.aClass213_9322
 						.method1369((byte) 26, (long) i_2_);
-				Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+				Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 				if (Class306.aBool4114
 						&& Class236_Sub4.method2768(i_2_, (byte) -120))
 					Class11_Sub18.method2477((byte) 78);
@@ -65,10 +65,10 @@ final class Class116 {
 				throw new RuntimeException("gnp3 mis:"
 						+ (Class108_Sub17.anInt6619 - Class23.anInt249));
 			for (int i_5_ = 0; (i_5_ ^ 0xffffffff) > (Class108_Sub17.anInt6619 ^ 0xffffffff); i_5_++) {
-				if ((((Actor) (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_5_]).aNpc_2373)).anInt10322 ^ 0xffffffff) != (Class147.anInt1994 ^ 0xffffffff))
+				if ((((Actor) (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_5_]).mob)).anInt10322 ^ 0xffffffff) != (Class147.anInt1994 ^ 0xffffffff))
 					throw new RuntimeException(
 							"gnp4 uk:"
-									+ (((Actor) (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_5_]).aNpc_2373)).anInt10319));
+									+ (((Actor) (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_5_]).mob)).anInt10319));
 			}
 		} catch (RuntimeException runtimeexception) {
 			throw Class205.method1298(runtimeexception, "dm.A(" + i + ')');

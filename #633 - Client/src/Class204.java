@@ -156,7 +156,7 @@ final class Class204 implements Interface6 {
 									if ((i_4_ ^ 0xffffffff) != 0) {
 										int i_9_ = 0;
 										Class228 class228 = new Class228(
-												Class161.aClass38_2097);
+												IncomingPacketDecoder.aClass38_2097);
 										for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) class228
 												.method1472(true)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) (class228
 												.method1471((byte) 106)))) {
@@ -219,14 +219,14 @@ final class Class204 implements Interface6 {
 								if (i_12_ != -1) {
 									int i_17_ = 0;
 									Class228 class228 = new Class228(
-											Class161.aClass38_2097);
+											IncomingPacketDecoder.aClass38_2097);
 									for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) class228
 											.method1472(true)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) class228
 											.method1471((byte) 106))) {
 										if (i_17_ == i_12_) {
 											if (((((Class11_Sub45_Sub14) class11_sub45_sub14).anInt9313) ^ 0xffffffff) == -2) {
-												Class11_Sub30_Sub1
-														.method3526(
+												PacketDecoder
+														.decodePacket(
 																(byte) -12,
 																i_10_,
 																((Class11_Sub45_Sub5) (((Class11_Sub45) (((Class38) (((Class11_Sub45_Sub14) class11_sub45_sub14).aClass38_9312)).aClass11_Sub45_515)).aClass11_Sub45_7903)),
@@ -270,7 +270,7 @@ final class Class204 implements Interface6 {
 											.method2018(i ^ ~0x531f)); class11_sub45_sub5 != null; class11_sub45_sub5 = ((Class11_Sub45_Sub5) (class336
 											.method2022(i + 146831366)))) {
 										if ((i_18_ ^ 0xffffffff) == (i_22_ ^ 0xffffffff)) {
-											Class11_Sub30_Sub1.method3526(
+											PacketDecoder.decodePacket(
 													(byte) -95, i_10_,
 													class11_sub45_sub5, i_11_);
 											break;
@@ -306,7 +306,7 @@ final class Class204 implements Interface6 {
 								.method1472(true)); class11_sub45_sub5 != null; class11_sub45_sub5 = ((Class11_Sub45_Sub5) class228
 								.method1471((byte) 106))) {
 							if ((i_27_ ^ 0xffffffff) == (i_23_ ^ 0xffffffff)) {
-								Class11_Sub30_Sub1.method3526((byte) -81,
+								PacketDecoder.decodePacket((byte) -81,
 										i_10_, class11_sub45_sub5, i_11_);
 								break;
 							}

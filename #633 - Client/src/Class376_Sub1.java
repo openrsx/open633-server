@@ -85,8 +85,8 @@ class Class376_Sub1 extends Class376 {
 							* ((((Class104) Class191.aClass104_2455).anInt1401) & 0xff00) + i_5_
 							* (0xff00 & Class11_Sub6_Sub3.anInt9141))) + (((((Class104) Class191.aClass104_2455).anInt1401 & 0xff00ff)
 							* i_6_ + ((0xff00ff & Class11_Sub6_Sub3.anInt9141) * i_5_)) & ~0xff00ff)) >>> 8;
-					Class221.aFloat3037 = ((-Class161.aFloat2099 + ((Class104) Class191.aClass104_2455).aFloat1404) * f_7_)
-							+ Class161.aFloat2099;
+					Class221.aFloat3037 = ((-IncomingPacketDecoder.aFloat2099 + ((Class104) Class191.aClass104_2455).aFloat1404) * f_7_)
+							+ IncomingPacketDecoder.aFloat2099;
 					Class245.aFloat3318 = (Class286.aFloat3875 + f_7_
 							* (-Class286.aFloat3875 + (((Class104) Class191.aClass104_2455).aFloat1393)));
 					Class57.aFloat862 = f_7_

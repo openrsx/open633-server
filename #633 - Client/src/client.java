@@ -77,7 +77,7 @@ public final class client extends Applet_Sub1 {
 				class376_sub7_sub5_sub5 = (((Class11_Sub25) (Class11_Sub25) (Class11_Sub2_Sub25.aClass213_9322
 						.method1369(
 								(byte) 26,
-								(long) Class11_Sub52.anIntArray8054[i_3_ - i_1_]))).aNpc_2373);
+								(long) Class11_Sub52.anIntArray8054[i_3_ - i_1_]))).mob);
 			if (((Class376_Sub7) class376_sub7_sub5_sub5).aByte7047 == i) {
 				((Actor) class376_sub7_sub5_sub5).anInt10277 = 0;
 				if ((((Actor) class376_sub7_sub5_sub5).anInt10346) < 0)
@@ -1071,7 +1071,7 @@ public final class client extends Applet_Sub1 {
 				class376_sub7_sub5_sub5 = (((Class11_Sub25) (Class11_Sub25) (Class11_Sub2_Sub25.aClass213_9322
 						.method1369((byte) 26,
 								(long) Class11_Sub52.anIntArray8054[i_74_
-										- i_73_]))).aNpc_2373);
+										- i_73_]))).mob);
 			if (((Class376_Sub7) class376_sub7_sub5_sub5).aByte7047 == i
 					&& (((Actor) class376_sub7_sub5_sub5).anInt10346) >= 0) {
 				int i_75_ = class376_sub7_sub5_sub5.method3968((byte) 127);
@@ -1141,7 +1141,7 @@ public final class client extends Applet_Sub1 {
 				for (int i_85_ = 0; i_85_ < 37; i_85_++)
 					Class206_Sub2.aClass182Array6440[i_85_].method1197(true);
 				Class256.aClass182_3508.method1197(true);
-				Class11_Sub30_Sub1.aClass182_8980.method1197(true);
+				PacketDecoder.aClass182_8980.method1197(true);
 				Class309.method1887(false);
 			} catch (Exception exception) {
 				/* empty */
@@ -1171,7 +1171,7 @@ public final class client extends Applet_Sub1 {
 				Class11_Sub2_Sub24.aClass347_9284 = (Class165.method1096(
 						(byte) -9,
 						Integer.parseInt(this.getParameter("modewhere"))));
-				if (Class11_Sub30_Sub1.aClass347_8979 != Class11_Sub2_Sub24.aClass347_9284) {
+				if (PacketDecoder.aClass347_8979 != Class11_Sub2_Sub24.aClass347_9284) {
 					if (!Class376_Sub7_Sub4.method3763(
 							Class11_Sub2_Sub24.aClass347_9284, 70)
 							&& (Class11_Sub2_Sub24.aClass347_9284 != Class362.aClass347_4711))
@@ -1451,7 +1451,7 @@ public final class client extends Applet_Sub1 {
 			Class34.method306(i ^ ~0x5f);
 			Class219_Sub1.anInt7238++;
 			for (int i_99_ = 0; ((Class108_Sub17.anInt6619 ^ 0xffffffff) < (i_99_ ^ 0xffffffff)); i_99_++) {
-				Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_99_]).aNpc_2373);
+				Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_99_]).mob);
 				if (class376_sub7_sub5_sub5_sub2 != null) {
 					byte i_100_ = (((NPCDefinitions) (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501)).aByte2926);
 					if ((0x1 & i_100_) != 0) {
@@ -1858,7 +1858,7 @@ public final class client extends Applet_Sub1 {
 			Class265.method1682((byte) -67);
 			Class48.method413((byte) -63);
 			Class346.method2090(115);
-			Class161.method995((byte) -104);
+			IncomingPacketDecoder.method995((byte) -104);
 			Class32.method282();
 			Class382.method2233((byte) -65);
 			Class30.method254((byte) -105);
@@ -2118,7 +2118,7 @@ public final class client extends Applet_Sub1 {
 			Class377.method2209((byte) 123);
 			Class325.method1977(0);
 			Class216.method1393(40);
-			Class11_Sub30_Sub1.method3527(-117);
+			PacketDecoder.method3527(-117);
 			Class166.method1100((byte) -120);
 			Class367.method2173(0);
 			Class321_Sub2.method2743(-1);
@@ -2383,7 +2383,7 @@ public final class client extends Applet_Sub1 {
 				((Class46) Class181.aClass46_2337).anInt726 = ((Class46) Class181.aClass46_2337).anInt730 + 50000;
 				((Class46) Class108_Sub23.aClass46_7759).anInt726 = (((Class46) Class108_Sub23.aClass46_7759).anInt730 + 50000);
 				((Class46) Class2_Sub8.aClass46_6867).anInt726 = ((Class46) Class2_Sub8.aClass46_6867).anInt730 + 50000;
-			} else if (Class11_Sub30_Sub1.aClass347_8979 == Class11_Sub2_Sub24.aClass347_9284) {
+			} else if (PacketDecoder.aClass347_8979 == Class11_Sub2_Sub24.aClass347_9284) {
 				((Class46) Class181.aClass46_2337).aString733 = "127.0.0.1";
 				((Class46) Class108_Sub23.aClass46_7759).aString733 = "127.0.0.1";
 				((Class46) Class2_Sub8.aClass46_6867).aString733 = "127.0.0.1";
@@ -2440,7 +2440,7 @@ public final class client extends Applet_Sub1 {
 					Class4.aClass243_24 = new Class243(255,
 							Class77.aClass182_1046, Class256.aClass182_3508,
 							500000);
-					Class11_Sub30_Sub1.aClass182_8980 = new Class182(
+					PacketDecoder.aClass182_8980 = new Class182(
 							(((Class341) Class108_Sub21.aClass341_7304).aClass119_4527),
 							24, 0);
 					((Class341) Class108_Sub21.aClass341_7304).aClass119_4527 = null;
@@ -2450,7 +2450,7 @@ public final class client extends Applet_Sub1 {
 				}
 			} catch (java.io.IOException ioexception) {
 				Class256.aClass182_3508 = null;
-				Class11_Sub30_Sub1.aClass182_8980 = null;
+				PacketDecoder.aClass182_8980 = null;
 				Class4.aClass243_24 = null;
 				Class77.aClass182_1046 = null;
 			}
@@ -2592,7 +2592,7 @@ public final class client extends Applet_Sub1 {
 		for (int i = 0; i < Class23.anInt249; i++) {
 			Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) (Class11_Sub25) (Class11_Sub2_Sub25.aClass213_9322
 					.method1369((byte) 26,
-							(long) Class11_Sub52.anIntArray8054[i]))).aNpc_2373);
+							(long) Class11_Sub52.anIntArray8054[i]))).mob);
 			if ((((Actor) class376_sub7_sub5_sub5_sub2).aBool10331)
 					&& class376_sub7_sub5_sub5_sub2.method3955((byte) 72) != -1) {
 				int i_122_ = ((class376_sub7_sub5_sub5_sub2
@@ -2641,7 +2641,7 @@ public final class client extends Applet_Sub1 {
 				Class2_Sub8.aClass46_6867 = new Class46();
 				((Class46) Class2_Sub8.aClass46_6867).anInt730 = Integer
 						.parseInt(strings[2]);
-				Class11_Sub2_Sub24.aClass347_9284 = Class11_Sub30_Sub1.aClass347_8979;
+				Class11_Sub2_Sub24.aClass347_9284 = PacketDecoder.aClass347_8979;
 				if (strings[3].equals("live"))
 					Class331.aClass307_4403 = Class350.aClass307_4608;
 				else if (strings[3].equals("rc"))
@@ -2837,7 +2837,7 @@ public final class client extends Applet_Sub1 {
 								if (Class285.anInt3846 == 13)
 									Class11_Sub2_Sub8
 											.method3433(
-													Class161.aClass292_2096,
+													IncomingPacketDecoder.aClass292_2096,
 													((Class26.aClass26_290
 															.method217(
 																	(byte) 103,
@@ -2857,7 +2857,7 @@ public final class client extends Applet_Sub1 {
 								Class373.anInt4883 = Class335.anInt4439;
 							int i_129_ = ((-Class335.anInt4439 + Class373.anInt4883) * 50 / Class373.anInt4883);
 							Class11_Sub2_Sub8.method3433(
-									Class161.aClass292_2096,
+									IncomingPacketDecoder.aClass292_2096,
 									((Class26.aClass26_288.method217((byte) 93,
 											Class11_Sub45_Sub1_Sub2.anInt9884))
 											+ "<br>(" + i_129_ + "%)"), true,
@@ -2868,7 +2868,7 @@ public final class client extends Applet_Sub1 {
 								Class249.anInt3442 = Class7.anInt45;
 							int i_130_ = ((50 * (Class249.anInt3442 - Class7.anInt45) / Class249.anInt3442) + 50);
 							Class11_Sub2_Sub8.method3433(
-									Class161.aClass292_2096,
+									IncomingPacketDecoder.aClass292_2096,
 									((Class26.aClass26_288.method217(
 											(byte) 120,
 											Class11_Sub45_Sub1_Sub2.anInt9884))
@@ -2878,7 +2878,7 @@ public final class client extends Applet_Sub1 {
 						} else
 							Class11_Sub2_Sub8
 									.method3433(
-											Class161.aClass292_2096,
+											IncomingPacketDecoder.aClass292_2096,
 											(Class26.aClass26_288
 													.method217(
 															(byte) 100,
@@ -3002,7 +3002,7 @@ public final class client extends Applet_Sub1 {
 			else
 				class376_sub7_sub5_sub5 = (((Class11_Sub25) (Class11_Sub25) (Class11_Sub2_Sub25.aClass213_9322
 						.method1369((byte) 26,
-								(long) Class11_Sub52.anIntArray8054[i_137_ - i]))).aNpc_2373);
+								(long) Class11_Sub52.anIntArray8054[i_137_ - i]))).mob);
 			if (((Actor) class376_sub7_sub5_sub5).anInt10346 >= 0) {
 				int i_138_ = class376_sub7_sub5_sub5.method3968((byte) 127);
 				if ((i_138_ & 0x1) == 0) {
@@ -3072,7 +3072,7 @@ public final class client extends Applet_Sub1 {
 		for (int i_142_ = 0; i_142_ < Class23.anInt249; i_142_++) {
 			Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) (Class11_Sub25) (Class11_Sub2_Sub25.aClass213_9322
 					.method1369((byte) 26,
-							(long) Class11_Sub52.anIntArray8054[i_142_]))).aNpc_2373);
+							(long) Class11_Sub52.anIntArray8054[i_142_]))).mob);
 			if (!class376_sub7_sub5_sub5_sub2.method4007(92160000)
 					|| !((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501
 							.method1383(0, Class11_Sub26.aClass97_6296))
@@ -3119,7 +3119,7 @@ public final class client extends Applet_Sub1 {
 							.method1369((byte) 26,
 									(long) ((Class275) class275).anInt3707)));
 					if (class11_sub25 != null) {
-						Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+						Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 						if (((Actor) class376_sub7_sub5_sub5_sub2).anInt10346 >= 0)
 							((Actor) class376_sub7_sub5_sub5_sub2).anInt10346 += 2048;
 					}

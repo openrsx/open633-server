@@ -106,8 +106,8 @@ final class Class329 {
 			int i_20_ = i_17_ + Class280.aClass225_3786.method1448((byte) -63);
 			if (Class11_Sub2_Sub14.aBool9015) {
 				int i_21_ = 0;
-				for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) Class161.aClass38_2097
-						.method331((byte) -7)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) Class161.aClass38_2097
+				for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) IncomingPacketDecoder.aClass38_2097
+						.method331((byte) -7)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) IncomingPacketDecoder.aClass38_2097
 						.method333(-102))) {
 					int i_22_ = i_21_ * 16 + i_17_ + (Class144.anInt1944 + 31);
 					i_21_++;

@@ -141,7 +141,7 @@ final class Class91_Sub3_Sub1 extends Class91_Sub3 {
 										(byte) 26,
 										(long) (-1 + (((Class376_Sub7_Sub5_Sub2) class376_sub7_sub5_sub2).anInt9982)))));
 						if (class11_sub25 != null) {
-							Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+							Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 							if ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045 ^ 0xffffffff) <= -1
 									&& ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045 ^ 0xffffffff) > (Class300.anInt4051 * 512 ^ 0xffffffff))
 									&& (((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7031 ^ 0xffffffff) <= -1

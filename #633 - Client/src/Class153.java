@@ -195,7 +195,7 @@ final class Class153 {
 			return (new Class347[] { Class362.aClass347_4711,
 					Class210.aClass347_2856, Class11_Sub45_Sub3.aClass347_8530,
 					Class376_Sub7_Sub2_Sub2.aClass347_10223,
-					Class11_Sub30_Sub1.aClass347_8979, Class146.aClass347_1981 });
+					PacketDecoder.aClass347_8979, Class146.aClass347_1981 });
 		} catch (RuntimeException runtimeexception) {
 			throw Class205.method1298(runtimeexception, "gg.A(" + i + ')');
 		}

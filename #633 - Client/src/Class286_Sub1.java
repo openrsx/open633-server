@@ -710,7 +710,7 @@ final class Class286_Sub1 extends Class286 {
 					boolean bool = (Class11_Sub46_Sub2.aBool9060
 							&& !((Class286) this).aBool3870 && ((Class42) class42).aBool681);
 					if (class42.method375((byte) 114))
-						Class11_Sub30_Sub1.method3530(class42, i_123_, i_119_,
+						PacketDecoder.method3530(class42, i_123_, i_119_,
 								null, i, i_124_, -106, null);
 					boolean bool_136_ = ((i_120_ ^ 0xffffffff) == 0
 							&& (((Class42) class42).anInt688 ^ 0xffffffff) == 0

@@ -37,8 +37,8 @@ final class Class159 {
 			int i_8_ = Class280.aClass225_3786.method1448((byte) -63) + i_1_;
 			if (Class11_Sub2_Sub14.aBool9015) {
 				int i_9_ = 0;
-				for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) Class161.aClass38_2097
-						.method331((byte) -7)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) Class161.aClass38_2097
+				for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) IncomingPacketDecoder.aClass38_2097
+						.method331((byte) -7)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) IncomingPacketDecoder.aClass38_2097
 						.method333(-90))) {
 					int i_10_ = i_3_ - (-i_6_ - 13 + -(i_9_ * 16));
 					i_9_++;
@@ -118,8 +118,8 @@ final class Class159 {
 					Class319.anInt4242 - -i_0_, class163);
 			if (Class11_Sub2_Sub14.aBool9015) {
 				int i_14_ = 0;
-				for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) Class161.aClass38_2097
-						.method331((byte) -7)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) Class161.aClass38_2097
+				for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) IncomingPacketDecoder.aClass38_2097
+						.method331((byte) -7)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) IncomingPacketDecoder.aClass38_2097
 						.method333(-115))) {
 					int i_15_ = 16 * i_14_ + 13
 							+ (i_6_ + i_1_ + Class144.anInt1944);

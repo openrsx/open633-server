@@ -113,7 +113,7 @@ final class Class283 {
 			if (Class287.aClass213_3883.method1369((byte) 26,
 					(long) ((Class23) class23).anInt233) != null)
 				return false;
-			if (Class161.aClass213_2098.method1369((byte) 26,
+			if (IncomingPacketDecoder.aClass213_2098.method1369((byte) 26,
 					(long) ((Class23) class23).anInt207) != null)
 				return false;
 			return true;

@@ -17,8 +17,8 @@ final class Class11_Sub41 extends Class11 {
 	static final void method2940(int i) {
 		try {
 			anInt7254++;
-			for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) Class161.aClass38_2097
-					.method331((byte) -7)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) Class161.aClass38_2097
+			for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) IncomingPacketDecoder.aClass38_2097
+					.method331((byte) -7)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) IncomingPacketDecoder.aClass38_2097
 					.method333(i ^ ~0x42))) {
 				if (((Class11_Sub45_Sub14) class11_sub45_sub14).anInt9313 > 1) {
 					((Class11_Sub45_Sub14) class11_sub45_sub14).anInt9313 = 0;
@@ -35,7 +35,7 @@ final class Class11_Sub41 extends Class11 {
 			Class52.anInt802 = i;
 			Class94_Sub1.aClass84_5220.method586((byte) -19);
 			Class376_Sub7_Sub5_Sub4.aClass213_10131.method1364((byte) 109);
-			Class161.aClass38_2097.method334(3);
+			IncomingPacketDecoder.aClass38_2097.method334(3);
 			Class306.aBool4114 = false;
 		} catch (RuntimeException runtimeexception) {
 			throw Class205.method1298(runtimeexception, "rr.A(" + i + ')');

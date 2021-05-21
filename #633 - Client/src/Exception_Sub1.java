@@ -128,8 +128,8 @@ final class Exception_Sub1 extends Exception {
 				class11_sub45_sub14.method3187(100);
 				if (i > -30)
 					aClass192_9486 = null;
-				for (Class11_Sub45_Sub14 class11_sub45_sub14_5_ = ((Class11_Sub45_Sub14) Class161.aClass38_2097
-						.method331((byte) -7)); class11_sub45_sub14_5_ != null; class11_sub45_sub14_5_ = ((Class11_Sub45_Sub14) Class161.aClass38_2097
+				for (Class11_Sub45_Sub14 class11_sub45_sub14_5_ = ((Class11_Sub45_Sub14) IncomingPacketDecoder.aClass38_2097
+						.method331((byte) -7)); class11_sub45_sub14_5_ != null; class11_sub45_sub14_5_ = ((Class11_Sub45_Sub14) IncomingPacketDecoder.aClass38_2097
 						.method333(-123))) {
 					if (Class140.method887(false,
 							class11_sub45_sub14_5_.method3640((byte) 79),
@@ -142,7 +142,7 @@ final class Exception_Sub1 extends Exception {
 				}
 				if (bool)
 					break;
-				Class161.aClass38_2097.method330(class11_sub45_sub14, 21934);
+				IncomingPacketDecoder.aClass38_2097.method330(class11_sub45_sub14, 21934);
 			} catch (RuntimeException runtimeexception) {
 				throw Class205.method1298(runtimeexception,
 						("qw.A("

@@ -126,7 +126,7 @@ final class Class14 implements Interface5 {
 							(byte) 26,
 							(long) ((Actor) class376_sub7_sub5_sub5_sub1).anInt10319)));
 			if (class11_sub19 == null)
-				Class11_Sub30_Sub1
+				PacketDecoder
 						.method3530(
 								null,
 								(((Actor) class376_sub7_sub5_sub5_sub1).anIntArray10376[0]),

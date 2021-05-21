@@ -4279,14 +4279,14 @@ final class Class86 {
 				anInt1197 -= 2;
 				int i_370_ = anIntArray1195[anInt1197];
 				boolean bool_371_ = anIntArray1195[anInt1197 + 1] == 1;
-				if (Class161.aClass213_2098 != null) {
-					Class11 class11 = Class161.aClass213_2098.method1369(
+				if (IncomingPacketDecoder.aClass213_2098 != null) {
+					Class11 class11 = IncomingPacketDecoder.aClass213_2098.method1369(
 							(byte) 26, (long) i_370_);
 					if (class11 != null && !bool_371_)
 						class11.method122(-122);
 					else if (class11 == null && bool_371_) {
 						class11 = new Class11();
-						Class161.aClass213_2098.method1368((long) i_370_,
+						IncomingPacketDecoder.aClass213_2098.method1368((long) i_370_,
 								class11, (byte) -26);
 					}
 				}
@@ -4294,8 +4294,8 @@ final class Class86 {
 			}
 			if (i == 5232) {
 				int i_372_ = anIntArray1195[--anInt1197];
-				if (Class161.aClass213_2098 != null) {
-					Class11 class11 = Class161.aClass213_2098.method1369(
+				if (IncomingPacketDecoder.aClass213_2098 != null) {
+					Class11 class11 = IncomingPacketDecoder.aClass213_2098.method1369(
 							(byte) 26, (long) i_372_);
 					anIntArray1195[anInt1197++] = class11 != null ? 1 : 0;
 				} else {
@@ -4838,7 +4838,7 @@ final class Class86 {
 				if (string.length() <= 320
 						&& Class285.anInt3846 == 3
 						&& (Class94_Sub1.loginStep == 0 && Class313.anInt4162 == 0)) {
-					Class11_Sub30_Sub1.currentUsername = string;
+					PacketDecoder.currentUsername = string;
 					Class11_Sub45_Sub8.currentPassword = string_426_;
 					Class108_Sub23.anInt7766 = i_427_;
 					Class83.method575(false, 6);
@@ -4930,7 +4930,7 @@ final class Class86 {
 						Class108_Sub2.aClass217_5081.method1398(-2147483648);
 						Class108_Sub2.aClass217_5081 = null;
 					}
-					Class11_Sub30_Sub1.currentUsername = string;
+					PacketDecoder.currentUsername = string;
 					Class11_Sub45_Sub8.currentPassword = string_429_;
 					Class83.method575(false, 5);
 					return;

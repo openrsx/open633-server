@@ -175,7 +175,7 @@ final class Class369 {
 							int i_8_ = stream.readInt(122);
 							if (((i_7_ ^ 0xffffffff) > (Class11_Sub2_Sub20.anIntArray9148.length ^ 0xffffffff))
 									&& Class299.aBoolArray4037[i_7_]
-									&& ((((Class161) Class234_Sub2_Sub1.aClass306_8443
+									&& ((((IncomingPacketDecoder) Class234_Sub2_Sub1.aClass306_8443
 											.method1877(i_7_, false)).aChar2092) != '1' || (i_8_ >= -1 && (i_8_ ^ 0xffffffff) >= -2)))
 								Class11_Sub2_Sub20.anIntArray9148[i_7_] = i_8_;
 						}

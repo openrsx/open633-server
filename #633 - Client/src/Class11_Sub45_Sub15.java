@@ -84,7 +84,7 @@ final class Class11_Sub45_Sub15 extends Class11_Sub45 {
 				Class366.aClass376_Sub7_Sub5_Sub5_Sub1Array4814[i_2_] = null;
 			Class11_Sub2_Sub8.myPlayer = null;
 			for (int i_3_ = 0; (i_3_ ^ 0xffffffff) > (Class108_Sub17.anInt6619 ^ 0xffffffff); i_3_++) {
-				Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_3_]).aNpc_2373);
+				Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_3_]).mob);
 				if (class376_sub7_sub5_sub5_sub2 != null)
 					((Actor) class376_sub7_sub5_sub5_sub2).faceEntity = -1;
 			}

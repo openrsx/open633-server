@@ -41,7 +41,7 @@ final class Class104 {
 					class376_sub7_sub5_sub5 = (((Class11_Sub25) (Class11_Sub25) (Class11_Sub2_Sub25.aClass213_9322
 							.method1369((byte) 26,
 									(long) (Class11_Sub52.anIntArray8054[-i_6_
-											+ i_7_])))).aNpc_2373);
+											+ i_7_])))).mob);
 					class215 = ((Npc) (Npc) class376_sub7_sub5_sub5).aClass215_10501;
 					if (((NPCDefinitions) class215).anIntArray2950 != null) {
 						class215 = class215.method1375((byte) 29,
@@ -379,14 +379,14 @@ final class Class104 {
 				Actor class376_sub7_sub5_sub5;
 				if (i_33_ >= 2048)
 					class376_sub7_sub5_sub5 = (((Class11_Sub25) (Class11_Sub25) Class11_Sub2_Sub25.aClass213_9322
-							.method1369((byte) 26, (long) (i_33_ - 2048))).aNpc_2373);
+							.method1369((byte) 26, (long) (i_33_ - 2048))).mob);
 				else
 					class376_sub7_sub5_sub5 = (Class366.aClass376_Sub7_Sub5_Sub5_Sub1Array4814[i_33_]);
 				int i_34_ = Class234_Sub2_Sub1.anIntArray8448[i_32_];
 				Actor class376_sub7_sub5_sub5_35_;
 				if ((i_34_ ^ 0xffffffff) <= -2049)
 					class376_sub7_sub5_sub5_35_ = (((Class11_Sub25) (Class11_Sub25) Class11_Sub2_Sub25.aClass213_9322
-							.method1369((byte) 26, (long) (i_34_ - 2048))).aNpc_2373);
+							.method1369((byte) 26, (long) (i_34_ - 2048))).mob);
 				else
 					class376_sub7_sub5_sub5_35_ = (Class366.aClass376_Sub7_Sub5_Sub5_Sub1Array4814[i_34_]);
 				Class9.method111(

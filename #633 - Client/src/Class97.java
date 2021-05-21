@@ -231,7 +231,7 @@ final class Class97 implements Interface20 {
 						}
 					}
 					for (int i_29_ = 0; ((Class108_Sub17.anInt6619 ^ 0xffffffff) < (i_29_ ^ 0xffffffff)); i_29_++) {
-						Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_29_]).aNpc_2373);
+						Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_29_]).mob);
 						if (class376_sub7_sub5_sub5_sub2 != null) {
 							for (int i_30_ = 0; ((i_30_ ^ 0xffffffff) > ((((Actor) class376_sub7_sub5_sub5_sub2).aClass206Array10371).length ^ 0xffffffff)); i_30_++)
 								((Actor) class376_sub7_sub5_sub5_sub2).aClass206Array10371[i_30_] = null;

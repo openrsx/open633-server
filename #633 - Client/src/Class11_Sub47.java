@@ -14,7 +14,7 @@ final class Class11_Sub47 extends Class11 {
 				for (int i_0_ = 0; i_0_ < Class11_Sub2_Sub22.anInt9204; i_0_++) {
 					int i_1_ = Class94_Sub3.anIntArray6905[i_0_];
 					Npc npc = (((Class11_Sub25) Class11_Sub2_Sub25.aClass213_9322
-							.method1369((byte) 26, (long) i_1_)).aNpc_2373);
+							.method1369((byte) 26, (long) i_1_)).mob);
 
 					int mask = Class3.packetStream.readUnsignedByte((byte) 35);
 					if ((mask & 0x2) != 0)
@@ -164,7 +164,7 @@ final class Class11_Sub47 extends Class11 {
 						npc.method3954(-21, npc.aClass215_10501.anInt2975);
 						npc.anInt10320 = npc.aClass215_10501.anInt2959 << 3;
 						if (((Npc) npc).aClass215_10501.method1376(116))
-							Class11_Sub30_Sub1
+							PacketDecoder
 									.method3530(
 											null,
 											(((Actor) npc).anIntArray10376[0]),

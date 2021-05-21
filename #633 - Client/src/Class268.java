@@ -229,7 +229,7 @@ final class Class268 {
 					}
 					if ((i_28_ ^ 0xffffffff) != 0) {
 						int i_32_ = 0;
-						Class228 class228 = new Class228(Class161.aClass38_2097);
+						Class228 class228 = new Class228(IncomingPacketDecoder.aClass38_2097);
 						for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) class228
 								.method1472(true)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) class228
 								.method1471((byte) 106))) {

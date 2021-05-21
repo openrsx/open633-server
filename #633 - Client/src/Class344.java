@@ -1193,7 +1193,7 @@ final class Class344 {
 									(byte) 26,
 									(long) ((Actor) class376_sub7_sub5_sub5).faceEntity)));
 					if (class11_sub25 != null)
-						class376_sub7_sub5_sub5_34_ = (((Class11_Sub25) class11_sub25).aNpc_2373);
+						class376_sub7_sub5_sub5_34_ = (((Class11_Sub25) class11_sub25).mob);
 				} else if ((((Actor) class376_sub7_sub5_sub5).faceEntity ^ 0xffffffff) <= -32769)
 					class376_sub7_sub5_sub5_34_ = (Class366.aClass376_Sub7_Sub5_Sub5_Sub1Array4814[-32768
 							+ ((Actor) class376_sub7_sub5_sub5).faceEntity]);

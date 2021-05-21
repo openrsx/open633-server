@@ -95,7 +95,7 @@ final class Class186 {
 	static final void method1214(byte i) {
 		try {
 			Class11_Sub2_Sub6.aStringArray8706 = new String[500];
-			Class2_Sub7.anInt6107 = (2 + ((Class292) Class161.aClass292_2096).anInt3951 - -((Class292) Class161.aClass292_2096).anInt3959);
+			Class2_Sub7.anInt6107 = (2 + ((Class292) IncomingPacketDecoder.aClass292_2096).anInt3951 - -((Class292) IncomingPacketDecoder.aClass292_2096).anInt3959);
 			Class50.anInt773 = 2 + (((Class292) Class256_Sub1.aClass292_5320).anInt3959 + ((Class292) Class256_Sub1.aClass292_5320).anInt3951);
 			anInt2378++;
 			if (i <= 100)

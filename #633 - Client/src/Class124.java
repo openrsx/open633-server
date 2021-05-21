@@ -212,7 +212,7 @@ final class Class124 {
 						.method3158(false) ^ 0xffffffff) == -2)
 					Class51.anInt800 = 0;
 				Class83.method575(bool_11_, i);
-				Class11_Sub2_Sub8.method3433(Class161.aClass292_2096,
+				Class11_Sub2_Sub8.method3433(IncomingPacketDecoder.aClass292_2096,
 						Class26.aClass26_288.method217((byte) 91,
 								(Class11_Sub45_Sub1_Sub2.anInt9884)), true,
 						117, OutputStream_Sub2.aClass107_7949,
@@ -235,7 +235,7 @@ final class Class124 {
 					for (int i_19_ = 0; ((i_19_ ^ 0xffffffff) > (Class108_Sub17.anInt6619 ^ 0xffffffff)); i_19_++) {
 						Class11_Sub25 class11_sub25 = Class369.aClass11_Sub25Array4842[i_19_];
 						if (class11_sub25 != null) {
-							Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+							Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 							((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045 -= 512 * i_14_;
 							((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7031 -= 512 * i_15_;
 							if ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045 ^ 0xffffffff) <= -1
@@ -278,7 +278,7 @@ final class Class124 {
 					for (int i_22_ = 0; i_22_ < Class108_Sub17.anInt6619; i_22_++) {
 						Class11_Sub25 class11_sub25 = Class369.aClass11_Sub25Array4842[i_22_];
 						if (class11_sub25 != null) {
-							Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+							Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 							for (int i_23_ = 0; (i_23_ ^ 0xffffffff) > -11; i_23_++) {
 								((Actor) class376_sub7_sub5_sub5_sub2).anIntArray10370[i_23_] -= i_14_;
 								((Actor) class376_sub7_sub5_sub5_sub2).anIntArray10376[i_23_] -= i_15_;

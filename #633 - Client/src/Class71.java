@@ -168,7 +168,7 @@ final class Class71 {
 										((Stream) stream).position, 0);
 								int i_3_ = ((Stream) packet).position;
 								packet.writeString((byte) 27,
-										Class11_Sub30_Sub1.currentUsername);
+										PacketDecoder.currentUsername);
 								packet.writeByte(
 										(((Class66) Class198.aClass66_2679).anInt945),
 										-1528071456);
@@ -203,7 +203,7 @@ final class Class71 {
 										((Stream) stream).position, 0);
 								int i_5_ = ((Stream) packet).position;
 								packet.writeString((byte) 27,
-										Class11_Sub30_Sub1.currentUsername);
+										PacketDecoder.currentUsername);
 								packet.writeByte((Class108_Sub23.anInt7766),
 										-1528071456);
 								packet.writeByte(
@@ -480,7 +480,7 @@ final class Class71 {
 									((Class46) (Class11_Sub45_Sub20_Sub1.aClass46_9960)).anInt726 = 50000 + ((Class46) (Class11_Sub45_Sub20_Sub1.aClass46_9960)).anInt730;
 									((Class46) (Class11_Sub45_Sub20_Sub1.aClass46_9960)).anInt720 = 40000 - -((Class46) (Class11_Sub45_Sub20_Sub1.aClass46_9960)).anInt730;
 								}
-								if ((Class11_Sub2_Sub24.aClass347_9284 != Class11_Sub30_Sub1.aClass347_8979)
+								if ((Class11_Sub2_Sub24.aClass347_9284 != PacketDecoder.aClass347_8979)
 										&& ((Class275.aClass46_3705.method407(
 												62, Class181.aClass46_2337)) || (Class275.aClass46_3705
 												.method407(

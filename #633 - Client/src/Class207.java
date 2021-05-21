@@ -218,7 +218,7 @@ final class Class207 {
 											173,
 											-1,
 											(-((-Class11_Sub36.anInt7080 + i_17_) * Class2_Sub7.anInt6107)
-													+ -(((Class292) Class161.aClass292_2096).anInt3959)
+													+ -(((Class292) IncomingPacketDecoder.aClass292_2096).anInt3959)
 													+ i_12_ - (-350
 													- -Class50.anInt773 + 2)),
 											Class256_Sub2.method3113(-112,

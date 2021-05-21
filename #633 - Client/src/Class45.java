@@ -278,7 +278,7 @@ final class Class45 {
 			try {
 				anInt715++;
 				Class287.aClass213_3883.method1364((byte) 95);
-				Class161.aClass213_2098.method1364((byte) 122);
+				IncomingPacketDecoder.aClass213_2098.method1364((byte) 122);
 				if (i <= -32)
 					break;
 				method399(true);

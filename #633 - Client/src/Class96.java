@@ -78,7 +78,7 @@ final class Class96 {
 			Class116.anInt1582 = 0;
 			Class11_Sub6_Sub2.anInt8899 = 0;
 			Class11_Sub45_Sub17.anInt9507 = 0;
-			Class11_Sub30_Sub1.anInt8963 = 0;
+			PacketDecoder.anInt8963 = 0;
 			Class11_Sub6_Sub2.anInt8910 = 0;
 			Class163_Sub2_Sub1.anInt8595 = 0;
 			Applet_Sub1.anInt10469 = 0;
@@ -997,12 +997,12 @@ final class Class96 {
 			Class292.anInt3953 = 0;
 			Class163_Sub3.anInt8089 = 0;
 			Class11_Sub39.anInt7217 = 0;
-			Class161.anInt2093 = 0;
+			IncomingPacketDecoder.anInt2093 = 0;
 			Class217_Sub1.anInt5537 = 0;
 			Class94_Sub1.anInt5230 = 0;
 			Class146.anInt1963 = 0;
 			Class2_Sub3.anInt5365 = 0;
-			Class11_Sub30_Sub1.anInt8966 = 0;
+			PacketDecoder.anInt8966 = 0;
 			Class2_Sub5.anInt5502 = 0;
 			Class163_Sub2.anInt7460 = 0;
 			Class258.anInt3519 = 0;
@@ -1103,7 +1103,7 @@ final class Class96 {
 			Class168.anInt2161 = 0;
 			Class382.anInt4980 = 0;
 			Class11_Sub6_Sub2.anInt8904 = 0;
-			Class11_Sub30_Sub1.anInt8976 = 0;
+			PacketDecoder.anInt8976 = 0;
 			Class206_Sub2.anInt6339 = 0;
 			Class376_Sub7_Sub4_Sub1.anInt9922 = 0;
 			Class38.anInt516 = 0;
@@ -1330,7 +1330,7 @@ final class Class96 {
 			Class253_Sub1.anInt5857 = 0;
 			Class359.anInt4675 = 0;
 			Class179.anInt2308 = 0;
-			Class11_Sub30_Sub1.anInt8970 = 0;
+			PacketDecoder.anInt8970 = 0;
 			Class382.anInt4967 = 0;
 			Class108_Sub10.anInt6138 = 0;
 			Class78.anInt1049 = 0;
@@ -1490,7 +1490,7 @@ final class Class96 {
 			Class170.anInt2184 = 0;
 			Class225_Sub1.anInt5004 = 0;
 			Class11_Sub45_Sub20_Sub2.anInt10219 = 0;
-			Class11_Sub30_Sub1.anInt8969 = 0;
+			PacketDecoder.anInt8969 = 0;
 			Class207.anInt2782 = 0;
 			Class343.anInt4560 = 0;
 			Class321_Sub3_Sub1.anInt9262 = 0;
@@ -1736,7 +1736,7 @@ final class Class96 {
 			Class73.anInt1010 = 0;
 			Class108_Sub8.anInt5739 = 0;
 			Class91_Sub3_Sub1.anInt9336 = 0;
-			Class161.anInt2091 = 0;
+			IncomingPacketDecoder.anInt2091 = 0;
 			Class171.anInt2196 = 0;
 			Applet_Sub1.anInt10457 = 0;
 			Class163_Sub2_Sub1.anInt8597 = 0;
@@ -1788,7 +1788,7 @@ final class Class96 {
 			Class305.anInt4100 = 0;
 			Class227.anInt3130 = 0;
 			Class108_Sub11.anInt6143 = 0;
-			Class161.anInt2095 = 0;
+			IncomingPacketDecoder.anInt2095 = 0;
 			Class243.anInt3297 = 0;
 			Class206_Sub2.anInt6379 = 0;
 			Class224.anInt3076 = 0;
@@ -1979,7 +1979,7 @@ final class Class96 {
 			Class227.anInt3124 = 0;
 			Class11_Sub45_Sub19.anInt9708 = 0;
 			Class12_Sub3.anInt6469 = 0;
-			Class161.anInt2094 = 0;
+			IncomingPacketDecoder.anInt2094 = 0;
 			Class119.anInt1615 = 0;
 			Class251.anInt3448 = 0;
 			Class146.anInt1969 = 0;
@@ -2048,7 +2048,7 @@ final class Class96 {
 			Class163_Sub3.anInt8214 = 0;
 			Class108_Sub17.anInt6620 = 0;
 			Class82.anInt1131 = 0;
-			Class11_Sub30_Sub1.anInt8975 = 0;
+			PacketDecoder.anInt8975 = 0;
 			Class91_Sub3_Sub1.anInt9341 = 0;
 			Class11_Sub45_Sub14.anInt9319 = 0;
 			Class219_Sub1.anInt7239 = 0;
@@ -2299,7 +2299,7 @@ final class Class96 {
 			Class11_Sub35_Sub1.anInt9118 = 0;
 			Class94_Sub4.anInt7723 = 0;
 			Class2_Sub7.anInt6105 = 0;
-			Class11_Sub30_Sub1.anInt8974 = 0;
+			PacketDecoder.anInt8974 = 0;
 			Class302.anInt4063 = 0;
 			Class376_Sub7_Sub2_Sub2.anInt10233 = 0;
 			Class239_Sub1.anInt7263 = 0;
@@ -2479,7 +2479,7 @@ final class Class96 {
 			Class337.anInt4456 = 0;
 			Class33_Sub1.anInt6175 = 0;
 			Class197.anInt2670 = 0;
-			Class11_Sub30_Sub1.anInt8961 = 0;
+			PacketDecoder.anInt8961 = 0;
 			Class11_Sub45_Sub15.anInt9365 = 0;
 			Class108_Sub9.anInt6101 = 0;
 			Class11_Sub45_Sub21.anInt9766 = 0;
@@ -2493,7 +2493,7 @@ final class Class96 {
 			Stream.anInt5924 = 0;
 			Class376_Sub7_Sub5_Sub2.anInt10020 = 0;
 			Class251_Sub2.anInt5430 = 0;
-			Class11_Sub30_Sub1.anInt8973 = 0;
+			PacketDecoder.anInt8973 = 0;
 			Class362.anInt4707 = 0;
 			Class11_Sub12_Sub4.anInt9438 = 0;
 			Class163_Sub2_Sub1.anInt8629 = 0;
@@ -2740,7 +2740,7 @@ final class Class96 {
 			Class1_Sub1.anInt7122 = 0;
 			Class163_Sub3.anInt8080 = 0;
 			Class22.anInt192 = 0;
-			Class161.anInt2088 = 0;
+			IncomingPacketDecoder.anInt2088 = 0;
 			Class167.anInt2150 = 0;
 			Class86.anInt1189 = 0;
 			Class42.anInt608 = 0;
@@ -3701,7 +3701,7 @@ final class Class96 {
 			Class11_Sub18.anInt5804 = 0;
 			Player.anInt10419 = 0;
 			Class11_Sub2_Sub6.anInt8703 = 0;
-			Class11_Sub30_Sub1.anInt8972 = 0;
+			PacketDecoder.anInt8972 = 0;
 			Class31.anInt409 = 0;
 			Class376_Sub7_Sub5_Sub4.anInt10124 = 0;
 			Class253_Sub2.anInt6507 = 0;
@@ -3845,7 +3845,7 @@ final class Class96 {
 			OutgoingPacket.anInt4862 = 0;
 			Class376_Sub7_Sub5_Sub2.anInt10011 = 0;
 			Class298.anInt4030 = 0;
-			Class11_Sub30_Sub1.anInt8968 = 0;
+			PacketDecoder.anInt8968 = 0;
 			Class108_Sub17.anInt6622 = 0;
 			Class236_Sub4.anInt6707 = 0;
 			Class11_Sub12_Sub1.anInt8822 = 0;

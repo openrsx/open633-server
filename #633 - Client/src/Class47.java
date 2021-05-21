@@ -210,7 +210,7 @@ final class Class47 {
 				Class107 class107 = Class298.aClass107_4028;
 				Class292 class292 = Class11_Sub45_Sub2.aClass292_8511;
 				if ((((Class23) class23).anInt208 ^ 0xffffffff) == -2) {
-					class292 = Class161.aClass292_2096;
+					class292 = IncomingPacketDecoder.aClass292_2096;
 					class107 = OutputStream_Sub2.aClass107_7949;
 				}
 				if (((Class23) class23).anInt208 == 2) {

@@ -46,7 +46,7 @@ final class Class180 {
 				Class11_Sub25 class11_sub25 = ((Class11_Sub25) Class11_Sub2_Sub25.aClass213_9322
 						.method1369((byte) 26, l));
 				if (class11_sub25 != null) {
-					Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+					Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 					if ((((Actor) class376_sub7_sub5_sub5_sub2).anInt10285 ^ 0xffffffff) < -1) {
 						((Actor) class376_sub7_sub5_sub5_sub2).anInt10285--;
 						if (((Actor) class376_sub7_sub5_sub5_sub2).anInt10285 == 0)

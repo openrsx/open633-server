@@ -3,7 +3,7 @@
  */
 import java.io.IOException;
 
-final class Class161 {
+final class IncomingPacketDecoder {
 	static int anInt2088;
 	static OutgoingPacket aClass370_2089 = new OutgoingPacket(24, 3);
 	int anInt2090 = 1;
@@ -46,7 +46,7 @@ final class Class161 {
 		}
 	}
 
-	static final boolean method996(byte i) throws IOException {
+	static final boolean decodeIncomingPacket(byte i) throws IOException {
 		try {
 			anInt2091++;
 			if (Class108_Sub2.aClass217_5081 == null)
@@ -141,7 +141,7 @@ final class Class161 {
 				if (class11_sub25 != null)
 					Class108_Sub29
 							.method3231(
-									(((Class11_Sub25) class11_sub25).aNpc_2373),
+									(((Class11_Sub25) class11_sub25).mob),
 									i_3_, is, (byte) 120);
 				Class236_Sub9.incomingPacket = null;
 				return true;
@@ -204,7 +204,7 @@ final class Class161 {
 				Class236_Sub9.incomingPacket = null;
 				return true;
 			}
-			if (Class236_Sub9.incomingPacket == Class11_Sub30_Sub1.aClass160_8965) {
+			if (Class236_Sub9.incomingPacket == PacketDecoder.aClass160_8965) {
 				int i_14_ = Class3.packetStream.readUnsignedShort((byte) -65);
 				Player class376_sub7_sub5_sub5_sub1;
 				if (Class11_Sub44.anInt7791 != i_14_)
@@ -692,7 +692,7 @@ final class Class161 {
 						Class11_Sub25 class11_sub25 = ((Class11_Sub25) Class11_Sub2_Sub25.aClass213_9322
 								.method1369((byte) 26, (long) i_91_));
 						if (class11_sub25 != null) {
-							Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+							Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 							if (i_85_ == 65535)
 								i_85_ = -1;
 							boolean bool_92_ = true;
@@ -1656,8 +1656,8 @@ final class Class161 {
 					}
 				}
 				for (int i_202_ = 0; Class108_Sub17.anInt6619 > i_202_; i_202_++) {
-					((Actor) (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_202_]).aNpc_2373)).anIntArray10272 = null;
-					((Actor) (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_202_]).aNpc_2373)).anInt10352 = -1;
+					((Actor) (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_202_]).mob)).anIntArray10272 = null;
+					((Actor) (((Class11_Sub25) Class369.aClass11_Sub25Array4842[i_202_]).mob)).anInt10352 = -1;
 				}
 				Class236_Sub9.incomingPacket = null;
 				return true;
@@ -2320,7 +2320,7 @@ final class Class161 {
 		}
 	}
 
-	public Class161() {
+	public IncomingPacketDecoder() {
 		/* empty */
 	}
 
@@ -2353,9 +2353,9 @@ final class Class161 {
 			anInt2088++;
 			if (i != 1) {
 				if (i == 2)
-					((Class161) this).anInt2090 = 0;
+					((IncomingPacketDecoder) this).anInt2090 = 0;
 			} else
-				((Class161) this).aChar2092 = Class64.method486(
+				((IncomingPacketDecoder) this).aChar2092 = Class64.method486(
 						stream.readByte(1854307120), 0);
 		} catch (RuntimeException runtimeexception) {
 			throw Class205.method1298(runtimeexception, ("gt.A(" + bool + ','

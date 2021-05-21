@@ -64,10 +64,10 @@ final class Class11_Sub48 extends Class11 {
 	static final void method3216(Stream stream, int i, int i_1_) {
 		do {
 			try {
-				if (Class11_Sub30_Sub1.aClass182_8980 != null) {
+				if (PacketDecoder.aClass182_8980 != null) {
 					try {
-						Class11_Sub30_Sub1.aClass182_8980.method1192(0L, true);
-						Class11_Sub30_Sub1.aClass182_8980.method1189(24,
+						PacketDecoder.aClass182_8980.method1192(0L, true);
+						PacketDecoder.aClass182_8980.method1189(24,
 								(byte) 72, ((Stream) stream).buffer, i_1_);
 					} catch (Exception exception) {
 						/* empty */

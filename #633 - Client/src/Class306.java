@@ -35,12 +35,12 @@ final class Class306 {
 		}
 	}
 
-	final Class161 method1877(int i, boolean bool) {
+	final IncomingPacketDecoder method1877(int i, boolean bool) {
 		try {
 			anInt4111++;
-			Class161 class161;
+			IncomingPacketDecoder class161;
 			synchronized (aClass22_4112) {
-				class161 = (Class161) aClass22_4112.method188((long) i,
+				class161 = (IncomingPacketDecoder) aClass22_4112.method188((long) i,
 						(byte) -86);
 			}
 			if (class161 != null)
@@ -49,7 +49,7 @@ final class Class306 {
 			synchronized (aClass146_4108) {
 				is = aClass146_4108.method930(i, (byte) 112, 19);
 			}
-			class161 = new Class161();
+			class161 = new IncomingPacketDecoder();
 			if (bool != false)
 				return null;
 			if (is != null)

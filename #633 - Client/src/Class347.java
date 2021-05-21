@@ -389,7 +389,7 @@ final class Class347 {
 				Class299.aBoolArray4037 = new boolean[((Class306) (Class234_Sub2_Sub1.aClass306_8443)).anInt4110];
 				Class138.aStringArray1888 = (new String[((Class260) Class312.aClass260_4149).anInt3576]);
 				for (int i_13_ = 0; ((i_13_ ^ 0xffffffff) > ((((Class306) Class234_Sub2_Sub1.aClass306_8443).anInt4110) ^ 0xffffffff)); i_13_++) {
-					if ((((Class161) Class234_Sub2_Sub1.aClass306_8443
+					if ((((IncomingPacketDecoder) Class234_Sub2_Sub1.aClass306_8443
 							.method1877(i_13_, false)).anInt2090 ^ 0xffffffff) == -1) {
 						Class299.aBoolArray4037[i_13_] = true;
 						Class236.anInt3221++;

@@ -90,7 +90,7 @@ final class Class170 {
 					Class23.anInt250 = Class119.anInt1617;
 					Class93.aFloat1250 = Class11_Sub20_Sub2.aFloat9496;
 					Class11_Sub6_Sub3.anInt9141 = Class206_Sub3.anInt6833;
-					Class161.aFloat2099 = Class221.aFloat3037;
+					IncomingPacketDecoder.aFloat2099 = Class221.aFloat3037;
 					Class286.aFloat3875 = Class245.aFloat3318;
 					Class334.aFloat4421 = Class11_Sub31.aFloat6705;
 					Class182.aFloat2343 = Class11_Sub2_Sub29.aFloat9469;

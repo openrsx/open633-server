@@ -657,7 +657,7 @@ abstract class Class376_Sub7_Sub2 extends Class376_Sub7 {
 															(Class321_Sub2.aClass163_6648),
 															-1));
 										else
-											class253 = (Class161
+											class253 = (IncomingPacketDecoder
 													.method997(
 															2107742921,
 															(((IComponentDefinitions) class192).anInt2552),

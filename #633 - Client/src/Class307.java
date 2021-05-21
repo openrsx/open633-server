@@ -159,7 +159,7 @@ final class Class307 {
 							Class11_Sub25 class11_sub25 = ((Class11_Sub25) Class11_Sub2_Sub25.aClass213_9322
 									.method1369((byte) 26, (long) i_38_));
 							if (class11_sub25 != null)
-								class376_sub7_sub5_sub5 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+								class376_sub7_sub5_sub5 = (((Class11_Sub25) class11_sub25).mob);
 						} else {
 							int i_39_ = -i_29_ - 1;
 							if ((Class11_Sub44.anInt7791 ^ 0xffffffff) == (i_39_ ^ 0xffffffff))

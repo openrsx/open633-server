@@ -51,7 +51,7 @@ final class Class120 {
 											true, -1);
 									continue;
 								}
-								Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+								Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 								i_5_ = (-(((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7031) + ((Class376_Sub7) class376_sub7_sub5_sub5).anInt7031);
 								i_4_ = (-(((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045) + ((Class376_Sub7) class376_sub7_sub5_sub5).anInt7045);
 							}

@@ -102,7 +102,7 @@ final class Class11_Sub12_Sub4 extends Class11_Sub12 {
 
 	static final void method3720(boolean bool) {
 		try {
-			Class161.method998((byte) -101);
+			IncomingPacketDecoder.method998((byte) -101);
 			anInt9435++;
 			if (bool != true)
 				anInt9464 = 73;
@@ -418,7 +418,7 @@ final class Class11_Sub12_Sub4 extends Class11_Sub12 {
 					Class108_Sub13.aClass160_6259,
 					Class11_Sub45_Sub12.aClass160_9191,
 					Class11_Sub2_Sub24.aClass160_9283,
-					Class11_Sub30_Sub1.aClass160_8965, Class121.aClass160_1642,
+					PacketDecoder.aClass160_8965, Class121.aClass160_1642,
 					Class108_Sub2.aClass160_5076, Class253_Sub2.aClass160_6511,
 					Class11_Sub2_Sub14.aClass160_9005, Class29.aClass160_392,
 					Class360.aClass160_4693, Class31.aClass160_411,

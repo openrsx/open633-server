@@ -81,7 +81,7 @@ final class Class376_Sub7_Sub5_Sub2 extends Class376_Sub7_Sub5 {
 							Class11_Sub25 class11_sub25 = ((Class11_Sub25) Class11_Sub2_Sub25.aClass213_9322
 									.method1369((byte) 26, (long) i_1_));
 							if (class11_sub25 != null)
-								class376_sub7_sub5_sub5 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+								class376_sub7_sub5_sub5 = (((Class11_Sub25) class11_sub25).mob);
 						}
 						if (class376_sub7_sub5_sub5 == null)
 							break;

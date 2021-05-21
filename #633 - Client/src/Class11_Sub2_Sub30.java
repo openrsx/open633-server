@@ -301,7 +301,7 @@ final class Class11_Sub2_Sub30 extends Class11_Sub2 {
 				if (InputStream_Sub1.aBool6286) {
 					Class321_Sub2.aClass163_6648.method1035(-16777216, i_8_,
 							i_9_, (byte) 103, i, i_6_);
-					Class11_Sub2_Sub8.method3433(Class161.aClass292_2096,
+					Class11_Sub2_Sub8.method3433(IncomingPacketDecoder.aClass292_2096,
 							(Class26.aClass26_288.method217((byte) 95,
 									Class11_Sub45_Sub1_Sub2.anInt9884)), false,
 							124, OutputStream_Sub2.aClass107_7949,

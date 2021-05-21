@@ -100,7 +100,7 @@ final class Class11_Sub2_Sub20 extends Class11_Sub2 {
 						Class118.method774(i_6_, 118, i);
 				}
 			} else
-				Class11_Sub30_Sub1.method3526((byte) -47, i,
+				PacketDecoder.decodePacket((byte) -47, i,
 						(Class342.aClass11_Sub45_Sub5_4538), i_6_);
 			Class342.aClass11_Sub45_Sub5_4538 = null;
 			Class197.anInt2668 = 0;

@@ -22,8 +22,8 @@ final class Class51 {
 					class11_sub45_sub5.method122(-98);
 					Class52.anInt802--;
 					if (((Class11_Sub45_Sub5) class11_sub45_sub5).aBool8761) {
-						for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) Class161.aClass38_2097
-								.method331((byte) -7)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) Class161.aClass38_2097
+						for (Class11_Sub45_Sub14 class11_sub45_sub14 = ((Class11_Sub45_Sub14) IncomingPacketDecoder.aClass38_2097
+								.method331((byte) -7)); class11_sub45_sub14 != null; class11_sub45_sub14 = ((Class11_Sub45_Sub14) IncomingPacketDecoder.aClass38_2097
 								.method333(-85))) {
 							if (((Class11_Sub45_Sub14) class11_sub45_sub14).aString9315
 									.equals(((Class11_Sub45_Sub5) class11_sub45_sub5).aString8767)) {

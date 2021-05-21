@@ -94,7 +94,7 @@ final class Class55 {
 			OutputStream_Sub2.aClass107_7949 = Class329.method1993(
 					Class372.anInt4874, true, 0, class163);
 			int i_6_ = 98 % ((i + 37) / 56);
-			Class161.aClass292_2096 = Class42.method376(125, class163,
+			IncomingPacketDecoder.aClass292_2096 = Class42.method376(125, class163,
 					Class372.anInt4874);
 			Class98.aClass107_1308 = Class329.method1993(
 					Class58_Sub2.anInt7839, true, 0, class163);

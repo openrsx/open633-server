@@ -144,7 +144,7 @@ final class Class228 {
 						if ((Class253_Sub1.anInt5868 ^ 0xffffffff) != -1)
 							Class11_Sub2_Sub8
 									.method3433(
-											Class161.aClass292_2096,
+											IncomingPacketDecoder.aClass292_2096,
 											((Class26.aClass26_288
 													.method217(
 															(byte) 90,

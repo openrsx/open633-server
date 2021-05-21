@@ -30,7 +30,7 @@ final class Class11_Sub2_Sub37 extends Class11_Sub2 {
 				anInt9757 = -63;
 			for (int i_3_ = i_1_; i > i_3_; i_3_++)
 				i_2_ = i_2_ >>> 8
-						^ (Class11_Sub30_Sub1.anIntArray8977[(is[i_3_] ^ i_2_) & 0xff]);
+						^ (PacketDecoder.packets[(is[i_3_] ^ i_2_) & 0xff]);
 			i_2_ ^= 0xffffffff;
 			return i_2_;
 		} catch (RuntimeException runtimeexception) {

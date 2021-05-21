@@ -29,7 +29,7 @@ final class Class175 implements Runnable {
 			if (bool)
 				Class342.aClass11_Sub45_Sub5_4538 = Class11_Sub19.aClass11_Sub45_Sub5_5815;
 			else
-				Class11_Sub30_Sub1.method3526((byte) -100, i_0_,
+				PacketDecoder.decodePacket((byte) -100, i_0_,
 						(Class11_Sub19.aClass11_Sub45_Sub5_5815), i_1_);
 		} catch (RuntimeException runtimeexception) {
 			throw Class205.method1298(runtimeexception, "hv.A(" + i + ')');

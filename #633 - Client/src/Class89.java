@@ -48,7 +48,7 @@ final class Class89 {
 	static final void method621(int i) {
 		try {
 			anInt1222++;
-			Class161.method998((byte) -108);
+			IncomingPacketDecoder.method998((byte) -108);
 			int i_3_ = ((Class11_Sub17) Class376_Sub7_Sub3_Sub1.aClass11_Sub17_9847).aClass108_Sub17_5731
 					.method2734(false);
 			do {

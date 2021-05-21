@@ -41,7 +41,7 @@ final class Class280 {
 					Class369.aClass11_Sub25Array4842[Class108_Sub17.anInt6619++] = class11_sub25;
 					bool = true;
 				}
-				Npc npc = class11_sub25.aNpc_2373;
+				Npc npc = class11_sub25.mob;
 				Class11_Sub52.anIntArray8054[Class23.anInt249++] = i_0_;
 				npc.anInt10322 = Class147.anInt1994;
 				if (((Npc) npc).aClass215_10501 != null
@@ -85,7 +85,7 @@ final class Class280 {
 										- -i_4_);
 				if (((Npc) npc).aClass215_10501
 						.method1376(96))
-					Class11_Sub30_Sub1
+					PacketDecoder
 							.method3530(
 									null,
 									npc.anIntArray10376[0],

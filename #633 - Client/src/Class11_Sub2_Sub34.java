@@ -64,7 +64,7 @@ final class Class11_Sub2_Sub34 extends Class11_Sub2 {
 			try {
 				if (i != -51)
 					return false;
-				return Class161.method996((byte) -114);
+				return IncomingPacketDecoder.decodeIncomingPacket((byte) -114);
 			} catch (java.io.IOException ioexception) {
 				Class287.method1777((byte) 93);
 				return true;

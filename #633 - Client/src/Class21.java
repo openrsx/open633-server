@@ -24,7 +24,7 @@ final class Class21 {
 				class11_sub30.method2731(i_0_, i, false, canvas);
 				return class11_sub30;
 			} catch (Throwable throwable) {
-				Class11_Sub30_Sub1 class11_sub30_sub1 = new Class11_Sub30_Sub1();
+				PacketDecoder class11_sub30_sub1 = new PacketDecoder();
 				class11_sub30_sub1.method2731(i_0_, i, false, canvas);
 				return class11_sub30_sub1;
 			}

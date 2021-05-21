@@ -47,7 +47,7 @@ final class Class277 {
 			for (int i_5_ = 0; i_5_ < i_3_; i_5_++) {
 				int i_6_ = Class11_Sub52.anIntArray8054[i_5_];
 				Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) (Class11_Sub25) Class11_Sub2_Sub25.aClass213_9322
-						.method1369((byte) 26, (long) i_6_)).aNpc_2373);
+						.method1369((byte) 26, (long) i_6_)).mob);
 				int i_7_ = Class3.packetStream.readBits(1, (byte) 108);
 				if (i_7_ == 0) {
 					Class11_Sub52.anIntArray8054[Class23.anInt249++] = i_6_;

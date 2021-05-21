@@ -59,7 +59,7 @@ final class Class278 {
 									(byte) 26,
 									(long) (int) ((Class11_Sub45_Sub5) class11_sub45_sub5).aLong8771)));
 					if (class11_sub25 != null) {
-						Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+						Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 						NPCDefinitions class215 = (((Npc) class376_sub7_sub5_sub5_sub2).aClass215_10501);
 						if (((NPCDefinitions) class215).anIntArray2950 != null)
 							class215 = class215.method1375((byte) 29,

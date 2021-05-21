@@ -39,10 +39,10 @@ final class Class83 {
 		try {
 			anInt1139++;
 			byte[] is = new byte[24];
-			if (Class11_Sub30_Sub1.aClass182_8980 != null) {
+			if (PacketDecoder.aClass182_8980 != null) {
 				try {
-					Class11_Sub30_Sub1.aClass182_8980.method1192(0L, true);
-					Class11_Sub30_Sub1.aClass182_8980.method1193((byte) 25, is);
+					PacketDecoder.aClass182_8980.method1192(0L, true);
+					PacketDecoder.aClass182_8980.method1193((byte) 25, is);
 					int i_2_;
 					for (i_2_ = 0; (i_2_ ^ 0xffffffff) > -25; i_2_++) {
 						if (is[i_2_] != 0)
@@ -86,7 +86,7 @@ final class Class83 {
 				if ((i ^ 0xffffffff) == -14) {
 					if (Class286.aString3874 == null)
 						Class9.method112(15341,
-								Class11_Sub30_Sub1.currentUsername,
+								PacketDecoder.currentUsername,
 								Class11_Sub45_Sub8.currentPassword,
 								Class108_Sub23.anInt7766);
 					else
@@ -106,7 +106,7 @@ final class Class83 {
 							(Class108_Sub9.anInt6099 != Class365.anInt4797));
 				if (i == 5) {
 					if (Class286.aString3874 == null)
-						Class255.method1635(Class11_Sub30_Sub1.currentUsername,
+						Class255.method1635(PacketDecoder.currentUsername,
 								125, Class11_Sub45_Sub8.currentPassword);
 					else
 						Class181.method1187(false);
@@ -117,7 +117,7 @@ final class Class83 {
 								Class181.method1187(bool);
 							else
 								Class255.method1635(
-										(Class11_Sub30_Sub1.currentUsername),
+										(PacketDecoder.currentUsername),
 										114,
 										(Class11_Sub45_Sub8.currentPassword));
 						}
@@ -125,13 +125,13 @@ final class Class83 {
 						Class245.method1547(126, Class108_Sub23.anInt7766);
 					else
 						Class9.method112(15341,
-								Class11_Sub30_Sub1.currentUsername,
+								PacketDecoder.currentUsername,
 								Class11_Sub45_Sub8.currentPassword,
 								Class108_Sub23.anInt7766);
 				} else if (Class286.aString3874 != null)
 					Class245.method1547(126, Class108_Sub23.anInt7766);
 				else
-					Class9.method112(15341, Class11_Sub30_Sub1.currentUsername,
+					Class9.method112(15341, PacketDecoder.currentUsername,
 							Class11_Sub45_Sub8.currentPassword,
 							Class108_Sub23.anInt7766);
 				if (Class11_Sub49.method3225(Class285.anInt3846, (byte) -117)) {

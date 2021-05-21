@@ -80,7 +80,7 @@ final class Class239_Sub2 extends Class239 implements Interface9 {
 		do {
 			try {
 				anInt7917++;
-				if (Class11_Sub2_Sub24.aClass347_9284 != Class11_Sub30_Sub1.aClass347_8979) {
+				if (Class11_Sub2_Sub24.aClass347_9284 != PacketDecoder.aClass347_8979) {
 					try {
 						Class36.method311("tbrefresh", 102,
 								Class11_Sub2_Sub23.aclient9263);

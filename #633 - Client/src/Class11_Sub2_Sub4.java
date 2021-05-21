@@ -168,12 +168,12 @@ final class Class11_Sub2_Sub4 extends Class11_Sub2 {
 	static final void method3352(String string, boolean bool, int i,
 			String string_12_) {
 		try {
-			Class11_Sub30_Sub1.currentUsername = string;
+			PacketDecoder.currentUsername = string;
 			anInt8499++;
 			Class11_Sub45_Sub8.currentPassword = string_12_;
 			Class11_Sub2_Sub21.aBool9197 = bool;
 			if (!Class11_Sub2_Sub21.aBool9197
-					&& (Class11_Sub30_Sub1.currentUsername.equals("") || Class11_Sub45_Sub8.currentPassword
+					&& (PacketDecoder.currentUsername.equals("") || Class11_Sub45_Sub8.currentPassword
 							.equals("")))
 				Class340.method2051(3, false);
 			else {

@@ -113,7 +113,7 @@ final class Class183 {
 											(byte) 26,
 											(long) (Class11_Sub52.anIntArray8054[i_21_]))));
 							if (class11_sub25 != null) {
-								Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+								Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 								if (class376_sub7_sub5_sub5_sub2
 										.method4007(92160000)
 										&& ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).aByte7047) == (((Class376_Sub7) (Class11_Sub2_Sub8.myPlayer)).aByte7047))) {
@@ -220,7 +220,7 @@ final class Class183 {
 													(byte) 26,
 													(long) (((Class275) class275).anInt3707))));
 									if (class11_sub25 != null) {
-										Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+										Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 										int i_33_ = (-(i_5_ / 128) + (((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7045) / 128);
 										int i_34_ = ((((Class376_Sub7) class376_sub7_sub5_sub5_sub2).anInt7031) / 128 - i_4_ / 128);
 										Class236_Sub9

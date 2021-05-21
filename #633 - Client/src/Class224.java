@@ -324,7 +324,7 @@ final class Class224 {
 			}
 			try {
 				Dimension dimension = Class11_Sub45_Sub13.aCanvas9308.getSize();
-				Class11_Sub2_Sub8.method3433(Class161.aClass292_2096,
+				Class11_Sub2_Sub8.method3433(IncomingPacketDecoder.aClass292_2096,
 						Class26.aClass26_289.method217((byte) 90,
 								(Class11_Sub45_Sub1_Sub2.anInt9884)), true,
 						-31, OutputStream_Sub2.aClass107_7949,

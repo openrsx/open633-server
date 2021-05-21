@@ -91,7 +91,7 @@ final class Class108_Sub21 extends Class108 {
 				Class86.parseIComponentScript(Class365.anInt4797);
 			}
 			anInt7306++;
-			Class11_Sub30_Sub1.currentUsername = Class11_Sub45_Sub8.currentPassword = "";
+			PacketDecoder.currentUsername = Class11_Sub45_Sub8.currentPassword = "";
 			Class11_Sub2_Sub17.aBool9046 = false;
 			Class84.method585(i + 231);
 			Class325.anInt4329 = -1;

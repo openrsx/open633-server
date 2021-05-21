@@ -7,7 +7,7 @@ final class Class11_Sub25 extends Class11 {
 	static Class11_Sub31 aClass11_Sub31_6280 = null;
 	static int anInt6281;
 	static int anInt6282;
-	Npc aNpc_2373;
+	Npc mob;
 
 	static final void method2661(String string, int i) {
 		try {
@@ -54,7 +54,7 @@ final class Class11_Sub25 extends Class11 {
 
 	Class11_Sub25(Npc class376_sub7_sub5_sub5_sub2) {
 		try {
-			((Class11_Sub25) this).aNpc_2373 = class376_sub7_sub5_sub5_sub2;
+			((Class11_Sub25) this).mob = class376_sub7_sub5_sub5_sub2;
 		} catch (RuntimeException runtimeexception) {
 			throw Class205.method1298(runtimeexception,
 					("hd.<init>("

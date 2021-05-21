@@ -126,7 +126,7 @@ final class Class164 implements Runnable {
 					Class11_Sub25 class11_sub25 = ((Class11_Sub25) Class11_Sub2_Sub25.aClass213_9322
 							.method1369((byte) 26, (long) i_11_));
 					if (class11_sub25 != null) {
-						Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).aNpc_2373);
+						Npc class376_sub7_sub5_sub5_sub2 = (((Class11_Sub25) class11_sub25).mob);
 						Class119.method778(
 								-18081,
 								class376_sub7_sub5_sub5_sub2,
