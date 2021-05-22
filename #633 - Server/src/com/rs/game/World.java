@@ -1359,7 +1359,7 @@ public final class World {
 
 	public static void sendWorldMessage(String message, boolean forStaff) {
 		for (Player p : World.getPlayers()) {
-			if (p == null || !p.isRunning() || p.isYellOff() || (forStaff && !p.getRights().isStaff())
+			if (p == null || !p.isRunning() || p.getDetails().isYellOff() || (forStaff && !p.getDetails().getRights().isStaff())
 					|| p.getInterfaceManager().containsReplacedChatBoxInter())
 				continue;
 			p.getPackets().sendGameMessage(message);
@@ -1368,7 +1368,7 @@ public final class World {
 
 	public static void sendIgnoreableWorldMessage(Player sender, String message, boolean forStaff) {
 		for (Player p : World.getPlayers()) {
-			if (p == null || !p.isRunning() || p.isYellOff() || (forStaff && !p.getRights().isStaff())
+			if (p == null || !p.isRunning() || p.getDetails().isYellOff() || (forStaff && !p.getDetails().getRights().isStaff())
 					|| p.getFriendsIgnores().containsIgnore(sender.getUsername())
 					|| p.getInterfaceManager().containsReplacedChatBoxInter())
 				continue;

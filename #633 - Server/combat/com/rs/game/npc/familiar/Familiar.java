@@ -242,15 +242,15 @@ public abstract class Familiar extends NPC implements Serializable {
 	}
 
 	public static void setLeftclickOption(Player player, byte summoningLeftClickOption) {
-		if (summoningLeftClickOption == player.getSummoningLeftClickOption())
+		if (summoningLeftClickOption == player.getDetails().getSummoningLeftClickOption())
 			return;
-		player.setSummoningLeftClickOption(summoningLeftClickOption);
+		player.getDetails().setSummoningLeftClickOption(summoningLeftClickOption);
 		sendLeftClickOption(player);
 	}
 
 	public static void sendLeftClickOption(Player player) {
-		player.getVarsManager().sendVar(1493, player.getSummoningLeftClickOption());
-		player.getVarsManager().sendVar(1494, player.getSummoningLeftClickOption());
+		player.getVarsManager().sendVar(1493, player.getDetails().getSummoningLeftClickOption());
+		player.getVarsManager().sendVar(1494, player.getDetails().getSummoningLeftClickOption());
 	}
 
 	public void unlock() {

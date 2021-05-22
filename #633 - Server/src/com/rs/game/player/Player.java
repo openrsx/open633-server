@@ -76,11 +76,6 @@ public class Player extends Entity {
 	private transient Pet pet;
 	private transient VarsManager varsManager;
 	private transient CoordsEvent coordsEvent;
-
-	/**
-	 * The amount of authority this player has over others.
-	 */
-	public Rights rights = Rights.PLAYER;
 	
 	// used for packets logic
 	private transient ConcurrentLinkedQueue<LogicPacket> logicPackets;
@@ -89,8 +84,8 @@ public class Player extends Entity {
 	private transient LocalPlayerUpdate localPlayerUpdate;
 	private transient LocalNPCUpdate localNPCUpdate;
 
-	private byte temporaryMovementType;
-	private boolean updateMovementType;
+	private transient byte temporaryMovementType;
+	private transient boolean updateMovementType;
 
 	// player stages
 	private transient boolean started;
@@ -105,13 +100,14 @@ public class Player extends Entity {
 	private transient List<Byte> switchItemCache;
 	private transient boolean disableEquip;
 	private transient boolean invulnerable;
-	// interface
 
 	// saving stuff
-	private String password;
 	private String displayName;
-	private String lastIP;
-	private long creationDate;
+	/**
+	 * Personal details & information stored for a Player
+	 */
+	private PlayerDetails details;
+	
 	private Appearance appearence;
 	private Inventory inventory;
 	private Equipment equipment;
@@ -126,56 +122,13 @@ public class Player extends Entity {
 	private FriendsIgnores friendsIgnores;
 	private Familiar familiar;
 	private PetManager petManager;
-	private byte runEnergy;
-	private boolean allowChatEffects;
-	private boolean acceptAid;
-	private boolean mouseButtons;
-	private boolean profanityFilter;
-	private byte privateChatSetup;
-	private byte friendChatSetup;
-	private byte clanChatSetup;
-	private byte guestChatSetup;
-	private int skullDelay; //to redo
-	private int skullId; //to redo
-	private boolean forceNextMapLoadRefresh;
-	private long poisonImmune; //to redo
-	private long fireImmune; //to redo
-	private double[] warriorPoints;
-
-	private byte[] pouches;
-	private long muted;
-	private long jailed;
-	private long banned;
-	private boolean permBanned;
-	private boolean filterGame;
-	private boolean xpLocked;
-	private boolean yellOff;
-	// game bar status
-	private byte publicStatus;
-	private byte clanStatus;
-	private byte tradeStatus;
-	private byte assistStatus;
-
-	// Used for storing recent ips and password
-	private ArrayList<String> passwordList = new ArrayList<String>();
-	private ArrayList<String> ipList = new ArrayList<String>();
-
-	private ChargesManager charges;
-
-	private String currentFriendChatOwner;
-	private String clanName;// , guestClanChat;
-	private boolean connectedClanChannel;
-
-	private byte summoningLeftClickOption;
-	private List<String> ownedObjectsManagerKeys;
-
-	private String yellColor = "ff0000";
 
 	// creates Player and saved classes
 	public Player(String password) {
 		super(Settings.START_PLAYER_LOCATION);
 		setHitpoints(100);
-		this.password = password;
+		details = new PlayerDetails();
+		getDetails().setPassword(password);
 		appearence = new Appearance();
 		inventory = new Inventory();
 		equipment = new Equipment();
@@ -188,23 +141,14 @@ public class Player extends Entity {
 		emotesManager = new EmotesManager();
 		notes = new Notes();
 		friendsIgnores = new FriendsIgnores();
-		charges = new ChargesManager();
 		petManager = new PetManager();
-		runEnergy = 100;
-		allowChatEffects = true;
-		mouseButtons = true;
-		profanityFilter = true;
-		pouches = new byte[4];
-		warriorPoints = new double[6];
-		ownedObjectsManagerKeys = new LinkedList<String>();
-		passwordList = new ArrayList<String>();
-		ipList = new ArrayList<String>();
-		creationDate = Utils.currentTimeMillis();
 	}
 
 	public void init(Session session, String username, byte displayMode,
 			short screenWidth, short screenHeight, IsaacKeyPair isaacKeyPair) {
 		// temporary deleted after reset all chars
+		if (details == null)
+			details = new PlayerDetails();
 		if (petManager == null)
 			petManager = new PetManager();
 		if (notes == null)
@@ -237,7 +181,6 @@ public class Player extends Entity {
 		emotesManager.setPlayer(this);
 		notes.setPlayer(this);
 		friendsIgnores.setPlayer(this);
-		charges.setPlayer(this);
 		petManager.setPlayer(this);
 		setDirection(Utils.getFaceDirection(0, -1));
 		temporaryMovementType = -1;
@@ -248,46 +191,8 @@ public class Player extends Entity {
 		World.updateEntityRegion(this);
 		if (Settings.DEBUG)
 			Logger.log(this, "Initiated player: " + username + ", pass: "
-					+ password);
-
-		// Do not delete >.>, useful for security purpose. this wont waste that
-		// much space..
-		if (passwordList == null)
-			passwordList = new ArrayList<String>();
-		if (ipList == null)
-			ipList = new ArrayList<String>();
+					+ getDetails().getPassword());
 		updateIPnPass();
-	}
-
-	public void setWildernessSkull() {
-		skullDelay = 3000; // 30minutes
-		skullId = 0;
-		appearence.generateAppearenceData();
-	}
-
-	public void setFightPitsSkull() {
-		skullDelay = Integer.MAX_VALUE; // infinite
-		skullId = 1;
-		appearence.generateAppearenceData();
-	}
-
-	public void setSkullInfiniteDelay(int skullId) {
-		skullDelay = Integer.MAX_VALUE; // infinite
-		this.skullId = skullId;
-		appearence.generateAppearenceData();
-	}
-
-	public void removeSkull() {
-		skullDelay = -1;
-		appearence.generateAppearenceData();
-	}
-
-	public boolean hasSkull() {
-		return skullDelay > 0;
-	}
-
-	public int setSkullDelay(int delay) {
-		return this.skullDelay = delay;
 	}
 
 	public void refreshSpawnedItems() {
@@ -382,10 +287,9 @@ public class Player extends Entity {
 		prayer.reset();
 		combatDefinitions.resetSpells(true);
 		resting = 0;
-		skullDelay = 0;
-		poisonImmune = 0;
-		fireImmune = 0;
-		setRunEnergy(100);
+		getDetails().setPoisonImmune(0);
+		getDetails().setFireImmune(0);
+		getDetails().setRunEnergy((byte) 100);
 		appearence.generateAppearenceData();
 	}
 
@@ -424,7 +328,7 @@ public class Player extends Entity {
 			if (wasAtDynamicRegion)
 				localNPCUpdate.reset();
 		}
-		forceNextMapLoadRefresh = false;
+		getDetails().setForceNextMapLoadRefresh(false);
 	}
 
 	public void processLogicPackets() {
@@ -445,7 +349,7 @@ public class Player extends Entity {
 		if (routeEvent != null && routeEvent.processEvent(this))
 			routeEvent = null;
 		super.processEntity();
-		charges.process();
+//		getDetails().getCharges().process();
 		prayer.processPrayer();
 		controlerManager.process();
 		if (isDead())
@@ -514,15 +418,15 @@ public class Player extends Entity {
 	}
 
 	public void restoreRunEnergy() {
-		int restore = 0;
-		if (getNextRunDirection() == -1 && runEnergy < 100) {
-			restore++;
-			if (resting != 0)
-				restore += 1 + resting;
-		}
-		runEnergy = (byte) (runEnergy + restore > 100 ? 100 : runEnergy
-				+ restore);
-		getPackets().sendRunEnergy();
+//		int restore = 0;
+//		if (getNextRunDirection() == -1 && runEnergy < 100) {
+//			restore++;
+//			if (resting != 0)
+//				restore += 1 + resting;
+//		}
+//		runEnergy = (byte) (runEnergy + restore > 100 ? 100 : runEnergy
+//				+ restore);
+//		getPackets().sendRunEnergy();
 	}
 
 	public void run() {
@@ -530,7 +434,7 @@ public class Player extends Entity {
 			int delayPassed = (int) ((Utils.currentTimeMillis() - World.exiting_start) / 1000);
 			getPackets().sendSystemUpdate(World.exiting_delay - delayPassed);
 		}
-		lastIP = getSession().getIP();
+		getDetails().setLastIP(getSession().getIP());
 		interfaceManager.sendInterfaces();
 		getPackets().sendRunEnergy();
 		refreshAllowChatEffects();
@@ -543,7 +447,7 @@ public class Player extends Entity {
 		World.addGroundItem(new Item(1050), this, this, false, 180);
 		getPackets().sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
 		
-		Settings.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> setRights(staff.getValue()));
+		Settings.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> getDetails().setRights(staff.getValue()));
 		
 		sendDefaultPlayersOptions();
 		checkMultiArea();
@@ -555,7 +459,6 @@ public class Player extends Entity {
 		prayer.init();
 		friendsIgnores.init();
 		refreshHitPoints();
-		warriorCheck();
 		prayer.refreshPrayerPoints();
 		getPoison().refresh();
 //		getVarsManager().sendVar(281, 1000); // unlock can't do this on tutorial
@@ -566,10 +469,10 @@ public class Player extends Entity {
 		emotesManager.init();
 		notes.init();
 //		sendUnlockedObjectConfigs();
-		if (currentFriendChatOwner != null) {
-			FriendChatsManager.joinChat(currentFriendChatOwner, this);
+		if (getDetails().getCurrentFriendChatOwner() != null) {
+			FriendChatsManager.joinChat(getDetails().getCurrentFriendChatOwner(), this);
 			if (currentFriendChat == null) // failed
-				currentFriendChatOwner = null;
+				getDetails().setCurrentFriendChatOwner(null);
 		}
 		if (familiar != null)
 			familiar.respawnFamiliar(this);
@@ -589,14 +492,14 @@ public class Player extends Entity {
 	}
 
 	public void updateIPnPass() {
-		if (getPasswordList().size() > 25)
-			getPasswordList().clear();
-		if (getIPList().size() > 50)
-			getIPList().clear();
-		if (!getPasswordList().contains(getPassword()))
-			getPasswordList().add(getPassword());
-		if (!getIPList().contains(getLastIP()))
-			getIPList().add(getLastIP());
+		if (getDetails().getPasswordList().size() > 25)
+			getDetails().getPasswordList().clear();
+		if (getDetails().getIpList().size() > 50)
+			getDetails().getIpList().clear();
+		if (!getDetails().getPasswordList().contains(getDetails().getPassword()))
+			getDetails().getPasswordList().add(getDetails().getPassword());
+		if (!getDetails().getIpList().contains(getDetails().getLastIP()))
+			getDetails().getIpList().add(getDetails().getLastIP());
 		return;
 	}
 
@@ -694,6 +597,10 @@ public class Player extends Entity {
 
 	}
 
+	public EmotesManager getEmotesManager() {
+		return emotesManager;
+	}
+	
 	public void realFinish(boolean shutdown) {
 		if (hasFinished())
 			return;
@@ -716,7 +623,7 @@ public class Player extends Entity {
 		World.removePlayer(this);
 		if (Settings.DEBUG)
 			Logger.log(this, "Finished Player: " + username + ", pass: "
-					+ password);
+					+ getDetails().getPassword());
 	}
 
 	@Override
@@ -752,20 +659,8 @@ public class Player extends Entity {
 		return username;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public ArrayList<String> getPasswordList() {
-		return passwordList;
-	}
-
-	public ArrayList<String> getIPList() {
-		return ipList;
-	}
-
 	public int getMessageIcon() {
-		return getRights() == Rights.ADMINISTRATOR ? 2 : getRights() == Rights.MODERATOR ? 1 : 0;
+		return getDetails().getRights() == Rights.ADMINISTRATOR ? 2 : getDetails().getRights() == Rights.MODERATOR ? 1 : 0;
 	}
 
 	public WorldPacketsEncoder getPackets() {
@@ -778,16 +673,6 @@ public class Player extends Entity {
 
 	public boolean isRunning() {
 		return running;
-	}
-
-	public String getDisplayName() {
-		if (displayName != null)
-			return displayName;
-		return Utils.formatPlayerNameForDisplay(username);
-	}
-
-	public boolean hasDisplayName() {
-		return displayName != null;
 	}
 
 	public Appearance getAppearence() {
@@ -863,11 +748,11 @@ public class Player extends Entity {
 	}
 
 	public byte getRunEnergy() {
-		return runEnergy;
+		return getDetails().getRunEnergy();
 	}
 
 	public void drainRunEnergy() {
-		setRunEnergy(runEnergy - 1);
+		setRunEnergy(getDetails().getRunEnergy() - 1);
 	}
 
 	public void setRunEnergy(int runEnergy) {
@@ -875,7 +760,7 @@ public class Player extends Entity {
 			runEnergy = 0;
 		else if (runEnergy > 100)
 			runEnergy = 100;
-		this.runEnergy = (byte) runEnergy;
+		getDetails().setRunEnergy((byte) runEnergy);
 		getPackets().sendRunEnergy();
 	}
 
@@ -1602,7 +1487,6 @@ public class Player extends Entity {
 		stopAll();
 		if (familiar != null)
 			familiar.sendDeath(this);
-		final WorldTile deathTile = new WorldTile(this);
 		WorldTasksManager.schedule(new WorldTask() {
 			int loop;
 
@@ -1613,8 +1497,7 @@ public class Player extends Entity {
 				} else if (loop == 1) {
 					getPackets().sendGameMessage("Oh dear, you have died.");
 				} else if (loop == 3) {
-					controlerManager.startControler("DeathEvent", deathTile,
-							hasSkull());
+					setNextWorldTile(Settings.START_PLAYER_LOCATION);
 				} else if (loop == 4) {
 					getPackets().sendMusicEffect(90);
 					stop();
@@ -1638,14 +1521,14 @@ public class Player extends Entity {
 	 * default items on death, now only used for wilderness
 	 */
 	public void sendItemsOnDeath(Player killer) {
-		sendItemsOnDeath(killer, hasSkull());
+//		sendItemsOnDeath(killer, hasSkull());
 	}
 
 	public void sendItemsOnDeath(Player killer, WorldTile deathTile,
 			WorldTile respawnTile, boolean wilderness, Integer[][] slots) {
-		if (getRights().isStaff() && Settings.HOSTED)
+		if (getDetails().getRights().isStaff() && Settings.HOSTED)
 			return;
-		charges.die(slots[1], slots[3]); // degrades droped and lost items only
+		getDetails().getCharges().die(slots[1], slots[3]); // degrades droped and lost items only
 //		Item[][] items = GraveStone.getItemsKeptOnDeath(this, slots);
 		inventory.reset();
 		equipment.reset();
@@ -1792,110 +1675,54 @@ public class Player extends Entity {
 	}
 
 	public void switchMouseButtons() {
-		mouseButtons = !mouseButtons;
+		getDetails().setMouseButtons(!getDetails().isMouseButtons());
 		refreshMouseButtons();
 	}
 
 	public void switchAllowChatEffects() {
-		allowChatEffects = !allowChatEffects;
+		getDetails().setAllowChatEffects(!getDetails().isAllowChatEffects());
 		refreshAllowChatEffects();
 	}
 
 	public void switchAcceptAid() {
-		acceptAid = !acceptAid;
+		getDetails().setAcceptAid(!getDetails().isAcceptAid());
 		refreshAcceptAid();
 	}
 
 	public void switchProfanityFilter() {
-		profanityFilter = !profanityFilter;
+		getDetails().setProfanityFilter(!getDetails().isProfanityFilter());
 		refreshProfanityFilter();
 	}
 
 
 	public void refreshAllowChatEffects() {
-		getVarsManager().sendVar(171, allowChatEffects ? 0 : 1);
+		getVarsManager().sendVar(171, getDetails().isAllowChatEffects() ? 0 : 1);
 	}
 
 	public void refreshAcceptAid() {
-		getVarsManager().sendVar(427, acceptAid ? 1 : 0);
+		getVarsManager().sendVar(427, getDetails().isAcceptAid() ? 1 : 0);
 	}
 
 	public void refreshProfanityFilter() {
-		getVarsManager().sendVarBit(8780, profanityFilter ? 0 : 1);
+		getVarsManager().sendVarBit(8780, getDetails().isProfanityFilter() ? 0 : 1);
 	}
 
 	public void refreshMouseButtons() {
-		getVarsManager().sendVar(170, mouseButtons ? 0 : 1);
+		getVarsManager().sendVar(170, getDetails().isMouseButtons() ? 0 : 1);
 	}
 
 	public void refreshPrivateChatSetup() {
-		getVarsManager().sendVar(287, privateChatSetup);
+		getVarsManager().sendVar(287, getDetails().getPrivateChatSetup());
 	}
 
 	public void refreshOtherChatsSetup() {
-		getVarsManager().setVarBit(9188, friendChatSetup);
-		getVarsManager().setVarBit(3612, clanChatSetup);
-		getVarsManager().forceSendVarBit(9191, guestChatSetup);
-	}
-
-	public void setPrivateChatSetup(byte privateChatSetup) {
-		this.privateChatSetup = privateChatSetup;
-	}
-
-	public void setClanChatSetup(byte clanChatSetup) {
-		this.clanChatSetup = clanChatSetup;
-	}
-
-	public void setGuestChatSetup(byte guestChatSetup) {
-		this.guestChatSetup = guestChatSetup;
-	}
-
-	public void setFriendChatSetup(byte friendChatSetup) {
-		this.friendChatSetup = friendChatSetup;
-	}
-
-	public int getPrivateChatSetup() {
-		return privateChatSetup;
-	}
-
-	public boolean isForceNextMapLoadRefresh() {
-		return forceNextMapLoadRefresh;
-	}
-
-	public void setForceNextMapLoadRefresh(boolean forceNextMapLoadRefresh) {
-		this.forceNextMapLoadRefresh = forceNextMapLoadRefresh;
+		getVarsManager().setVarBit(9188, getDetails().getFriendChatSetup());
+		getVarsManager().setVarBit(3612, getDetails().getClanChatSetup());
+		getVarsManager().forceSendVarBit(9191, getDetails().getGuestChatSetup());
 	}
 
 	public FriendsIgnores getFriendsIgnores() {
 		return friendsIgnores;
-	}
-
-	/*
-	 * do not use this, only used by pm
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-
-	public void addPoisonImmune(long time) {
-		poisonImmune = time + Utils.currentTimeMillis();
-		getPoison().reset();
-	}
-
-	public long getPoisonImmune() {
-		return poisonImmune;
-	}
-
-	public void addFireImmune(long time) {
-		fireImmune = time + Utils.currentTimeMillis();
-	}
-
-	public long getFireImmune() {
-		return fireImmune;
 	}
 
 	@Override
@@ -1916,62 +1743,10 @@ public class Player extends Entity {
 		this.closeInterfacesEvent = closeInterfacesEvent;
 	}
 
-	public long getMuted() {
-		return muted;
-	}
-
-	public void setMuted(long muted) {
-		this.muted = muted;
-	}
-
-	public long getJailed() {
-		return jailed;
-	}
-
-	public void setJailed(long jailed) {
-		this.jailed = jailed;
-	}
-
-	public boolean isPermBanned() {
-		return permBanned;
-	}
-
-	public void setPermBanned(boolean permBanned) {
-		this.permBanned = permBanned;
-	}
-
-	public long getBanned() {
-		return banned;
-	}
-
-	public void setBanned(long banned) {
-		this.banned = banned;
-	}
-
-	public ChargesManager getCharges() {
-		return charges;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public byte[] getPouches() {
-		return pouches;
-	}
-
-	public EmotesManager getEmotesManager() {
-		return emotesManager;
-	}
-
-	public String getLastIP() {
-		return lastIP;
-	}
-
 	public String getLastHostname() {
 		InetAddress addr;
 		try {
-			addr = InetAddress.getByName(getLastIP());
+			addr = InetAddress.getByName(getDetails().getLastIP());
 			String hostname = addr.getHostName();
 			return hostname;
 		} catch (UnknownHostException e) {
@@ -2032,22 +1807,6 @@ public class Player extends Entity {
 		}
 	}
 
-	public void setSkullId(int skullId) {
-		this.skullId = skullId;
-	}
-
-	public int getSkullId() {
-		return skullId;
-	}
-
-	public boolean isFilterGame() {
-		return filterGame;
-	}
-
-	public void setFilterGame(boolean filterGame) {
-		this.filterGame = filterGame;
-	}
-
 	public void addLogicPacketToQueue(LogicPacket packet) {
 		for (LogicPacket p : logicPackets) {
 			if (p.getId() == packet.getId()) {
@@ -2103,22 +1862,6 @@ public class Player extends Entity {
 		this.currentFriendChat = currentFriendChat;
 	}
 
-	public String getCurrentFriendChatOwner() {
-		return currentFriendChatOwner;
-	}
-
-	public void setCurrentFriendChatOwner(String currentFriendChatOwner) {
-		this.currentFriendChatOwner = currentFriendChatOwner;
-	}
-
-	public int getSummoningLeftClickOption() {
-		return summoningLeftClickOption;
-	}
-
-	public void setSummoningLeftClickOption(byte summoningLeftClickOption) {
-		this.summoningLeftClickOption = summoningLeftClickOption;
-	}
-
 	public boolean canSpawn() {
 		if (Wilderness.isAtWild(this)
 				|| getControlerManager().getControler() instanceof GodWars
@@ -2140,9 +1883,9 @@ public class Player extends Entity {
 	}
 
 	public List<String> getOwnedObjectManagerKeys() {
-		if (ownedObjectsManagerKeys == null) // temporary
-			ownedObjectsManagerKeys = new LinkedList<String>();
-		return ownedObjectsManagerKeys;
+		if (getDetails().getOwnedObjectsManagerKeys() == null) // temporary
+			getDetails().setOwnedObjectsManagerKeys(new LinkedList<String>());
+		return getDetails().getOwnedObjectsManagerKeys();
 	}
 
 	public boolean hasInstantSpecial(final int weaponId) {
@@ -2269,38 +2012,6 @@ public class Player extends Entity {
 		return disableEquip;
 	}
 	
-	public int getPublicStatus() {
-		return publicStatus;
-	}
-
-	public void setPublicStatus(byte publicStatus) {
-		this.publicStatus = publicStatus;
-	}
-
-	public int getClanStatus() {
-		return clanStatus;
-	}
-
-	public void setClanStatus(byte clanStatus) {
-		this.clanStatus = clanStatus;
-	}
-
-	public int getTradeStatus() {
-		return tradeStatus;
-	}
-
-	public void setTradeStatus(byte tradeStatus) {
-		this.tradeStatus = tradeStatus;
-	}
-
-	public int getAssistStatus() {
-		return assistStatus;
-	}
-
-	public void setAssistStatus(byte assistStatus) {
-		this.assistStatus = assistStatus;
-	}
-
 	public Notes getNotes() {
 		return notes;
 	}
@@ -2315,14 +2026,6 @@ public class Player extends Entity {
 
 	public void setCantTrade(boolean canTrade) {
 		this.cantTrade = canTrade;
-	}
-
-	public String getYellColor() {
-		return yellColor;
-	}
-
-	public void setYellColor(String yellColor) {
-		this.yellColor = yellColor;
 	}
 
 	/**
@@ -2363,22 +2066,6 @@ public class Player extends Entity {
 		this.petManager = petManager;
 	}
 
-	public boolean isXpLocked() {
-		return xpLocked;
-	}
-
-	public void setXpLocked(boolean locked) {
-		this.xpLocked = locked;
-	}
-
-	public boolean isYellOff() {
-		return yellOff;
-	}
-
-	public void setYellOff(boolean yellOff) {
-		this.yellOff = yellOff;
-	}
-
 	public void setInvulnerable(boolean invulnerable) {
 		this.invulnerable = invulnerable;
 	}
@@ -2389,18 +2076,6 @@ public class Player extends Entity {
 
 	public void setLastDuelRules(DuelRules duelRules) {
 		this.lastDuelRules = duelRules;
-	}
-
-	public long getCreationDate() {
-		return creationDate;
-	}
-
-	public boolean isAcceptingAid() {
-		return acceptAid;
-	}
-
-	public boolean isFilteringProfanity() {
-		return profanityFilter;
 	}
 
 	public VarsManager getVarsManager() {
@@ -2426,22 +2101,6 @@ public class Player extends Entity {
 		varsManager.forceSendVarBit(4071, toogleLootShare ? 1 : 0);
 	}
 
-	public String getClanName() {
-		return clanName;
-	}
-
-	public void setClanName(String clanName) {
-		this.clanName = clanName;
-	}
-
-	public boolean isConnectedClanChannel() {
-		return connectedClanChannel;
-	}
-
-	public void setConnectedClanChannel(boolean connectedClanChannel) {
-		this.connectedClanChannel = connectedClanChannel;
-	}
-
 	/*
 	 * started now
 	 */
@@ -2449,51 +2108,48 @@ public class Player extends Entity {
 		return false;
 	}
 
-	public double[] getWarriorPoints() {
-		return warriorPoints;
-	}
-
 	public void setWarriorPoints(int index, double pointsDifference) {
-		warriorPoints[index] += pointsDifference;
-		if (warriorPoints[index] < 0) {
+		getDetails().getWarriorPoints()[index] += pointsDifference;
+		if (getDetails().getWarriorPoints()[index] < 0) {
 			Controller controler = getControlerManager().getControler();
 			if (controler == null || !(controler instanceof WarriorsGuild))
 				return;
 			WarriorsGuild guild = (WarriorsGuild) controler;
 			guild.inCyclopse = false;
 			setNextWorldTile(WarriorsGuild.CYCLOPS_LOBBY);
-			warriorPoints[index] = 0;
-		} else if (warriorPoints[index] > 65535)
-			warriorPoints[index] = 65535;
+			getDetails().getWarriorPoints()[index] = 0;
+		} else if (getDetails().getWarriorPoints()[index] > 65535)
+			getDetails().getWarriorPoints()[index] = 65535;
 		refreshWarriorPoints(index);
 	}
 
 	public void refreshWarriorPoints(int index) {
-		varsManager.sendVarBit(index + 8662, (int) warriorPoints[index]);
-	}
-
-	private void warriorCheck() {
-		if (warriorPoints == null || warriorPoints.length != 6)
-			warriorPoints = new double[6];
-	}
-	
-	/**
-	 * Gets the amount of authority this player has over others.
-	 * @return the authority this player has.
-	 */
-	public Rights getRights() {
-		return rights;
-	}
-	
-	/**
-	 * Sets the value for {@link Player#rights}.
-	 * @param rights the new value to set.
-	 */
-	public void setRights(Rights rights) {
-		this.rights = rights;
+		varsManager.sendVarBit(index + 8662, (int) getDetails().getWarriorPoints()[index]);
 	}
 
 	public void setCoordsEvent(CoordsEvent coordsEvent) {
 		this.coordsEvent = coordsEvent;
+	}
+	
+	/**
+	 * Gets the Players Details
+	 * @return details
+	 */
+	public PlayerDetails getDetails() {
+		return details;
+	}
+	
+	public String getDisplayName() {
+		if (displayName != null)
+			return displayName;
+		return Utils.formatPlayerNameForDisplay(username);
+	}
+
+	public boolean hasDisplayName() {
+		return displayName != null;
+	}
+	
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 }

@@ -448,7 +448,7 @@ public class Magic {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
 			}
-			if (!((Player) target).isAcceptingAid()) {
+			if (!((Player) target).getDetails().isAcceptAid()) {
 				player.getPackets().sendGameMessage(((Player) target).getDisplayName() + " is not accepting aid");
 				return;
 			}
@@ -516,7 +516,7 @@ public class Magic {
 					if (p2 == null || p2 == player || p2.isDead() || !p2.hasStarted() || p2.hasFinished()
 							|| !p2.withinDistance(player, 4) || !player.getControlerManager().canHit(p2))
 						continue;
-					if (!p2.isAcceptingAid()) {
+					if (!p2.getDetails().isAcceptAid()) {
 						player.getPackets().sendGameMessage(p2.getDisplayName() + " is not accepting aid");
 						continue;
 					} else if (p2.getControlerManager().getControler() != null

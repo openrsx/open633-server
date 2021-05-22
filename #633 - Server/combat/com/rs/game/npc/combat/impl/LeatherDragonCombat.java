@@ -32,7 +32,7 @@ public class LeatherDragonCombat extends CombatScript {
 	    if(player != null) {
 		boolean hasShield = Combat.hasAntiDragProtection(target);
 		boolean hasPrayer = player.getPrayer().isMageProtecting();
-		boolean hasPot = player.getFireImmune() >= Utils.currentTimeMillis();
+		boolean hasPot = player.getDetails().getFireImmune() >= Utils.currentTimeMillis();
 		if(hasPot) {
 		    damage = Utils.random(100);
 		    player.getPackets().sendGameMessage("Your potion absorbs most of the dragon's breath!", true);

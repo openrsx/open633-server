@@ -196,7 +196,7 @@ public class WarriorsGuild extends Controller {
 		if (inCatapultArea(player) && player.getEquipment().getShieldId() == 8856)
 			sendShieldInterfaces();
 		player.getInterfaceManager().setOverlay(1057, false);
-		for (int i = 0; i < player.getWarriorPoints().length; i++)
+		for (int i = 0; i < player.getDetails().getWarriorPoints().length; i++)
 			player.refreshWarriorPoints(i);
 	}
 
@@ -233,7 +233,7 @@ public class WarriorsGuild extends Controller {
 		} else if (cyclopseOption != -1 && inCyclopse) {
 			if (timer.ticks % 50 == 0) {
 				if (cyclopseOption == ALL) {
-					for (int index = 0; index < player.getWarriorPoints().length; index++)
+					for (int index = 0; index < player.getDetails().getWarriorPoints().length; index++)
 						player.setWarriorPoints(index, -3);
 				} else
 					player.setWarriorPoints(cyclopseOption, -20);
@@ -511,14 +511,14 @@ public class WarriorsGuild extends Controller {
 							.sendGameMessage("You must select an option before proceeding to the cyclopes room.");
 					return false;
 				} else if (cyclopseOption == ALL) {
-					for (int i = 0; i < player.getWarriorPoints().length; i++) {
-						if (player.getWarriorPoints()[i] < 30) {
+					for (int i = 0; i < player.getDetails().getWarriorPoints().length; i++) {
+						if (player.getDetails().getWarriorPoints()[i] < 30) {
 							failure = true;
 							break;
 						}
 					}
 				} else {
-					if (player.getWarriorPoints()[cyclopseOption] < 200)
+					if (player.getDetails().getWarriorPoints()[cyclopseOption] < 200)
 						failure = true;
 				}
 				if (failure) {

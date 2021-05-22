@@ -981,7 +981,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (forceRun)
 				player.setRun(forceRun);
 			player.stopAll();
-			if (player.getRights().isStaff())
+			if (player.getDetails().getRights().isStaff())
 				player.getDialogueManager().startDialogue("ModReportD", p2);
 //			else
 //				ReportAbuse.report(player, p2.getDisplayName());
@@ -1249,7 +1249,7 @@ public final class WorldPacketsDecoder extends Decoder {
 							"Password length is limited to 5-15 characters.");
 					return;
 				}
-				player.setPassword(Encrypt.encryptSHA1(value));
+				player.getDetails().setPassword(Encrypt.encryptSHA1(value));
 				player.getPackets().sendGameMessage(
 						"You have changed your password! Your new password is \""
 								+ value + "\".");
@@ -1283,11 +1283,11 @@ public final class WorldPacketsDecoder extends Decoder {
 							.sendGameMessage(
 									"The requested yell color can only contain numeric and regular characters.");
 				} else {
-					player.setYellColor(value);
+					player.getDetails().setYellColor(value);
 					player.getPackets().sendGameMessage(
 							"Your yell color has been changed to <col="
-									+ player.getYellColor() + ">"
-									+ player.getYellColor() + "</col>.");
+									+ player.getDetails().getYellColor() + ">"
+									+ player.getDetails().getYellColor() + "</col>.");
 				}
 			}
 		} else if (packetId == ENTER_INTEGER_PACKET) {
@@ -1531,7 +1531,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == SEND_FRIEND_MESSAGE_PACKET) {
 			if (!player.hasStarted())
 				return;
-			if (player.getMuted() > Utils.currentTimeMillis()) {
+			if (player.getDetails().getMuted() > Utils.currentTimeMillis()) {
 				player.getPackets().sendGameMessage(
 						"You temporary muted. Recheck in 48 hours.");
 				return;
@@ -1610,7 +1610,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				CommandDispatcher.processCommand(player, message.replace("::", "").replace(";;", ""), false, false);
 				return;
 			}
-			if (player.getMuted() > Utils.currentTimeMillis()) {
+			if (player.getDetails().getMuted() > Utils.currentTimeMillis()) {
 				player.getPackets().sendGameMessage(
 						"You temporary muted. Recheck in 48 hours.");
 				return;

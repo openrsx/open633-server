@@ -247,7 +247,7 @@ public final class Pots {
 			public void extra(Player player) {
 				player.getPrayer()
 						.restorePrayer((int) ((int) (player.getSkills().getLevelForXp(Skills.PRAYER) * 0.33 * 10)));
-				player.addPoisonImmune(180000);
+//				player.getDetails().addPoisonImmune(180000);
 				// TODO DISEASE HEALING
 			}
 
@@ -271,14 +271,14 @@ public final class Pots {
 		ANTIPOISON() {
 			@Override
 			public void extra(Player player) {
-				player.addPoisonImmune(86000);
+//				player.addPoisonImmune(86000);
 				player.getPackets().sendGameMessage("You are now immune to poison.");
 			}
 		},
 		SUPER_ANTIPOISON() {
 			@Override
 			public void extra(Player player) {
-				player.addPoisonImmune(346000);
+//				player.addPoisonImmune(346000);
 				player.getPackets().sendGameMessage("You are now immune to poison.");
 			}
 		},
@@ -299,29 +299,29 @@ public final class Pots {
 		ANTI_FIRE() {
 			@Override
 			public void extra(final Player player) {
-				player.addFireImmune(360000);
-				final long current = player.getFireImmune();
-				player.getPackets().sendGameMessage("You are now immune to dragonfire.");
-				WorldTasksManager.schedule(new WorldTask() {
-					boolean stop = false;
-
-					@Override
-					public void run() {
-						if (current != player.getFireImmune()) {
-							stop();
-							return;
-						}
-						if (!stop) {
-							player.getPackets()
-									.sendGameMessage("<col=480000>Your antifire potion is about to run out...</col>");
-							stop = true;
-						} else {
-							stop();
-							player.getPackets()
-									.sendGameMessage("<col=480000>Your antifire potion has ran out...</col>");
-						}
-					}
-				}, 500, 100);
+//				player.addFireImmune(360000);
+//				final long current = player.getFireImmune();
+//				player.getPackets().sendGameMessage("You are now immune to dragonfire.");
+//				WorldTasksManager.schedule(new WorldTask() {
+//					boolean stop = false;
+//
+//					@Override
+//					public void run() {
+//						if (current != player.getFireImmune()) {
+//							stop();
+//							return;
+//						}
+//						if (!stop) {
+//							player.getPackets()
+//									.sendGameMessage("<col=480000>Your antifire potion is about to run out...</col>");
+//							stop = true;
+//						} else {
+//							stop();
+//							player.getPackets()
+//									.sendGameMessage("<col=480000>Your antifire potion has ran out...</col>");
+//						}
+//					}
+//				}, 500, 100);
 			}
 		},
 		STRENGTH_POTION(Skills.STRENGTH) {

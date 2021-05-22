@@ -192,12 +192,12 @@ public class PlayerCombat extends Action {
 			delayMagicHit(2, getMagicHit(player,
 					getRandomMagicMaxHit(player, (5 * player.getSkills().getLevel(Skills.MAGIC)) - 180)));
 			if (player.getEquipment().getWeaponId() == 22494) {
-				player.getCharges().addCharges(22496, ItemConstants.getItemDefaultCharges(22496),
+				player.getDetails().getCharges().addCharges(22496, ItemConstants.getItemDefaultCharges(22496),
 						Equipment.SLOT_WEAPON);
 				player.getEquipment().getItem(Equipment.SLOT_WEAPON).setId(22496);
 				player.getEquipment().refresh(Equipment.SLOT_WEAPON);
 			}
-			player.getCharges().addCharges(22496, -1, Equipment.SLOT_WEAPON);
+			player.getDetails().getCharges().addCharges(22496, -1, Equipment.SLOT_WEAPON);
 			World.sendProjectile(player, target, 2035, 60, 32, 50, 50, 0, 0);
 			return 4;
 		}
@@ -1325,12 +1325,12 @@ public class PlayerCombat extends Action {
 					player.setNextAnimation(new Animation(426));
 					delayHit(2, weaponId, attackStyle, getRangeHit(player, hit));
 					if (player.getEquipment().getWeaponId() == 20171) {
-						player.getCharges().addCharges(20173, ItemConstants.getItemDefaultCharges(20173),
+						player.getDetails().getCharges().addCharges(20173, ItemConstants.getItemDefaultCharges(20173),
 								Equipment.SLOT_WEAPON);
 						player.getEquipment().getItem(Equipment.SLOT_WEAPON).setId(20173);
 						player.getEquipment().refresh(Equipment.SLOT_WEAPON);
 					}
-					player.getCharges().addCharges(20173, -1, Equipment.SLOT_WEAPON);
+					player.getDetails().getCharges().addCharges(20173, -1, Equipment.SLOT_WEAPON);
 					World.sendProjectile(player, target, 1066, 60, 32, 50, 50, 0, 0);
 					checkSwiftGlovesEffect(player, 2, attackStyle, weaponId, hit, 1066, 41, 36, 41, 35, 0, 0);
 				} else if (weaponId == 10034 || weaponId == 10033) {

@@ -90,10 +90,10 @@ public final class CommandDispatcher {
 	private static boolean hasPrivileges(Player player, Command command) {
 		Annotation annotation = command.getClass().getAnnotation(CommandSignature.class);
 		CommandSignature sig = (CommandSignature) annotation;
-		if (player.getRights().isStaff()) {
+		if (player.getDetails().getRights().isStaff()) {
 			return true;
 		}
-		return Arrays.stream(sig.rights()).anyMatch(right -> player.getRights().equals(right));
+		return Arrays.stream(sig.rights()).anyMatch(right -> player.getDetails().getRights().equals(right));
 	}
 	
 	/**

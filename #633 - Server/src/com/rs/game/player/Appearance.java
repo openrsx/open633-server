@@ -79,13 +79,12 @@ public class Appearance {
 		int flag = 0;
 		if (!male)
 			flag |= 0x1;
-		if (transformedNpcId >= 0
-				&& NPCDefinitions.getNPCDefinitions(transformedNpcId).aBoolean3190)
+		if (transformedNpcId >= 0 && NPCDefinitions.getNPCDefinitions(transformedNpcId).aBoolean3190)
 			flag |= 0x2;
 
 		stream.writeByte(flag);
 		stream.writeByte(title);
-		stream.writeByte(player.hasSkull() ? player.getSkullId() : -1); // pk//icon
+		stream.writeByte(/* player.hasSkull() ? player.getSkullId() : -1 */ -1); // pk//icon
 		stream.writeByte(player.getPrayer().getPrayerHeadIcon()); // prayer icon
 		stream.writeByte(hidePlayer ? 1 : 0);
 		// npc
@@ -107,10 +106,8 @@ public class Appearance {
 						stream.writeShort(16384 + item.getId());
 				}
 			}
-			Item item = player.getEquipment().getItems()
-					.get(Equipment.SLOT_CHEST);
-			stream.writeShort(item == null ? 0x100 + lookI[2] : 16384 + item
-					.getId());
+			Item item = player.getEquipment().getItems().get(Equipment.SLOT_CHEST);
+			stream.writeShort(item == null ? 0x100 + lookI[2] : 16384 + item.getId());
 			item = player.getEquipment().getItems().get(Equipment.SLOT_SHIELD);
 			if (item == null || forcedShield != -1) {
 				if (forcedShield == -1)
@@ -125,22 +122,18 @@ public class Appearance {
 			else
 				stream.writeByte(0);
 			item = player.getEquipment().getItems().get(Equipment.SLOT_LEGS);
-			stream.writeShort(item == null ? 0x100 + lookI[5] : 16384 + item
-					.getId());
+			stream.writeShort(item == null ? 0x100 + lookI[5] : 16384 + item.getId());
 			item = player.getEquipment().getItems().get(Equipment.SLOT_HAT);
 			if ((item == null || !Equipment.hideHair(item)))
 				stream.writeShort(0x100 + lookI[0]);
 			else
 				stream.writeByte(0);
 			item = player.getEquipment().getItems().get(Equipment.SLOT_HANDS);
-			stream.writeShort(item == null ? 0x100 + lookI[4] : 16384 + item
-					.getId());
+			stream.writeShort(item == null ? 0x100 + lookI[4] : 16384 + item.getId());
 			item = player.getEquipment().getItems().get(Equipment.SLOT_FEET);
-			stream.writeShort(item == null ? 0x100 + lookI[6] : 16384 + item
-					.getId());
+			stream.writeShort(item == null ? 0x100 + lookI[6] : 16384 + item.getId());
 			// tits for female, bear for male
-			item = player.getEquipment().getItems()
-					.get(male ? Equipment.SLOT_HAT : Equipment.SLOT_CHEST);
+			item = player.getEquipment().getItems().get(male ? Equipment.SLOT_HAT : Equipment.SLOT_CHEST);
 			if (item == null || (male && Equipment.showBear(item)))
 				stream.writeShort(0x100 + lookI[1]);
 			else
@@ -154,17 +147,15 @@ public class Appearance {
 		stream.writeShort(getRenderEmote());
 		stream.writeString(player.getDisplayName());
 		boolean pvpArea = World.isPvpArea(player);
-		stream.writeByte(pvpArea ? player.getSkills().getCombatLevel() : player
-				.getSkills().getCombatLevelWithSummoning());
-		stream.writeByte(pvpArea ? player.getSkills()
-				.getCombatLevelWithSummoning() : 0);
+		stream.writeByte(
+				pvpArea ? player.getSkills().getCombatLevel() : player.getSkills().getCombatLevelWithSummoning());
+		stream.writeByte(pvpArea ? player.getSkills().getCombatLevelWithSummoning() : 0);
 		stream.writeByte(-1); // higher level acc name appears in front :P
 		stream.writeByte(transformedNpcId >= 0 ? 1 : 0); // to end here else id
 		// need to send more
 		// data
 		if (transformedNpcId >= 0) {
-			NPCDefinitions defs = NPCDefinitions
-					.getNPCDefinitions(transformedNpcId);
+			NPCDefinitions defs = NPCDefinitions.getNPCDefinitions(transformedNpcId);
 			stream.writeShort(defs.anInt876);
 			stream.writeShort(defs.anInt842);
 			stream.writeShort(defs.anInt884);
@@ -174,8 +165,7 @@ public class Appearance {
 
 		// done separated for safe because of synchronization
 		byte[] appeareanceData = new byte[stream.getOffset()];
-		System.arraycopy(stream.getBuffer(), 0, appeareanceData, 0,
-				appeareanceData.length);
+		System.arraycopy(stream.getBuffer(), 0, appeareanceData, 0, appeareanceData.length);
 		byte[] md5Hash = Utils.encryptUsingMD5(appeareanceData);
 		this.appeareanceData = appeareanceData;
 		md5AppeareanceDataHash = md5Hash;

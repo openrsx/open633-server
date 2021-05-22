@@ -155,7 +155,7 @@ public class ItemConstants {
 	}
 
 	public static boolean canWear(Item item, Player player) {
-		if (player.getRights() == Rights.ADMINISTRATOR)
+		if (player.getDetails().getRights() == Rights.ADMINISTRATOR)
 			return true;
 		if (!item.getDefinitions().isWearItem())
 			return false;
