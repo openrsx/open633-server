@@ -15,6 +15,7 @@ import com.rs.game.player.dialogues.DialogueHandler;
 import com.rs.net.ServerChannelHandler;
 import com.rs.plugin.CommandDispatcher;
 import com.rs.plugin.InventoryDispatcher;
+import com.rs.plugin.NPCDispatcher;
 import com.rs.plugin.ObjectDispatcher;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utils.Censor;
@@ -117,6 +118,7 @@ public class GameLoader {
 			InventoryDispatcher.load();
 			ObjectDispatcher.load();
 			CommandDispatcher.load();
+			NPCDispatcher.load();
 			return null;
 		});
 	}

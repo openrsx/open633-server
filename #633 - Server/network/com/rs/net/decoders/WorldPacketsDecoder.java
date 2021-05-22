@@ -17,7 +17,6 @@ import com.rs.game.player.PublicChatMessage;
 import com.rs.game.player.QuickChatMessage;
 import com.rs.game.player.Skills;
 import com.rs.game.player.actions.PlayerFollow;
-import com.rs.game.player.content.Commands;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Magic;
 import com.rs.game.player.content.Shop;
@@ -29,7 +28,8 @@ import com.rs.io.InputStream;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.decoders.handlers.InventoryOptionsHandler;
-import com.rs.net.decoders.handlers.NPCHandler;
+import com.rs.plugin.CommandDispatcher;
+import com.rs.plugin.NPCDispatcher;
 import com.rs.plugin.ObjectDispatcher;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utils.Encrypt;
@@ -75,7 +75,7 @@ public final class WorldPacketsDecoder extends Decoder {
 	private final static int CLOSE_INTERFACE_PACKET = 50;
 	private final static int SCREEN_PACKET = 3445;
 	private final static int MOUVE_MOUSE_PACKET = 44588;
-	private final static int KEY_TYPED_PACKET = 1;
+	private final static int KEY_TYPED_PACKET = 89545;
 	private final static int OBJECT_CLICK1_PACKET = 75;
 	private final static int ITEM_TAKE_PACKET = 24;
 	private final static int NPC_CLICK1_PACKET = 22;
@@ -129,7 +129,9 @@ public final class WorldPacketsDecoder extends Decoder {
 	}
 
 	public static void loadPacketSizes() {
-		PACKET_SIZES[17] = 0;
+		for (int i : PACKET_SIZES)
+			PACKET_SIZES[i] = -3;
+		PACKET_SIZES[17] = -1;
 		PACKET_SIZES[76] = 3;
 		PACKET_SIZES[46] = 3;
 		PACKET_SIZES[82] = -1;
@@ -137,7 +139,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		PACKET_SIZES[28] = -1;
 		PACKET_SIZES[35] = -1;
 		PACKET_SIZES[10] = 16;
-		PACKET_SIZES[1] = 1;
+		PACKET_SIZES[1] = -1;
 		PACKET_SIZES[5] = 4;
 		PACKET_SIZES[69] = -1;
 		PACKET_SIZES[62] = 6;
@@ -156,7 +158,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		PACKET_SIZES[16] = 1;
 		PACKET_SIZES[19] = 8;
 		PACKET_SIZES[61] = 6;
-		PACKET_SIZES[7] = 2;
+		PACKET_SIZES[7] = -1;
 		PACKET_SIZES[32] = 8;
 		PACKET_SIZES[56] = 4;
 		PACKET_SIZES[41] = 2;
@@ -171,8 +173,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		PACKET_SIZES[18] = 8;
 		PACKET_SIZES[23] = 4;
 		PACKET_SIZES[40] = -1;
-		PACKET_SIZES[63] = 3;
-		PACKET_SIZES[69] = 4;
+		PACKET_SIZES[63] = -1;
 		PACKET_SIZES[58] = 15;
 		PACKET_SIZES[39] = 0;
 		PACKET_SIZES[42] = 2;
@@ -186,7 +187,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		PACKET_SIZES[79] = -1;
 		PACKET_SIZES[80] = 3;
 		PACKET_SIZES[60] = 4;
-		PACKET_SIZES[2] = 9;
+		PACKET_SIZES[2] = 11;
 		PACKET_SIZES[51] = 3;
 		PACKET_SIZES[30] = 7;
 		PACKET_SIZES[55] = 6;
@@ -214,7 +215,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		PACKET_SIZES[6] = 7;
 		PACKET_SIZES[15] = 2;
 		PACKET_SIZES[47] = 3;
-		PACKET_SIZES[0] = 0;
+		PACKET_SIZES[0] = 7;
 
 	}
 
@@ -600,7 +601,7 @@ public final class WorldPacketsDecoder extends Decoder {
 						return;
 					}
 				}
-				NPCHandler.handleItemOnNPC(player, npc, item);
+				NPCDispatcher.handleItemOnNPC(player, npc, item);
 				break;
 			case 662:
 			case 747:
@@ -1050,14 +1051,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				}
 			}
 			player.getActionManager().setAction(new PlayerCombat(npc));
-		} else if (packetId == NPC_CLICK1_PACKET)
-			NPCHandler.handleOption1(player, stream);
-		else if (packetId == NPC_CLICK2_PACKET)
-			NPCHandler.handleOption2(player, stream);
-		else if (packetId == NPC_CLICK3_PACKET)
-			NPCHandler.handleOption3(player, stream);
-		else if (packetId == NPC_CLICK4_PACKET)
-			NPCHandler.handleOption4(player, stream);
+		}
 		else if (packetId == OBJECT_CLICK1_PACKET)
 			ObjectDispatcher.handleOption(player, stream, 1);
 		else if (packetId == OBJECT_CLICK2_PACKET)
@@ -1111,6 +1105,8 @@ public final class WorldPacketsDecoder extends Decoder {
 				}
 			}));
 		}
+		
+		NPCDispatcher.executeMobInteraction(player, stream, packetId == NPC_CLICK1_PACKET ? 1 :packetId ==  NPC_CLICK2_PACKET ? 2 :packetId ==  NPC_CLICK3_PACKET ? 3 : packetId == NPC_CLICK4_PACKET ? 4 : 5);
 	}
 
 	public void processPackets(final int packetId, InputStream stream,
@@ -1121,6 +1117,8 @@ public final class WorldPacketsDecoder extends Decoder {
 			// USELESS PACKET
 		} else if (packetId == KEY_TYPED_PACKET) {
 			// USELESS PACKET
+			int read = stream.readUnsignedByte();
+			System.out.println("key"+read);
 		} else if (packetId == RECEIVE_PACKET_COUNT_PACKET) {
 			// interface packets
 			stream.readInt();
@@ -1476,14 +1474,15 @@ public final class WorldPacketsDecoder extends Decoder {
 				|| packetId == OBJECT_CLICK3_PACKET
 				|| packetId == OBJECT_CLICK4_PACKET
 				|| packetId == OBJECT_CLICK5_PACKET
-				|| packetId == 3 || packetId == 2 || packetId == 8 || packetId == 0
+				|| packetId == 3 || packetId == 2 || packetId == 8 || packetId == KEY_TYPED_PACKET
 				|| packetId == INTERFACE_ON_OBJECT)
 			player.addLogicPacketToQueue(new LogicPacket(packetId, length,
 					stream));
 		else if (packetId == OBJECT_EXAMINE_PACKET) {
 			ObjectDispatcher.handleOption(player, stream, -1);
 		} else if (packetId == NPC_EXAMINE_PACKET) {
-			NPCHandler.handleExamine(player, stream);
+//			NPCDispatcher.handleExamine(player, stream);
+			//doesn't work, examines might be handled elsewhere..
 		} else if (packetId == JOIN_FRIEND_CHAT_PACKET) {
 			if (!player.hasStarted())
 				return;
@@ -1608,8 +1607,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (message.startsWith("::") || message.startsWith(";;")) {
 				// if command exists and processed wont send message as public
 				// message
-				Commands.processCommand(player, message.replace("::", "")
-						.replace(";;", ""), false, false);
+				CommandDispatcher.processCommand(player, message.replace("::", "").replace(";;", ""), false, false);
 				return;
 			}
 			if (player.getMuted() > Utils.currentTimeMillis()) {
@@ -1634,8 +1632,8 @@ public final class WorldPacketsDecoder extends Decoder {
 			@SuppressWarnings("unused")
 			boolean unknown = stream.readUnsignedByte() == 1;
 			String command = stream.readString();
-			if (!Commands.processCommand(player, command, true, clientCommand)
-					&& Settings.DEBUG)
+			if (!CommandDispatcher.processCommand(player, command, true, clientCommand) && Settings.DEBUG)
+				Logger.log(this, "Command: " + command);
 				Logger.log(this, "Command: " + command);
 		} else if (packetId == COLOR_ID_PACKET) {
 			if (!player.hasStarted())
