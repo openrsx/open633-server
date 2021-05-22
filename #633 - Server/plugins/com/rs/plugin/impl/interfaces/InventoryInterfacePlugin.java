@@ -1,19 +1,29 @@
 package com.rs.plugin.impl.interfaces;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.TimerTask;
+
 import com.rs.Settings;
 import com.rs.cache.io.InputStream;
+import com.rs.cores.CoresManager;
 import com.rs.cores.WorldThread;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.item.ItemConstants;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar.SpecialAttack;
 import com.rs.game.npc.others.Pet;
+import com.rs.game.player.Equipment;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
+import com.rs.game.player.Skills;
 import com.rs.game.player.content.Foods;
 import com.rs.game.player.content.Pots;
 import com.rs.game.route.CoordsEvent;
+import com.rs.game.tasks.WorldTask;
+import com.rs.game.tasks.WorldTasksManager;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.plugin.InventoryDispatcher;
 import com.rs.plugin.listener.RSInterface;
@@ -50,20 +60,29 @@ public class InventoryInterfacePlugin implements RSInterface {
 				if (player.isEquipDisabled())
 					return;
 				long passedTime = Utils.currentTimeMillis() - WorldThread.WORLD_CYCLE;
-//				World.get().submit(new Task(passedTime >= 600 ? 0 : passedTime > 330 ? 1 : 0) {
-//					
-//					@Override
-//					protected void execute() {
-//						List<Byte> slots = player.getSwitchItemCache();
-//						int[] slot = new int[slots.size()];
-//						for (int i = 0; i < slot.length; i++)
-//							slot[i] = slots.get(i);
-//						player.getSwitchItemCache().clear();
-//						InventoryInterfaceTypePlugin.sendWear(player, slot);
-//						player.stopAll(false, true, false);
-//						this.cancel();
-//					}
-//				});
+				CoresManager.fastExecutor.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					try {
+						WorldTasksManager.schedule(new WorldTask() {
+
+							@Override
+							public void run() {
+								List<Integer> slots = player
+										.getSwitchItemCache();
+								int[] slot = new int[slots.size()];
+								for (int i = 0; i < slot.length; i++)
+									slot[i] = slots.get(i);
+								player.getSwitchItemCache().clear();
+								sendWear(player, slot);
+								player.stopAll(false, true, false);
+							}
+						}, 0);
+					} catch (Throwable e) {
+						Logger.handle(e);
+					}
+				}
+			}, 300);
 				if (player.getSwitchItemCache().contains(slotId))
 					return;
 				player.getSwitchItemCache().add((int) slotId);
@@ -173,5 +192,138 @@ public class InventoryInterfacePlugin implements RSInterface {
 				}
 			}
 		}, npc.getSize()));
+	}
+	public static void sendWear(Player player, int[] slotIds) {
+		if (player.hasFinished() || player.isDead())
+			return;
+		boolean worn = false;
+		Item[] copy = player.getInventory().getItems().getItemsCopy();
+		for (int slotId : slotIds) {
+			Item item = player.getInventory().getItem(slotId);
+			if (item == null)
+				continue;
+			if (sendWear2(player, slotId, item.getId()))
+				worn = true;
+		}
+		player.getInventory().refreshItems(copy);
+		if (worn) {
+			player.getAppearence().generateAppearenceData();
+			player.getPackets().sendSound(2240, 0, 1);
+		}
+	}
+	
+	public static boolean sendWear2(Player player, int slotId, int itemId) {
+		if (player.hasFinished() || player.isDead())
+			return false;
+		player.stopAll(false, false);
+		Item item = player.getInventory().getItem(slotId);
+		if (item == null || item.getId() != itemId)
+			return false;
+		if (item.getDefinitions().isNoted()
+				|| !item.getDefinitions().isWearItem(
+						player.getAppearence().isMale()) && itemId != 4084) {
+			player.getPackets().sendGameMessage("You can't wear that.");
+			return false;
+		}
+		int targetSlot = Equipment.getItemSlot(itemId);
+		if (itemId == 4084)
+			targetSlot = 3;
+		if (targetSlot == -1) {
+			player.getPackets().sendGameMessage("You can't wear that.");
+			return false;
+		}
+		if (!ItemConstants.canWear(item, player))
+			return false;
+		boolean isTwoHandedWeapon = targetSlot == 3
+				&& Equipment.isTwoHandedWeapon(item);
+		if (isTwoHandedWeapon && !player.getInventory().hasFreeSlots()
+				&& player.getEquipment().hasShield()) {
+			player.getPackets().sendGameMessage(
+					"Not enough free space in your inventory.");
+			return false;
+		}
+		HashMap<Integer, Integer> requiriments = item.getDefinitions()
+				.getWearingSkillRequiriments();
+		boolean hasRequiriments = true;
+		if (requiriments != null) {
+			for (int skillId : requiriments.keySet()) {
+				if (skillId > 24 || skillId < 0)
+					continue;
+				int level = requiriments.get(skillId);
+				if (level < 0 || level > 120)
+					continue;
+				if (player.getSkills().getLevelForXp(skillId) < level) {
+					if (hasRequiriments)
+						player.getPackets()
+								.sendGameMessage(
+										"You are not high enough level to use this item.");
+					hasRequiriments = false;
+					String name = Skills.SKILL_NAME[skillId].toLowerCase();
+					player.getPackets().sendGameMessage(
+							"You need to have a"
+									+ (name.startsWith("a") ? "n" : "") + " "
+									+ name + " level of " + level + ".");
+				}
+
+			}
+		}
+		if (!hasRequiriments)
+			return false;
+		if (!player.getControlerManager().canEquip(targetSlot, itemId))
+			return false;
+		player.getInventory().getItems().remove(slotId, item);
+		if (targetSlot == 3) {
+			if (isTwoHandedWeapon && player.getEquipment().getItem(5) != null) {
+				if (!player.getInventory().getItems()
+						.add(player.getEquipment().getItem(5))) {
+					player.getInventory().getItems().set(slotId, item);
+					return false;
+				}
+				player.getEquipment().getItems().set(5, null);
+			}
+		} else if (targetSlot == 5) {
+			if (player.getEquipment().getItem(3) != null
+					&& Equipment.isTwoHandedWeapon(player.getEquipment()
+							.getItem(3))) {
+				if (!player.getInventory().getItems()
+						.add(player.getEquipment().getItem(3))) {
+					player.getInventory().getItems().set(slotId, item);
+					return false;
+				}
+				player.getEquipment().getItems().set(3, null);
+			}
+
+		}
+		if (player.getEquipment().getItem(targetSlot) != null
+				&& (itemId != player.getEquipment().getItem(targetSlot).getId() || !item
+						.getDefinitions().isStackable())) {
+			if (player.getInventory().getItems().get(slotId) == null) {
+				player.getInventory()
+						.getItems()
+						.set(slotId,
+								new Item(player.getEquipment()
+										.getItem(targetSlot).getId(), player
+										.getEquipment().getItem(targetSlot)
+										.getAmount()));
+			} else
+				player.getInventory()
+						.getItems()
+						.add(new Item(player.getEquipment().getItem(targetSlot)
+								.getId(), player.getEquipment()
+								.getItem(targetSlot).getAmount()));
+			player.getEquipment().getItems().set(targetSlot, null);
+		}
+		int oldAmt = 0;
+		if (player.getEquipment().getItem(targetSlot) != null) {
+			oldAmt = player.getEquipment().getItem(targetSlot).getAmount();
+		}
+		Item item2 = new Item(itemId, oldAmt + item.getAmount());
+		player.getEquipment().getItems().set(targetSlot, item2);
+		player.getEquipment().refresh(targetSlot,
+				targetSlot == 3 ? 5 : targetSlot == 3 ? 0 : 3);
+		if (targetSlot == 3)
+			player.getCombatDefinitions().desecreaseSpecialAttack(0);
+		player.getCharges().wear(targetSlot);
+		return true;
 	}
 }

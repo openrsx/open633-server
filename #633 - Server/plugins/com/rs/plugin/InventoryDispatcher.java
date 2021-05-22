@@ -78,7 +78,6 @@ public final class InventoryDispatcher {
 			}
 			ITEMS.put(InventoryType.getClass().getAnnotation(InventoryWrapper.class), InventoryType);
 		}
-		System.out.println(ITEMS.size());
 	}
 	
 	/**

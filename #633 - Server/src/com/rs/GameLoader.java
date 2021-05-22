@@ -13,6 +13,7 @@ import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.controllers.ControlerHandler;
 import com.rs.game.player.dialogues.DialogueHandler;
 import com.rs.net.ServerChannelHandler;
+import com.rs.plugin.CommandDispatcher;
 import com.rs.plugin.InventoryDispatcher;
 import com.rs.plugin.ObjectDispatcher;
 import com.rs.plugin.RSInterfaceDispatcher;
@@ -115,6 +116,7 @@ public class GameLoader {
 			RSInterfaceDispatcher.load();
 			InventoryDispatcher.load();
 			ObjectDispatcher.load();
+			CommandDispatcher.load();
 			return null;
 		});
 	}
