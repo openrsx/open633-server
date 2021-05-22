@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.rs.Settings;
-import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.cores.CoresManager;
 import com.rs.game.Animation;
@@ -16,12 +14,10 @@ import com.rs.game.Hit;
 import com.rs.game.Hit.HitLook;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
-import com.rs.game.item.Item;
 import com.rs.game.npc.combat.NPCCombat;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
-import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.FixedTileStrategy;
@@ -31,7 +27,6 @@ import com.rs.utils.Logger;
 import com.rs.utils.MapAreas;
 import com.rs.utils.NPCBonuses;
 import com.rs.utils.NPCCombatDefinitionsL;
-import com.rs.utils.NPCDrops;
 import com.rs.utils.Utils;
 
 public class NPC extends Entity implements Serializable {
@@ -651,59 +646,15 @@ public class NPC extends Entity implements Serializable {
 	}
 
 	public void drop() {
-		if (getCombatDefinitions() == NPCCombatDefinitionsL.DEFAULT_DEFINITION
-				|| getMaxHitpoints() == 1)
-			return;
+//		if (getCombatDefinitions() == NPCCombatDefinitionsL.DEFAULT_DEFINITION)
+//			return;
 		Player killer = getMostDamageReceivedSourcePlayer();
 		if (killer == null)
 			return;
-		Drops drops = NPCDrops.getDrops(id);
-		if (drops == null)
-			return;
-		List<Drop> dropL = drops.generateDrops(dropRateFactor);
-		drops.addCharms(dropL, getSize());
-		List<Player> players = FriendChatsManager.getLootSharingPeople(killer);
-		if (players == null || players.size() == 1) {
-			for (Drop drop : dropL)
-				sendDrop(killer, drop);
-		} else {
-			for (Drop drop : dropL) {
-				Player luckyPlayer = players.get(Utils.random(players.size()));
-				Item item = sendDrop(luckyPlayer, drop);
-				luckyPlayer.getPackets().sendGameMessage(
-						"<col=00FF00>You received: " + item.getAmount() + " "
-								+ item.getName() + ".");
-				for (Player p2 : players) {
-					if (p2 == luckyPlayer)
-						continue;
-					p2.getPackets().sendGameMessage(
-							"<col=66FFCC>" + luckyPlayer.getDisplayName()
-									+ "</col> received: " + item.getAmount()
-									+ " " + item.getName() + ".");
-					p2.getPackets().sendGameMessage(
-							"Your chance of receiving loot has improved.");
-				}
-			}
-		}
+		System.out.println("?");
+		DropManager.dropItems(killer, this);
 	}
-
-	public Item sendDrop(Player player, Drop drop) {
-		int size = getSize();
-		Item item = ItemDefinitions.getItemDefinitions(drop.getItemId())
-				.isStackable() ? new Item(drop.getItemId(),
-				(drop.getMinAmount() * Settings.DROP_QUANTITY_RATE)
-						+ Utils.getRandom(drop.getExtraAmount()
-								* Settings.DROP_QUANTITY_RATE)) : new Item(
-				drop.getItemId(), drop.getMinAmount()
-						+ Utils.getRandom(drop.getExtraAmount()));
-		if (item.getId() == 995)
-			player.getInventory().addItem(item);
-		else
-			World.addGroundItem(item, new WorldTile(getCoordFaceX(size),
-					getCoordFaceY(size), getPlane()), player, true, 60);
-		return item;
-	}
-
+	
 	@Override
 	public int getSize() {
 		return getDefinitions().size;

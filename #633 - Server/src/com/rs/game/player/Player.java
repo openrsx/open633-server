@@ -22,6 +22,7 @@ import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
+import com.rs.game.item.Item;
 import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.minigames.duel.DuelRules;
@@ -542,8 +543,7 @@ public class Player extends Entity {
 		refreshPrivateChatSetup();
 		refreshOtherChatsSetup();
 		sendRunButtonConfig();
-		World.spawnNPC(1, this,
-				-1, false);
+		World.addGroundItem(new Item(1050), this, this, false, 180);
 		getPackets().sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
 		
 		Settings.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> setRights(staff.getValue()));

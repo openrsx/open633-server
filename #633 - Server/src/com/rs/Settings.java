@@ -39,6 +39,16 @@ public final class Settings {
 	public static boolean XP_BONUS_ENABLED = Config.get().getBoolean("bonus_exp_enabled");
 	
 	/**
+	 * The maximum amount of drops that can be rolled from the dynamic drop table.
+	 */
+	public static final byte DROP_THRESHOLD = 2;
+
+	/**
+	 * The attempted looped of randomized rare mob drops.
+	 */
+	public static final byte DROP_RARE_ATTEMPTS = 5;
+	
+	/**
 	 * An immutable map of Staff members
 	 */
 	public static final ImmutableMap<String, Rights> STAFF = ImmutableMap.of(

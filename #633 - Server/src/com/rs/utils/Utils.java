@@ -14,15 +14,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.rs.Settings;
 import com.rs.cache.Cache;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.plugin.listener.RSInterface;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
@@ -987,5 +986,27 @@ public final class Utils {
 			}
 		}
 		return classes;
+	}
+
+	/**
+	 * Returns a pseudo-random {@code int} value between inclusive {@code min} and inclusive {@code max}.
+	 * @param min The minimum inclusive number.
+	 * @param max The maximum inclusive number.
+	 * @return The pseudo-random {@code int}.
+	 * @throws IllegalArgumentException If {@code max - min + 1} is less than {@code 0}.
+	 */
+	public static int inclusive(int min, int max) {
+		if(min == max)
+			return min;
+		return ThreadLocalRandom.current().nextInt((max - min) + 1) + min;
+	}
+	
+	/**
+	 * Pseudo-randomly retrieves a element from {@code list}.
+	 * @param list The list to retrieve an element from.
+	 * @return The element retrieved from the list.
+	 */
+	public static <T> T random(List<T> list) {
+		return list.get((int) (ThreadLocalRandom.current().nextDouble() * list.size()));
 	}
 }

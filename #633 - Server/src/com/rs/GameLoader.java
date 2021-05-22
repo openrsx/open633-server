@@ -29,10 +29,10 @@ import com.rs.utils.MapAreas;
 import com.rs.utils.MusicHints;
 import com.rs.utils.NPCBonuses;
 import com.rs.utils.NPCCombatDefinitionsL;
-import com.rs.utils.NPCDrops;
 import com.rs.utils.ObjectSpawns;
 import com.rs.utils.ShopsHandler;
 import com.rs.utils.json.GsonHandler;
+import com.rs.utils.json.impl.MobDropTableLoader;
 
 /**
  *
@@ -94,7 +94,6 @@ public class GameLoader {
 			ObjectSpawns.init();
 			NPCCombatDefinitionsL.init();
 			NPCBonuses.init();
-			NPCDrops.init();
 			return null;
 		});
 		getBackgroundLoader().submit(() -> {
@@ -114,6 +113,7 @@ public class GameLoader {
 		});
 		getBackgroundLoader().submit(() -> {
 			GsonHandler.initialize();
+			new MobDropTableLoader().load();
 			RSInterfaceDispatcher.load();
 			InventoryDispatcher.load();
 			ObjectDispatcher.load();

@@ -715,6 +715,10 @@ public class WorldPacketsEncoder extends Encoder {
 		return stream;
 	}
 
+	/**
+	 * This needs to be fixed. As well as Object spawning, probably rest of these.
+	 * @param item
+	 */
 	public void sendGroundItem(FloorItem item) {
 		OutputStream stream = createWorldTileStream(item.getTile());
 		int localX = item.getTile().getLocalX(
