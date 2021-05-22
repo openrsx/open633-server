@@ -1,12 +1,9 @@
 package com.rs.game.player;
 
-import java.io.Serializable;
-
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
 import com.rs.game.npc.NPC;
-import com.rs.game.player.CombatDefinitions;
 import com.rs.utils.Utils;
 
 public class Prayer {

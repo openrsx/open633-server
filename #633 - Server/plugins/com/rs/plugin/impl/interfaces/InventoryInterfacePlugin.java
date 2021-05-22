@@ -7,7 +7,6 @@ import java.util.TimerTask;
 import com.rs.Settings;
 import com.rs.cache.io.InputStream;
 import com.rs.cores.CoresManager;
-import com.rs.cores.WorldThread;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
@@ -26,6 +25,7 @@ import com.rs.game.tasks.WorldTask;
 import com.rs.game.tasks.WorldTasksManager;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.plugin.InventoryDispatcher;
+import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
 import com.rs.utils.Logger;
@@ -59,33 +59,34 @@ public class InventoryInterfacePlugin implements RSInterface {
 			case WorldPacketsDecoder.ACTION_BUTTON2_PACKET:
 				if (player.isEquipDisabled())
 					return;
-				long passedTime = Utils.currentTimeMillis() - WorldThread.WORLD_CYCLE;
-				CoresManager.fastExecutor.schedule(new TimerTask() {
-				@Override
-				public void run() {
-					try {
-						WorldTasksManager.schedule(new WorldTask() {
+				if (player.getSwitchItemCache().isEmpty()) {
+					player.getSwitchItemCache().add(slotId);
+					CoresManager.fastExecutor.schedule(new TimerTask() {
+						@Override
+						public void run() {
+							try {
+								WorldTasksManager.schedule(new WorldTask() {
 
-							@Override
-							public void run() {
-								List<Integer> slots = player
-										.getSwitchItemCache();
-								int[] slot = new int[slots.size()];
-								for (int i = 0; i < slot.length; i++)
-									slot[i] = slots.get(i);
-								player.getSwitchItemCache().clear();
-								sendWear(player, slot);
-								player.stopAll(false, true, false);
+									@Override
+									public void run() {
+										List<Byte> slots = player
+												.getSwitchItemCache();
+										int[] slot = new int[slots.size()];
+										for (int i = 0; i < slot.length; i++)
+											slot[i] = slots.get(i);
+										player.getSwitchItemCache().clear();
+										RSInterfaceDispatcher.sendWear(player, slot);
+										player.stopAll(false, true, false);
+									}
+								}, 0);
+							} catch (Throwable e) {
+								Logger.handle(e);
 							}
-						}, 0);
-					} catch (Throwable e) {
-						Logger.handle(e);
-					}
+						}
+					}, 300);
+				} else if (!player.getSwitchItemCache().contains(slotId)) {
+					player.getSwitchItemCache().add(slotId);
 				}
-			}, 300);
-				if (player.getSwitchItemCache().contains(slotId))
-					return;
-				player.getSwitchItemCache().add((int) slotId);
 				InventoryDispatcher.execute(player, item, 2);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON3_PACKET:

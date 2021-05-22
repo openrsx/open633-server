@@ -47,7 +47,6 @@ public class GsonHandler {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@SuppressWarnings("deprecation")
 	public static void addJsonLoaders() throws InstantiationException, IllegalAccessException {
 		CLASSES.add(NPCAutoSpawn.class.newInstance());
 	}

@@ -27,7 +27,6 @@ import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.io.InputStream;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
-import com.rs.net.decoders.handlers.InventoryOptionsHandler;
 import com.rs.plugin.CommandDispatcher;
 import com.rs.plugin.NPCDispatcher;
 import com.rs.plugin.ObjectDispatcher;
@@ -35,13 +34,14 @@ import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utils.Encrypt;
 import com.rs.utils.Huffman;
 import com.rs.utils.Logger;
-import com.rs.utils.ReportAbuse;
 import com.rs.utils.Utils;
 
+@SuppressWarnings("all")
 public final class WorldPacketsDecoder extends Decoder {
 
 	/**
 	 * The packet sizes.
+	 * TODO: Fix incoming & outgoing packets
 	 * TODO: fix packet reading, etc..
 	 */
 	public static final byte[] PACKET_SIZES = new byte[256];
@@ -983,8 +983,8 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.stopAll();
 			if (player.getRights().isStaff())
 				player.getDialogueManager().startDialogue("ModReportD", p2);
-			else
-				ReportAbuse.report(player, p2.getDisplayName());
+//			else
+//				ReportAbuse.report(player, p2.getDisplayName());
 		} else if (packetId == PLAYER_OPTION_9_PACKET) {
 			boolean forceRun = stream.readUnsignedByte() == 1;
 			int playerIndex = stream.readUnsignedShortLE128();
@@ -1124,7 +1124,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			stream.readInt();
 
 		} else if (packetId == INTERFACE_ON_INTERFACE) {
-			InventoryOptionsHandler.handleInterfaceOnInterface(player, stream);
+			RSInterfaceDispatcher.handleInterfaceOnInterface(player, stream);
 		} else if (packetId == AFK_PACKET) {
 			player.getSession().getChannel().close();
 		} else if (packetId == CLOSE_INTERFACE_PACKET) {
@@ -1652,7 +1652,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			boolean mute = stream.readUnsignedByte() == 1;
 			@SuppressWarnings("unused")
 			String unknown2 = stream.readString();
-			ReportAbuse.report(player, displayName, type, mute);
+//			ReportAbuse.report(player, displayName, type, mute);
 //		} else if (packetId == FORUM_THREAD_ID_PACKET) {
 //			String threadId = stream.readString();
 //			if (player.getInterfaceManager().containsInterface(1100))

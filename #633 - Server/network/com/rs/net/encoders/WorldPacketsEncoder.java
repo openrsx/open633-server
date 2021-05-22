@@ -641,7 +641,21 @@ public class WorldPacketsEncoder extends Encoder {
 		// ////session.write(stream);
 	}
 
-	@Deprecated
+	
+	/**
+	 * TODO: Test and or rework projectiles entirely.
+	 * @param receiver
+	 * @param startTile
+	 * @param endTile
+	 * @param gfxId
+	 * @param startHeight
+	 * @param endHeight
+	 * @param speed
+	 * @param delay
+	 * @param curve
+	 * @param startDistanceOffset
+	 * @param creatorSize
+	 */
 	public void sendProjectile(Entity receiver, WorldTile startTile,
 			WorldTile endTile, int gfxId, int startHeight, int endHeight,
 			int speed, int delay, int curve, int startDistanceOffset,

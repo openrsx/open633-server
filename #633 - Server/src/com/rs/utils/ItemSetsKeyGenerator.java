@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ItemSetsKeyGenerator {
 
-    private final static AtomicInteger nextKey = new AtomicInteger(500); // After
+    private final static AtomicInteger nextKey = new AtomicInteger(400); // After
 									 // 400
 									 // keys
 									 // uses

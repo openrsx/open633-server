@@ -23,7 +23,6 @@ import com.rs.utils.EquipData;
 import com.rs.utils.Huffman;
 import com.rs.utils.ItemBonuses;
 import com.rs.utils.ItemDestroys;
-import com.rs.utils.ItemSpawns;
 import com.rs.utils.MapArchiveKeys;
 import com.rs.utils.MapAreas;
 import com.rs.utils.MusicHints;
@@ -98,7 +97,6 @@ public class GameLoader {
 		});
 		getBackgroundLoader().submit(() -> {
 			ItemDestroys.init();
-			ItemSpawns.init();
 			MusicHints.init();
 			ShopsHandler.init();
 			return null;

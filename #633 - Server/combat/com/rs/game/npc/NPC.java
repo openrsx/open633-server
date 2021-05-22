@@ -1,6 +1,5 @@
 package com.rs.game.npc;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -29,11 +28,9 @@ import com.rs.utils.NPCBonuses;
 import com.rs.utils.NPCCombatDefinitionsL;
 import com.rs.utils.Utils;
 
-public class NPC extends Entity implements Serializable {
+public class NPC extends Entity {
 
 	public static int NORMAL_WALK = 0x2, WATER_WALK = 0x4, FLY_WALK = 0x8;
-
-	private static final long serialVersionUID = -4794678936277614443L;
 
 	private int id;
 	private WorldTile respawnTile;
@@ -68,16 +65,14 @@ public class NPC extends Entity implements Serializable {
 	private transient boolean locked;
 	private transient double dropRateFactor;
 
-	public NPC(int id, WorldTile tile, int mapAreaNameHash,
-			boolean canBeAttackFromOutOfArea) {
+	public NPC(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
 		this(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, false);
 	}
 
 	/*
 	 * creates and adds npc
 	 */
-	public NPC(int id, WorldTile tile, int mapAreaNameHash,
-			boolean canBeAttackFromOutOfArea, boolean spawned) {
+	public NPC(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
 		super(tile);
 		this.id = id;
 		this.respawnTile = new WorldTile(tile);
@@ -114,11 +109,10 @@ public class NPC extends Entity implements Serializable {
 
 	@Override
 	public boolean needMasksUpdate() {
-		return super.needMasksUpdate() || nextTransformation != null
-				|| getCustomName() != null || getCustomCombatLevel() >= 0 /*
-																		 * *
-																		 * changedName
-																		 */;
+		return super.needMasksUpdate() || nextTransformation != null || getCustomName() != null
+				|| getCustomCombatLevel() >= 0 /*
+												 * * changedName
+												 */;
 	}
 
 	public void setNextNPCTransformation(int id) {
@@ -141,7 +135,7 @@ public class NPC extends Entity implements Serializable {
 		nextTransformation = null;
 		changedCombatLevel = false;
 		changedName = false;
-	
+
 	}
 
 	public int getMapAreaNameHash() {
@@ -176,15 +170,12 @@ public class NPC extends Entity implements Serializable {
 	public void processNPC() {
 		if (isDead() || locked)
 			return;
-		if (!combat.process()) { // if not under combat
-			if (!isForceWalking()) {// combat still processed for attack delay
-				// go down
-				// random walk
+		if (!combat.process()) {
+			if (!isForceWalking()) {
 				if (!cantInteract) {
 					if (!checkAgressivity()) {
 						if (getFreezeDelay() < Utils.currentTimeMillis()) {
-							if (!hasWalkSteps()
-									&& (walkType & NORMAL_WALK) != 0) {
+							if (!hasWalkSteps() && (walkType & NORMAL_WALK) != 0) {
 								boolean can = false;
 								for (int i = 0; i < 2; i++) {
 									if (Math.random() * 1000.0 < 100.0) {
@@ -194,26 +185,19 @@ public class NPC extends Entity implements Serializable {
 								}
 
 								if (can) {
-									int moveX = (int) Math
-											.round(Math.random() * 10.0 - 5.0);
-									int moveY = (int) Math
-											.round(Math.random() * 10.0 - 5.0);
+									int moveX = (int) Math.round(Math.random() * 10.0 - 5.0);
+									int moveY = (int) Math.round(Math.random() * 10.0 - 5.0);
 									resetWalkSteps();
 									if (getMapAreaNameHash() != -1) {
-										if (!MapAreas.isAtArea(
-												getMapAreaNameHash(), this)) {
+										if (!MapAreas.isAtArea(getMapAreaNameHash(), this)) {
 											forceWalkRespawnTile();
 											return;
 										}
 										// fly walk noclips for now, nothing
 										// uses it anyway
-										addWalkSteps(getX() + moveX, getY()
-												+ moveY, 5,
-												(walkType & FLY_WALK) == 0);
+										addWalkSteps(getX() + moveX, getY() + moveY, 5, (walkType & FLY_WALK) == 0);
 									} else
-										addWalkSteps(
-												respawnTile.getX() + moveX,
-												respawnTile.getY() + moveY, 5,
+										addWalkSteps(respawnTile.getX() + moveX, respawnTile.getY() + moveY, 5,
 												(walkType & FLY_WALK) == 0);
 								}
 
@@ -227,11 +211,8 @@ public class NPC extends Entity implements Serializable {
 			if (getFreezeDelay() < Utils.currentTimeMillis()) {
 				if (getX() != forceWalk.getX() || getY() != forceWalk.getY()) {
 					if (!hasWalkSteps()) {
-						int steps = RouteFinder.findRoute(
-								RouteFinder.WALK_ROUTEFINDER, getX(), getY(),
-								getPlane(), getSize(), new FixedTileStrategy(
-										forceWalk.getX(), forceWalk.getY()),
-								true);
+						int steps = RouteFinder.findRoute(RouteFinder.WALK_ROUTEFINDER, getX(), getY(), getPlane(),
+								getSize(), new FixedTileStrategy(forceWalk.getX(), forceWalk.getY()), true);
 						int[] bufferX = RouteFinder.getLastPathBufferX();
 						int[] bufferY = RouteFinder.getLastPathBufferY();
 						for (int i = steps - 1; i >= 0; i--) {
@@ -240,16 +221,10 @@ public class NPC extends Entity implements Serializable {
 						}
 					}
 					if (!hasWalkSteps()) { // failing finding route
-						setNextWorldTile(new WorldTile(forceWalk)); // force
-						// tele
-						// to
-						// the
-						// forcewalk
-						// place
-						forceWalk = null; // so ofc reached forcewalk place
+						setNextWorldTile(new WorldTile(forceWalk));
+						forceWalk = null;
 					}
 				} else
-					// walked till forcewalk place
 					forceWalk = null;
 			}
 		}
@@ -263,21 +238,10 @@ public class NPC extends Entity implements Serializable {
 
 	public int getRespawnDirection() {
 		NPCDefinitions definitions = getDefinitions();
-		if (definitions.anInt853 << 32 != 0 && definitions.respawnDirection > 0
-				&& definitions.respawnDirection <= 8)
+		if (definitions.anInt853 << 32 != 0 && definitions.respawnDirection > 0 && definitions.respawnDirection <= 8)
 			return (4 + definitions.respawnDirection) << 11;
 		return 0;
 	}
-
-	/*
-	 * forces npc to random walk even if cache says no, used because of fake
-	 * cache information
-	 */
-	/*
-	 * private static int walkType(int npcId) { switch (npcId) { case 11226:
-	 * return RANDOM_WALK; case 3341: case 3342: case 3343: return RANDOM_WALK;
-	 * default: return -1; } }
-	 */
 
 	public void sendSoulSplit(final Hit hit, final Entity user) {
 		final NPC target = this;
@@ -289,8 +253,7 @@ public class NPC extends Entity implements Serializable {
 			public void run() {
 				setNextGraphics(new Graphics(2264));
 				if (hit.getDamage() > 0)
-					World.sendProjectile(target, user, 2263, 11, 11, 20, 5, 0,
-							0);
+					World.sendProjectile(target, user, 2263, 11, 11, 20, 5, 0, 0);
 			}
 		}, 1);
 	}
@@ -299,8 +262,7 @@ public class NPC extends Entity implements Serializable {
 	public void handleIngoingHit(final Hit hit) {
 		if (capDamage != -1 && hit.getDamage() > capDamage)
 			hit.setDamage(capDamage);
-		if (hit.getLook() != HitLook.MELEE_DAMAGE
-				&& hit.getLook() != HitLook.RANGE_DAMAGE
+		if (hit.getLook() != HitLook.MELEE_DAMAGE && hit.getLook() != HitLook.RANGE_DAMAGE
 				&& hit.getLook() != HitLook.MAGIC_DAMAGE)
 			return;
 		Entity source = hit.getSource();
@@ -323,22 +285,18 @@ public class NPC extends Entity implements Serializable {
 							// att
 							if (Utils.getRandom(4) == 0) {
 								if (p2.getPrayer().reachedMax(0)) {
-									p2.getPackets()
-											.sendGameMessage(
-													"Your opponent has been weakened so much that your sap curse has no effect.",
-													true);
+									p2.getPackets().sendGameMessage(
+											"Your opponent has been weakened so much that your sap curse has no effect.",
+											true);
 								} else {
 									p2.getPrayer().increaseLeechBonus(0);
-									p2.getPackets()
-											.sendGameMessage(
-													"Your curse drains Attack from the enemy, boosting your Attack.",
-													true);
+									p2.getPackets().sendGameMessage(
+											"Your curse drains Attack from the enemy, boosting your Attack.", true);
 								}
 								p2.setNextAnimation(new Animation(12569));
 								p2.setNextGraphics(new Graphics(2214));
 								p2.getPrayer().setBoostedLeech(true);
-								World.sendProjectile(p2, this, 2215, 35, 35,
-										20, 5, 0, 0);
+								World.sendProjectile(p2, this, 2215, 35, 35, 20, 5, 0, 0);
 								WorldTasksManager.schedule(new WorldTask() {
 									@Override
 									public void run() {
@@ -351,21 +309,17 @@ public class NPC extends Entity implements Serializable {
 							if (p2.getPrayer().usingPrayer(1, 10)) {
 								if (Utils.getRandom(7) == 0) {
 									if (p2.getPrayer().reachedMax(3)) {
-										p2.getPackets()
-												.sendGameMessage(
-														"Your opponent has been weakened so much that your leech curse has no effect.",
-														true);
+										p2.getPackets().sendGameMessage(
+												"Your opponent has been weakened so much that your leech curse has no effect.",
+												true);
 									} else {
 										p2.getPrayer().increaseLeechBonus(3);
-										p2.getPackets()
-												.sendGameMessage(
-														"Your curse drains Attack from the enemy, boosting your Attack.",
-														true);
+										p2.getPackets().sendGameMessage(
+												"Your curse drains Attack from the enemy, boosting your Attack.", true);
 									}
 									p2.setNextAnimation(new Animation(12575));
 									p2.getPrayer().setBoostedLeech(true);
-									World.sendProjectile(p2, this, 2231, 35,
-											35, 20, 5, 0, 0);
+									World.sendProjectile(p2, this, 2231, 35, 35, 20, 5, 0, 0);
 									WorldTasksManager.schedule(new WorldTask() {
 										@Override
 										public void run() {
@@ -378,21 +332,18 @@ public class NPC extends Entity implements Serializable {
 							if (p2.getPrayer().usingPrayer(1, 14)) {
 								if (Utils.getRandom(7) == 0) {
 									if (p2.getPrayer().reachedMax(7)) {
-										p2.getPackets()
-												.sendGameMessage(
-														"Your opponent has been weakened so much that your leech curse has no effect.",
-														true);
+										p2.getPackets().sendGameMessage(
+												"Your opponent has been weakened so much that your leech curse has no effect.",
+												true);
 									} else {
 										p2.getPrayer().increaseLeechBonus(7);
-										p2.getPackets()
-												.sendGameMessage(
-														"Your curse drains Strength from the enemy, boosting your Strength.",
-														true);
+										p2.getPackets().sendGameMessage(
+												"Your curse drains Strength from the enemy, boosting your Strength.",
+												true);
 									}
 									p2.setNextAnimation(new Animation(12575));
 									p2.getPrayer().setBoostedLeech(true);
-									World.sendProjectile(p2, this, 2248, 35,
-											35, 20, 5, 0, 0);
+									World.sendProjectile(p2, this, 2248, 35, 35, 20, 5, 0, 0);
 									WorldTasksManager.schedule(new WorldTask() {
 										@Override
 										public void run() {
@@ -409,22 +360,18 @@ public class NPC extends Entity implements Serializable {
 						if (p2.getPrayer().usingPrayer(1, 2)) { // sap range
 							if (Utils.getRandom(4) == 0) {
 								if (p2.getPrayer().reachedMax(1)) {
-									p2.getPackets()
-											.sendGameMessage(
-													"Your opponent has been weakened so much that your sap curse has no effect.",
-													true);
+									p2.getPackets().sendGameMessage(
+											"Your opponent has been weakened so much that your sap curse has no effect.",
+											true);
 								} else {
 									p2.getPrayer().increaseLeechBonus(1);
-									p2.getPackets()
-											.sendGameMessage(
-													"Your curse drains Range from the enemy, boosting your Range.",
-													true);
+									p2.getPackets().sendGameMessage(
+											"Your curse drains Range from the enemy, boosting your Range.", true);
 								}
 								p2.setNextAnimation(new Animation(12569));
 								p2.setNextGraphics(new Graphics(2217));
 								p2.getPrayer().setBoostedLeech(true);
-								World.sendProjectile(p2, this, 2218, 35, 35,
-										20, 5, 0, 0);
+								World.sendProjectile(p2, this, 2218, 35, 35, 20, 5, 0, 0);
 								WorldTasksManager.schedule(new WorldTask() {
 									@Override
 									public void run() {
@@ -436,21 +383,17 @@ public class NPC extends Entity implements Serializable {
 						} else if (p2.getPrayer().usingPrayer(1, 11)) {
 							if (Utils.getRandom(7) == 0) {
 								if (p2.getPrayer().reachedMax(4)) {
-									p2.getPackets()
-											.sendGameMessage(
-													"Your opponent has been weakened so much that your leech curse has no effect.",
-													true);
+									p2.getPackets().sendGameMessage(
+											"Your opponent has been weakened so much that your leech curse has no effect.",
+											true);
 								} else {
 									p2.getPrayer().increaseLeechBonus(4);
-									p2.getPackets()
-											.sendGameMessage(
-													"Your curse drains Range from the enemy, boosting your Range.",
-													true);
+									p2.getPackets().sendGameMessage(
+											"Your curse drains Range from the enemy, boosting your Range.", true);
 								}
 								p2.setNextAnimation(new Animation(12575));
 								p2.getPrayer().setBoostedLeech(true);
-								World.sendProjectile(p2, this, 2236, 35, 35,
-										20, 5, 0, 0);
+								World.sendProjectile(p2, this, 2236, 35, 35, 20, 5, 0, 0);
 								WorldTasksManager.schedule(new WorldTask() {
 									@Override
 									public void run() {
@@ -465,22 +408,18 @@ public class NPC extends Entity implements Serializable {
 						if (p2.getPrayer().usingPrayer(1, 3)) { // sap mage
 							if (Utils.getRandom(4) == 0) {
 								if (p2.getPrayer().reachedMax(2)) {
-									p2.getPackets()
-											.sendGameMessage(
-													"Your opponent has been weakened so much that your sap curse has no effect.",
-													true);
+									p2.getPackets().sendGameMessage(
+											"Your opponent has been weakened so much that your sap curse has no effect.",
+											true);
 								} else {
 									p2.getPrayer().increaseLeechBonus(2);
-									p2.getPackets()
-											.sendGameMessage(
-													"Your curse drains Magic from the enemy, boosting your Magic.",
-													true);
+									p2.getPackets().sendGameMessage(
+											"Your curse drains Magic from the enemy, boosting your Magic.", true);
 								}
 								p2.setNextAnimation(new Animation(12569));
 								p2.setNextGraphics(new Graphics(2220));
 								p2.getPrayer().setBoostedLeech(true);
-								World.sendProjectile(p2, this, 2221, 35, 35,
-										20, 5, 0, 0);
+								World.sendProjectile(p2, this, 2221, 35, 35, 20, 5, 0, 0);
 								WorldTasksManager.schedule(new WorldTask() {
 									@Override
 									public void run() {
@@ -492,21 +431,17 @@ public class NPC extends Entity implements Serializable {
 						} else if (p2.getPrayer().usingPrayer(1, 12)) {
 							if (Utils.getRandom(7) == 0) {
 								if (p2.getPrayer().reachedMax(5)) {
-									p2.getPackets()
-											.sendGameMessage(
-													"Your opponent has been weakened so much that your leech curse has no effect.",
-													true);
+									p2.getPackets().sendGameMessage(
+											"Your opponent has been weakened so much that your leech curse has no effect.",
+											true);
 								} else {
 									p2.getPrayer().increaseLeechBonus(5);
-									p2.getPackets()
-											.sendGameMessage(
-													"Your curse drains Magic from the enemy, boosting your Magic.",
-													true);
+									p2.getPackets().sendGameMessage(
+											"Your curse drains Magic from the enemy, boosting your Magic.", true);
 								}
 								p2.setNextAnimation(new Animation(12575));
 								p2.getPrayer().setBoostedLeech(true);
-								World.sendProjectile(p2, this, 2240, 35, 35,
-										20, 5, 0, 0);
+								World.sendProjectile(p2, this, 2240, 35, 35, 20, 5, 0, 0);
 								WorldTasksManager.schedule(new WorldTask() {
 									@Override
 									public void run() {
@@ -523,21 +458,17 @@ public class NPC extends Entity implements Serializable {
 					if (p2.getPrayer().usingPrayer(1, 13)) { // leech defence
 						if (Utils.getRandom(10) == 0) {
 							if (p2.getPrayer().reachedMax(6)) {
-								p2.getPackets()
-										.sendGameMessage(
-												"Your opponent has been weakened so much that your leech curse has no effect.",
-												true);
+								p2.getPackets().sendGameMessage(
+										"Your opponent has been weakened so much that your leech curse has no effect.",
+										true);
 							} else {
 								p2.getPrayer().increaseLeechBonus(6);
-								p2.getPackets()
-										.sendGameMessage(
-												"Your curse drains Defence from the enemy, boosting your Defence.",
-												true);
+								p2.getPackets().sendGameMessage(
+										"Your curse drains Defence from the enemy, boosting your Defence.", true);
 							}
 							p2.setNextAnimation(new Animation(12575));
 							p2.getPrayer().setBoostedLeech(true);
-							World.sendProjectile(p2, this, 2244, 35, 35, 20, 5,
-									0, 0);
+							World.sendProjectile(p2, this, 2244, 35, 35, 20, 5, 0, 0);
 							WorldTasksManager.schedule(new WorldTask() {
 								@Override
 								public void run() {
@@ -586,8 +517,7 @@ public class NPC extends Entity implements Serializable {
 					Logger.handle(e);
 				}
 			}
-		}, getCombatDefinitions().getRespawnDelay() * 600,
-				TimeUnit.MILLISECONDS);
+		}, getCombatDefinitions().getRespawnDelay() * 600, TimeUnit.MILLISECONDS);
 	}
 
 	public void deserialize() {
@@ -624,8 +554,7 @@ public class NPC extends Entity implements Serializable {
 					setNextAnimation(new Animation(defs.getDeathEmote()));
 				} else if (loop >= defs.getDeathDelay()) {
 					if (source instanceof Player)
-						((Player) source).getControlerManager()
-								.processNPCDeath(getId());
+						((Player) source).getControlerManager().processNPCDeath(getId());
 					drop();
 					reset();
 					setLocation(respawnTile);
@@ -646,15 +575,14 @@ public class NPC extends Entity implements Serializable {
 	}
 
 	public void drop() {
-//		if (getCombatDefinitions() == NPCCombatDefinitionsL.DEFAULT_DEFINITION)
-//			return;
+		if (getCombatDefinitions() == NPCCombatDefinitionsL.DEFAULT_DEFINITION)
+			return;
 		Player killer = getMostDamageReceivedSourcePlayer();
 		if (killer == null)
 			return;
-		System.out.println("?");
 		DropManager.dropItems(killer, this);
 	}
-	
+
 	@Override
 	public int getSize() {
 		return getDefinitions().size;
@@ -694,8 +622,7 @@ public class NPC extends Entity implements Serializable {
 	@Override
 	public void setAttackedBy(Entity target) {
 		super.setAttackedBy(target);
-		if (target == combat.getTarget()
-				&& !(combat.getTarget() instanceof Familiar))
+		if (target == combat.getTarget() && !(combat.getTarget() instanceof Familiar))
 			lastAttackedByTarget = Utils.currentTimeMillis();
 	}
 
@@ -733,76 +660,42 @@ public class NPC extends Entity implements Serializable {
 		return forceWalk != null;
 	}
 
-	public ArrayList<Entity> getPossibleTargets(boolean checkNPCs,
-			boolean checkPlayers) {
+	public ArrayList<Entity> getPossibleTargets(boolean checkNPCs, boolean checkPlayers) {
 		int size = getSize();
 		int agroRatio = getCombatDefinitions().getAgroRatio();
 		ArrayList<Entity> possibleTarget = new ArrayList<Entity>();
 		for (int regionId : getMapRegionsIds()) {
 			if (checkPlayers) {
-				List<Integer> playerIndexes = World.getRegion(regionId)
-						.getPlayerIndexes();
+				List<Integer> playerIndexes = World.getRegion(regionId).getPlayerIndexes();
 				if (playerIndexes != null) {
 					for (int playerIndex : playerIndexes) {
 						Player player = World.getPlayers().get(playerIndex);
-						if (player == null
-								|| player.isDead()
-								|| player.hasFinished()
-								|| !player.isRunning()
+						if (player == null || player.isDead() || player.hasFinished() || !player.isRunning()
 								|| player.getAppearence().isHidden()
-								|| !Utils
-										.isOnRange(
-												getX(),
-												getY(),
-												size,
-												player.getX(),
-												player.getY(),
-												player.getSize(),
-												forceTargetDistance > 0 ? forceTargetDistance
-														: agroRatio)
-								|| (!forceMultiAttacked
-										&& (!isAtMultiArea() || !player
-												.isAtMultiArea()) && (player
-										.getAttackedBy() != this && (player
-										.getAttackedByDelay() > Utils
-										.currentTimeMillis() || player
-										.getFindTargetDelay() > Utils
-										.currentTimeMillis())))
-								|| !clipedProjectile(player, false)
-								|| (!forceAgressive
-										&& !Wilderness.isAtWild(this) && player
-										.getSkills()
-										.getCombatLevelWithSummoning() >= getCombatLevel() * 2))
+								|| !Utils.isOnRange(getX(), getY(), size, player.getX(), player.getY(),
+										player.getSize(), forceTargetDistance > 0 ? forceTargetDistance : agroRatio)
+								|| (!forceMultiAttacked && (!isAtMultiArea() || !player.isAtMultiArea())
+										&& (player.getAttackedBy() != this
+												&& (player.getAttackedByDelay() > Utils.currentTimeMillis()
+														|| player.getFindTargetDelay() > Utils.currentTimeMillis())))
+								|| !clipedProjectile(player, false) || (!forceAgressive && !Wilderness.isAtWild(this)
+										&& player.getSkills().getCombatLevelWithSummoning() >= getCombatLevel() * 2))
 							continue;
 						possibleTarget.add(player);
 					}
 				}
 			}
 			if (checkNPCs) {
-				List<Integer> npcsIndexes = World.getRegion(regionId)
-						.getNPCsIndexes();
+				List<Integer> npcsIndexes = World.getRegion(regionId).getNPCsIndexes();
 				if (npcsIndexes != null) {
 					for (int npcIndex : npcsIndexes) {
 						NPC npc = World.getNPCs().get(npcIndex);
-						if (npc == null
-								|| npc == this
-								|| npc.isDead()
-								|| npc.hasFinished()
-								|| !Utils
-										.isOnRange(
-												getX(),
-												getY(),
-												size,
-												npc.getX(),
-												npc.getY(),
-												npc.getSize(),
-												forceTargetDistance > 0 ? forceTargetDistance
-														: agroRatio)
+						if (npc == null || npc == this || npc.isDead() || npc.hasFinished()
+								|| !Utils.isOnRange(getX(), getY(), size, npc.getX(), npc.getY(), npc.getSize(),
+										forceTargetDistance > 0 ? forceTargetDistance : agroRatio)
 								|| !npc.getDefinitions().hasAttackOption()
-								|| ((!isAtMultiArea() || !npc.isAtMultiArea())
-										&& npc.getAttackedBy() != this && npc
-										.getAttackedByDelay() > Utils
-										.currentTimeMillis())
+								|| ((!isAtMultiArea() || !npc.isAtMultiArea()) && npc.getAttackedBy() != this
+										&& npc.getAttackedByDelay() > Utils.currentTimeMillis())
 								|| !clipedProjectile(npc, false))
 							continue;
 						possibleTarget.add(npc);
@@ -827,8 +720,7 @@ public class NPC extends Entity implements Serializable {
 		}
 		ArrayList<Entity> possibleTarget = getPossibleTargets();
 		if (!possibleTarget.isEmpty()) {
-			Entity target = possibleTarget.get(Utils.random(possibleTarget
-					.size()));
+			Entity target = possibleTarget.get(Utils.random(possibleTarget.size()));
 			setTarget(target);
 			target.setAttackedBy(target);
 			target.setFindTargetDelay(Utils.currentTimeMillis() + 10000);
@@ -877,8 +769,7 @@ public class NPC extends Entity implements Serializable {
 
 	@Override
 	public String toString() {
-		return getDefinitions().getName() + " - " + id + " - " + getX() + " "
-				+ getY() + " " + getPlane();
+		return getDefinitions().getName() + " - " + id + " - " + getX() + " " + getY() + " " + getPlane();
 	}
 
 	public boolean isForceAgressive() {
@@ -983,8 +874,7 @@ public class NPC extends Entity implements Serializable {
 	/**
 	 * Sets the locked.
 	 * 
-	 * @param locked
-	 *            The locked to set.
+	 * @param locked The locked to set.
 	 */
 	public void setLocked(boolean locked) {
 		this.locked = locked;

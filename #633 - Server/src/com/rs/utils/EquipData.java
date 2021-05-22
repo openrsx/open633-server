@@ -13,8 +13,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.util.HashMap;
 
-import com.rs.utils.Logger;
-
 public class EquipData {
 
 	public static final byte SLOT = 0, TYPE = 1;

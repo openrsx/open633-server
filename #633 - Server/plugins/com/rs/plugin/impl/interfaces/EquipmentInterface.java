@@ -1,9 +1,6 @@
 package com.rs.plugin.impl.interfaces;
 
-import com.rs.game.item.ItemConstants;
-import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
-import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;

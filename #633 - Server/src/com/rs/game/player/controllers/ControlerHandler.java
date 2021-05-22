@@ -9,10 +9,9 @@ public class ControlerHandler {
 
 	private static final HashMap<Object, Class<Controller>> handledControlers = new HashMap<Object, Class<Controller>>();
 
-	@SuppressWarnings("unchecked")
 	public static final void init() {
 		try {
-			
+			@SuppressWarnings("unchecked")
 			Class<Controller>[] regular = Utils.getClasses("com.rs.game.player.controllers");
 			for (Class<Controller> c : regular) {
 				if (c.isAnonymousClass()) // next
@@ -25,7 +24,6 @@ public class ControlerHandler {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public static final Controller getControler(Object key) {
 		if (key instanceof Controller)
 			return (Controller) key;

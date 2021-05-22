@@ -1,6 +1,5 @@
 package com.rs.game.player;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.rs.Settings;

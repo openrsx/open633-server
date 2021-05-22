@@ -458,6 +458,12 @@ public final class LocalPlayerUpdate {
 
 	
 
+	/**
+	 * Pretty sure this is an unused method in this revision.
+	 * @param p
+	 * @param data
+	 */
+	@SuppressWarnings("unused")
 	private void applySecondaryBarMask(Player p, OutputStream data) {
 		SecondaryBar bar = p.getNextSecondaryBar();
 		boolean permanant = bar.isPermenant();
@@ -476,10 +482,17 @@ public final class LocalPlayerUpdate {
 		data.writeByteC(p.getRun() ? 2 : 1);
 	}
 
+	@SuppressWarnings("unused")
 	private void applyForceTalkMask(Player p, OutputStream data) {
 		data.writeString(p.getNextForceTalk().getText());
 	}
 
+	/**
+	 * This is the hitmark for the player; we need to fix this and the HP bar (assumingly)
+	 * @param p
+	 * @param data
+	 */
+	@SuppressWarnings("unused")
 	private void applyHitsMask(Player p, OutputStream data) {
 		int count = p.getNextHits().size();
 		data.writeByteC(count);

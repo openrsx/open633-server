@@ -1,7 +1,5 @@
 package com.rs.game.player.controllers;
 
-import java.io.Serializable;
-
 import com.rs.game.Entity;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;

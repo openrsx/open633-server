@@ -1,6 +1,5 @@
 package com.rs;
 
-import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import com.alex.store.Index;
@@ -12,8 +11,6 @@ import com.rs.cores.CoresManager;
 import com.rs.game.Region;
 import com.rs.game.World;
 import com.rs.game.map.MapBuilder;
-import com.rs.game.player.AccountCreation;
-import com.rs.game.player.Player;
 import com.rs.net.ServerChannelHandler;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
@@ -37,9 +34,7 @@ public class Launcher {
 		Logger.log("Launcher", "Server took "
 				+ (Utils.currentTimeMillis() - currentTime)
 				+ " milli seconds to launch.");
-//		addFilesSavingTask();
 		addCleanMemoryTask();
-//		addrecalcPricesTask();
 	}
 
 	private static void addCleanMemoryTask() {
@@ -54,52 +49,6 @@ public class Launcher {
 			}
 		}, 0, 10, TimeUnit.MINUTES);
 	}
-
-	private static void addFilesSavingTask() {
-		CoresManager.slowExecutor.scheduleWithFixedDelay(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					saveFiles();
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-
-			}
-		}, 15, 15, TimeUnit.MINUTES);
-	}
-
-	private static void addrecalcPricesTask() {
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.DAY_OF_MONTH, 1);
-		c.set(Calendar.HOUR, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		int minutes = (int) ((c.getTimeInMillis() - Utils.currentTimeMillis()) / 1000 / 60);
-		int halfDay = 12 * 60;
-		if (minutes > halfDay)
-			minutes -= halfDay;
-		CoresManager.slowExecutor.scheduleWithFixedDelay(new Runnable() {
-			@Override
-			public void run() {
-				try {
-//					GrandExchange.recalcPrices();
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-
-			}
-		}, minutes, halfDay, TimeUnit.MINUTES);
-	}
-
-	private static void saveFiles() {
-		for (Player player : World.getPlayers()) {
-			if (player == null || !player.hasStarted() || player.hasFinished())
-				continue;
-			AccountCreation.savePlayer(player);
-		}
-	}
-
 
 	public static void cleanMemory(boolean force) {
 		if (force) {
@@ -135,22 +84,4 @@ public class Launcher {
 		ServerChannelHandler.shutdown();
 		CoresManager.shutdown();
 	}
-
-	public static void restart() {
-		closeServices();
-		System.gc();
-		try {
-			Runtime.getRuntime()
-					.exec("java -server -Xms2048m -Xmx20000m -cp bin;/data/libs/netty-3.2.7.Final.jar;/data/libs/FileStore.jar Launcher false false true false");
-			System.exit(0);
-		} catch (Throwable e) {
-			Logger.handle(e);
-		}
-
-	}
-
-	private Launcher() {
-
-	}
-
 }

@@ -6,6 +6,7 @@ import com.rs.game.item.Item;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.utils.Utils;
 
+@SuppressWarnings("all")
 public class Bank {
 
 	// tab, items
@@ -15,6 +16,7 @@ public class Bank {
 	/**
 	 * Bankpin related code.
 	 */
+	
 	private long recoveryDelay, activatedTime, lockPunishment;
 	private byte[] actualPin, requestedPin;
 	private transient byte stage;

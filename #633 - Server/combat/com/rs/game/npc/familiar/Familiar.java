@@ -11,7 +11,6 @@ import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
-import com.rs.game.npc.glacior.Glacyte;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning;
 import com.rs.game.player.content.Summoning.Pouch;
@@ -148,16 +147,6 @@ public abstract class Familiar extends NPC implements Serializable {
 			Player player = (Player) target;
 			if (!owner.isCanPvp() || !player.isCanPvp())
 				return false;
-		} else if (target instanceof NPC) {
-			NPC n = (NPC) target;
-			if (n.getId() == 14301 || n.getId() == 14302 || n.getId() == 14303 || n.getId() == 14304) {
-				Glacyte glacyte = (Glacyte) n;
-				if (glacyte.getGlacor().getTargetIndex() != -1
-						&& getOwner().getIndex() != glacyte.getGlacor().getTargetIndex()) {
-					getOwner().getPackets().sendGameMessage("This isn't your target.");
-					return false;
-				}
-			}
 		}
 		return !target.isDead()
 				&& ((owner.isAtMultiArea() && isAtMultiArea() && target.isAtMultiArea())

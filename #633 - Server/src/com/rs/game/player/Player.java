@@ -28,7 +28,6 @@ import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.minigames.duel.DuelRules;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
-import com.rs.game.npc.godwars.zaros.Nex;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Notes;
@@ -38,7 +37,6 @@ import com.rs.game.player.controllers.Controller;
 import com.rs.game.player.controllers.GodWars;
 import com.rs.game.player.controllers.JailControler;
 import com.rs.game.player.controllers.Wilderness;
-import com.rs.game.player.controllers.ZGDControler;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
 import com.rs.game.tasks.WorldTask;
@@ -104,7 +102,7 @@ public class Player extends Entity {
 	private transient long lockDelay; // used for doors and stuff like that
 	private transient Runnable closeInterfacesEvent;
 	private transient long lastPublicMessage;
-	private transient List<Integer> switchItemCache;
+	private transient List<Byte> switchItemCache;
 	private transient boolean disableEquip;
 	private transient boolean invulnerable;
 	// interface
@@ -244,8 +242,7 @@ public class Player extends Entity {
 		setDirection(Utils.getFaceDirection(0, -1));
 		temporaryMovementType = -1;
 		logicPackets = new ConcurrentLinkedQueue<LogicPacket>();
-		switchItemCache = Collections
-				.synchronizedList(new ArrayList<Integer>());
+		switchItemCache = Collections.synchronizedList(new ArrayList<Byte>());
 		initEntity();
 		World.addPlayer(this);
 		World.updateEntityRegion(this);
@@ -453,8 +450,8 @@ public class Player extends Entity {
 		controlerManager.process();
 		if (isDead())
 			return;
-//		if (musicsManager.musicEnded())
-//			musicsManager.replayMusic();
+		if (musicsManager.musicEnded())
+			musicsManager.replayMusic();
 //		if (hasSkull()) {
 //			skullDelay--;
 //			if (!hasSkull())
@@ -561,14 +558,14 @@ public class Player extends Entity {
 		warriorCheck();
 		prayer.refreshPrayerPoints();
 		getPoison().refresh();
-		getVarsManager().sendVar(281, 1000); // unlock can't do this on tutorial
-		getVarsManager().sendVar(1160, -1); // unlock summoning orb
-		getVarsManager().sendVar(1159, 1);
+//		getVarsManager().sendVar(281, 1000); // unlock can't do this on tutorial
+//		getVarsManager().sendVar(1160, -1); // unlock summoning orb
+//		getVarsManager().sendVar(1159, 1);
 		getPackets().sendGameBarStages();
 		musicsManager.init();
 		emotesManager.init();
 		notes.init();
-		sendUnlockedObjectConfigs();
+//		sendUnlockedObjectConfigs();
 		if (currentFriendChatOwner != null) {
 			FriendChatsManager.joinChat(currentFriendChatOwner, this);
 			if (currentFriendChat == null) // failed
@@ -585,17 +582,10 @@ public class Player extends Entity {
 		OwnedObjectManager.linkKeys(this);
 	}
 
+	@SuppressWarnings("unused")
 	private void sendUnlockedObjectConfigs() {
-		refreshLairofTarnRazorlorEntrance();
-		refreshTreeofJadinko();
-	}
-
-	private void refreshTreeofJadinko() {
+		//Jadinko tree
 		getVarsManager().sendVarBit(9513, 1);
-	}
-
-	private void refreshLairofTarnRazorlorEntrance() {
-		getVarsManager().sendVar(382, 11);
 	}
 
 	public void updateIPnPass() {
@@ -710,8 +700,7 @@ public class Player extends Entity {
 		Logger.globalLog(username, session.getIP(), new String(
 				" has logged out."));
 		stopAll();
-		controlerManager.logout(); // checks what to do on before logout for
-		// login
+		controlerManager.logout();
 		running = false;
 		friendsIgnores.sendFriendsMyStatus(false);
 		if (currentFriendChat != null)
@@ -773,21 +762,6 @@ public class Player extends Entity {
 
 	public ArrayList<String> getIPList() {
 		return ipList;
-	}
-
-	public void syncRanksFromForumGroups(String groupString) {
-		ArrayList<Integer> groups = new ArrayList<Integer>();
-		String[] spl = groupString.split("\\@");
-		groups.add(Integer.parseInt(spl[0])); // primary
-		if (spl.length > 1) {
-			String[] secondary = spl[1].split("\\,"); // secondary
-			for (String sec : secondary)
-				groups.add(Integer.parseInt(sec));
-		}
-		int[] groupIDS = new int[groups.size()];
-		int write = 0;
-		for (Integer group : groups)
-			groupIDS[write++] = group.intValue();
 	}
 
 	public int getMessageIcon() {
@@ -981,8 +955,7 @@ public class Player extends Entity {
 					hit.setDamage((int) (hit.getDamage() * source
 							.getMagePrayerMultiplier()));
 				else if (prayer.usingPrayer(1, 7)) {
-					int deflectedDamage = source instanceof Nex ? 0
-							: (int) (hit.getDamage() * 0.1);
+					int deflectedDamage = (int) (hit.getDamage() * 0.1);
 					hit.setDamage((int) (hit.getDamage() * source
 							.getMagePrayerMultiplier()));
 					if (deflectedDamage > 0) {
@@ -997,8 +970,7 @@ public class Player extends Entity {
 					hit.setDamage((int) (hit.getDamage() * source
 							.getRangePrayerMultiplier()));
 				else if (prayer.usingPrayer(1, 8)) {
-					int deflectedDamage = source instanceof Nex ? 0
-							: (int) (hit.getDamage() * 0.1);
+					int deflectedDamage = (int) (hit.getDamage() * 0.1);
 					hit.setDamage((int) (hit.getDamage() * source
 							.getRangePrayerMultiplier()));
 					if (deflectedDamage > 0) {
@@ -1013,8 +985,7 @@ public class Player extends Entity {
 					hit.setDamage((int) (hit.getDamage() * source
 							.getMeleePrayerMultiplier()));
 				else if (prayer.usingPrayer(1, 9)) {
-					int deflectedDamage = source instanceof Nex ? 0
-							: (int) (hit.getDamage() * 0.1);
+					int deflectedDamage = (int) (hit.getDamage() * 0.1);
 					hit.setDamage((int) (hit.getDamage() * source
 							.getMeleePrayerMultiplier()));
 					if (deflectedDamage > 0) {
@@ -2148,23 +2119,8 @@ public class Player extends Entity {
 		this.summoningLeftClickOption = summoningLeftClickOption;
 	}
 
-	public boolean containsOneItem(int... itemIds) {
-		if (getInventory().containsOneItem(itemIds))
-			return true;
-		if (getEquipment().containsOneItem(itemIds))
-			return true;
-		Familiar familiar = getFamiliar();
-		if (familiar != null
-				&& ((familiar.getBob() != null
-						&& familiar.getBob().containsOneItem(itemIds) || familiar
-							.isFinished())))
-			return true;
-		return false;
-	}
-
 	public boolean canSpawn() {
 		if (Wilderness.isAtWild(this)
-				|| getControlerManager().getControler() instanceof ZGDControler
 				|| getControlerManager().getControler() instanceof GodWars
 				|| getControlerManager().getControler() instanceof DuelArena
 				|| getControlerManager().getControler() instanceof JailControler) {
@@ -2173,7 +2129,7 @@ public class Player extends Entity {
 		return true;
 	}
 
-	public List<Integer> getSwitchItemCache() {
+	public List<Byte> getSwitchItemCache() {
 		return switchItemCache;
 	}
 

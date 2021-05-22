@@ -3,7 +3,6 @@ package com.rs.game.player;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Entity;
 import com.rs.game.npc.NPC;
-import com.rs.game.player.Player;
 import com.rs.utils.Utils;
 
 public final class Combat {

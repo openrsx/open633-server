@@ -1,12 +1,9 @@
 package com.rs.utils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
-import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -92,29 +89,7 @@ public final class Utils {
 			int radius) {
 		return getDistance(center, location) < radius;
 	}
-
-	public static void copyFile(File sourceFile, File destFile)
-			throws IOException {
-		if (!destFile.exists()) {
-			destFile.createNewFile();
-		}
-
-		FileChannel source = null;
-		FileChannel destination = null;
-		try {
-			source = new FileInputStream(sourceFile).getChannel();
-			destination = new FileOutputStream(destFile).getChannel();
-			destination.transferFrom(source, 0, source.size());
-		} finally {
-			if (source != null) {
-				source.close();
-			}
-			if (destination != null) {
-				destination.close();
-			}
-		}
-	}
-
+	
 	@SuppressWarnings({ "rawtypes" })
 	public static Class[] getClasses(String packageName)
 			throws ClassNotFoundException, IOException {
@@ -978,7 +953,6 @@ public final class Utils {
 				continue;
 			}
 			try {
-				@SuppressWarnings("deprecation")
 				Object objectEvent = (Class.forName(directory + "." + file.getName().replace(".class", "")).newInstance());
 				classes.add(objectEvent);
 			} catch(InstantiationException | IllegalAccessException | ClassNotFoundException e) {

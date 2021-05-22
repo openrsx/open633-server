@@ -1,15 +1,10 @@
 package com.rs.game.player;
 
-import java.io.Serializable;
-
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
-import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 
-public final class CombatDefinitions implements Serializable {
+public final class CombatDefinitions {
 
-	private static final long serialVersionUID = 2102201264836121104L;
 	public static final int STAB_ATTACK = 0, SLASH_ATTACK = 1, CRUSH_ATTACK = 2, RANGE_ATTACK = 4, MAGIC_ATTACK = 3;
 	public static final int STAB_DEF = 5, SLASH_DEF = 6, CRUSH_DEF = 7, RANGE_DEF = 9, MAGIC_DEF = 8,
 			SUMMONING_DEF = 10;

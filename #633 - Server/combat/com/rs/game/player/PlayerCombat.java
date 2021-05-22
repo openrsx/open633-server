@@ -18,8 +18,6 @@ import com.rs.game.item.ItemConstants;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.familiar.Steeltitan;
-import com.rs.game.npc.glacior.Glacyte;
-import com.rs.game.npc.godwars.zaros.NexMinion;
 import com.rs.game.player.actions.Action;
 import com.rs.game.player.content.Magic;
 import com.rs.game.tasks.WorldTask;
@@ -43,9 +41,8 @@ public class PlayerCombat extends Action {
 	private int spellcasterGloves;
 	private int spell_type = -1;
 
-	@SuppressWarnings({ "unused"})
-	private static final int AIR_SPELL = 0, WATER_SPELL = 1, EARTH_SPELL = 2,
-			FIRE_SPELL = 3;
+	@SuppressWarnings({ "unused" })
+	private static final int AIR_SPELL = 0, WATER_SPELL = 1, EARTH_SPELL = 2, FIRE_SPELL = 3;
 
 	// finish client routefinder
 
@@ -67,10 +64,6 @@ public class PlayerCombat extends Action {
 		return checkAll(player);
 	}
 
-	private boolean forceCheckClipAsRange(Entity target) {
-		return target instanceof NexMinion;
-	}
-
 	@Override
 	public int processWithDelay(Player player) {
 		int isRanging = isRanging(player);
@@ -83,13 +76,12 @@ public class PlayerCombat extends Action {
 		if (player.getTemporaryAttributtes().get("miasmic_effect") == Boolean.TRUE)
 			multiplier = 1.5;
 		int size = player.getSize();
-		if (!player.clipedProjectile(target, maxDistance == 0
-				&& !forceCheckClipAsRange(target)))
+		if (!player.clipedProjectile(target, maxDistance == 0))
 			return 0;
 		if (player.hasWalkSteps())
 			maxDistance += player.getRun() ? 2 : 1;
-		if (!Utils.isOnRange(player.getX(), player.getY(), size, target.getX(),
-				target.getY(), target.getSize(), maxDistance))
+		if (!Utils.isOnRange(player.getX(), player.getY(), size, target.getX(), target.getY(), target.getSize(),
+				maxDistance))
 			return 0;
 		if (!player.getControlerManager().keepCombating(target))
 			return -1;
@@ -97,13 +89,9 @@ public class PlayerCombat extends Action {
 		if (spellId > 0) {
 			boolean manualCast = spellId != 65535 && spellId >= 256;
 			Item gloves = player.getEquipment().getItem(Equipment.SLOT_HANDS);
-			spellcasterGloves = gloves != null
-					&& gloves.getDefinitions().getName()
-							.contains("Spellcaster glove")
-					&& player.getEquipment().getWeaponId() == -1
-					&& new Random().nextInt(30) == 0 ? spellId : -1;
-			int delay = mageAttack(player,
-					manualCast ? spellId - 256 : spellId, !manualCast);
+			spellcasterGloves = gloves != null && gloves.getDefinitions().getName().contains("Spellcaster glove")
+					&& player.getEquipment().getWeaponId() == -1 && new Random().nextInt(30) == 0 ? spellId : -1;
+			int delay = mageAttack(player, manualCast ? spellId - 256 : spellId, !manualCast);
 			if (player.getNextAnimation() != null && spellcasterGloves > 0) {
 				player.setNextAnimation(new Animation(14339));
 				spellcasterGloves = -1;
@@ -113,12 +101,10 @@ public class PlayerCombat extends Action {
 			if (isRanging == 0) {
 				return (int) (meleeAttack(player) * multiplier);
 			} else if (isRanging == 1) {
-				player.getPackets().sendGameMessage(
-						"This ammo is not very effective with this weapon.");
+				player.getPackets().sendGameMessage("This ammo is not very effective with this weapon.");
 				return -1;
 			} else if (isRanging == 3) {
-				player.getPackets().sendGameMessage(
-						"You dont have any ammo in your backpack.");
+				player.getPackets().sendGameMessage("You dont have any ammo in your backpack.");
 				return -1;
 			} else {
 				return (int) (rangeAttack(player) * multiplier);
@@ -132,13 +118,11 @@ public class PlayerCombat extends Action {
 	}
 
 	public static int getMeleeCombatDelay(Player player, int weaponId) {
-		return weaponId == -1 ? 3 : (ItemDefinitions.getItemDefinitions(
-				weaponId).getAttackSpeed() - 1);
+		return weaponId == -1 ? 3 : (ItemDefinitions.getItemDefinitions(weaponId).getAttackSpeed() - 1);
 	}
 
 	private int getRangeCombatDelay(int weaponId, int attackStyle) {
-		int delay = weaponId == -1 ? 3 : (ItemDefinitions.getItemDefinitions(
-				weaponId).getAttackSpeed() - 1);
+		int delay = weaponId == -1 ? 3 : (ItemDefinitions.getItemDefinitions(weaponId).getAttackSpeed() - 1);
 		if (attackStyle == 1)
 			delay--;
 		else if (attackStyle == 2)
@@ -150,8 +134,7 @@ public class PlayerCombat extends Action {
 		return getMultiAttackTargets(player, 1, 9);
 	}
 
-	public Entity[] getMultiAttackTargets(Player player, int maxDistance,
-			int maxAmtTargets) {
+	public Entity[] getMultiAttackTargets(Player player, int maxDistance, int maxAmtTargets) {
 		List<Entity> possibleTargets = new ArrayList<Entity>();
 		possibleTargets.add(target);
 		if (target.isAtMultiArea()) {
@@ -163,12 +146,9 @@ public class PlayerCombat extends Action {
 						continue;
 					for (int playerIndex : playerIndexes) {
 						Player p2 = World.getPlayers().get(playerIndex);
-						if (p2 == null || p2 == player || p2 == target
-								|| p2.isDead() || !p2.hasStarted()
-								|| p2.hasFinished() || !p2.isCanPvp()
-								|| !p2.isAtMultiArea()
-								|| !p2.withinDistance(target, maxDistance)
-								|| !player.getControlerManager().canHit(p2))
+						if (p2 == null || p2 == player || p2 == target || p2.isDead() || !p2.hasStarted()
+								|| p2.hasFinished() || !p2.isCanPvp() || !p2.isAtMultiArea()
+								|| !p2.withinDistance(target, maxDistance) || !player.getControlerManager().canHit(p2))
 							continue;
 						possibleTargets.add(p2);
 						if (possibleTargets.size() == maxAmtTargets)
@@ -180,12 +160,9 @@ public class PlayerCombat extends Action {
 						continue;
 					for (int npcIndex : npcIndexes) {
 						NPC n = World.getNPCs().get(npcIndex);
-						if (n == null || n == target
-								|| n == player.getFamiliar() || n.isDead()
-								|| n.hasFinished() || !n.isAtMultiArea()
-								|| !n.withinDistance(target, maxDistance)
-								|| !n.getDefinitions().hasAttackOption()
-								|| !player.getControlerManager().canHit(n))
+						if (n == null || n == target || n == player.getFamiliar() || n.isDead() || n.hasFinished()
+								|| !n.isAtMultiArea() || !n.withinDistance(target, maxDistance)
+								|| !n.getDefinitions().hasAttackOption() || !player.getControlerManager().canHit(n))
 							continue;
 						possibleTargets.add(n);
 						if (possibleTargets.size() == maxAmtTargets)
@@ -212,18 +189,12 @@ public class PlayerCombat extends Action {
 			player.setNextGraphics(new Graphics(2034));
 			player.setNextAnimation(new Animation(15448));
 			mage_hit_gfx = 2036;
-			delayMagicHit(
-					2,
-					getMagicHit(
-							player,
-							getRandomMagicMaxHit(player, (5 * player
-									.getSkills().getLevel(Skills.MAGIC)) - 180)));
+			delayMagicHit(2, getMagicHit(player,
+					getRandomMagicMaxHit(player, (5 * player.getSkills().getLevel(Skills.MAGIC)) - 180)));
 			if (player.getEquipment().getWeaponId() == 22494) {
-				player.getCharges().addCharges(22496,
-						ItemConstants.getItemDefaultCharges(22496),
+				player.getCharges().addCharges(22496, ItemConstants.getItemDefaultCharges(22496),
 						Equipment.SLOT_WEAPON);
-				player.getEquipment().getItem(Equipment.SLOT_WEAPON)
-						.setId(22496);
+				player.getEquipment().getItem(Equipment.SLOT_WEAPON).setId(22496);
 				player.getEquipment().refresh(Equipment.SLOT_WEAPON);
 			}
 			player.getCharges().addCharges(22496, -1, Equipment.SLOT_WEAPON);
@@ -240,10 +211,7 @@ public class PlayerCombat extends Action {
 				if (player.getEquipment().getGlovesId() == 205) {
 					baseDamage = 90;
 				}
-				delayMagicHit(
-						2,
-						getMagicHit(player,
-								getRandomMagicMaxHit(player, baseDamage)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, baseDamage)));
 				World.sendProjectile(player, target, 2699, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 28: // water strike
@@ -255,10 +223,7 @@ public class PlayerCombat extends Action {
 				if (player.getEquipment().getGlovesId() == 205) {
 					baseDamage = 100;
 				}
-				delayMagicHit(
-						2,
-						getMagicHit(player,
-								getRandomMagicMaxHit(player, baseDamage)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, baseDamage)));
 				World.sendProjectile(player, target, 2703, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 36:// bind
@@ -266,13 +231,11 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(710));
 				mage_hit_gfx = 181;
 				base_mage_xp = 60.5;
-				Hit magicHit = getMagicHit(player,
-						getRandomMagicMaxHit(player, 20));
+				Hit magicHit = getMagicHit(player, getRandomMagicMaxHit(player, 20));
 				delayMagicHit(2, magicHit);
 				World.sendProjectile(player, target, 178, 18, 18, 50, 50, 0, 0);
 				long currentTime = Utils.currentTimeMillis();
-				if (magicHit.getDamage() > 0
-						&& target.getFrozenBlockedDelay() < currentTime)
+				if (magicHit.getDamage() > 0 && target.getFrozenBlockedDelay() < currentTime)
 					target.addFreezeDelay(5000, true);
 				return 5;
 			case 55:// snare
@@ -280,12 +243,9 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(710));
 				mage_hit_gfx = 180;
 				base_mage_xp = 91.1;
-				Hit snareHit = getMagicHit(player,
-						getRandomMagicMaxHit(player, 30));
+				Hit snareHit = getMagicHit(player, getRandomMagicMaxHit(player, 30));
 				delayMagicHit(2, snareHit);
-				if (snareHit.getDamage() > 0
-						&& target.getFrozenBlockedDelay() < Utils
-								.currentTimeMillis())
+				if (snareHit.getDamage() > 0 && target.getFrozenBlockedDelay() < Utils.currentTimeMillis())
 					target.addFreezeDelay(10000, true);
 				World.sendProjectile(player, target, 178, 18, 18, 50, 50, 0, 0);
 				return 5;
@@ -294,12 +254,9 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(710));
 				mage_hit_gfx = 179;
 				base_mage_xp = 91.1;
-				Hit entangleHit = getMagicHit(player,
-						getRandomMagicMaxHit(player, 50));
+				Hit entangleHit = getMagicHit(player, getRandomMagicMaxHit(player, 50));
 				delayMagicHit(2, entangleHit);
-				if (entangleHit.getDamage() > 0
-						&& target.getFrozenBlockedDelay() < Utils
-								.currentTimeMillis())
+				if (entangleHit.getDamage() > 0 && target.getFrozenBlockedDelay() < Utils.currentTimeMillis())
 					target.addFreezeDelay(20000, true);
 				World.sendProjectile(player, target, 178, 18, 18, 50, 50, 0, 0);
 				return 5;
@@ -312,10 +269,7 @@ public class PlayerCombat extends Action {
 				if (player.getEquipment().getGlovesId() == 205) {
 					baseDamage = 110;
 				}
-				delayMagicHit(
-						2,
-						getMagicHit(player,
-								getRandomMagicMaxHit(player, baseDamage)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, baseDamage)));
 				World.sendProjectile(player, target, 2718, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 32: // fire strike
@@ -345,10 +299,7 @@ public class PlayerCombat extends Action {
 				if (player.getEquipment().getGlovesId() == 777) {
 					baseDamage = 120;
 				}
-				delayMagicHit(
-						2,
-						getMagicHit(player,
-								getRandomMagicMaxHit(player, baseDamage)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, baseDamage)));
 				World.sendProjectile(player, target, 2699, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 39: // water bolt
@@ -360,10 +311,7 @@ public class PlayerCombat extends Action {
 				if (player.getEquipment().getGlovesId() == 777) {
 					baseDamage = 130;
 				}
-				delayMagicHit(
-						2,
-						getMagicHit(player,
-								getRandomMagicMaxHit(player, baseDamage)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, baseDamage)));
 				World.sendProjectile(player, target, 2704, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 42: // earth bolt
@@ -375,10 +323,7 @@ public class PlayerCombat extends Action {
 				if (player.getEquipment().getGlovesId() == 777) {
 					baseDamage = 140;
 				}
-				delayMagicHit(
-						2,
-						getMagicHit(player,
-								getRandomMagicMaxHit(player, baseDamage)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, baseDamage)));
 				World.sendProjectile(player, target, 2719, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 45: // fire bolt
@@ -404,8 +349,7 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(14221));
 				mage_hit_gfx = 2700;
 				base_mage_xp = 25.5;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 130)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 130)));
 				World.sendProjectile(player, target, 2699, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 52: // water blast
@@ -413,8 +357,7 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(14220));
 				mage_hit_gfx = 2710;
 				base_mage_xp = 31.5;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 140)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 140)));
 				World.sendProjectile(player, target, 2705, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 58: // earth blast
@@ -422,8 +365,7 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(14222));
 				mage_hit_gfx = 2725;
 				base_mage_xp = 31.5;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 150)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 150)));
 				World.sendProjectile(player, target, 2720, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 63: // fire blast
@@ -445,29 +387,25 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(811));
 				mage_hit_gfx = 76;
 				base_mage_xp = 34.5;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 300)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 300)));
 				return 5;
 			case 67: // Claws of Guthix
 				player.setNextAnimation(new Animation(811));
 				mage_hit_gfx = 77;
 				base_mage_xp = 34.5;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 300)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 300)));
 				return 5;
 			case 68: // Flames of Zamorak
 				player.setNextAnimation(new Animation(811));
 				mage_hit_gfx = 78;
 				base_mage_xp = 34.5;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 300)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 300)));
 				return 5;
 			case 70: // air wave
 				player.setNextAnimation(new Animation(14221));
 				mage_hit_gfx = 2700;
 				base_mage_xp = 36;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 170)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 170)));
 				World.sendProjectile(player, target, 2699, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 73: // water wave
@@ -475,8 +413,7 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(14220));
 				mage_hit_gfx = 2710;
 				base_mage_xp = 37.5;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 180)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 180)));
 				World.sendProjectile(player, target, 2706, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 77: // earth wave
@@ -484,8 +421,7 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(14222));
 				mage_hit_gfx = 2726;
 				base_mage_xp = 42.5;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 190)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 190)));
 				World.sendProjectile(player, target, 2721, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 80: // fire wave
@@ -504,23 +440,17 @@ public class PlayerCombat extends Action {
 				World.sendProjectile(player, target, 2735, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 86: // teleblock
-				if (target instanceof Player
-						&& ((Player) target).getTeleBlockDelay() <= Utils
-								.currentTimeMillis()) {
+				if (target instanceof Player && ((Player) target).getTeleBlockDelay() <= Utils.currentTimeMillis()) {
 					player.setNextGraphics(new Graphics(1841));
 					player.setNextAnimation(new Animation(10503));
 					mage_hit_gfx = 1843;
 					base_mage_xp = 80;
 					block_tele = true;
-					Hit hit = getMagicHit(player,
-							getRandomMagicMaxHit(player, 30));
+					Hit hit = getMagicHit(player, getRandomMagicMaxHit(player, 30));
 					delayMagicHit(2, hit);
-					World.sendProjectile(player, target, 1842, 18, 18, 50, 50,
-							0, 0);
+					World.sendProjectile(player, target, 1842, 18, 18, 50, 50, 0, 0);
 				} else {
-					player.getPackets().sendGameMessage(
-							"This player is already effected by this spell.",
-							true);
+					player.getPackets().sendGameMessage("This player is already effected by this spell.", true);
 				}
 				return 5;
 			case 84:// air surge
@@ -528,8 +458,7 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(10546));
 				mage_hit_gfx = 2700;
 				base_mage_xp = 80;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 220)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 220)));
 				World.sendProjectile(player, target, 462, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 87:// water surge
@@ -537,8 +466,7 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(10542));
 				mage_hit_gfx = 2712;
 				base_mage_xp = 80;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 240)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 240)));
 				World.sendProjectile(player, target, 2707, 18, 18, 50, 50, 3, 0);
 				return 5;
 			case 89:// earth surge
@@ -546,8 +474,7 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(14209));
 				mage_hit_gfx = 2727;
 				base_mage_xp = 80;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 260)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 260)));
 				World.sendProjectile(player, target, 2722, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 91:// fire surge
@@ -564,10 +491,8 @@ public class PlayerCombat extends Action {
 				}
 				delayMagicHit(2, getMagicHit(player, damage));
 				World.sendProjectile(player, target, 2735, 18, 18, 50, 50, 3, 0);
-				World.sendProjectile(player, target, 2736, 18, 18, 50, 50, 20,
-						0);
-				World.sendProjectile(player, target, 2736, 18, 18, 50, 50, 110,
-						0);
+				World.sendProjectile(player, target, 2736, 18, 18, 50, 50, 20, 0);
+				World.sendProjectile(player, target, 2736, 18, 18, 50, 50, 110, 0);
 				return 5;
 			case 99: // Storm of armadyl //Sonic and Tyler dumped
 				player.setNextGraphics(new Graphics(457));
@@ -592,8 +517,7 @@ public class PlayerCombat extends Action {
 				mage_hit_gfx = 385;
 				base_mage_xp = 30;
 				max_poison_hit = 20;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 150)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 150)));
 				World.sendProjectile(player, target, 386, 18, 18, 50, 50, 0, 0);
 				return 4;
 			case 32:// Shadow Rush
@@ -601,8 +525,7 @@ public class PlayerCombat extends Action {
 				mage_hit_gfx = 379;
 				base_mage_xp = 31;
 				reduceAttack = true;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 160)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 160)));
 				World.sendProjectile(player, target, 380, 18, 18, 50, 50, 0, 0);
 				return 4;
 			case 36: // Miasmic rush
@@ -610,21 +533,16 @@ public class PlayerCombat extends Action {
 				player.setNextGraphics(new Graphics(1845));
 				mage_hit_gfx = 1847;
 				base_mage_xp = 35;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 200)));
-				World.sendProjectile(player, target, 1846, 43, 22, 51, 50, 16,
-						0);
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 200)));
+				World.sendProjectile(player, target, 1846, 43, 22, 51, 50, 16, 0);
 				if (target.getTemporaryAttributtes().get("miasmic_immunity") == Boolean.TRUE) {
 					return 4;
 				}
 				if (target instanceof Player) {
-					((Player) target).getPackets().sendGameMessage(
-							"You feel slowed down.");
+					((Player) target).getPackets().sendGameMessage("You feel slowed down.");
 				}
-				target.getTemporaryAttributtes().put("miasmic_immunity",
-						Boolean.TRUE);
-				target.getTemporaryAttributtes().put("miasmic_effect",
-						Boolean.TRUE);
+				target.getTemporaryAttributtes().put("miasmic_immunity", Boolean.TRUE);
+				target.getTemporaryAttributtes().put("miasmic_effect", Boolean.TRUE);
 				final Entity t = target;
 				WorldTasksManager.schedule(new WorldTask() {
 					@Override
@@ -633,8 +551,7 @@ public class PlayerCombat extends Action {
 						WorldTasksManager.schedule(new WorldTask() {
 							@Override
 							public void run() {
-								t.getTemporaryAttributtes().remove(
-										"miasmic_immunity");
+								t.getTemporaryAttributtes().remove("miasmic_immunity");
 								stop();
 							}
 						}, 15);
@@ -647,21 +564,16 @@ public class PlayerCombat extends Action {
 				player.setNextGraphics(new Graphics(1850));
 				mage_hit_gfx = 1851;
 				base_mage_xp = 48;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 280)));
-				World.sendProjectile(player, target, 1852, 43, 22, 51, 50, 16,
-						0);
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 280)));
+				World.sendProjectile(player, target, 1852, 43, 22, 51, 50, 16, 0);
 				if (target.getTemporaryAttributtes().get("miasmic_immunity") == Boolean.TRUE) {
 					return 4;
 				}
 				if (target instanceof Player) {
-					((Player) target).getPackets().sendGameMessage(
-							"You feel slowed down.");
+					((Player) target).getPackets().sendGameMessage("You feel slowed down.");
 				}
-				target.getTemporaryAttributtes().put("miasmic_immunity",
-						Boolean.TRUE);
-				target.getTemporaryAttributtes().put("miasmic_effect",
-						Boolean.TRUE);
+				target.getTemporaryAttributtes().put("miasmic_immunity", Boolean.TRUE);
+				target.getTemporaryAttributtes().put("miasmic_effect", Boolean.TRUE);
 				final Entity t0 = target;
 				WorldTasksManager.schedule(new WorldTask() {
 					@Override
@@ -670,8 +582,7 @@ public class PlayerCombat extends Action {
 						WorldTasksManager.schedule(new WorldTask() {
 							@Override
 							public void run() {
-								t0.getTemporaryAttributtes().remove(
-										"miasmic_immunity");
+								t0.getTemporaryAttributtes().remove("miasmic_immunity");
 								stop();
 							}
 						}, 15);
@@ -691,27 +602,21 @@ public class PlayerCombat extends Action {
 						base_mage_xp = 42;
 						int damage = getRandomMagicMaxHit(player, 240);
 						delayMagicHit(2, getMagicHit(player, damage));
-						if (target.getTemporaryAttributtes().get(
-								"miasmic_immunity") != Boolean.TRUE) {
+						if (target.getTemporaryAttributtes().get("miasmic_immunity") != Boolean.TRUE) {
 							if (target instanceof Player) {
-								((Player) target).getPackets().sendGameMessage(
-										"You feel slowed down.");
+								((Player) target).getPackets().sendGameMessage("You feel slowed down.");
 							}
-							target.getTemporaryAttributtes().put(
-									"miasmic_immunity", Boolean.TRUE);
-							target.getTemporaryAttributtes().put(
-									"miasmic_effect", Boolean.TRUE);
+							target.getTemporaryAttributtes().put("miasmic_immunity", Boolean.TRUE);
+							target.getTemporaryAttributtes().put("miasmic_effect", Boolean.TRUE);
 							final Entity t = target;
 							WorldTasksManager.schedule(new WorldTask() {
 								@Override
 								public void run() {
-									t.getTemporaryAttributtes().remove(
-											"miasmic_effect");
+									t.getTemporaryAttributtes().remove("miasmic_effect");
 									WorldTasksManager.schedule(new WorldTask() {
 										@Override
 										public void run() {
-											t.getTemporaryAttributtes().remove(
-													"miasmic_immunity");
+											t.getTemporaryAttributtes().remove("miasmic_immunity");
 											stop();
 										}
 									}, 15);
@@ -742,27 +647,21 @@ public class PlayerCombat extends Action {
 						base_mage_xp = 54;
 						int damage = getRandomMagicMaxHit(player, 320);
 						delayMagicHit(2, getMagicHit(player, damage));
-						if (target.getTemporaryAttributtes().get(
-								"miasmic_immunity") != Boolean.TRUE) {
+						if (target.getTemporaryAttributtes().get("miasmic_immunity") != Boolean.TRUE) {
 							if (target instanceof Player) {
-								((Player) target).getPackets().sendGameMessage(
-										"You feel slowed down.");
+								((Player) target).getPackets().sendGameMessage("You feel slowed down.");
 							}
-							target.getTemporaryAttributtes().put(
-									"miasmic_immunity", Boolean.TRUE);
-							target.getTemporaryAttributtes().put(
-									"miasmic_effect", Boolean.TRUE);
+							target.getTemporaryAttributtes().put("miasmic_immunity", Boolean.TRUE);
+							target.getTemporaryAttributtes().put("miasmic_effect", Boolean.TRUE);
 							final Entity t = target;
 							WorldTasksManager.schedule(new WorldTask() {
 								@Override
 								public void run() {
-									t.getTemporaryAttributtes().remove(
-											"miasmic_effect");
+									t.getTemporaryAttributtes().remove("miasmic_effect");
 									WorldTasksManager.schedule(new WorldTask() {
 										@Override
 										public void run() {
-											t.getTemporaryAttributtes().remove(
-													"miasmic_immunity");
+											t.getTemporaryAttributtes().remove("miasmic_immunity");
 											stop();
 										}
 									}, 15);
@@ -786,8 +685,7 @@ public class PlayerCombat extends Action {
 				mage_hit_gfx = 373;
 				base_mage_xp = 33;
 				blood_spell = true;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 170)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 170)));
 				World.sendProjectile(player, target, 374, 18, 18, 50, 50, 0, 0);
 				return 4;
 			case 20:// Ice rush
@@ -795,11 +693,10 @@ public class PlayerCombat extends Action {
 				mage_hit_gfx = 361;
 				base_mage_xp = 34;
 				freeze_time = 5000;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 180)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 180)));
 				World.sendProjectile(player, target, 362, 18, 18, 50, 50, 0, 0);
 				return 4;
-				// TODO burst
+			// TODO burst
 			case 30:// Smoke burst
 				player.setNextAnimation(new Animation(1979));
 				attackTarget(getMultiAttackTargets(player), new MultiAttack() {
@@ -813,8 +710,7 @@ public class PlayerCombat extends Action {
 						max_poison_hit = 40;
 						int damage = getRandomMagicMaxHit(player, 190);
 						delayMagicHit(2, getMagicHit(player, damage));
-						World.sendProjectile(player, target, 388, 18, 18, 50,
-								50, 0, 0);
+						World.sendProjectile(player, target, 388, 18, 18, 50, 50, 0, 0);
 						if (!nextTarget) {
 							if (damage == -1)
 								return false;
@@ -886,8 +782,7 @@ public class PlayerCombat extends Action {
 						magic_sound = 169;
 						int damage = getRandomMagicMaxHit(player, 220);
 						delayMagicHit(4, getMagicHit(player, damage));
-						World.sendProjectile(player, target, 366, 43, 0, 120,
-								0, 50, 64);
+						World.sendProjectile(player, target, 366, 43, 0, 120, 0, 50, 64);
 						if (!nextTarget) {
 							if (damage == -1)
 								return false;
@@ -903,8 +798,7 @@ public class PlayerCombat extends Action {
 				mage_hit_gfx = 387;
 				base_mage_xp = 42;
 				max_poison_hit = 60;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 230)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 230)));
 				World.sendProjectile(player, target, 386, 18, 18, 50, 50, 0, 0);
 				return 4;
 			case 33:// Shadow Blitz
@@ -912,8 +806,7 @@ public class PlayerCombat extends Action {
 				mage_hit_gfx = 381;
 				base_mage_xp = 43;
 				reduceAttack = true;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 240)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 240)));
 				World.sendProjectile(player, target, 380, 18, 18, 50, 50, 0, 0);
 				return 4;
 			case 25:// Blood Blitz
@@ -921,8 +814,7 @@ public class PlayerCombat extends Action {
 				mage_hit_gfx = 375;
 				base_mage_xp = 45;
 				blood_spell = true;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 250)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 250)));
 				World.sendProjectile(player, target, 374, 18, 18, 50, 50, 0, 0);
 				return 4;
 			case 21:// Ice Blitz
@@ -932,8 +824,7 @@ public class PlayerCombat extends Action {
 				base_mage_xp = 46;
 				freeze_time = 15000;
 				magic_sound = 169;
-				delayMagicHit(2,
-						getMagicHit(player, getRandomMagicMaxHit(player, 260)));
+				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 260)));
 				return 4;
 			case 31:// Smoke barrage
 				player.setNextAnimation(new Animation(1979));
@@ -948,8 +839,7 @@ public class PlayerCombat extends Action {
 						max_poison_hit = 80;
 						int damage = getRandomMagicMaxHit(player, 270);
 						delayMagicHit(2, getMagicHit(player, damage));
-						World.sendProjectile(player, target, 390, 18, 18, 50,
-								50, 0, 0);
+						World.sendProjectile(player, target, 390, 18, 18, 50, 50, 0, 0);
 						if (!nextTarget) {
 							if (damage == -1)
 								return false;
@@ -1019,8 +909,7 @@ public class PlayerCombat extends Action {
 						magic_sound = 168;
 						magic_voice = 5531;
 						long currentTime = Utils.currentTimeMillis();
-						if (target.getSize() >= 2
-								|| target.getFreezeDelay() >= currentTime
+						if (target.getSize() >= 2 || target.getFreezeDelay() >= currentTime
 								|| target.getFrozenBlockedDelay() >= currentTime) {
 							mage_hit_gfx = 1677;
 						} else {
@@ -1115,34 +1004,29 @@ public class PlayerCombat extends Action {
 				def *= p2.getPrayer().getDefenceMultiplier();
 			} else {
 				NPC n = (NPC) target;
-				def = n.getBonuses() == null ? 0
-						: n.getBonuses()[CombatDefinitions.MAGIC_DEF];
+				def = n.getBonuses() == null ? 0 : n.getBonuses()[CombatDefinitions.MAGIC_DEF];
 			}
 			if (!Combat.rollHit(att, def))
 				return 0;
 		}
 		max_hit = baseDamage;
-		double boost = 1 + ((player.getSkills().getLevel(Skills.MAGIC) - player
-				.getSkills().getLevelForXp(Skills.MAGIC)) * 0.03);
+		double boost = 1
+				+ ((player.getSkills().getLevel(Skills.MAGIC) - player.getSkills().getLevelForXp(Skills.MAGIC)) * 0.03);
 		if (boost > 1)
 			max_hit *= boost;
 		double magicPerc = player.getCombatDefinitions().getBonuses()[CombatDefinitions.MAGIC_DAMAGE];
 		if (spellcasterGloves > 0) {
-			if (baseDamage > 60 || spellcasterGloves == 28
-					|| spellcasterGloves == 25) {
+			if (baseDamage > 60 || spellcasterGloves == 28 || spellcasterGloves == 25) {
 				magicPerc += 17;
 				if (target instanceof Player) {
 					Player p = (Player) target;
 					p.getSkills().drainLevel(0, p.getSkills().getLevel(0) / 10);
 					p.getSkills().drainLevel(1, p.getSkills().getLevel(1) / 10);
 					p.getSkills().drainLevel(2, p.getSkills().getLevel(2) / 10);
-					p.getPackets().sendGameMessage(
-							"Your melee skills have been drained.");
-					player.getPackets().sendGameMessage(
-							"Your spell weakened your enemy.");
+					p.getPackets().sendGameMessage("Your melee skills have been drained.");
+					player.getPackets().sendGameMessage("Your spell weakened your enemy.");
 				}
-				player.getPackets().sendGameMessage(
-						"Your magic surged with extra power.");
+				player.getPackets().sendGameMessage("Your magic surged with extra power.");
 			}
 		}
 		if (target instanceof NPC) {
@@ -1160,17 +1044,15 @@ public class PlayerCombat extends Action {
 		if (player.getCombatDefinitions().isUsingSpecialAttack()) {
 			int specAmt = getSpecialAmmount(weaponId);
 			if (specAmt == 0) {
-				player.getPackets()
-						.sendGameMessage(
-								"This weapon has no special Attack, if you still see special bar please relogin.");
+				player.getPackets().sendGameMessage(
+						"This weapon has no special Attack, if you still see special bar please relogin.");
 				player.getCombatDefinitions().desecreaseSpecialAttack(0);
 				return combatDelay;
 			}
 			if (player.getCombatDefinitions().hasRingOfVigour())
 				specAmt *= 0.9;
 			if (player.getCombatDefinitions().getSpecialAttackPercentage() < specAmt) {
-				player.getPackets().sendGameMessage(
-						"You don't have enough power left.");
+				player.getPackets().sendGameMessage("You don't have enough power left.");
 				player.getCombatDefinitions().desecreaseSpecialAttack(0);
 				return combatDelay;
 			}
@@ -1181,14 +1063,8 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(426));
 				player.setNextGraphics(new Graphics(97));
 				World.sendProjectile(player, target, 100, 41, 16, 25, 35, 16, 0);
-				delayHit(
-						1,
-						weaponId,
-						attackStyle,
-						getRangeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										true, true, 1.0, true)));
+				delayHit(1, weaponId, attackStyle,
+						getRangeHit(player, getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.0, true)));
 				dropAmmo(player, 1);
 				break;
 			case 19146:
@@ -1196,14 +1072,8 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(426));
 				player.setNextGraphics(new Graphics(95));
 				World.sendProjectile(player, target, 98, 41, 16, 25, 35, 16, 0);
-				delayHit(
-						1,
-						weaponId,
-						attackStyle,
-						getRangeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										true, true, 1.0, true)));
+				delayHit(1, weaponId, attackStyle,
+						getRangeHit(player, getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.0, true)));
 				dropAmmo(player, 1);
 				break;
 			case 19143:// saradomin bow
@@ -1211,14 +1081,8 @@ public class PlayerCombat extends Action {
 				player.setNextAnimation(new Animation(426));
 				player.setNextGraphics(new Graphics(96));
 				World.sendProjectile(player, target, 99, 41, 16, 25, 35, 16, 0);
-				delayHit(
-						1,
-						weaponId,
-						attackStyle,
-						getRangeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										true, true, 1.0, true)));
+				delayHit(1, weaponId, attackStyle,
+						getRangeHit(player, getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.0, true)));
 				dropAmmo(player, 1);
 				break;
 			case 859: // magic longbow
@@ -1229,22 +1093,10 @@ public class PlayerCombat extends Action {
 				player.setNextGraphics(new Graphics(249, 0, 100));
 				World.sendProjectile(player, target, 249, 41, 16, 31, 35, 16, 0);
 				World.sendProjectile(player, target, 249, 41, 16, 25, 35, 21, 0);
-				delayHit(
-						2,
-						weaponId,
-						attackStyle,
-						getRangeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										true, true, 1.0, true)));
-				delayHit(
-						3,
-						weaponId,
-						attackStyle,
-						getRangeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										true, true, 1.0, true)));
+				delayHit(2, weaponId, attackStyle,
+						getRangeHit(player, getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.0, true)));
+				delayHit(3, weaponId, attackStyle,
+						getRangeHit(player, getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.0, true)));
 				dropAmmo(player, 2);
 				break;
 			case 15241: // Hand cannon
@@ -1253,39 +1105,22 @@ public class PlayerCombat extends Action {
 
 					@Override
 					public void run() {
-						if ((target.isDead() || player.isDead() || loop > 1)
-								&& !World.getNPCs().contains(target)) {
+						if ((target.isDead() || player.isDead() || loop > 1) && !World.getNPCs().contains(target)) {
 							stop();
 							return;
 						}
 						if (loop == 0) {
 							player.setNextAnimation(new Animation(12174));
 							player.setNextGraphics(new Graphics(2138));
-							World.sendProjectile(player, target, 2143, 18, 18,
-									50, 50, 0, 0);
-							delayHit(
-									1,
-									weaponId,
-									attackStyle,
-									getRangeHit(
-											player,
-											getRandomMaxHit(player, weaponId,
-													attackStyle, true, true,
-													1.0, true)));
+							World.sendProjectile(player, target, 2143, 18, 18, 50, 50, 0, 0);
+							delayHit(1, weaponId, attackStyle, getRangeHit(player,
+									getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.0, true)));
 						} else if (loop == 1) {
 							player.setNextAnimation(new Animation(12174));
 							player.setNextGraphics(new Graphics(2138));
-							World.sendProjectile(player, target, 2143, 18, 18,
-									50, 50, 0, 0);
-							delayHit(
-									1,
-									weaponId,
-									attackStyle,
-									getRangeHit(
-											player,
-											getRandomMaxHit(player, weaponId,
-													attackStyle, true, true,
-													1.0, true)));
+							World.sendProjectile(player, target, 2143, 18, 18, 50, 50, 0, 0);
+							delayHit(1, weaponId, attackStyle, getRangeHit(player,
+									getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.0, true)));
 							stop();
 						}
 						loop++;
@@ -1299,27 +1134,19 @@ public class PlayerCombat extends Action {
 			case 15703:
 			case 15704:
 				int ammoId = player.getEquipment().getAmmoId();
-				player.setNextAnimation(new Animation(getWeaponAttackEmote(
-						weaponId, attackStyle)));
-				player.setNextGraphics(new Graphics(getArrowThrowGfxId(
-						weaponId, ammoId), 0, 100));
+				player.setNextAnimation(new Animation(getWeaponAttackEmote(weaponId, attackStyle)));
+				player.setNextGraphics(new Graphics(getArrowThrowGfxId(weaponId, ammoId), 0, 100));
 				if (ammoId == 11212) {
-					int damage = getRandomMaxHit(player, weaponId, attackStyle,
-							true, true, 1.5, true);
+					int damage = getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.5, true);
 					if (damage < 80)
 						damage = 80;
-					int damage2 = getRandomMaxHit(player, weaponId,
-							attackStyle, true, true, 1.5, true);
+					int damage2 = getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.5, true);
 					if (damage2 < 80)
 						damage2 = 80;
-					World.sendProjectile(player, target, 1099, 41, 16, 31, 35,
-							16, 0);
-					World.sendProjectile(player, target, 1099, 41, 16, 25, 35,
-							21, 0);
-					delayHit(2, weaponId, attackStyle,
-							getRangeHit(player, damage));
-					delayHit(3, weaponId, attackStyle,
-							getRangeHit(player, damage2));
+					World.sendProjectile(player, target, 1099, 41, 16, 31, 35, 16, 0);
+					World.sendProjectile(player, target, 1099, 41, 16, 25, 35, 21, 0);
+					delayHit(2, weaponId, attackStyle, getRangeHit(player, damage));
+					delayHit(3, weaponId, attackStyle, getRangeHit(player, damage2));
 					WorldTasksManager.schedule(new WorldTask() {
 						@Override
 						public void run() {
@@ -1327,41 +1154,27 @@ public class PlayerCombat extends Action {
 						}
 					}, 2);
 				} else {
-					int damage = getRandomMaxHit(player, weaponId, attackStyle,
-							true, true, 1.3, true);
+					int damage = getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.3, true);
 					if (damage < 50)
 						damage = 50;
-					int damage2 = getRandomMaxHit(player, weaponId,
-							attackStyle, true, true, 1.3, true);
+					int damage2 = getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.3, true);
 					if (damage2 < 50)
 						damage2 = 50;
-					World.sendProjectile(player, target, 1101, 41, 16, 31, 35,
-							16, 0);
-					World.sendProjectile(player, target, 1101, 41, 16, 25, 35,
-							21, 0);
-					delayHit(2, weaponId, attackStyle,
-							getRangeHit(player, damage));
-					delayHit(3, weaponId, attackStyle,
-							getRangeHit(player, damage2));
+					World.sendProjectile(player, target, 1101, 41, 16, 31, 35, 16, 0);
+					World.sendProjectile(player, target, 1101, 41, 16, 25, 35, 21, 0);
+					delayHit(2, weaponId, attackStyle, getRangeHit(player, damage));
+					delayHit(3, weaponId, attackStyle, getRangeHit(player, damage2));
 				}
 				dropAmmo(player, 2);
 
 				break;
 			case 14684: // zanik cbow
-				player.setNextAnimation(new Animation(getWeaponAttackEmote(
-						weaponId, attackStyle)));
+				player.setNextAnimation(new Animation(getWeaponAttackEmote(weaponId, attackStyle)));
 				player.setNextGraphics(new Graphics(1714));
 				World.sendProjectile(player, target, 2001, 41, 41, 41, 35, 0, 0);
-				delayHit(
-						2,
-						weaponId,
-						attackStyle,
-						getRangeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										true, true, 1.0, true)
-										+ 30
-										+ Utils.getRandom(120)));
+				delayHit(2, weaponId, attackStyle,
+						getRangeHit(player, getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.0, true) + 30
+								+ Utils.getRandom(120)));
 				dropAmmo(player);
 				break;
 			case 13954:// morrigan javelin
@@ -1374,8 +1187,7 @@ public class PlayerCombat extends Action {
 				player.setNextGraphics(new Graphics(1836));
 				player.setNextAnimation(new Animation(10501));
 				World.sendProjectile(player, target, 1837, 41, 41, 41, 35, 0, 0);
-				final int hit = getRandomMaxHit(player, weaponId, attackStyle,
-						true, true, 1.0, true);
+				final int hit = getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.0, true);
 				delayHit(2, weaponId, attackStyle, getRangeHit(player, hit));
 				if (hit > 0) {
 					final Entity finalTarget = target;
@@ -1384,18 +1196,15 @@ public class PlayerCombat extends Action {
 
 						@Override
 						public void run() {
-							if (finalTarget.isDead()
-									|| finalTarget.hasFinished()) {
+							if (finalTarget.isDead() || finalTarget.hasFinished()) {
 								stop();
 								return;
 							}
 							if (damage > 50) {
 								damage -= 50;
-								finalTarget.applyHit(new Hit(player, 50,
-										HitLook.REGULAR_DAMAGE));
+								finalTarget.applyHit(new Hit(player, 50, HitLook.REGULAR_DAMAGE));
 							} else {
-								finalTarget.applyHit(new Hit(player, damage,
-										HitLook.REGULAR_DAMAGE));
+								finalTarget.applyHit(new Hit(player, damage, HitLook.REGULAR_DAMAGE));
 								stop();
 							}
 						}
@@ -1408,43 +1217,27 @@ public class PlayerCombat extends Action {
 				player.setNextGraphics(new Graphics(1838));
 				player.setNextAnimation(new Animation(10504));
 				World.sendProjectile(player, target, 1839, 41, 41, 41, 35, 0, 0);
-				delayHit(
-						2,
-						weaponId,
-						attackStyle,
-						getRangeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										true, true, 1.0, true)));
+				delayHit(2, weaponId, attackStyle,
+						getRangeHit(player, getRandomMaxHit(player, weaponId, attackStyle, true, true, 1.0, true)));
 				dropAmmo(player, -1);
 				break;
 			default:
-				player.getPackets()
-						.sendGameMessage(
-								"This weapon has no special Attack, if you still see special bar please relogin.");
+				player.getPackets().sendGameMessage(
+						"This weapon has no special Attack, if you still see special bar please relogin.");
 				return combatDelay;
 			}
 		} else {
 			if (weaponId != -1) {
-				String weaponName = ItemDefinitions
-						.getItemDefinitions(weaponId).getName().toLowerCase();
-				if (weaponName.contains("throwing axe")
-						|| weaponName.contains("knife")
-						|| weaponName.contains("dart")
-						|| weaponName.contains("javelin")
-						|| weaponName.contains("thrownaxe")) {
-					if (!weaponName.contains("javelin")
-							&& !weaponName.contains("thrownaxe"))
-						player.setNextGraphics(new Graphics(
-								getKnifeThrowGfxId(weaponId), 0, 100));
-					World.sendProjectile(player, target,
-							getKnifeThrowGfxId(weaponId), 41, 36, 41, 32, 15, 0);
-					int hit = getRandomMaxHit(player, weaponId, attackStyle,
-							true);
+				String weaponName = ItemDefinitions.getItemDefinitions(weaponId).getName().toLowerCase();
+				if (weaponName.contains("throwing axe") || weaponName.contains("knife") || weaponName.contains("dart")
+						|| weaponName.contains("javelin") || weaponName.contains("thrownaxe")) {
+					if (!weaponName.contains("javelin") && !weaponName.contains("thrownaxe"))
+						player.setNextGraphics(new Graphics(getKnifeThrowGfxId(weaponId), 0, 100));
+					World.sendProjectile(player, target, getKnifeThrowGfxId(weaponId), 41, 36, 41, 32, 15, 0);
+					int hit = getRandomMaxHit(player, weaponId, attackStyle, true);
 					delayHit(1, weaponId, attackStyle, getRangeHit(player, hit));
-					checkSwiftGlovesEffect(player, 1, attackStyle, weaponId,
-							hit, getKnifeThrowGfxId(weaponId), 41, 36, 41, 32,
-							15, 0);
+					checkSwiftGlovesEffect(player, 1, attackStyle, weaponId, hit, getKnifeThrowGfxId(weaponId), 41, 36,
+							41, 32, 15, 0);
 					dropAmmo(player, -1);
 				} else if (weaponName.contains("crossbow")) {
 					int damage = 0;
@@ -1452,8 +1245,7 @@ public class PlayerCombat extends Action {
 					if (ammoId != -1 && Utils.getRandom(10) == 5) {
 						switch (ammoId) {
 						case 9237:
-							damage = getRandomMaxHit(player, weaponId,
-									attackStyle, true);
+							damage = getRandomMaxHit(player, weaponId, attackStyle, true);
 							target.setNextGraphics(new Graphics(755));
 							if (target instanceof Player) {
 								Player p2 = (Player) target;
@@ -1468,171 +1260,127 @@ public class PlayerCombat extends Action {
 							max_hit = Short.MAX_VALUE;
 							damage = (int) (target.getHitpoints() * 0.2);
 							target.setNextGraphics(new Graphics(754));
-							player.applyHit(new Hit(target, player
-									.getHitpoints() > 20 ? (int) (player
-									.getHitpoints() * 0.1) : 1,
+							player.applyHit(new Hit(target,
+									player.getHitpoints() > 20 ? (int) (player.getHitpoints() * 0.1) : 1,
 									HitLook.REFLECTED_DAMAGE));
 							soundId = 2912;
 							break;
 						case 9243:
-							damage = getRandomMaxHit(player, weaponId,
-									attackStyle, true, false, 1.15, true);
+							damage = getRandomMaxHit(player, weaponId, attackStyle, true, false, 1.15, true);
 							target.setNextGraphics(new Graphics(751));
 							soundId = 2913;
 							break;
 						case 9244:
-							damage = getRandomMaxHit(
-									player,
-									weaponId,
-									attackStyle,
-									true,
-									false,
-									!Combat.hasAntiDragProtection(target) ? 1.45
-											: 1.0, true);
+							damage = getRandomMaxHit(player, weaponId, attackStyle, true, false,
+									!Combat.hasAntiDragProtection(target) ? 1.45 : 1.0, true);
 							target.setNextGraphics(new Graphics(756));
 							soundId = 2915;
 							break;
 						case 9245:
-							damage = getRandomMaxHit(player, weaponId,
-									attackStyle, true, false, 1.15, true);
+							damage = getRandomMaxHit(player, weaponId, attackStyle, true, false, 1.15, true);
 							target.setNextGraphics(new Graphics(753));
 							player.heal((int) (player.getMaxHitpoints() * 0.25));
 							soundId = 2917;
 							break;
 						default:
-							damage = getRandomMaxHit(player, weaponId,
-									attackStyle, true);
+							damage = getRandomMaxHit(player, weaponId, attackStyle, true);
 						}
 					} else {
-						damage = getRandomMaxHit(player, weaponId, attackStyle,
-								true);
-						checkSwiftGlovesEffect(player, 2, attackStyle,
-								weaponId, damage, 27, 38, 36, 41, 32, 5, 0);
+						damage = getRandomMaxHit(player, weaponId, attackStyle, true);
+						checkSwiftGlovesEffect(player, 2, attackStyle, weaponId, damage, 27, 38, 36, 41, 32, 5, 0);
 					}
-					World.sendProjectile(player, target, 27, 38, 36, 41, 32, 5,
-							0);
-					delayHit(2, weaponId, attackStyle,
-							getRangeHit(player, damage));
+					World.sendProjectile(player, target, 27, 38, 36, 41, 32, 5, 0);
+					delayHit(2, weaponId, attackStyle, getRangeHit(player, damage));
 					if (weaponId != 4740)
 						dropAmmo(player);
 					else
 						player.getEquipment().removeAmmo(ammoId, 1);
 				} else if (weaponId == 15241) {// handcannon
-					if (Utils.getRandom(player.getSkills().getLevel(
-							Skills.FIREMAKING) << 1) == 0) {
+					if (Utils.getRandom(player.getSkills().getLevel(Skills.FIREMAKING) << 1) == 0) {
 						// explode
 						player.setNextGraphics(new Graphics(2140));
 						player.getEquipment().getItems().set(3, null);
 						player.getEquipment().refresh(3);
 						player.getAppearence().generateAppearenceData();
-						player.applyHit(new Hit(player,
-								Utils.getRandom(150) + 10,
-								HitLook.REGULAR_DAMAGE));
+						player.applyHit(new Hit(player, Utils.getRandom(150) + 10, HitLook.REGULAR_DAMAGE));
 						player.setNextAnimation(new Animation(12175));
 						return combatDelay;
 					} else {
 						player.setNextGraphics(new Graphics(2138));
-						World.sendProjectile(player, target, 2143, 18, 18, 60,
-								30, 0, 0);
-						delayHit(
-								1,
-								weaponId,
-								attackStyle,
-								getRangeHit(
-										player,
-										getRandomMaxHit(player, weaponId,
-												attackStyle, true)));
+						World.sendProjectile(player, target, 2143, 18, 18, 60, 30, 0, 0);
+						delayHit(1, weaponId, attackStyle,
+								getRangeHit(player, getRandomMaxHit(player, weaponId, attackStyle, true)));
 						dropAmmo(player, -2);
 					}
 				} else if (weaponName.contains("crystal bow")) {
-					player.setNextAnimation(new Animation(getWeaponAttackEmote(
-							weaponId, attackStyle)));
+					player.setNextAnimation(new Animation(getWeaponAttackEmote(weaponId, attackStyle)));
 					player.setNextGraphics(new Graphics(250));
-					World.sendProjectile(player, target, 249, 41, 36, 41, 35,
-							0, 0);
-					int hit = getRandomMaxHit(player, weaponId, attackStyle,
-							true);
+					World.sendProjectile(player, target, 249, 41, 36, 41, 35, 0, 0);
+					int hit = getRandomMaxHit(player, weaponId, attackStyle, true);
 					delayHit(2, weaponId, attackStyle, getRangeHit(player, hit));
-					checkSwiftGlovesEffect(player, 2, attackStyle, weaponId,
-							hit, 249, 41, 36, 41, 35, 0, 0);
+					checkSwiftGlovesEffect(player, 2, attackStyle, weaponId, hit, 249, 41, 36, 41, 35, 0, 0);
 				} else if (weaponId == 20171 || weaponId == 20173) {
-					int hit = getRandomMaxHit(player, weaponId, attackStyle,
-							true);
+					int hit = getRandomMaxHit(player, weaponId, attackStyle, true);
 					player.setNextGraphics(new Graphics(2962, 0, 100));
 					player.setNextAnimation(new Animation(426));
 					delayHit(2, weaponId, attackStyle, getRangeHit(player, hit));
 					if (player.getEquipment().getWeaponId() == 20171) {
-						player.getCharges().addCharges(20173,
-								ItemConstants.getItemDefaultCharges(20173),
+						player.getCharges().addCharges(20173, ItemConstants.getItemDefaultCharges(20173),
 								Equipment.SLOT_WEAPON);
-						player.getEquipment().getItem(Equipment.SLOT_WEAPON)
-								.setId(20173);
+						player.getEquipment().getItem(Equipment.SLOT_WEAPON).setId(20173);
 						player.getEquipment().refresh(Equipment.SLOT_WEAPON);
 					}
-					player.getCharges().addCharges(20173, -1,
-							Equipment.SLOT_WEAPON);
-					World.sendProjectile(player, target, 1066, 60, 32, 50, 50,
-							0, 0);
-					checkSwiftGlovesEffect(player, 2, attackStyle, weaponId,
-							hit, 1066, 41, 36, 41, 35, 0, 0);
+					player.getCharges().addCharges(20173, -1, Equipment.SLOT_WEAPON);
+					World.sendProjectile(player, target, 1066, 60, 32, 50, 50, 0, 0);
+					checkSwiftGlovesEffect(player, 2, attackStyle, weaponId, hit, 1066, 41, 36, 41, 35, 0, 0);
 				} else if (weaponId == 10034 || weaponId == 10033) {
 					player.setNextAnimation(new Animation(2779));
-					World.sendProjectile(player, target,
-							weaponId == 10034 ? 909 : 908, 41, 16, 31, 35, 16,
-							0);
+					World.sendProjectile(player, target, weaponId == 10034 ? 909 : 908, 41, 16, 31, 35, 16, 0);
 					player.getEquipment().removeAmmo(weaponId, -1);
-					attackTarget(getMultiAttackTargets(player),
-							new MultiAttack() {
+					attackTarget(getMultiAttackTargets(player), new MultiAttack() {
 
-								private boolean nextTarget; // real target is
-															// first
+						private boolean nextTarget; // real target is
+													// first
 
-								// player on array
+						// player on array
 
+						@Override
+						public boolean attack() {
+							int damage = getRandomMaxHit(player, weaponId, attackStyle, true, true,
+									weaponId == 10034 ? 1.2 : 1.0, true);
+							delayHit(2, weaponId, attackStyle, getRangeHit(player, damage));
+							WorldTasksManager.schedule(new WorldTask() {
 								@Override
-								public boolean attack() {
-									int damage = getRandomMaxHit(player,
-											weaponId, attackStyle, true, true,
-											weaponId == 10034 ? 1.2 : 1.0, true);
-									delayHit(2, weaponId, attackStyle,
-											getRangeHit(player, damage));
-									WorldTasksManager.schedule(new WorldTask() {
-										@Override
-										public void run() {
-											target.setNextGraphics(new Graphics(
-													2737, 0, 100));
-										}
-									}, 2);
-									if (!nextTarget) {
-										if (damage == -1)
-											return false;
-										nextTarget = true;
-									}
-									return nextTarget;
-
+								public void run() {
+									target.setNextGraphics(new Graphics(2737, 0, 100));
 								}
-							});
+							}, 2);
+							if (!nextTarget) {
+								if (damage == -1)
+									return false;
+								nextTarget = true;
+							}
+							return nextTarget;
+
+						}
+					});
 					return combatDelay;
 				} else if (weaponId == 21364) {// sagaie
 					player.getEquipment().removeAmmo(weaponId, -1);
 					player.setNextAnimation(new Animation(3236));
-					World.sendProjectile(player, target, 466, 41, 41, 41, 35,
-							0, 0);
+					World.sendProjectile(player, target, 466, 41, 41, 41, 35, 0, 0);
 					int distance = Utils.getDistance(player, target);
 					if (distance > 4)
 						distance = 4;
-					int damage = getRandomMaxHit(player, weaponId, attackStyle,
-							true);
+					int damage = getRandomMaxHit(player, weaponId, attackStyle, true);
 					if (damage > 20)
 						damage += 20 * distance;
-					delayHit(1, weaponId, attackStyle,
-							getRangeHit(player, damage));
+					delayHit(1, weaponId, attackStyle, getRangeHit(player, damage));
 					return combatDelay;
 				} else if (weaponId == 21365) { // Bolas
 					player.getEquipment().removeAmmo(weaponId, -1);
 					player.setNextAnimation(new Animation(3128));
-					World.sendProjectile(player, target, 468, 41, 41, 41, 35,
-							0, 0);
+					World.sendProjectile(player, target, 468, 41, 41, 41, 35, 0, 0);
 					int delay = 15000;
 					if (target instanceof Player) {
 						Player p = (Player) target;
@@ -1650,8 +1398,7 @@ public class PlayerCombat extends Action {
 						if (p.getInventory().containsItem(946, 1) || slashBased) {
 							delay /= 2;
 						}
-						if (p.getPrayer().usingPrayer(0, 18)
-								|| p.getPrayer().usingPrayer(1, 8)) {
+						if (p.getPrayer().usingPrayer(0, 18) || p.getPrayer().usingPrayer(1, 8)) {
 							delay /= 2;
 						}
 						if (delay < 5000) {
@@ -1679,43 +1426,29 @@ public class PlayerCombat extends Action {
 					return combatDelay;
 				} else { // bow/default
 					final int ammoId = player.getEquipment().getAmmoId();
-					player.setNextGraphics(new Graphics(getArrowThrowGfxId(
-							weaponId, ammoId), 0, 100));
-					World.sendProjectile(player, target,
-							getArrowProjectileGfxId(weaponId, ammoId), 41, 36,
-							20, 35, 16, 0);
-					int hit = getRandomMaxHit(player, weaponId, attackStyle,
-							true);
+					player.setNextGraphics(new Graphics(getArrowThrowGfxId(weaponId, ammoId), 0, 100));
+					World.sendProjectile(player, target, getArrowProjectileGfxId(weaponId, ammoId), 41, 36, 20, 35, 16,
+							0);
+					int hit = getRandomMaxHit(player, weaponId, attackStyle, true);
 					delayHit(2, weaponId, attackStyle, getRangeHit(player, hit));
-					checkSwiftGlovesEffect(player, 2, attackStyle, weaponId,
-							hit, getArrowProjectileGfxId(weaponId, ammoId), 41,
-							36, 20, 35, 16, 0);
-					if (weaponId == 11235 || weaponId == 15701
-							|| weaponId == 15702 || weaponId == 15703
+					checkSwiftGlovesEffect(player, 2, attackStyle, weaponId, hit,
+							getArrowProjectileGfxId(weaponId, ammoId), 41, 36, 20, 35, 16, 0);
+					if (weaponId == 11235 || weaponId == 15701 || weaponId == 15702 || weaponId == 15703
 							|| weaponId == 15704) { // dbows
-						World.sendProjectile(player, target,
-								getArrowProjectileGfxId(weaponId, ammoId), 41,
-								35, 36, 35, 21, 0);
-						delayHit(
-								2,
-								weaponId,
-								attackStyle,
-								getRangeHit(
-										player,
-										getRandomMaxHit(player, weaponId,
-												attackStyle, true)));
+						World.sendProjectile(player, target, getArrowProjectileGfxId(weaponId, ammoId), 41, 35, 36, 35,
+								21, 0);
+						delayHit(2, weaponId, attackStyle,
+								getRangeHit(player, getRandomMaxHit(player, weaponId, attackStyle, true)));
 						dropAmmo(player, 2);
 					} else {
 						if (weaponId != -1) {
-							if (!weaponName.endsWith("bow full")
-									&& !weaponName.equals("zaryte bow"))
+							if (!weaponName.endsWith("bow full") && !weaponName.equals("zaryte bow"))
 								dropAmmo(player);
 						}
 					}
 				}
 
-				player.setNextAnimation(new Animation(getWeaponAttackEmote(
-						weaponId, attackStyle)));
+				player.setNextAnimation(new Animation(getWeaponAttackEmote(weaponId, attackStyle)));
 			}
 		}
 		playSound(soundId, player, target);
@@ -1725,54 +1458,34 @@ public class PlayerCombat extends Action {
 	/**
 	 * Handles the swift gloves effect.
 	 * 
-	 * @param player
-	 *            The player.
-	 * @param hitDelay
-	 *            The delay before hitting the target.
-	 * @param attackStyle
-	 *            The attack style used.
-	 * @param weaponId
-	 *            The weapon id.
-	 * @param hit
-	 *            The hit done.
-	 * @param gfxId
-	 *            The gfx id.
-	 * @param startHeight
-	 *            The start height of the original projectile.
-	 * @param endHeight
-	 *            The end height of the original projectile.
-	 * @param speed
-	 *            The speed of the original projectile.
-	 * @param delay
-	 *            The delay of the original projectile.
-	 * @param curve
-	 *            The curve of the original projectile.
-	 * @param startDistanceOffset
-	 *            The start distance offset of the original projectile.
+	 * @param player              The player.
+	 * @param hitDelay            The delay before hitting the target.
+	 * @param attackStyle         The attack style used.
+	 * @param weaponId            The weapon id.
+	 * @param hit                 The hit done.
+	 * @param gfxId               The gfx id.
+	 * @param startHeight         The start height of the original projectile.
+	 * @param endHeight           The end height of the original projectile.
+	 * @param speed               The speed of the original projectile.
+	 * @param delay               The delay of the original projectile.
+	 * @param curve               The curve of the original projectile.
+	 * @param startDistanceOffset The start distance offset of the original
+	 *                            projectile.
 	 */
-	private void checkSwiftGlovesEffect(Player player, int hitDelay,
-			int attackStyle, int weaponId, int hit, int gfxId, int startHeight,
-			int endHeight, int speed, int delay, int curve,
-			int startDistanceOffset) {
+	private void checkSwiftGlovesEffect(Player player, int hitDelay, int attackStyle, int weaponId, int hit, int gfxId,
+			int startHeight, int endHeight, int speed, int delay, int curve, int startDistanceOffset) {
 		Item gloves = player.getEquipment().getItem(Equipment.SLOT_HANDS);
-		if (gloves == null
-				|| !gloves.getDefinitions().getName().contains("Swift glove")) {
+		if (gloves == null || !gloves.getDefinitions().getName().contains("Swift glove")) {
 			return;
 		}
-		if (hit != 0 && hit < ((max_hit / 3) * 2)
-				|| new Random().nextInt(3) != 0) {
+		if (hit != 0 && hit < ((max_hit / 3) * 2) || new Random().nextInt(3) != 0) {
 			return;
 		}
 		player.getPackets().sendGameMessage("You fired an extra shot.");
-		World.sendProjectile(player, target, gfxId, startHeight - 5,
-				endHeight - 5, speed, delay, curve - 5 < 0 ? 0 : curve - 5,
-				startDistanceOffset);
-		delayHit(
-				hitDelay,
-				weaponId,
-				attackStyle,
-				getRangeHit(player,
-						getRandomMaxHit(player, weaponId, attackStyle, true)));
+		World.sendProjectile(player, target, gfxId, startHeight - 5, endHeight - 5, speed, delay,
+				curve - 5 < 0 ? 0 : curve - 5, startDistanceOffset);
+		delayHit(hitDelay, weaponId, attackStyle,
+				getRangeHit(player, getRandomMaxHit(player, weaponId, attackStyle, true)));
 		if (hit > (max_hit - 10)) {
 			target.addFreezeDelay(10000, false);
 			target.setNextGraphics(new Graphics(181, 0, 96));
@@ -1787,29 +1500,25 @@ public class PlayerCombat extends Action {
 		} else if (quantity == -1 || quantity == -3) {
 			final int weaponId = player.getEquipment().getWeaponId();
 			if (weaponId != -1) {
-				if ((quantity == -3 && Utils.getRandom(10) < 2)
-						|| (quantity != -3 && Utils.getRandom(3) > 0)) {
+				if ((quantity == -3 && Utils.getRandom(10) < 2) || (quantity != -3 && Utils.getRandom(3) > 0)) {
 					int capeId = player.getEquipment().getCapeId();
-					if (capeId == 10498 || capeId == 10499 || capeId == 20068
-							|| capeId == 20769 || capeId == 20771)
+					if (capeId == 10498 || capeId == 10499 || capeId == 20068 || capeId == 20769 || capeId == 20771)
 						return; // nothing happens
 				} else {
 					player.getEquipment().removeAmmo(weaponId, quantity);
 					return;
 				}
 				player.getEquipment().removeAmmo(weaponId, quantity);
-				World.updateGroundItem(
-						new Item(weaponId, quantity),
-						new WorldTile(target.getCoordFaceX(target.getSize()),
-								target.getCoordFaceY(target.getSize()), target
-										.getPlane()), player);
+				World.updateGroundItem(new Item(weaponId, quantity),
+						new WorldTile(target.getCoordFaceX(target.getSize()), target.getCoordFaceY(target.getSize()),
+								target.getPlane()),
+						player);
 			}
 		} else {
 			final int ammoId = player.getEquipment().getAmmoId();
 			if (Utils.getRandom(3) > 0) {
 				int capeId = player.getEquipment().getCapeId();
-				if (capeId == 10498 || capeId == 10499 || capeId == 20068
-						|| capeId == 20769 || capeId == 20771)
+				if (capeId == 10498 || capeId == 10499 || capeId == 20068 || capeId == 20769 || capeId == 20771)
 					return; // nothing happens
 			} else {
 				player.getEquipment().removeAmmo(ammoId, quantity);
@@ -1817,11 +1526,8 @@ public class PlayerCombat extends Action {
 			}
 			if (ammoId != -1) {
 				player.getEquipment().removeAmmo(ammoId, quantity);
-				World.updateGroundItem(
-						new Item(ammoId, quantity),
-						new WorldTile(target.getCoordFaceX(target.getSize()),
-								target.getCoordFaceY(target.getSize()), target
-										.getPlane()), player);
+				World.updateGroundItem(new Item(ammoId, quantity), new WorldTile(target.getCoordFaceX(target.getSize()),
+						target.getCoordFaceY(target.getSize()), target.getPlane()), player);
 			}
 		}
 	}
@@ -1900,8 +1606,7 @@ public class PlayerCombat extends Action {
 			return 1123;
 		}
 		// javelins
-		if (weaponId >= 13954 && weaponId <= 13956 || weaponId >= 13879
-				&& weaponId <= 13882)
+		if (weaponId >= 13954 && weaponId <= 13956 || weaponId >= 13879 && weaponId <= 13882)
 			return 1837;
 		// thrownaxe
 		if (weaponId == 13883 || weaponId == 13957)
@@ -1910,17 +1615,15 @@ public class PlayerCombat extends Action {
 			return 43;
 		else if (weaponId == 13883 || weaponId == 13957)
 			return 1839;
-		else if (weaponId == 13954 || weaponId == 13955 || weaponId == 13956
-				|| weaponId == 13879 || weaponId == 13880 || weaponId == 13881
-				|| weaponId == 13882)
+		else if (weaponId == 13954 || weaponId == 13955 || weaponId == 13956 || weaponId == 13879 || weaponId == 13880
+				|| weaponId == 13881 || weaponId == 13882)
 			return 1837;
 		return 219;
 	}
 
 	@SuppressWarnings("unused")
 	private int getRangeHitDelay(Player player) {
-		return Utils.getDistance(player.getX(), player.getY(), target.getX(),
-				target.getY()) >= 5 ? 2 : 1;
+		return Utils.getDistance(player.getX(), player.getY(), target.getX(), target.getY()) >= 5 ? 2 : 1;
 	}
 
 	private int meleeAttack(final Player player) {
@@ -1930,9 +1633,7 @@ public class PlayerCombat extends Action {
 		int soundId = getSoundId(weaponId, attackStyle);
 		if (weaponId == -1) {
 			Item gloves = player.getEquipment().getItem(Equipment.SLOT_HANDS);
-			if (gloves != null
-					&& gloves.getDefinitions().getName()
-							.contains("Goliath gloves")) {
+			if (gloves != null && gloves.getDefinitions().getName().contains("Goliath gloves")) {
 				weaponId = -2;
 			}
 		}
@@ -1944,13 +1645,8 @@ public class PlayerCombat extends Action {
 			case 14679:
 				player.setNextAnimation(new Animation(1667));
 				player.setNextGraphics(new Graphics(340, 0, 96 << 16));
-				delayNormalHit(
-						weaponId,
-						attackStyle,
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, true, 1.1, true)));
+				delayNormalHit(weaponId, attackStyle,
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.1, true)));
 				break;
 			case 15442:// whip start
 			case 15443:
@@ -1962,29 +1658,17 @@ public class PlayerCombat extends Action {
 				target.setNextGraphics(new Graphics(2108, 0, 100));
 				if (target instanceof Player) {
 					Player p2 = (Player) target;
-					p2.setRunEnergy(p2.getRunEnergy() > 25 ? p2.getRunEnergy() - 25
-							: 0);
+					p2.setRunEnergy(p2.getRunEnergy() > 25 ? p2.getRunEnergy() - 25 : 0);
 				}
-				delayNormalHit(
-						weaponId,
-						attackStyle,
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, true, 1.2, true)));
+				delayNormalHit(weaponId, attackStyle,
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.2, true)));
 				break;
 			case 11730: // sara sword
 			case 23690:
 				player.setNextAnimation(new Animation(11993));
 				target.setNextGraphics(new Graphics(1194));
-				delayNormalHit(
-						weaponId,
-						attackStyle,
-						getMeleeHit(player, 50 + Utils.getRandom(100)),
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, true, 1.1, true)));
+				delayNormalHit(weaponId, attackStyle, getMeleeHit(player, 50 + Utils.getRandom(100)),
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.1, true)));
 				soundId = 3853;
 				break;
 			case 1249:// d spear
@@ -2000,8 +1684,7 @@ public class PlayerCombat extends Action {
 				player.stopAll();
 				target.setNextGraphics(new Graphics(80, 5, 60));
 
-				if (!target.addWalkSteps(
-						target.getX() - player.getX() + target.getX(),
+				if (!target.addWalkSteps(target.getX() - player.getX() + target.getX(),
 						target.getY() - player.getY() + target.getY(), 1))
 					player.setNextFaceEntity(target);
 				target.setNextFaceEntity(player);
@@ -2034,38 +1717,27 @@ public class PlayerCombat extends Action {
 			case 23681:
 				player.setNextAnimation(new Animation(12019));
 				player.setNextGraphics(new Graphics(2109));
-				int sgsdamage = getRandomMaxHit(player, weaponId, attackStyle,
-						false, true, 1.1, true);
+				int sgsdamage = getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.1, true);
 				player.heal(sgsdamage / 2);
 				player.getPrayer().restorePrayer((sgsdamage / 4) * 10);
-				delayNormalHit(weaponId, attackStyle,
-						getMeleeHit(player, sgsdamage));
+				delayNormalHit(weaponId, attackStyle, getMeleeHit(player, sgsdamage));
 				break;
 			case 11696: // bgs
 			case 23680:
 				player.setNextAnimation(new Animation(11991));
 				player.setNextGraphics(new Graphics(2114));
-				int damage = getRandomMaxHit(player, weaponId, attackStyle,
-						false, true, 1.2, true);
-				delayNormalHit(weaponId, attackStyle,
-						getMeleeHit(player, damage));
+				int damage = getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.2, true);
+				delayNormalHit(weaponId, attackStyle, getMeleeHit(player, damage));
 				if (target instanceof Player) {
 					Player targetPlayer = ((Player) target);
 					int amountLeft;
-					if ((amountLeft = targetPlayer.getSkills().drainLevel(
-							Skills.DEFENCE, damage / 10)) > 0) {
-						if ((amountLeft = targetPlayer.getSkills().drainLevel(
-								Skills.STRENGTH, amountLeft)) > 0) {
-							if ((amountLeft = targetPlayer.getSkills()
-									.drainLevel(Skills.PRAYER, amountLeft)) > 0) {
-								if ((amountLeft = targetPlayer.getSkills()
-										.drainLevel(Skills.ATTACK, amountLeft)) > 0) {
-									if ((amountLeft = targetPlayer.getSkills()
-											.drainLevel(Skills.MAGIC,
-													amountLeft)) > 0) {
-										if (targetPlayer.getSkills()
-												.drainLevel(Skills.RANGE,
-														amountLeft) > 0) {
+					if ((amountLeft = targetPlayer.getSkills().drainLevel(Skills.DEFENCE, damage / 10)) > 0) {
+						if ((amountLeft = targetPlayer.getSkills().drainLevel(Skills.STRENGTH, amountLeft)) > 0) {
+							if ((amountLeft = targetPlayer.getSkills().drainLevel(Skills.PRAYER, amountLeft)) > 0) {
+								if ((amountLeft = targetPlayer.getSkills().drainLevel(Skills.ATTACK, amountLeft)) > 0) {
+									if ((amountLeft = targetPlayer.getSkills().drainLevel(Skills.MAGIC,
+											amountLeft)) > 0) {
+										if (targetPlayer.getSkills().drainLevel(Skills.RANGE, amountLeft) > 0) {
 											break;
 										}
 									}
@@ -2079,48 +1751,28 @@ public class PlayerCombat extends Action {
 			case 23679:
 				player.setNextAnimation(new Animation(11989));
 				player.setNextGraphics(new Graphics(2113));
-				delayNormalHit(
-						weaponId,
-						attackStyle,
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, true, 1.375, true)));
+				delayNormalHit(weaponId, attackStyle,
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.375, true)));
 				break;
 			case 13899: // vls
 			case 13901:
 				player.setNextAnimation(new Animation(10502));
-				delayNormalHit(
-						weaponId,
-						attackStyle,
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, true, 1.20, true)));
+				delayNormalHit(weaponId, attackStyle,
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.20, true)));
 				break;
 			case 13902: // statius hammer
 			case 13904:
 				player.setNextAnimation(new Animation(10505));
 				player.setNextGraphics(new Graphics(1840));
-				delayNormalHit(
-						weaponId,
-						attackStyle,
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, true, 1.25, true)));
+				delayNormalHit(weaponId, attackStyle,
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.25, true)));
 				break;
 			case 13905: // vesta spear
 			case 13907:
 				player.setNextAnimation(new Animation(10499));
 				player.setNextGraphics(new Graphics(1835));
-				delayNormalHit(
-						weaponId,
-						attackStyle,
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, true, 1.1, true)));
+				delayNormalHit(weaponId, attackStyle,
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.1, true)));
 				break;
 			case 19780:
 			case 19784: // korasi sword
@@ -2136,17 +1788,14 @@ public class PlayerCombat extends Action {
 
 					@Override
 					public boolean attack() {
-						int korasiDamage = getMaxHit(player, weaponId,
-								attackStyle, false, true, 1);
+						int korasiDamage = getMaxHit(player, weaponId, attackStyle, false, true, 1);
 						korasiDamage *= multiplier;
 						max_hit = (int) (korasiDamage * 1.5);
-						delayHit(0, weaponId, attackStyle,
-								getMagicHit(player, korasiDamage));
+						delayHit(0, weaponId, attackStyle, getMagicHit(player, korasiDamage));
 						WorldTasksManager.schedule(new WorldTask() {
 							@Override
 							public void run() {
-								target.setNextGraphics(new Graphics(2795, 0,
-										100));
+								target.setNextGraphics(new Graphics(2795, 0, 100));
 							}
 						});
 						if (!nextTarget) {
@@ -2160,8 +1809,7 @@ public class PlayerCombat extends Action {
 				});
 				return combatDelay;
 			case 11700:
-				int zgsdamage = getRandomMaxHit(player, weaponId, attackStyle,
-						false, true, 1.0, true);
+				int zgsdamage = getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.0, true);
 				player.setNextAnimation(new Animation(7070));
 				player.setNextGraphics(new Graphics(1221));
 				if (zgsdamage != 0 && target.getSize() <= 1) { // freezes
@@ -2170,32 +1818,26 @@ public class PlayerCombat extends Action {
 					target.setNextGraphics(new Graphics(2104));
 					target.addFreezeDelay(18000); // 18seconds
 				}
-				delayNormalHit(weaponId, attackStyle,
-						getMeleeHit(player, zgsdamage));
+				delayNormalHit(weaponId, attackStyle, getMeleeHit(player, zgsdamage));
 				break;
 			case 14484: // d claws
 			case 23695:
 				player.setNextAnimation(new Animation(10961));
 				player.setNextGraphics(new Graphics(1950));
 				int[] hits = new int[] { 0, 1 };
-				int hit = getRandomMaxHit(player, weaponId, attackStyle, false,
-						true, 1.0, true);
+				int hit = getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.0, true);
 				if (hit > 0) {
-					hits = new int[] { hit, hit / 2, (hit / 2) / 2,
-							(hit / 2) - ((hit / 2) / 2) };
+					hits = new int[] { hit, hit / 2, (hit / 2) / 2, (hit / 2) - ((hit / 2) / 2) };
 				} else {
-					hit = getRandomMaxHit(player, weaponId, attackStyle, false,
-							true, 1.0, true);
+					hit = getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.0, true);
 					if (hit > 0) {
 						hits = new int[] { 0, hit, hit / 2, hit - (hit / 2) };
 					} else {
-						hit = getRandomMaxHit(player, weaponId, attackStyle,
-								false, true, 1.0, true);
+						hit = getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.0, true);
 						if (hit > 0) {
 							hits = new int[] { 0, 0, hit / 2, (hit / 2) + 10 };
 						} else {
-							hit = getRandomMaxHit(player, weaponId,
-									attackStyle, false, true, 1.0, true);
+							hit = getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.0, true);
 							if (hit > 0) {
 								hits = new int[] { 0, 0, 0, (int) (hit * 1.5) };
 							} else {
@@ -2206,35 +1848,23 @@ public class PlayerCombat extends Action {
 				}
 				for (int i = 0; i < hits.length; i++) {
 					if (i > 1) {
-						delayHit(1, weaponId, attackStyle,
-								getMeleeHit(player, hits[i]));
+						delayHit(1, weaponId, attackStyle, getMeleeHit(player, hits[i]));
 					} else {
-						delayNormalHit(weaponId, attackStyle,
-								getMeleeHit(player, hits[i]));
+						delayNormalHit(weaponId, attackStyle, getMeleeHit(player, hits[i]));
 					}
 				}
 				break;
 			case 10887: // anchor
 				player.setNextAnimation(new Animation(5870));
 				player.setNextGraphics(new Graphics(1027));
-				delayNormalHit(
-						weaponId,
-						attackStyle,
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, false, 1.0, true)));
+				delayNormalHit(weaponId, attackStyle,
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, false, 1.0, true)));
 				break;
 			case 1305: // dragon long
 				player.setNextAnimation(new Animation(12033));
 				player.setNextGraphics(new Graphics(2117));
-				delayNormalHit(
-						weaponId,
-						attackStyle,
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, true, 1.25, true)));
+				delayNormalHit(weaponId, attackStyle,
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.25, true)));
 				break;
 			case 3204: // d hally
 				player.setNextAnimation(new Animation(1665));
@@ -2245,30 +1875,16 @@ public class PlayerCombat extends Action {
 					target.setNextGraphics(new Graphics(254, 0, 100));
 					target.setNextGraphics(new Graphics(80));
 				}
-				delayNormalHit(
-						weaponId,
-						attackStyle,
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, true, 1.1, true)));
+				delayNormalHit(weaponId, attackStyle,
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.1, true)));
 				if (target.getSize() > 1)
-					delayHit(
-							1,
-							weaponId,
-							attackStyle,
-							getMeleeHit(
-									player,
-									getRandomMaxHit(player, weaponId,
-											attackStyle, false, true, 1.1, true)));
+					delayHit(1, weaponId, attackStyle, getMeleeHit(player,
+							getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.1, true)));
 				break;
 			case 4587: // dragon scimitar
 				player.setNextAnimation(new Animation(12031));
 				player.setNextGraphics(new Graphics(2118));
-				Hit hit1 = getMeleeHit(
-						player,
-						getRandomMaxHit(player, weaponId, attackStyle, false,
-								true, 1.0, true));
+				Hit hit1 = getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.0, true));
 				if (target instanceof Player) {
 					Player p2 = (Player) target;
 					if (hit1.getDamage() > 0)
@@ -2283,92 +1899,70 @@ public class PlayerCombat extends Action {
 			case 5680:
 				player.setNextAnimation(new Animation(1062));
 				player.setNextGraphics(new Graphics(252, 0, 100));
-				delayNormalHit(
-						weaponId,
-						attackStyle,
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, true, 1.15, true)),
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, true, 1.15, true)));
+				delayNormalHit(weaponId, attackStyle,
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.15, true)),
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.15, true)));
 				soundId = 2537;
 				break;
 			case 1434: // dragon mace
 				player.setNextAnimation(new Animation(1060));
 				player.setNextGraphics(new Graphics(251));
-				delayNormalHit(
-						weaponId,
-						attackStyle,
-						getMeleeHit(
-								player,
-								getRandomMaxHit(player, weaponId, attackStyle,
-										false, true, 1.45, true)));
+				delayNormalHit(weaponId, attackStyle,
+						getMeleeHit(player, getRandomMaxHit(player, weaponId, attackStyle, false, true, 1.45, true)));
 				soundId = 2541;
 				break;
 			default:
-				player.getPackets()
-						.sendGameMessage(
-								"This weapon has no special Attack, if you still see special bar please relogin.");
+				player.getPackets().sendGameMessage(
+						"This weapon has no special Attack, if you still see special bar please relogin.");
 				return combatDelay;
 			}
 		} else {
 			if (weaponId == -2 && new Random().nextInt(25) == 0) {
 				player.setNextAnimation(new Animation(14417));
 				final int attack = attackStyle;
-				attackTarget(
-						getMultiAttackTargets(player, 5, Integer.MAX_VALUE),
-						new MultiAttack() {
+				attackTarget(getMultiAttackTargets(player, 5, Integer.MAX_VALUE), new MultiAttack() {
 
-							private boolean nextTarget;
+					private boolean nextTarget;
 
+					@Override
+					public boolean attack() {
+						target.addFreezeDelay(10000, true);
+						target.setNextGraphics(new Graphics(181, 0, 96));
+						final Entity t = target;
+						WorldTasksManager.schedule(new WorldTask() {
 							@Override
-							public boolean attack() {
-								target.addFreezeDelay(10000, true);
-								target.setNextGraphics(new Graphics(181, 0, 96));
-								final Entity t = target;
-								WorldTasksManager.schedule(new WorldTask() {
-									@Override
-									public void run() {
-										final int damage = getRandomMaxHit(
-												player, -2, attack, false,
-												false, 1.0, false);
-										t.applyHit(new Hit(player, damage,
-												HitLook.REGULAR_DAMAGE));
+							public void run() {
+								final int damage = getRandomMaxHit(player, -2, attack, false, false, 1.0, false);
+								t.applyHit(new Hit(player, damage, HitLook.REGULAR_DAMAGE));
 
-										stop();
-									}
-								}, 1);
-								if (target instanceof Player) {
-									Player p = (Player) target;
-									for (int i = 0; i < 7; i++) {
-										if (i != 3 && i != 5) {
-											p.getSkills().drainLevel(i, 7);
-										}
-									}
-									p.getPackets().sendGameMessage(
-											"Your stats have been drained!");
-								}
-								if (!nextTarget) {
-									nextTarget = true;
-								}
-								return nextTarget;
-
+								stop();
 							}
-						});
+						}, 1);
+						if (target instanceof Player) {
+							Player p = (Player) target;
+							for (int i = 0; i < 7; i++) {
+								if (i != 3 && i != 5) {
+									p.getSkills().drainLevel(i, 7);
+								}
+							}
+							p.getPackets().sendGameMessage("Your stats have been drained!");
+						}
+						if (!nextTarget) {
+							nextTarget = true;
+						}
+						return nextTarget;
+
+					}
+				});
 				return combatDelay;
 			}
 			int damage = getRandomMaxHit(player, weaponId, attackStyle, false);
-			if (damage != 0 && fullGuthanEquipped(player)
-					&& Utils.random(3) == 0) {
+			if (damage != 0 && fullGuthanEquipped(player) && Utils.random(3) == 0) {
 				target.setNextGraphics(new Graphics(398));
 				player.heal(damage);
 			}
 			delayNormalHit(weaponId, attackStyle, getMeleeHit(player, damage));
-			player.setNextAnimation(new Animation(getWeaponAttackEmote(
-					weaponId, attackStyle)));
+			player.setNextAnimation(new Animation(getWeaponAttackEmote(weaponId, attackStyle)));
 		}
 		playSound(soundId, player, target);
 		return combatDelay;
@@ -2490,28 +2084,20 @@ public class PlayerCombat extends Action {
 		}
 	}
 
-	public int getRandomMaxHit(Player player, int weaponId, int attackStyle,
-			boolean ranging) {
-		return getRandomMaxHit(player, weaponId, attackStyle, ranging, true,
-				1.0D, false);
+	public int getRandomMaxHit(Player player, int weaponId, int attackStyle, boolean ranging) {
+		return getRandomMaxHit(player, weaponId, attackStyle, ranging, true, 1.0D, false);
 	}
 
-	public int getRandomMaxHit(Player player, int weaponId, int attackStyle,
-			boolean ranging, boolean defenceAffects, double specMultiplier,
-			boolean usingSpec) {
-		max_hit = getMaxHit(player, weaponId, attackStyle, ranging, usingSpec,
-				specMultiplier);
+	public int getRandomMaxHit(Player player, int weaponId, int attackStyle, boolean ranging, boolean defenceAffects,
+			double specMultiplier, boolean usingSpec) {
+		max_hit = getMaxHit(player, weaponId, attackStyle, ranging, usingSpec, specMultiplier);
 		if (defenceAffects) {
-			double att = (player.getSkills().getLevel(ranging ? 4 : 0) / 2)
-					+ player.getCombatDefinitions().getBonuses()[ranging ? 4
-							: CombatDefinitions.getMeleeBonusStyle(weaponId,
-									attackStyle)];
+			double att = (player.getSkills().getLevel(ranging ? 4 : 0) / 2) + player.getCombatDefinitions()
+					.getBonuses()[ranging ? 4 : CombatDefinitions.getMeleeBonusStyle(weaponId, attackStyle)];
 			if (weaponId == -2) // dont ask me why. was there lol
 				att += 82;
-			att *= ranging ? player.getPrayer().getRangeMultiplier() : player
-					.getPrayer().getAttackMultiplier();
-			if (fullVoidEquipped(player, ranging ? (new int[] { 11664, 11675 })
-					: (new int[] { 11665, 11676 })))
+			att *= ranging ? player.getPrayer().getRangeMultiplier() : player.getPrayer().getAttackMultiplier();
+			if (fullVoidEquipped(player, ranging ? (new int[] { 11664, 11675 }) : (new int[] { 11665, 11676 })))
 				att *= 1.1;
 			if (usingSpec) {
 				double m1 = (0.35 + specMultiplier);
@@ -2520,12 +2106,9 @@ public class PlayerCombat extends Action {
 			double def = 0;
 			if (target instanceof Player) {
 				Player p2 = (Player) target;
-				def = (p2.getSkills().getLevel(Skills.DEFENCE) / 2)
-						+ p2.getCombatDefinitions().getBonuses()[ranging ? 9
-								: CombatDefinitions
-										.getMeleeDefenceBonus(CombatDefinitions
-												.getMeleeBonusStyle(weaponId,
-														attackStyle))];
+				def = (p2.getSkills().getLevel(Skills.DEFENCE) / 2) + p2.getCombatDefinitions().getBonuses()[ranging ? 9
+						: CombatDefinitions
+								.getMeleeDefenceBonus(CombatDefinitions.getMeleeBonusStyle(weaponId, attackStyle))];
 				def *= p2.getPrayer().getDefenceMultiplier();
 				if (!ranging) {
 					if (p2.getFamiliar() instanceof Steeltitan)
@@ -2535,9 +2118,8 @@ public class PlayerCombat extends Action {
 				NPC n = (NPC) target;
 				def = n.getBonuses() != null ? n.getBonuses()[ranging ? 9
 						: CombatDefinitions
-								.getMeleeDefenceBonus(CombatDefinitions
-										.getMeleeBonusStyle(weaponId,
-												attackStyle))] : 0;
+								.getMeleeDefenceBonus(CombatDefinitions.getMeleeBonusStyle(weaponId, attackStyle))]
+						: 0;
 				if (n.getId() == 1160 && fullVeracsEquipped(player))
 					def *= 0.6;
 			}
@@ -2546,38 +2128,34 @@ public class PlayerCombat extends Action {
 			/*
 			 * double att = player.getSkills().getLevel(ranging ? 4 : 0) +
 			 * player.getCombatDefinitions().getBonuses()[ranging ? 4 :
-			 * CombatDefinitions.getMeleeBonusStyle(weaponId, attackStyle)]; if
-			 * (weaponId == -2) { att += 82; } att *= ranging ?
-			 * player.getPrayer().getRangeMultiplier() : player
-			 * .getPrayer().getAttackMultiplier(); if (fullVoidEquipped(player,
-			 * ranging ? (new int[] { 11664, 11675 }) : (new int[] { 11665,
-			 * 11676 }))) att *= 1.1; if (ranging) att *=
-			 * player.getAuraManager().getRangeAccurayMultiplier(); double def =
-			 * 0; if (target instanceof Player) { Player p2 = (Player) target;
-			 * def = (double) p2.getSkills().getLevel(Skills.DEFENCE) + (2 *
-			 * p2.getCombatDefinitions().getBonuses()[ranging ? 9 :
-			 * CombatDefinitions .getMeleeDefenceBonus(CombatDefinitions
-			 * .getMeleeBonusStyle(weaponId, attackStyle))]);
+			 * CombatDefinitions.getMeleeBonusStyle(weaponId, attackStyle)]; if (weaponId ==
+			 * -2) { att += 82; } att *= ranging ? player.getPrayer().getRangeMultiplier() :
+			 * player .getPrayer().getAttackMultiplier(); if (fullVoidEquipped(player,
+			 * ranging ? (new int[] { 11664, 11675 }) : (new int[] { 11665, 11676 }))) att
+			 * *= 1.1; if (ranging) att *=
+			 * player.getAuraManager().getRangeAccurayMultiplier(); double def = 0; if
+			 * (target instanceof Player) { Player p2 = (Player) target; def = (double)
+			 * p2.getSkills().getLevel(Skills.DEFENCE) + (2 *
+			 * p2.getCombatDefinitions().getBonuses()[ranging ? 9 : CombatDefinitions
+			 * .getMeleeDefenceBonus(CombatDefinitions .getMeleeBonusStyle(weaponId,
+			 * attackStyle))]);
 			 * 
 			 * def *= p2.getPrayer().getDefenceMultiplier(); if (!ranging) { if
-			 * (p2.getFamiliar() instanceof Steeltitan) def *= 1.15; } } else {
-			 * NPC n = (NPC) target; def = n.getBonuses() != null ?
-			 * n.getBonuses()[ranging ? 9 : CombatDefinitions
-			 * .getMeleeDefenceBonus(CombatDefinitions
-			 * .getMeleeBonusStyle(weaponId, attackStyle))] : 0; def *= 2;
-			 * if(n.getId() == 1160 && fullVeracsEquipped(player)) def *= 0.6; }
-			 * if (usingSpec) { double multiplier = 0.25 + specMultiplier;///*
-			 * 0.25 +
+			 * (p2.getFamiliar() instanceof Steeltitan) def *= 1.15; } } else { NPC n =
+			 * (NPC) target; def = n.getBonuses() != null ? n.getBonuses()[ranging ? 9 :
+			 * CombatDefinitions .getMeleeDefenceBonus(CombatDefinitions
+			 * .getMeleeBonusStyle(weaponId, attackStyle))] : 0; def *= 2; if(n.getId() ==
+			 * 1160 && fullVeracsEquipped(player)) def *= 0.6; } if (usingSpec) { double
+			 * multiplier = 0.25 + specMultiplier;///* 0.25 +
 			 */getSpecialAccuracyModifier(player);
 			// att *= multiplier;
 			// }
 			/*
 			 * if(def < 0) { def = -def; att += def; } double prob = att / def;
 			 * 
-			 * if (prob > 0.90) // max, 90% prob hit so even lvl 138 can miss at
-			 * // lvl 3 prob = 0.90; else if (prob < 0.05) // minimun 5% so even
-			 * lvl 3 can hit lvl 138 prob = 0.05; if (prob < Math.random())
-			 * return 0;
+			 * if (prob > 0.90) // max, 90% prob hit so even lvl 138 can miss at // lvl 3
+			 * prob = 0.90; else if (prob < 0.05) // minimun 5% so even lvl 3 can hit lvl
+			 * 138 prob = 0.05; if (prob < Math.random()) return 0;
 			 */
 		}
 		int hit = Utils.random(max_hit);
@@ -2598,33 +2176,29 @@ public class PlayerCombat extends Action {
 		return hit;
 	}
 
-	private final int getMaxHit(Player player, int weaponId, int attackStyle,
-			boolean ranging, boolean usingSpec, double specMultiplier) {
+	private final int getMaxHit(Player player, int weaponId, int attackStyle, boolean ranging, boolean usingSpec,
+			double specMultiplier) {
 		if (!ranging) {
 
 			/*
 			 * //whip hiting 450 no pot no pray? lmao nty int strLvl =
-			 * player.getSkills().getLevel(Skills.STRENGTH); int strBonus =
-			 * player
-			 * .getCombatDefinitions().getBonuses()[CombatDefinitions.STRENGTH_BONUS
-			 * ]; double strMult = player.getPrayer().getStrengthMultiplier();
-			 * double xpStyle = CombatDefinitions.getXpStyle(weaponId,
-			 * attackStyle); double style = xpStyle == Skills.STRENGTH ? 3 :
-			 * xpStyle == CombatDefinitions.SHARED ? 1 : 0; int dhp = 0; double
-			 * dharokMod = 1.0; double hitMultiplier = 1.0; if
+			 * player.getSkills().getLevel(Skills.STRENGTH); int strBonus = player
+			 * .getCombatDefinitions().getBonuses()[CombatDefinitions.STRENGTH_BONUS ];
+			 * double strMult = player.getPrayer().getStrengthMultiplier(); double xpStyle =
+			 * CombatDefinitions.getXpStyle(weaponId, attackStyle); double style = xpStyle
+			 * == Skills.STRENGTH ? 3 : xpStyle == CombatDefinitions.SHARED ? 1 : 0; int dhp
+			 * = 0; double dharokMod = 1.0; double hitMultiplier = 1.0; if
 			 * (fullDharokEquipped(player)) { dhp = player.getMaxHitpoints() -
 			 * player.getHitpoints(); dharokMod = (dhp * 0.001) + 1; } if
-			 * (fullVoidEquipped(player, 11665, 11676)) { hitMultiplier *= 1.1;
-			 * } hitMultiplier *= specMultiplier; double cumulativeStr = (strLvl
-			 * * strMult + style) * dharokMod; return (int) ((14 + cumulativeStr
-			 * + (strBonus / 8) + ((cumulativeStr * strBonus) / 64)) *
-			 * hitMultiplier);
+			 * (fullVoidEquipped(player, 11665, 11676)) { hitMultiplier *= 1.1; }
+			 * hitMultiplier *= specMultiplier; double cumulativeStr = (strLvl * strMult +
+			 * style) * dharokMod; return (int) ((14 + cumulativeStr + (strBonus / 8) +
+			 * ((cumulativeStr * strBonus) / 64)) * hitMultiplier);
 			 */
 
 			double strengthLvl = player.getSkills().getLevel(Skills.STRENGTH);
 			int xpStyle = CombatDefinitions.getXpStyle(weaponId, attackStyle);
-			double styleBonus = xpStyle == Skills.STRENGTH ? 3
-					: xpStyle == CombatDefinitions.SHARED ? 1 : 0;
+			double styleBonus = xpStyle == Skills.STRENGTH ? 3 : xpStyle == CombatDefinitions.SHARED ? 1 : 0;
 			double otherBonus = 1;
 			if (fullDharokEquipped(player)) {
 				double hp = player.getHitpoints();
@@ -2633,27 +2207,24 @@ public class PlayerCombat extends Action {
 				otherBonus = 2 - d;
 			}
 			if (target instanceof NPC) {
-				if (player.getEquipment().getAmuletId() == 10588
-						&& Combat.isUndead(target))
+				if (player.getEquipment().getAmuletId() == 10588 && Combat.isUndead(target))
 					otherBonus += 0.2;
-				
+
 			}
-			double effectiveStrength = 8 + Math.floor((strengthLvl * player
-					.getPrayer().getStrengthMultiplier()) + styleBonus);
+			double effectiveStrength = 8
+					+ Math.floor((strengthLvl * player.getPrayer().getStrengthMultiplier()) + styleBonus);
 			if (fullVoidEquipped(player, 11665, 11676))
 				effectiveStrength = Math.floor(effectiveStrength * 1.1);
 			double strengthBonus = player.getCombatDefinitions().getBonuses()[CombatDefinitions.STRENGTH_BONUS];
 			if (weaponId == -2) {
 				strengthBonus += 82;
 			}
-			double baseDamage = 5 + effectiveStrength
-					* (1 + (strengthBonus / 64));
+			double baseDamage = 5 + effectiveStrength * (1 + (strengthBonus / 64));
 			return (int) Math.floor(baseDamage * specMultiplier * otherBonus);
 		} else {
 			if (weaponId == 24338 && target instanceof Player) {
 				player.getPackets()
-						.sendGameMessage(
-								"The royal crossbow feels weak and unresponsive against other players.");
+						.sendGameMessage("The royal crossbow feels weak and unresponsive against other players.");
 				return 60;
 			}
 			double rangedLvl = player.getSkills().getLevel(Skills.RANGE);
@@ -2661,12 +2232,9 @@ public class PlayerCombat extends Action {
 			double otherBonus = 1;
 			if (target instanceof NPC) {
 			}
-			double effectiveStrenght = Math.floor(rangedLvl
-					* player.getPrayer().getRangeMultiplier())
-					+ styleBonus;
+			double effectiveStrenght = Math.floor(rangedLvl * player.getPrayer().getRangeMultiplier()) + styleBonus;
 			if (fullVoidEquipped(player, 11664, 11675))
-				effectiveStrenght += Math.floor((player.getSkills()
-						.getLevelForXp(Skills.RANGE) / 5) + 1.6);
+				effectiveStrenght += Math.floor((player.getSkills().getLevelForXp(Skills.RANGE) / 5) + 1.6);
 			double strengthBonus = player.getCombatDefinitions().getBonuses()[CombatDefinitions.RANGED_STR_BONUS];
 			double baseDamage = 5 + (((effectiveStrenght + 8) * (strengthBonus + 64)) / 64);
 			return (int) Math.floor(baseDamage * specMultiplier * otherBonus);
@@ -2676,22 +2244,21 @@ public class PlayerCombat extends Action {
 	/*
 	 * public int getRandomMaxHit(Player player, int weaponId, int attackStyle,
 	 * boolean ranging, boolean defenceAffects, double specMultiplier, boolean
-	 * usingSpec) { Random r = new Random(); max_hit = getMaxHit(player,
-	 * weaponId, attackStyle, ranging, usingSpec, specMultiplier); double
-	 * accuracyMultiplier = 1.0; if (defenceAffects) { accuracyMultiplier =
-	 * getSpecialAccuracyModifier(player); } if (ranging && defenceAffects) {
-	 * double accuracy = accuracyMultiplier * getRangeAccuracy(player,
-	 * attackStyle) + 1; double defence = getRangeDefence(target) + 1; if
-	 * (r.nextInt((int) accuracy) < r.nextInt((int) defence)) { return 0; } }
-	 * else if (defenceAffects) { double accuracy = accuracyMultiplier *
-	 * getMeleeAccuracy(player, attackStyle, weaponId) + 1; double defence =
-	 * getMeleeDefence(target, attackStyle, weaponId) + 1; if (r.nextInt((int)
-	 * accuracy) < r.nextInt((int) defence)) { return 0; } } int hit =
-	 * r.nextInt(max_hit + 1); if (target instanceof NPC) { NPC n = (NPC)
-	 * target; if (n.getId() == 9463 && hasFireCape(player)) hit += 40; } if
-	 * (player.getAuraManager().usingEquilibrium()) { int perc25MaxHit = (int)
-	 * (max_hit * 0.25); hit -= perc25MaxHit; max_hit -= perc25MaxHit; if (hit <
-	 * 0) hit = 0; if (hit < perc25MaxHit) hit += perc25MaxHit;
+	 * usingSpec) { Random r = new Random(); max_hit = getMaxHit(player, weaponId,
+	 * attackStyle, ranging, usingSpec, specMultiplier); double accuracyMultiplier =
+	 * 1.0; if (defenceAffects) { accuracyMultiplier =
+	 * getSpecialAccuracyModifier(player); } if (ranging && defenceAffects) { double
+	 * accuracy = accuracyMultiplier * getRangeAccuracy(player, attackStyle) + 1;
+	 * double defence = getRangeDefence(target) + 1; if (r.nextInt((int) accuracy) <
+	 * r.nextInt((int) defence)) { return 0; } } else if (defenceAffects) { double
+	 * accuracy = accuracyMultiplier * getMeleeAccuracy(player, attackStyle,
+	 * weaponId) + 1; double defence = getMeleeDefence(target, attackStyle,
+	 * weaponId) + 1; if (r.nextInt((int) accuracy) < r.nextInt((int) defence)) {
+	 * return 0; } } int hit = r.nextInt(max_hit + 1); if (target instanceof NPC) {
+	 * NPC n = (NPC) target; if (n.getId() == 9463 && hasFireCape(player)) hit +=
+	 * 40; } if (player.getAuraManager().usingEquilibrium()) { int perc25MaxHit =
+	 * (int) (max_hit * 0.25); hit -= perc25MaxHit; max_hit -= perc25MaxHit; if (hit
+	 * < 0) hit = 0; if (hit < perc25MaxHit) hit += perc25MaxHit;
 	 * 
 	 * } return hit; }
 	 * 
@@ -2707,16 +2274,15 @@ public class PlayerCombat extends Action {
 	 */
 	/*
 	 * public static double getMeleeAccuracy(Player e, int attackStyle, int
-	 * weaponId) { int style = attackStyle == 0 ? 3 : attackStyle == 2 ? 1 : 0;
-	 * int attLvl = e.getSkills().getLevel(Skills.ATTACK); int attBonus =
+	 * weaponId) { int style = attackStyle == 0 ? 3 : attackStyle == 2 ? 1 : 0; int
+	 * attLvl = e.getSkills().getLevel(Skills.ATTACK); int attBonus =
 	 * e.getCombatDefinitions
-	 * ().getBonuses()[CombatDefinitions.getMeleeBonusStyle(weaponId,
-	 * attackStyle)]; if (weaponId == -2) { attBonus += 82; } double attMult =
-	 * 1.0 * e.getPrayer().getAttackMultiplier(); double accuracyMultiplier =
-	 * 1.0; if (fullVoidEquipped(e, 11665, 11676)) { accuracyMultiplier *= 0.15;
-	 * } double cumulativeAtt = attLvl * attMult + style; return (14 +
-	 * cumulativeAtt + (attBonus / 8) + ((cumulativeAtt * attBonus) / 64)) *
-	 * accuracyMultiplier; }
+	 * ().getBonuses()[CombatDefinitions.getMeleeBonusStyle(weaponId, attackStyle)];
+	 * if (weaponId == -2) { attBonus += 82; } double attMult = 1.0 *
+	 * e.getPrayer().getAttackMultiplier(); double accuracyMultiplier = 1.0; if
+	 * (fullVoidEquipped(e, 11665, 11676)) { accuracyMultiplier *= 0.15; } double
+	 * cumulativeAtt = attLvl * attMult + style; return (14 + cumulativeAtt +
+	 * (attBonus / 8) + ((cumulativeAtt * attBonus) / 64)) * accuracyMultiplier; }
 	 * 
 	 * /** Gets the maximum melee hit.
 	 * 
@@ -2729,19 +2295,18 @@ public class PlayerCombat extends Action {
 	 * @return The maximum melee hit.
 	 */
 	/*
-	 * public static double getMeleeMaximum(Player e, int attackStyle, int
-	 * weaponId) { int strLvl = e.getSkills().getLevel(Skills.STRENGTH); int
-	 * strBonus =
-	 * e.getCombatDefinitions().getBonuses()[CombatDefinitions.STRENGTH_BONUS];
-	 * if (weaponId == -2) { strBonus += 82; } double strMult =
+	 * public static double getMeleeMaximum(Player e, int attackStyle, int weaponId)
+	 * { int strLvl = e.getSkills().getLevel(Skills.STRENGTH); int strBonus =
+	 * e.getCombatDefinitions().getBonuses()[CombatDefinitions.STRENGTH_BONUS]; if
+	 * (weaponId == -2) { strBonus += 82; } double strMult =
 	 * e.getPrayer().getStrengthMultiplier(); double xpStyle =
-	 * CombatDefinitions.getXpStyle(weaponId, attackStyle); double style =
-	 * xpStyle == Skills.STRENGTH ? 3 : xpStyle == CombatDefinitions.SHARED ? 1
-	 * : 0; int dhp = 0; double dharokMod = 1.0; double hitMultiplier = 1.0; if
+	 * CombatDefinitions.getXpStyle(weaponId, attackStyle); double style = xpStyle
+	 * == Skills.STRENGTH ? 3 : xpStyle == CombatDefinitions.SHARED ? 1 : 0; int dhp
+	 * = 0; double dharokMod = 1.0; double hitMultiplier = 1.0; if
 	 * (fullDharokEquipped(e)) { dhp = e.getMaxHitpoints() - e.getHitpoints();
 	 * dharokMod = (dhp * 0.001) + 1; } if (fullVoidEquipped(e, 11665, 11676)) {
-	 * hitMultiplier *= 1.1; } double cumulativeStr = (strLvl * strMult + style)
-	 * * dharokMod; return (int) ((14 + cumulativeStr + (strBonus / 8) +
+	 * hitMultiplier *= 1.1; } double cumulativeStr = (strLvl * strMult + style) *
+	 * dharokMod; return (int) ((14 + cumulativeStr + (strBonus / 8) +
 	 * ((cumulativeStr * strBonus) / 64)) * hitMultiplier); }
 	 * 
 	 * /** Gets the melee defence.
@@ -2755,18 +2320,17 @@ public class PlayerCombat extends Action {
 	 * @return The maximum melee defence.
 	 */
 	/*
-	 * public static double getMeleeDefence(Entity e, int attackStyle, int
-	 * weaponId) { boolean player = e instanceof Player; int style = player ?
-	 * ((Player) e).getCombatDefinitions().getAttackStyle() : 0; style = style
-	 * == 2 ? 1 : style == 3 ? 3 : 0; int defLvl = player ? ((Player)
-	 * e).getSkills().getLevel(Skills.DEFENCE) : (int) (((NPC)
-	 * e).getCombatLevel() * 0.6); int defBonus = player ? ((Player)
+	 * public static double getMeleeDefence(Entity e, int attackStyle, int weaponId)
+	 * { boolean player = e instanceof Player; int style = player ? ((Player)
+	 * e).getCombatDefinitions().getAttackStyle() : 0; style = style == 2 ? 1 :
+	 * style == 3 ? 3 : 0; int defLvl = player ? ((Player)
+	 * e).getSkills().getLevel(Skills.DEFENCE) : (int) (((NPC) e).getCombatLevel() *
+	 * 0.6); int defBonus = player ? ((Player)
 	 * e).getCombatDefinitions().getBonuses()[
 	 * CombatDefinitions.getMeleeDefenceBonus
 	 * (CombatDefinitions.getMeleeBonusStyle(weaponId, attackStyle))] : 0; if
 	 * (!player) { defBonus = ((NPC) e).getBonuses() != null ? ((NPC)
-	 * e).getBonuses()[
-	 * CombatDefinitions.getMeleeDefenceBonus(CombatDefinitions.
+	 * e).getBonuses()[ CombatDefinitions.getMeleeDefenceBonus(CombatDefinitions.
 	 * getMeleeBonusStyle(weaponId, attackStyle))] : 0; } double defMult = 1.0 *
 	 * (player ? ((Player) e).getPrayer().getDefenceMultiplier() : 1.0); double
 	 * cumulativeDef = defLvl * defMult + style; return 14 + cumulativeDef +
@@ -2781,16 +2345,15 @@ public class PlayerCombat extends Action {
 	 * @return The range accuracy.
 	 */
 	/*
-	 * public static double getRangeAccuracy(Player e, int attackStyle) { int
-	 * style = attackStyle == 0 ? 3 : attackStyle == 2 ? 1 : 0; int attLvl =
+	 * public static double getRangeAccuracy(Player e, int attackStyle) { int style
+	 * = attackStyle == 0 ? 3 : attackStyle == 2 ? 1 : 0; int attLvl =
 	 * e.getSkills().getLevel(Skills.RANGE); int attBonus =
 	 * e.getCombatDefinitions().getBonuses()[4]; double attMult = 1.0 *
 	 * e.getPrayer().getRangeMultiplier() *
-	 * e.getAuraManager().getRangeAccurayMultiplier(); double accuracyMultiplier
-	 * = 1.05; if (fullVoidEquipped(e, 11664, 11675)) { accuracyMultiplier +=
-	 * 0.10; } double cumulativeAtt = attLvl * attMult + style; return (14 +
-	 * cumulativeAtt + (attBonus / 8) + ((cumulativeAtt * attBonus) / 64)) *
-	 * accuracyMultiplier; }
+	 * e.getAuraManager().getRangeAccurayMultiplier(); double accuracyMultiplier =
+	 * 1.05; if (fullVoidEquipped(e, 11664, 11675)) { accuracyMultiplier += 0.10; }
+	 * double cumulativeAtt = attLvl * attMult + style; return (14 + cumulativeAtt +
+	 * (attBonus / 8) + ((cumulativeAtt * attBonus) / 64)) * accuracyMultiplier; }
 	 * 
 	 * /** Gets the maximum range hit.
 	 * 
@@ -2801,12 +2364,11 @@ public class PlayerCombat extends Action {
 	 * @return The maximum range hit.
 	 */
 	/*
-	 * public static double getRangeMaximum(Player e, int attackStyle) { int
-	 * style = attackStyle == 0 ? 3 : attackStyle == 2 ? 1 : 0; int strLvl =
-	 * e.getSkills().getLevel(Skills.RANGE); int strBonus =
-	 * e.getCombatDefinitions
-	 * ().getBonuses()[CombatDefinitions.RANGED_STR_BONUS]; double strMult = 1.0
-	 * * e.getPrayer().getRangeMultiplier(); double hitMultiplier = 1.0; if
+	 * public static double getRangeMaximum(Player e, int attackStyle) { int style =
+	 * attackStyle == 0 ? 3 : attackStyle == 2 ? 1 : 0; int strLvl =
+	 * e.getSkills().getLevel(Skills.RANGE); int strBonus = e.getCombatDefinitions
+	 * ().getBonuses()[CombatDefinitions.RANGED_STR_BONUS]; double strMult = 1.0 *
+	 * e.getPrayer().getRangeMultiplier(); double hitMultiplier = 1.0; if
 	 * (fullVoidEquipped(e, 11664, 11675)) { hitMultiplier += 0.1; } double
 	 * cumulativeStr = strLvl * strMult + style; return (14 + cumulativeStr +
 	 * (strBonus / 8) + ((cumulativeStr * strBonus) / 64)) * hitMultiplier; }
@@ -2822,14 +2384,14 @@ public class PlayerCombat extends Action {
 	 * instanceof Player; int style = player ? ((Player)
 	 * e).getCombatDefinitions().getAttackStyle() : 0; style = style == 2 ? 1 :
 	 * style == 3 ? 3 : 0; int defLvl = player ? ((Player)
-	 * e).getSkills().getLevel(Skills.DEFENCE) : (int) (((NPC)
-	 * e).getCombatLevel() * 0.6); int defBonus = player ? ((Player)
-	 * e).getCombatDefinitions().getBonuses()[CombatDefinitions.RANGE_DEF] : 0;
-	 * if (!player) { defBonus = ((NPC) e).getBonuses() != null ? ((NPC)
+	 * e).getSkills().getLevel(Skills.DEFENCE) : (int) (((NPC) e).getCombatLevel() *
+	 * 0.6); int defBonus = player ? ((Player)
+	 * e).getCombatDefinitions().getBonuses()[CombatDefinitions.RANGE_DEF] : 0; if
+	 * (!player) { defBonus = ((NPC) e).getBonuses() != null ? ((NPC)
 	 * e).getBonuses()[9] : 0; } double defMult = 1.0 * (player ? ((Player)
-	 * e).getPrayer().getDefenceMultiplier() : 1.0); double cumulativeDef =
-	 * defLvl * defMult + style; return 14 + cumulativeDef + (defBonus / 8) +
-	 * ((cumulativeDef * defBonus) / 64); }
+	 * e).getPrayer().getDefenceMultiplier() : 1.0); double cumulativeDef = defLvl *
+	 * defMult + style; return 14 + cumulativeDef + (defBonus / 8) + ((cumulativeDef
+	 * * defBonus) / 64); }
 	 */
 
 	private double getSpecialAccuracyModifier(Player player) {
@@ -2837,8 +2399,7 @@ public class PlayerCombat extends Action {
 		if (weapon == null)
 			return 1;
 		String name = weapon.getDefinitions().getName().toLowerCase();
-		if (name.contains("whip") || name.contains("dragon longsword")
-				|| name.contains("dragon scimitar")
+		if (name.contains("whip") || name.contains("dragon longsword") || name.contains("dragon scimitar")
 				|| name.contains("dragon dagger"))
 			return 1.1;
 		if (name.contains("anchor") || name.contains("magic longbow"))
@@ -2855,8 +2416,8 @@ public class PlayerCombat extends Action {
 
 	/*
 	 * public static final int getMaxHit(Player player, int weaponId, int
-	 * attackStyle, boolean ranging, boolean usingSpec, double specMultiplier) {
-	 * if (ranging) { return (int) (getRangeMaximum(player, attackStyle) *
+	 * attackStyle, boolean ranging, boolean usingSpec, double specMultiplier) { if
+	 * (ranging) { return (int) (getRangeMaximum(player, attackStyle) *
 	 * specMultiplier); } return (int) (getMeleeMaximum(player, weaponId,
 	 * attackStyle) * specMultiplier); }
 	 */
@@ -2868,35 +2429,24 @@ public class PlayerCombat extends Action {
 		int weaponId = player.getEquipment().getWeaponId();
 		int bootsId = player.getEquipment().getBootsId();
 		int glovesId = player.getEquipment().getGlovesId();
-		if (helmId == -1 || chestId == -1 || legsId == -1 || weaponId == -1
-				|| bootsId == -1 || glovesId == -1)
+		if (helmId == -1 || chestId == -1 || legsId == -1 || weaponId == -1 || bootsId == -1 || glovesId == -1)
 			return false;
-		return ItemDefinitions.getItemDefinitions(helmId).getName()
-				.contains("Vanguard")
-				&& ItemDefinitions.getItemDefinitions(chestId).getName()
-						.contains("Vanguard")
-				&& ItemDefinitions.getItemDefinitions(legsId).getName()
-						.contains("Vanguard")
-				&& ItemDefinitions.getItemDefinitions(weaponId).getName()
-						.contains("Vanguard")
-				&& ItemDefinitions.getItemDefinitions(bootsId).getName()
-						.contains("Vanguard")
-				&& ItemDefinitions.getItemDefinitions(glovesId).getName()
-						.contains("Vanguard");
+		return ItemDefinitions.getItemDefinitions(helmId).getName().contains("Vanguard")
+				&& ItemDefinitions.getItemDefinitions(chestId).getName().contains("Vanguard")
+				&& ItemDefinitions.getItemDefinitions(legsId).getName().contains("Vanguard")
+				&& ItemDefinitions.getItemDefinitions(weaponId).getName().contains("Vanguard")
+				&& ItemDefinitions.getItemDefinitions(bootsId).getName().contains("Vanguard")
+				&& ItemDefinitions.getItemDefinitions(glovesId).getName().contains("Vanguard");
 	}
 
 	public static final boolean usingGoliathGloves(Player player) {
-		String name = player.getEquipment().getItem(Equipment.SLOT_SHIELD) != null ? player
-				.getEquipment().getItem(Equipment.SLOT_SHIELD).getDefinitions()
-				.getName().toLowerCase()
+		String name = player.getEquipment().getItem(Equipment.SLOT_SHIELD) != null
+				? player.getEquipment().getItem(Equipment.SLOT_SHIELD).getDefinitions().getName().toLowerCase()
 				: "";
 		if (player.getEquipment().getItem((Equipment.SLOT_HANDS)) != null) {
-			if (player.getEquipment().getItem(Equipment.SLOT_HANDS)
-					.getDefinitions().getName().toLowerCase()
-					.contains("goliath")
-					&& player.getEquipment().getWeaponId() == -1) {
-				if (name.contains("defender")
-						&& name.contains("dragonfire shield"))
+			if (player.getEquipment().getItem(Equipment.SLOT_HANDS).getDefinitions().getName().toLowerCase()
+					.contains("goliath") && player.getEquipment().getWeaponId() == -1) {
+				if (name.contains("defender") && name.contains("dragonfire shield"))
 					return true;
 				return true;
 			}
@@ -2911,14 +2461,10 @@ public class PlayerCombat extends Action {
 		int weaponId = player.getEquipment().getWeaponId();
 		if (helmId == -1 || chestId == -1 || legsId == -1 || weaponId == -1)
 			return false;
-		return ItemDefinitions.getItemDefinitions(helmId).getName()
-				.contains("Verac's")
-				&& ItemDefinitions.getItemDefinitions(chestId).getName()
-						.contains("Verac's")
-				&& ItemDefinitions.getItemDefinitions(legsId).getName()
-						.contains("Verac's")
-				&& ItemDefinitions.getItemDefinitions(weaponId).getName()
-						.contains("Verac's");
+		return ItemDefinitions.getItemDefinitions(helmId).getName().contains("Verac's")
+				&& ItemDefinitions.getItemDefinitions(chestId).getName().contains("Verac's")
+				&& ItemDefinitions.getItemDefinitions(legsId).getName().contains("Verac's")
+				&& ItemDefinitions.getItemDefinitions(weaponId).getName().contains("Verac's");
 	}
 
 	public static final boolean fullGuthanEquipped(Player player) {
@@ -2928,14 +2474,10 @@ public class PlayerCombat extends Action {
 		int weaponId = player.getEquipment().getWeaponId();
 		if (helmId == -1 || chestId == -1 || legsId == -1 || weaponId == -1)
 			return false;
-		return ItemDefinitions.getItemDefinitions(helmId).getName()
-				.contains("Guthan's")
-				&& ItemDefinitions.getItemDefinitions(chestId).getName()
-						.contains("Guthan's")
-				&& ItemDefinitions.getItemDefinitions(legsId).getName()
-						.contains("Guthan's")
-				&& ItemDefinitions.getItemDefinitions(weaponId).getName()
-						.contains("Guthan's");
+		return ItemDefinitions.getItemDefinitions(helmId).getName().contains("Guthan's")
+				&& ItemDefinitions.getItemDefinitions(chestId).getName().contains("Guthan's")
+				&& ItemDefinitions.getItemDefinitions(legsId).getName().contains("Guthan's")
+				&& ItemDefinitions.getItemDefinitions(weaponId).getName().contains("Guthan's");
 	}
 
 	public static final boolean fullDharokEquipped(Player player) {
@@ -2945,14 +2487,10 @@ public class PlayerCombat extends Action {
 		int weaponId = player.getEquipment().getWeaponId();
 		if (helmId == -1 || chestId == -1 || legsId == -1 || weaponId == -1)
 			return false;
-		return ItemDefinitions.getItemDefinitions(helmId).getName()
-				.contains("Dharok's")
-				&& ItemDefinitions.getItemDefinitions(chestId).getName()
-						.contains("Dharok's")
-				&& ItemDefinitions.getItemDefinitions(legsId).getName()
-						.contains("Dharok's")
-				&& ItemDefinitions.getItemDefinitions(weaponId).getName()
-						.contains("Dharok's");
+		return ItemDefinitions.getItemDefinitions(helmId).getName().contains("Dharok's")
+				&& ItemDefinitions.getItemDefinitions(chestId).getName().contains("Dharok's")
+				&& ItemDefinitions.getItemDefinitions(legsId).getName().contains("Dharok's")
+				&& ItemDefinitions.getItemDefinitions(weaponId).getName().contains("Dharok's");
 	}
 
 	public static final boolean fullVoidEquipped(Player player, int... helmid) {
@@ -2964,8 +2502,7 @@ public class PlayerCombat extends Action {
 				return false;
 		}
 		int legsId = player.getEquipment().getLegsId();
-		boolean hasLegs = legsId != -1
-				&& (legsId == 8840 || legsId == 19786 || legsId == 19788 || legsId == 19790);
+		boolean hasLegs = legsId != -1 && (legsId == 8840 || legsId == 19786 || legsId == 19788 || legsId == 19790);
 		if (!hasLegs) {
 			if (hasDeflector)
 				hasDeflector = false;
@@ -2974,8 +2511,7 @@ public class PlayerCombat extends Action {
 		}
 		int torsoId = player.getEquipment().getChestId();
 		boolean hasTorso = torsoId != -1
-				&& (torsoId == 8839 || torsoId == 10611 || torsoId == 19785
-						|| torsoId == 19787 || torsoId == 19789);
+				&& (torsoId == 8839 || torsoId == 10611 || torsoId == 19785 || torsoId == 19787 || torsoId == 19789);
 		if (!hasTorso) {
 			if (hasDeflector)
 				hasDeflector = false;
@@ -3030,8 +2566,7 @@ public class PlayerCombat extends Action {
 		block_tele = false;
 	}
 
-	private void delayHit(int delay, final int weaponId, final int attackStyle,
-			final Hit... hits) {
+	private void delayHit(int delay, final int weaponId, final int attackStyle, final Hit... hits) {
 		addAttackedByDelay(hits[0].getSource());
 
 		final Entity target = this.target;
@@ -3055,76 +2590,58 @@ public class PlayerCombat extends Action {
 				if (player.getPrayer().usingPrayer(1, 18))
 					p2.sendSoulSplit(hit, player);
 			}
-			int damage = hit.getDamage() > target.getHitpoints() ? target
-					.getHitpoints() : hit.getDamage();
-			if (hit.getLook() == HitLook.RANGE_DAMAGE
-					|| hit.getLook() == HitLook.MELEE_DAMAGE) {
+			int damage = hit.getDamage() > target.getHitpoints() ? target.getHitpoints() : hit.getDamage();
+			if (hit.getLook() == HitLook.RANGE_DAMAGE || hit.getLook() == HitLook.MELEE_DAMAGE) {
 				double combatXp = damage / 2.5;
 				if (combatXp > 0) {
 					if (hit.getLook() == HitLook.RANGE_DAMAGE) {
 						if (attackStyle == 2) {
 							if (target instanceof Player) {
-								player.getSkills().addXpNormal(Skills.RANGE,
-										combatXp / 2);
-								player.getSkills().addXpNormal(Skills.DEFENCE,
-										combatXp / 2);
+								player.getSkills().addXpNormal(Skills.RANGE, combatXp / 2);
+								player.getSkills().addXpNormal(Skills.DEFENCE, combatXp / 2);
 							} else {
-								player.getSkills().addXp(Skills.RANGE,
-										combatXp / 2);
-								player.getSkills().addXp(Skills.DEFENCE,
-										combatXp / 2);
+								player.getSkills().addXp(Skills.RANGE, combatXp / 2);
+								player.getSkills().addXp(Skills.DEFENCE, combatXp / 2);
 							}
 						} else if (target instanceof Player)
-							player.getSkills().addXpNormal(Skills.RANGE,
-									combatXp);
+							player.getSkills().addXpNormal(Skills.RANGE, combatXp);
 						else
 							player.getSkills().addXp(Skills.RANGE, combatXp);
 
 					} else {
-						int xpStyle = CombatDefinitions.getXpStyle(weaponId,
-								attackStyle);
+						int xpStyle = CombatDefinitions.getXpStyle(weaponId, attackStyle);
 						if (xpStyle != CombatDefinitions.SHARED)
 							if (target instanceof Player)
-								player.getSkills().addXpNormal(xpStyle,
-										combatXp);
+								player.getSkills().addXpNormal(xpStyle, combatXp);
 							else
 								player.getSkills().addXp(xpStyle, combatXp);
 						else {
 							if (target instanceof Player) {
-								player.getSkills().addXpNormal(Skills.ATTACK,
-										combatXp / 3);
-								player.getSkills().addXpNormal(Skills.STRENGTH,
-										combatXp / 3);
-								player.getSkills().addXpNormal(Skills.DEFENCE,
-										combatXp / 3);
+								player.getSkills().addXpNormal(Skills.ATTACK, combatXp / 3);
+								player.getSkills().addXpNormal(Skills.STRENGTH, combatXp / 3);
+								player.getSkills().addXpNormal(Skills.DEFENCE, combatXp / 3);
 							} else {
-								player.getSkills().addXp(Skills.ATTACK,
-										combatXp / 3);
-								player.getSkills().addXp(Skills.STRENGTH,
-										combatXp / 3);
-								player.getSkills().addXp(Skills.DEFENCE,
-										combatXp / 3);
+								player.getSkills().addXp(Skills.ATTACK, combatXp / 3);
+								player.getSkills().addXp(Skills.STRENGTH, combatXp / 3);
+								player.getSkills().addXp(Skills.DEFENCE, combatXp / 3);
 							}
 						}
 					}
 					double hpXp = damage / 7.5;
 					if (hpXp > 0)
 						if (target instanceof Player)
-							player.getSkills().addXpNormal(Skills.HITPOINTS,
-									hpXp);
+							player.getSkills().addXpNormal(Skills.HITPOINTS, hpXp);
 						else
 							player.getSkills().addXp(Skills.HITPOINTS, hpXp);
 				}
 			} else if (hit.getLook() == HitLook.MAGIC_DAMAGE) {
 				if (mage_hit_gfx != 0 && damage > 0) {
-					if (target.getFrozenBlockedDelay() < Utils
-							.currentTimeMillis()) {
+					if (target.getFrozenBlockedDelay() < Utils.currentTimeMillis()) {
 						if (freeze_time > 0) {
 							target.addFreezeDelay(freeze_time, freeze_time == 0);
 							if (target instanceof Player)
 								((Player) target).stopAll(false);
-							target.addFrozenBlockedDelay(freeze_time
-									+ (4 * 1000));
+							target.addFrozenBlockedDelay(freeze_time + (4 * 1000));
 						}
 					}
 				} else if (damage < 0) {
@@ -3133,17 +2650,14 @@ public class PlayerCombat extends Action {
 				double combatXp = base_mage_xp * 1 + (damage / 5);
 				if (combatXp > 0) {
 					if (player.getCombatDefinitions().isDefensiveCasting()
-							|| (hasPolyporeStaff(player) && player
-									.getCombatDefinitions().getAttackStyle() == 1)) {
+							|| (hasPolyporeStaff(player) && player.getCombatDefinitions().getAttackStyle() == 1)) {
 						int defenceXp = (int) (damage / 7.5);
 						if (defenceXp > 0) {
 							combatXp -= defenceXp;
 							if (target instanceof Player)
-								player.getSkills().addXpNormal(Skills.DEFENCE,
-										defenceXp / 7.5);
+								player.getSkills().addXpNormal(Skills.DEFENCE, defenceXp / 7.5);
 							else
-								player.getSkills().addXp(Skills.DEFENCE,
-										defenceXp / 7.5);
+								player.getSkills().addXp(Skills.DEFENCE, defenceXp / 7.5);
 						}
 					}
 					if (target instanceof Player)
@@ -3153,8 +2667,7 @@ public class PlayerCombat extends Action {
 					double hpXp = damage / 7.5;
 					if (hpXp > 0)
 						if (target instanceof Player)
-							player.getSkills().addXpNormal(Skills.HITPOINTS,
-									hpXp);
+							player.getSkills().addXpNormal(Skills.HITPOINTS, hpXp);
 						else
 							player.getSkills().addXp(Skills.HITPOINTS, hpXp);
 				}
@@ -3168,8 +2681,7 @@ public class PlayerCombat extends Action {
 				for (Hit hit : hits) {
 					boolean splash = false;
 					Player player = (Player) hit.getSource();
-					if (player.isDead() || player.hasFinished()
-							|| target.isDead() || target.hasFinished())
+					if (player.isDead() || player.hasFinished() || target.isDead() || target.hasFinished())
 						return;
 					if (hit.getDamage() > -1) {
 						target.applyHit(hit); // also reduces damage if needed,
@@ -3179,24 +2691,17 @@ public class PlayerCombat extends Action {
 						splash = true;
 						hit.setDamage(0);
 					}
-					target.setNextAnimationNoPriority(new Animation(
-							defenceEmote));
-					int damage = hit.getDamage() > target.getHitpoints() ? target
-							.getHitpoints() : hit.getDamage();
-					if ((damage >= max_hit * 0.90)
-							&& (hit.getLook() == HitLook.MAGIC_DAMAGE
-									|| hit.getLook() == HitLook.RANGE_DAMAGE || hit
-									.getLook() == HitLook.MELEE_DAMAGE))
+					target.setNextAnimationNoPriority(new Animation(defenceEmote));
+					int damage = hit.getDamage() > target.getHitpoints() ? target.getHitpoints() : hit.getDamage();
+					if ((damage >= max_hit * 0.90) && (hit.getLook() == HitLook.MAGIC_DAMAGE
+							|| hit.getLook() == HitLook.RANGE_DAMAGE || hit.getLook() == HitLook.MELEE_DAMAGE))
 						hit.setCriticalMark();
-					if (hit.getLook() == HitLook.RANGE_DAMAGE
-							|| hit.getLook() == HitLook.MELEE_DAMAGE) {
+					if (hit.getLook() == HitLook.RANGE_DAMAGE || hit.getLook() == HitLook.MELEE_DAMAGE) {
 						double combatXp = damage / 2.5;
 						if (combatXp > 0) {
 							if (hit.getLook() == HitLook.RANGE_DAMAGE) {
 								if (weaponId != -1) {
-									String name = ItemDefinitions
-											.getItemDefinitions(weaponId)
-											.getName();
+									String name = ItemDefinitions.getItemDefinitions(weaponId).getName();
 									if (name.contains("(p++)")) {
 										if (Utils.getRandom(8) == 0)
 											target.getPoison().makePoisoned(48);
@@ -3210,9 +2715,7 @@ public class PlayerCombat extends Action {
 								}
 							} else {
 								if (weaponId != -1) {
-									String name = ItemDefinitions
-											.getItemDefinitions(weaponId)
-											.getName();
+									String name = ItemDefinitions.getItemDefinitions(weaponId).getName();
 									if (name.contains("(p++)")) {
 										if (Utils.getRandom(8) == 0)
 											target.getPoison().makePoisoned(68);
@@ -3232,32 +2735,17 @@ public class PlayerCombat extends Action {
 							playSound(227, player, target);
 						} else {
 							if (mage_hit_gfx != 0) {
-								target.setNextGraphics(new Graphics(
-										mage_hit_gfx,
-										0,
-										mage_hit_gfx == 369
-												|| mage_hit_gfx == 1843
-												|| (mage_hit_gfx > 1844 && mage_hit_gfx < 1855) ? 0
-												: 96));
+								target.setNextGraphics(
+										new Graphics(mage_hit_gfx, 0, mage_hit_gfx == 369 || mage_hit_gfx == 1843
+												|| (mage_hit_gfx > 1844 && mage_hit_gfx < 1855) ? 0 : 96));
 								if (blood_spell)
 									player.heal(damage / 4);
 								if (block_tele) {
 									if (target instanceof Player) {
 										Player targetPlayer = (Player) target;
-										targetPlayer
-												.setTeleBlockDelay((targetPlayer
-														.getPrayer()
-														.usingPrayer(0, 17)
-														|| targetPlayer
-																.getPrayer()
-																.usingPrayer(1,
-																		7) ? 100000
-														: 300000));
-										targetPlayer
-												.getPackets()
-												.sendGameMessage(
-														"You have been teleblocked.",
-														true);
+										targetPlayer.setTeleBlockDelay((targetPlayer.getPrayer().usingPrayer(0, 17)
+												|| targetPlayer.getPrayer().usingPrayer(1, 7) ? 100000 : 300000));
+										targetPlayer.getPackets().sendGameMessage("You have been teleblocked.", true);
 									}
 								}
 							}
@@ -3274,16 +2762,12 @@ public class PlayerCombat extends Action {
 					if (target instanceof Player) {
 						Player p2 = (Player) target;
 						p2.closeInterfaces();
-						if (p2.getCombatDefinitions().isAutoRelatie()
-								&& !p2.getActionManager().hasSkillWorking()
-								&& !p2.hasWalkSteps() && !p2.isLocked()
-								&& !p2.getEmotesManager().isDoingEmote())
-							p2.getActionManager().setAction(
-									new PlayerCombat(player));
+						if (p2.getCombatDefinitions().isAutoRelatie() && !p2.getActionManager().hasSkillWorking()
+								&& !p2.hasWalkSteps() && !p2.isLocked() && !p2.getEmotesManager().isDoingEmote())
+							p2.getActionManager().setAction(new PlayerCombat(player));
 					} else {
 						NPC n = (NPC) target;
-						if (!n.isUnderCombat()
-								|| n.canBeAttackedByAutoRelatie())
+						if (!n.isUnderCombat() || n.canBeAttackedByAutoRelatie())
 							n.setTarget(player);
 					}
 				}
@@ -3293,8 +2777,7 @@ public class PlayerCombat extends Action {
 
 	private int getSoundId(int weaponId, int attackStyle) {
 		if (weaponId != -1) {
-			String weaponName = ItemDefinitions.getItemDefinitions(weaponId)
-					.getName().toLowerCase();
+			String weaponName = ItemDefinitions.getItemDefinitions(weaponId).getName().toLowerCase();
 			if (weaponName.contains("dart") || weaponName.contains("knife"))
 				return 2707;
 		}
@@ -3312,15 +2795,12 @@ public class PlayerCombat extends Action {
 					return 14393;
 				}
 			}
-			String weaponName = ItemDefinitions.getItemDefinitions(weaponId)
-					.getName().toLowerCase();
+			String weaponName = ItemDefinitions.getItemDefinitions(weaponId).getName().toLowerCase();
 			if (weaponName != null && !weaponName.equals("null")) {
 				if (weaponName.contains("crossbow"))
 					return weaponName.contains("royal crossbow") ? 16929
-							: weaponName.contains("karil's crossbow") ? 2075
-									: 4230;
-				if (weaponName.contains("bow")
-						|| weaponName.contains("decimation"))
+							: weaponName.contains("karil's crossbow") ? 2075 : 4230;
+				if (weaponName.contains("bow") || weaponName.contains("decimation"))
 					return 426;
 				if (weaponName.contains("chinchompa"))
 					return 2779;
@@ -3334,17 +2814,14 @@ public class PlayerCombat extends Action {
 						return 414;
 					}
 				}
-				if (weaponName.contains("mindspike")
-						|| weaponName.contains("staff")
-						|| weaponName.contains("wand")
+				if (weaponName.contains("mindspike") || weaponName.contains("staff") || weaponName.contains("wand")
 						|| weaponName.contentEquals("obliteration"))
 					return 419;
 				if (weaponName.contains("dart"))
 					return 6600;
 				if (weaponName.contains("knife"))
 					return 9055;
-				if (weaponName.contains("scimitar")
-						|| weaponName.contains("korasi's sword")
+				if (weaponName.contains("scimitar") || weaponName.contains("korasi's sword")
 						|| weaponName.contains("sabre")) {
 					switch (attackStyle) {
 					case 2:
@@ -3355,8 +2832,7 @@ public class PlayerCombat extends Action {
 				}
 				if (weaponName.contains("granite mace"))
 					return 400;
-				if (weaponName.contains("mace")
-						|| weaponName.contains("annihilation")) {
+				if (weaponName.contains("mace") || weaponName.contains("annihilation")) {
 					switch (attackStyle) {
 					case 2:
 						return 400;
@@ -3364,8 +2840,7 @@ public class PlayerCombat extends Action {
 						return 401;
 					}
 				}
-				if (weaponName.contains("hatchet")
-						|| weaponName.contains("battleaxe")) {
+				if (weaponName.contains("hatchet") || weaponName.contains("battleaxe")) {
 					switch (attackStyle) {
 					case 2:
 						return 401;
@@ -3477,10 +2952,8 @@ public class PlayerCombat extends Action {
 						return 400;
 					}
 				}
-				if (weaponName.contains("2h sword")
-						|| weaponName.equals("dominion sword")
-						|| weaponName.equals("thok's sword")
-						|| weaponName.equals("saradomin sword")) {
+				if (weaponName.contains("2h sword") || weaponName.equals("dominion sword")
+						|| weaponName.equals("thok's sword") || weaponName.equals("saradomin sword")) {
 					switch (attackStyle) {
 					case 2:
 						return 7048;
@@ -3490,11 +2963,8 @@ public class PlayerCombat extends Action {
 						return 7041;
 					}
 				}
-				if (weaponName.contains(" sword")
-						|| weaponName.contains("saber")
-						|| weaponName.contains("longsword")
-						|| weaponName.contains("light")
-						|| weaponName.contains("excalibur")) {
+				if (weaponName.contains(" sword") || weaponName.contains("saber") || weaponName.contains("longsword")
+						|| weaponName.contains("light") || weaponName.contains("excalibur")) {
 					switch (attackStyle) {
 					case 2:
 						return 12310;
@@ -3502,8 +2972,7 @@ public class PlayerCombat extends Action {
 						return 12311;
 					}
 				}
-				if (weaponName.contains("rapier")
-						|| weaponName.contains("brackish")) {
+				if (weaponName.contains("rapier") || weaponName.contains("brackish")) {
 					switch (attackStyle) {
 					case 2:
 						return 13048;
@@ -3580,19 +3049,15 @@ public class PlayerCombat extends Action {
 	}
 
 	private boolean checkAll(Player player) {
-		if (player.isDead() || player.hasFinished() || target.isDead()
-				|| target.hasFinished()) {
+		if (player.isDead() || player.hasFinished() || target.isDead() || target.hasFinished()) {
 			return false;
 		}
 		int distanceX = player.getX() - target.getX();
 		int distanceY = player.getY() - target.getY();
 		int size = player.getSize();
 		int maxDistance = 16;
-		if (player.getPlane() != target.getPlane()
-				|| distanceX > size + maxDistance
-				|| distanceX < -1 - maxDistance
-				|| distanceY > size + maxDistance
-				|| distanceY < -1 - maxDistance) {
+		if (player.getPlane() != target.getPlane() || distanceX > size + maxDistance || distanceX < -1 - maxDistance
+				|| distanceY > size + maxDistance || distanceY < -1 - maxDistance) {
 			return false;
 		}
 		if (target instanceof Player) {
@@ -3609,44 +3074,27 @@ public class PlayerCombat extends Action {
 				if (!familiar.canAttack(target))
 					return false;
 			} else {
-				if (!n.canBeAttackFromOutOfArea()
-						&& !MapAreas.isAtArea(n.getMapAreaNameHash(), player)) {
+				if (!n.canBeAttackFromOutOfArea() && !MapAreas.isAtArea(n.getMapAreaNameHash(), player)) {
 					return false;
 				}
 				if (n.getId() == 879) {
 					if (player.getEquipment().getWeaponId() != 2402
-							&& player.getCombatDefinitions().getAutoCastSpell() <= 0
-							&& !hasPolyporeStaff(player)) {
-						player.getPackets().sendGameMessage(
-								"I'd better wield Silverlight first.");
+							&& player.getCombatDefinitions().getAutoCastSpell() <= 0 && !hasPolyporeStaff(player)) {
+						player.getPackets().sendGameMessage("I'd better wield Silverlight first.");
 						return false;
 					}
 				} else if (n.getId() >= 14084 && n.getId() <= 14139) {
 					int weaponId = player.getEquipment().getWeaponId();
 					if (!((weaponId >= 13117 && weaponId <= 13146) || (weaponId >= 21580 && weaponId <= 21582))
-							&& player.getCombatDefinitions().getAutoCastSpell() <= 0
-							&& !hasPolyporeStaff(player)) {
-						player.getPackets().sendGameMessage(
-								"I'd better wield a silver weapon first.");
+							&& player.getCombatDefinitions().getAutoCastSpell() <= 0 && !hasPolyporeStaff(player)) {
+						player.getPackets().sendGameMessage("I'd better wield a silver weapon first.");
 						return false;
 					}
-				} else if (n.getId() == 6222 || n.getId() == 6223
-						|| n.getId() == 6225 || n.getId() == 6227
+				} else if (n.getId() == 6222 || n.getId() == 6223 || n.getId() == 6225 || n.getId() == 6227
 						|| (n.getId() >= 6232 && n.getId() <= 6246)) {
 					if (isRanging(player) == 0) {
 						player.getPackets()
-								.sendGameMessage(
-										"The Aviansie is flying too high for you to attack using melee.");
-						return false;
-					}
-				} else if (n.getId() == 14301 || n.getId() == 14302
-						|| n.getId() == 14303 || n.getId() == 14304) {
-					Glacyte glacyte = (Glacyte) n;
-					if (glacyte.getGlacor().getTargetIndex() != -1
-							&& player.getIndex() != glacyte.getGlacor()
-									.getTargetIndex()) {
-						player.getPackets().sendGameMessage(
-								"This isn't your target.");
+								.sendGameMessage("The Aviansie is flying too high for you to attack using melee.");
 						return false;
 					}
 				}
@@ -3655,22 +3103,13 @@ public class PlayerCombat extends Action {
 		if (!(target instanceof NPC && ((NPC) target).isForceMultiAttacked())) {
 
 			if (!target.isAtMultiArea() || !player.isAtMultiArea()) {
-				if (player.getAttackedBy() != target
-						&& player.getAttackedByDelay() > Utils
-								.currentTimeMillis()) {
-					player.getPackets().sendGameMessage(
-							"You are already in combat.");
+				if (player.getAttackedBy() != target && player.getAttackedByDelay() > Utils.currentTimeMillis()) {
+					player.getPackets().sendGameMessage("You are already in combat.");
 					return false;
 				}
-				if (target.getAttackedBy() != player
-						&& target.getAttackedByDelay() > Utils
-								.currentTimeMillis()) {
-					player.getPackets()
-							.sendGameMessage(
-									"That "
-											+ (player.getAttackedBy() instanceof Player ? "player"
-													: "npc")
-											+ " is already in combat.");
+				if (target.getAttackedBy() != player && target.getAttackedByDelay() > Utils.currentTimeMillis()) {
+					player.getPackets().sendGameMessage("That "
+							+ (player.getAttackedBy() instanceof Player ? "player" : "npc") + " is already in combat.");
 					return false;
 				}
 			}
@@ -3678,56 +3117,43 @@ public class PlayerCombat extends Action {
 		int isRanging = isRanging(player);
 		int targetSize = target.getSize();
 		if (player.getFreezeDelay() >= Utils.currentTimeMillis()) {
-			if (Utils.colides(player.getX(), player.getY(), size,
-					target.getX(), target.getY(), targetSize))// under
+			if (Utils.colides(player.getX(), player.getY(), size, target.getX(), target.getY(), targetSize))// under
 				// target
 				return false;
-			if (isRanging == 0 && target.getSize() == 1
-					&& player.getCombatDefinitions().getSpellId() <= 0
-					&& !hasPolyporeStaff(player)
-					&& Math.abs(player.getX() - target.getX()) == 1
-					&& Math.abs(player.getY() - target.getY()) == 1
-					&& !target.hasWalkSteps()) // diagonal
+			if (isRanging == 0 && target.getSize() == 1 && player.getCombatDefinitions().getSpellId() <= 0
+					&& !hasPolyporeStaff(player) && Math.abs(player.getX() - target.getX()) == 1
+					&& Math.abs(player.getY() - target.getY()) == 1 && !target.hasWalkSteps()) // diagonal
 				return false;
 			return true;
 		}
-		if (Utils.colides(player.getX(), player.getY(), size, target.getX(),
-				target.getY(), targetSize) && !target.hasWalkSteps()) {
+		if (Utils.colides(player.getX(), player.getY(), size, target.getX(), target.getY(), targetSize)
+				&& !target.hasWalkSteps()) {
 			player.resetWalkSteps();
 			if (!player.addWalkSteps(target.getX() + targetSize, player.getY())) {
 				player.resetWalkSteps();
 				if (!player.addWalkSteps(target.getX() - size, player.getY())) {
 					player.resetWalkSteps();
-					if (!player.addWalkSteps(player.getX(), target.getY()
-							+ targetSize)) {
+					if (!player.addWalkSteps(player.getX(), target.getY() + targetSize)) {
 						player.resetWalkSteps();
-						if (!player.addWalkSteps(player.getX(), target.getY()
-								- size)) {
+						if (!player.addWalkSteps(player.getX(), target.getY() - size)) {
 							return false;
 						}
 					}
 				}
 			}
 			return true;
-		} else if (isRanging == 0 && target.getSize() == 1
-				&& player.getCombatDefinitions().getSpellId() <= 0
-				&& !hasPolyporeStaff(player)
-				&& Math.abs(player.getX() - target.getX()) == 1
-				&& Math.abs(player.getY() - target.getY()) == 1
-				&& !target.hasWalkSteps()) {
+		} else if (isRanging == 0 && target.getSize() == 1 && player.getCombatDefinitions().getSpellId() <= 0
+				&& !hasPolyporeStaff(player) && Math.abs(player.getX() - target.getX()) == 1
+				&& Math.abs(player.getY() - target.getY()) == 1 && !target.hasWalkSteps()) {
 			if (!player.addWalkSteps(target.getX(), player.getY(), 1))
 				player.addWalkSteps(player.getX(), target.getY(), 1);
 			return true;
 		}
-		maxDistance = isRanging != 0
-				|| player.getCombatDefinitions().getSpellId() > 0
-				|| hasPolyporeStaff(player) ? 7 : 0;
+		maxDistance = isRanging != 0 || player.getCombatDefinitions().getSpellId() > 0 || hasPolyporeStaff(player) ? 7
+				: 0;
 		boolean needCalc = !player.hasWalkSteps() || target.hasWalkSteps();
-		if ((!player.clipedProjectile(target, maxDistance == 0
-				&& !forceCheckClipAsRange(target)))
-				|| !Utils.isOnRange(player.getX(), player.getY(), size,
-						target.getX(), target.getY(), target.getSize(),
-						maxDistance)) {
+		if ((!player.clipedProjectile(target, maxDistance == 0)) || !Utils.isOnRange(player.getX(), player.getY(), size,
+				target.getX(), target.getY(), target.getSize(), maxDistance)) {
 			// if (!player.hasWalkSteps()) {
 			if (needCalc) {
 				player.resetWalkSteps();
@@ -3747,16 +3173,14 @@ public class PlayerCombat extends Action {
 		int specAmt = getSpecialAmmount(weaponId);
 		if (specAmt == 0) {
 			player.getPackets()
-					.sendGameMessage(
-							"This weapon has no special Attack, if you still see special bar please relogin.");
+					.sendGameMessage("This weapon has no special Attack, if you still see special bar please relogin.");
 			player.getCombatDefinitions().desecreaseSpecialAttack(0);
 			return false;
 		}
 		if (player.getCombatDefinitions().hasRingOfVigour())
 			specAmt *= 0.9;
 		if (player.getCombatDefinitions().getSpecialAttackPercentage() < specAmt) {
-			player.getPackets().sendGameMessage(
-					"You don't have enough power left.");
+			player.getPackets().sendGameMessage("You don't have enough power left.");
 			player.getCombatDefinitions().desecreaseSpecialAttack(0);
 			return false;
 		}
@@ -3773,12 +3197,9 @@ public class PlayerCombat extends Action {
 			return 0;
 		String name = ItemDefinitions.getItemDefinitions(weaponId).getName();
 		if (name != null) { // those dont need arrows
-			if (name.contains("knife") || name.contains("dart")
-					|| name.contains("javelin") || name.contains("thrownaxe")
-					|| name.contains("throwing axe")
-					|| name.contains("crystal bow")
-					|| name.equalsIgnoreCase("zaryte bow")
-					|| name.contains("chinchompa") || name.equals("Decimation")
+			if (name.contains("knife") || name.contains("dart") || name.contains("javelin")
+					|| name.contains("thrownaxe") || name.contains("throwing axe") || name.contains("crystal bow")
+					|| name.equalsIgnoreCase("zaryte bow") || name.contains("chinchompa") || name.equals("Decimation")
 					|| name.contains("Bolas") || weaponId == 21364)
 				return 2;
 		}
@@ -4220,8 +3641,7 @@ public class PlayerCombat extends Action {
 	/**
 	 * Checks if the player is wielding polypore staff.
 	 * 
-	 * @param player
-	 *            The player.
+	 * @param player The player.
 	 * @return {@code True} if so.
 	 */
 	private static boolean hasPolyporeStaff(Player player) {

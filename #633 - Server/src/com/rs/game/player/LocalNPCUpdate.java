@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.rs.Settings;
 import com.rs.game.Hit;
-import com.rs.game.SecondaryBar;
 import com.rs.game.World;
 import com.rs.game.npc.NPC;
 import com.rs.io.OutputStream;
@@ -263,16 +262,7 @@ public final class LocalNPCUpdate {
 		/*/
 
 	}
-
-	private void applySecondaryBar(NPC n, OutputStream data) {
-		SecondaryBar bar = n.getNextSecondaryBar();
-		boolean permanant = bar.isPermenant();
-		int unknownV = bar.getTotalUnits();
-		data.writeShort((permanant ? 8000 : 0) | (unknownV & 0x7fff));
-		data.write128Byte(bar.getBeginningOffset());
-		data.write128Byte(bar.getIncrementalUnits());
-	}
-
+	
 	private void applyTransformationMask(NPC n, OutputStream data) {
 		data.writeShort128(n.getNextTransformation().getToNPCId());
 	}

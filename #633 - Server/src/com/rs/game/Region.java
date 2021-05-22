@@ -12,7 +12,6 @@ import com.rs.cores.CoresManager;
 import com.rs.game.item.FloorItem;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
-import com.rs.utils.ItemSpawns;
 import com.rs.utils.Logger;
 import com.rs.utils.MapArchiveKeys;
 import com.rs.utils.NPCSpawning;
@@ -42,7 +41,6 @@ public class Region {
 	private volatile int loadMapStage;
 	private boolean loadedNPCSpawns;
 	private boolean loadedObjectSpawns;
-	private boolean loadedItemSpawns;
 	private int[] musicIds;
 
 	public Region(int regionId) {
@@ -71,10 +69,6 @@ public class Region {
 							loadNPCSpawns(regionId);
 							setLoadedNPCSpawns(true);
 						}
-						if (!isLoadedItemSpawns()) {
-							loadItemSpawns();
-							setLoadedItemSpawns(true);
-						}
 					} catch (Throwable e) {
 						Logger.handle(e);
 					}
@@ -97,11 +91,7 @@ public class Region {
 	private void loadObjectSpawns() {
 		ObjectSpawns.loadObjectSpawns(regionId);
 	}
-
-	private void loadItemSpawns() {
-		ItemSpawns.loadItemSpawns(regionId);
-	}
-
+	
 	/**
 	 * Unload's map from memory.
 	 */
@@ -1276,13 +1266,5 @@ public class Region {
 		int musicIndex = (int) ClientScriptMap.getMap(1345).getKeyForValue(
 				musicName);
 		return ClientScriptMap.getMap(1351).getIntValue(musicIndex);
-	}
-
-	public boolean isLoadedItemSpawns() {
-		return loadedItemSpawns;
-	}
-
-	public void setLoadedItemSpawns(boolean loadedItemSpawns) {
-		this.loadedItemSpawns = loadedItemSpawns;
 	}
 }
