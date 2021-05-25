@@ -623,91 +623,47 @@ public class WorldPacketsEncoder extends Encoder {
 		session.write(stream);
 	}
 
-	// *********************************************************
-
 	public void sendGlobalString(int id, String string) {
 		OutputStream stream = new OutputStream();
 		if (string.length() >= 253) {
-			stream.writePacketVarShort(player, 95);
-			stream.writeShortLE(id);
-			stream.writeString(string);
-			stream.endPacketVarShort();
-		} else {
-			stream.writePacketVarByte(player, 52);
+			stream.writePacketVarShort(player, 114);
 			stream.writeString(string);
 			stream.writeShort128(id);
+			stream.endPacketVarShort();
+		} else {
+			stream.writePacketVarByte(player, 42);
+			stream.writeString(string);
+			stream.writeShort(id);
 			stream.endPacketVarByte();
 		}
-		// ////session.write(stream);
+		session.write(stream);
 	}
 
-	
-	/**
-	 * TODO: Test and or rework projectiles entirely.
-	 * @param receiver
-	 * @param startTile
-	 * @param endTile
-	 * @param gfxId
-	 * @param startHeight
-	 * @param endHeight
-	 * @param speed
-	 * @param delay
-	 * @param curve
-	 * @param startDistanceOffset
-	 * @param creatorSize
-	 */
-	public void sendProjectile(Entity receiver, WorldTile startTile,
-			WorldTile endTile, int gfxId, int startHeight, int endHeight,
-			int speed, int delay, int curve, int startDistanceOffset,
-			int creatorSize) {
-		/*
-		 * fuck the idiot who made this refactoring OutputStream stream =
-		 * createWorldTileStream(startTile); stream.writePacket(player, 20); int
-		 * localX = startTile.getLocalX(player.getLastLoadedMapRegionTile(),
-		 * player.getMapSize()); int localY =
-		 * startTile.getLocalY(player.getLastLoadedMapRegionTile(),
-		 * player.getMapSize()); int offsetX = localX - ((localX >> 3) << 3);
-		 * int offsetY = localY - ((localY >> 3) << 3);
-		 * stream.writeByte((offsetX << 3) | offsetY);
-		 * stream.writeByte(endTile.getX() - startTile.getX());
-		 * stream.writeByte(endTile.getY() - startTile.getY());
-		 * stream.writeShort(receiver == null ? 0 : (receiver instanceof Player
-		 * ? -(receiver.getIndex() + 1) : receiver.getIndex() + 1));
-		 * stream.writeShort(gfxId); stream.writeByte(startHeight);
-		 * stream.writeByte(endHeight); stream.writeShort(delay); int duration =
-		 * (Utils.getDistance(startTile.getX(), startTile.getY(),
-		 * endTile.getX(), endTile.getY()) * 30 / ((speed / 10) < 1 ? 1 : (speed
-		 * / 10))) + delay; stream.writeShort(duration);
-		 * stream.writeByte(curve); stream.writeShort(creatorSize * 64 +
-		 * startDistanceOffset * 64); //////session.write(stream);
-		 */
-
-		sendProjectileProper(startTile, creatorSize, creatorSize, endTile,
-				receiver != null ? receiver.getSize() : 1,
-				receiver != null ? receiver.getSize() : 1, receiver, gfxId,
-				startHeight, endHeight, delay, (Utils.getDistance(
-						startTile.getX(), startTile.getY(), endTile.getX(),
-						endTile.getY()) * 30 / ((speed / 10) < 1 ? 1
-						: (speed / 10))), startDistanceOffset, curve);
+	@Deprecated
+	public void sendProjectile(Entity receiver, WorldTile startTile, WorldTile endTile, int gfxId, int startHeight,
+							   int endHeight, int speed, int delay, int curve, int startDistanceOffset, int creatorSize) {
+		sendProjectileProper(startTile, creatorSize, creatorSize, endTile, receiver != null ? receiver.getSize() : 1,
+				receiver != null ? receiver.getSize() : 1, receiver, gfxId, startHeight, endHeight, delay,
+				(Utils.getDistance(startTile.getX(), startTile.getY(), endTile.getX(), endTile.getY()) * 30
+						/ ((speed / 10) < 1 ? 1 : (speed / 10))),
+				startDistanceOffset, curve);
 
 	}
 
-	public void sendProjectileProper(WorldTile from, int fromSizeX,
-			int fromSizeY, WorldTile to, int toSizeX, int toSizeY,
-			Entity lockOn, int gfxId, int startHeight, int endHeight,
-			int delay, int speed, int slope, int angle) {
-		WorldTile src = new WorldTile(((from.getX() << 1) + fromSizeX) >> 1,
-				((from.getY() << 1) + fromSizeY) >> 1, from.getPlane());
-		WorldTile dst = new WorldTile(((to.getX() << 1) + toSizeX) >> 1,
-				((to.getY() << 1) + toSizeY) >> 1, to.getPlane());
+	public void sendProjectileProper(WorldTile from, int fromSizeX, int fromSizeY, WorldTile to, int toSizeX,
+									 int toSizeY, Entity lockOn, int gfxId, int startHeight, int endHeight, int delay, int speed, int slope,
+									 int angle) {
+		WorldTile src = new WorldTile(((from.getX() << 1) + fromSizeX) >> 1, ((from.getY() << 1) + fromSizeY) >> 1,
+				from.getPlane());
+		WorldTile dst = new WorldTile(((to.getX() << 1) + toSizeX) >> 1, ((to.getY() << 1) + toSizeY) >> 1,
+				to.getPlane());
 		OutputStream stream = createWorldTileStream(src);
-		stream.writePacket(player, 27);
+		stream.writePacket(player, 28);
 		stream.writeByte(((src.getX() & 0x7) << 3) | (src.getY() & 0x7));
 		stream.writeByte(dst.getX() - src.getX());
 		stream.writeByte(dst.getY() - src.getY());
-		stream.writeShort(lockOn == null ? 0
-				: (lockOn instanceof Player ? -(lockOn.getIndex() + 1) : lockOn
-						.getIndex() + 1));
+		stream.writeShort(
+				lockOn == null ? 0 : (lockOn instanceof Player ? -(lockOn.getIndex() + 1) : lockOn.getIndex() + 1));
 		stream.writeShort(gfxId);
 		stream.writeByte(startHeight);
 		stream.writeByte(endHeight);
@@ -715,53 +671,257 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeShort(delay + speed);
 		stream.writeByte(angle);
 		stream.writeShort(angle);
-		// //session.write(stream);
+		session.write(stream);
 	}
 
 	public OutputStream createWorldTileStream(WorldTile tile) {
 		OutputStream stream = new OutputStream(4);
-		stream.writePacket(player, 77);
-		stream.write128Byte(tile.getPlane());
-		stream.writeByteC(tile.getLocalX(player.getLastLoadedMapRegionTile(),
-				player.getMapSize()) >> 3);
-		stream.writeByte128(tile.getLocalY(player.getLastLoadedMapRegionTile(),
-				player.getMapSize()) >> 3);
+		stream.writePacket(player, 115);
+		stream.writeByte128(tile.getPlane());
+		stream.writeByte(tile.getLocalY(player.getLastLoadedMapRegionTile(), player.getMapSize()) >> 3);
+		stream.writeByte128(tile.getLocalX(player.getLastLoadedMapRegionTile(), player.getMapSize()) >> 3);
 		return stream;
 	}
 
-	/**
-	 * This needs to be fixed. As well as Object spawning, probably rest of these.
-	 * @param item
-	 */
 	public void sendGroundItem(FloorItem item) {
 		OutputStream stream = createWorldTileStream(item.getTile());
-		int localX = item.getTile().getLocalX(
-				player.getLastLoadedMapRegionTile(), player.getMapSize());
-		int localY = item.getTile().getLocalY(
-				player.getLastLoadedMapRegionTile(), player.getMapSize());
+		int localX = item.getTile().getLocalX(player.getLastLoadedMapRegionTile(), player.getMapSize());
+		int localY = item.getTile().getLocalY(player.getLastLoadedMapRegionTile(), player.getMapSize());
 		int offsetX = localX - ((localX >> 3) << 3);
 		int offsetY = localY - ((localY >> 3) << 3);
-		stream.writePacket(player, 35);
-		stream.writeShortLE(item.getAmount());
-		stream.writeShort(0);
-		stream.writeByte((offsetX << 4) | offsetY);
-		stream.writeShort128(item.getId());
-		// //session.write(stream);
+		stream.writePacket(player, 48);
+		stream.writeShort(item.getAmount());
+		stream.writeByte128((offsetX << 4) | offsetY);
+		stream.writeShortLE128(item.getId());
+		session.write(stream);
 	}
 
 	public void sendRemoveGroundItem(FloorItem item) {
 		OutputStream stream = createWorldTileStream(item.getTile());
-		int localX = item.getTile().getLocalX(
-				player.getLastLoadedMapRegionTile(), player.getMapSize());
-		int localY = item.getTile().getLocalY(
-				player.getLastLoadedMapRegionTile(), player.getMapSize());
+		int localX = item.getTile().getLocalX(player.getLastLoadedMapRegionTile(), player.getMapSize());
+		int localY = item.getTile().getLocalY(player.getLastLoadedMapRegionTile(), player.getMapSize());
 		int offsetX = localX - ((localX >> 3) << 3);
 		int offsetY = localY - ((localY >> 3) << 3);
-		stream.writePacket(player, 46);
+		stream.writePacket(player, 0);
 		stream.writeShort128(item.getId());
 		stream.write128Byte((offsetX << 4) | offsetY);
-		// //session.write(stream);
+		session.write(stream);
 	}
+
+	public void sendSpawnedObject(WorldObject object) {
+		OutputStream stream = createWorldTileStream(object);
+		int localX = object.getLocalX(player.getLastLoadedMapRegionTile(), player.getMapSize());
+		int localY = object.getLocalY(player.getLastLoadedMapRegionTile(), player.getMapSize());
+		int offsetX = localX - ((localX >> 3) << 3);
+		int offsetY = localY - ((localY >> 3) << 3);
+		stream.writePacket(player, 1);
+		stream.writeShort(object.getId());
+		stream.writeByteC((offsetX << 4) | offsetY);
+		stream.writeByte((object.getType() << 2) + (object.getRotation() & 0x3));
+		session.write(stream);
+
+	}
+
+	public void sendDestroyObject(WorldObject object) {
+		OutputStream stream = createWorldTileStream(object);
+		int localX = object.getLocalX(player.getLastLoadedMapRegionTile(), player.getMapSize());
+		int localY = object.getLocalY(player.getLastLoadedMapRegionTile(), player.getMapSize());
+		int offsetX = localX - ((localX >> 3) << 3);
+		int offsetY = localY - ((localY >> 3) << 3);
+		stream.writePacket(player, 13);
+		stream.write128Byte((object.getType() << 2) + (object.getRotation() & 0x3));
+		stream.writeByte((offsetX << 4) | offsetY);
+		session.write(stream);
+
+	}
+
+	public void sendSystemUpdate(int delay) {
+		OutputStream stream = new OutputStream(3);
+		stream.writePacket(player, 100);
+		stream.writeShort((int) (delay * 1.6));
+		session.write(stream);
+	}
+
+	public void sendGraphics(Graphics graphics, Object target) {
+		OutputStream stream = new OutputStream(13);
+		int hash = 0;
+		if (target instanceof Player) {
+			Player p = (Player) target;
+			hash = p.getIndex() & 0xffff | 1 << 28;
+		} else if (target instanceof NPC) {
+			NPC n = (NPC) target;
+			hash = n.getIndex() & 0xffff | 1 << 29;
+		} else {
+			WorldTile tile = (WorldTile) target;
+			hash = tile.getPlane() << 28 | tile.getX() << 14 | tile.getY() & 0x3fff | 1 << 30;
+		}
+		stream.writePacket(player, 80);
+		//stream.writeByte128(0); // slot id used for entitys
+		stream.writeShort128(graphics.getSpeed());
+		stream.writeShortLE128(graphics.getId());
+		stream.writeShort128(graphics.getHeight());
+		stream.writeIntLE(hash);
+		stream.writeByte(graphics.getSettings2Hash());
+		session.write(stream);
+	}
+
+	public void sendIComponentSprite(int interfaceId, int componentId, int spriteId) {
+		OutputStream stream = new OutputStream(11);
+		stream.writePacket(player, 106);
+		stream.writeIntLE(spriteId);
+		stream.writeShortLE128(interfaceId << 16 | componentId);
+		session.write(stream);
+	}
+
+	public void sendIComponentAnimation(int emoteId, int interfaceId, int componentId) {
+		OutputStream stream = new OutputStream(9);
+		stream.writePacket(player, 112);
+		stream.writeShortLE(emoteId);
+		stream.writeIntLE(interfaceId << 16 | componentId);
+		session.write(stream);
+
+	}
+
+	public void sendItemOnIComponent(int interfaceid, int componentId, int id, int amount) {
+		OutputStream stream = new OutputStream(11);
+		stream.writePacket(player, 15);
+		stream.writeInt(interfaceid << 16 | componentId);
+		stream.writeShortLE128(id);
+		stream.writeIntLE(amount);
+		session.write(stream);
+
+	}
+
+	public void sendEntityOnIComponent(boolean isPlayer, int entityId, int interfaceId, int componentId) {
+		if (isPlayer)
+			sendPlayerOnIComponent(interfaceId, componentId);
+		else
+			sendNPCOnIComponent(interfaceId, componentId, entityId);
+	}
+
+	public void sendPlayerOnIComponent(int interfaceId, int componentId) {
+		OutputStream stream = new OutputStream(5);
+		stream.writePacket(player, 59);
+		stream.writeIntLE(interfaceId << 16 | componentId);
+		session.write(stream);
+
+	}
+
+	public void sendNPCOnIComponent(int interfaceId, int componentId, int npcId) {
+		OutputStream stream = new OutputStream(9);
+		stream.writePacket(player, 109);
+		stream.writeShort(npcId);
+		stream.writeIntV1(interfaceId << 16 | componentId);
+		session.write(stream);
+
+	}
+
+	public void sendObjectAnimation(WorldObject object, Animation animation) {
+		OutputStream stream = new OutputStream(10);
+		stream.writePacket(player, 20);
+		stream.writeIntV2(object.getTileHash());
+		stream.writeByte128((object.getType() << 2) + (object.getRotation() & 0x3));
+		stream.writeShort128(animation.getIds()[0]);
+		session.write(stream);
+	}
+
+	public void sendFriendsChatChannel() {
+		FriendChatsManager manager = player.getCurrentFriendChat();
+		OutputStream stream = new OutputStream(manager == null ? 3 : manager.getDataBlock().length + 3);
+		stream.writePacketVarShort(player, 22);
+		if (manager != null)
+			stream.writeBytes(manager.getDataBlock());
+		stream.endPacketVarShort();
+		session.write(stream);
+	}
+
+	public void sendFriends() {
+		OutputStream stream = new OutputStream();
+		stream.writePacketVarShort(player, 34);
+		for (String username : player.getFriendsIgnores().getFriends()) {
+			String displayName;
+			Player p2 = World.getPlayerByDisplayName(username);
+			if (p2 != null)
+				displayName = p2.getDisplayName();
+			else
+				displayName = Utils.formatPlayerNameForDisplay(username);
+			player.getPackets().sendFriend(Utils.formatPlayerNameForDisplay(username), displayName, 1,
+					p2 != null && player.getFriendsIgnores().isOnline(p2), false, stream);
+		}
+		stream.endPacketVarShort();
+		session.write(stream);
+	}
+
+	public void sendFriend(String username, String displayName, int world, boolean putOnline, boolean warnMessage) {
+		OutputStream stream = new OutputStream();
+		stream.writePacketVarShort(player, 34);
+		sendFriend(username, displayName, world, putOnline, warnMessage, stream);
+		stream.endPacketVarShort();
+		session.write(stream);
+	}
+
+	public void sendFriend(String username, String displayName, int world,
+						   boolean putOnline, boolean warnMessage, OutputStream stream) {
+		stream.writeByte(warnMessage ? 0 : 1);
+		stream.writeString(displayName);
+		stream.writeString(displayName.equals(username) ? "" : username);
+		stream.writeShort(putOnline ? world : 0);
+		stream.writeByte(player.getFriendsIgnores().getRank(
+				Utils.formatPlayerNameForProtocol(username)));
+		stream.writeByte(0);
+		if (putOnline) {
+			stream.writeString(Settings.SERVER_NAME);
+			stream.writeByte(0);
+		}
+	}
+
+	public void sendPrivateMessage(String username, ChatMessage message) {
+		OutputStream stream = new OutputStream();
+		stream.writePacketVarByte(player, 4);
+		stream.writeString(username);
+		Huffman.sendEncryptMessage(stream, message.getMessage(player.getDetails().isProfanityFilter()));
+		stream.endPacketVarByte();
+		session.write(stream);
+	}
+
+	public void receivePrivateMessage(String name, String display, int rights, ChatMessage message) {
+		OutputStream stream = new OutputStream();
+		stream.writePacketVarByte(player, 2);
+		stream.writeByte(name.equals(display) ? 0 : 1);
+		stream.writeString(display);
+		if (!name.equals(display))
+			stream.writeString(name);
+		for (int i = 0; i < 5; i++)
+			stream.writeByte(Utils.getRandom(255));
+		stream.writeByte(rights);
+		Huffman.sendEncryptMessage(stream, message.getMessage(player.getDetails().isProfanityFilter()));
+		stream.endPacketVarByte();
+		session.write(stream);
+	}
+
+	public void sendPlayerOption(String option, int slot, boolean top) {
+		sendPlayerOption(option, slot, top, -1);
+	}
+
+	public void sendPlayerOption(String option, int slot, boolean top, int cursor) {
+		OutputStream stream = new OutputStream();
+		stream.writePacketVarByte(player, 6);
+		stream.writeString(option);
+		stream.writeShort(cursor);
+		stream.writeByte(top ? 1 : 0);
+		stream.writeByte128(slot);
+		stream.endPacketVarByte();
+		session.write(stream);
+	}
+
+	public void sendPlayerUnderNPCPriority(boolean priority) {
+		OutputStream stream = new OutputStream(2);
+		stream.writePacket(player, 77);
+		stream.writeByte(priority ? 1 : 0);
+		session.write(stream);
+	}
+
+	// *********************************************************
 
 	public void sendCutscene(int id) {
 		OutputStream stream = new OutputStream();
@@ -798,28 +958,7 @@ public class WorldPacketsEncoder extends Encoder {
 				settingsHash);
 	}
 
-	public void sendPlayerOption(String option, int slot, boolean top) {
-		OutputStream stream = new OutputStream();
-		stream.writePacketVarByte(player, 144);
-		stream.writeString(option);
-		stream.writeByteC(top ? 1 : 0);
-		stream.writeByte(slot);
-		stream.writeShort(slot == 1 && top ? 42 : 65535);
-		stream.endPacketVarByte();
-		// //session.write(stream);
-
-	}
-
 	// CUTSCENE PACKETS START
-
-
-
-	public void sendPlayerUnderNPCPriority(boolean priority) {
-		OutputStream stream = new OutputStream(2);
-		stream.writePacket(player, 6);
-		stream.writeByteC(priority ? 1 : 0);
-		// ////session.write(stream);
-	}
 
 	public void sendHintIcon(HintIcon icon) {
 		OutputStream stream = new OutputStream(15);
@@ -891,54 +1030,6 @@ public class WorldPacketsEncoder extends Encoder {
 //		// ////session.write(stream);
 //	}
 
-	public void sendIComponentSprite(int interfaceId, int componentId,
-			int spriteId) {
-		OutputStream stream = new OutputStream(11);
-		stream.writePacket(player, 121);
-		stream.writeInt(spriteId);
-		stream.writeIntV2(interfaceId << 16 | componentId);
-		// ////session.write(stream);
-	}
-
-	public void sendIComponentAnimation(int emoteId, int interfaceId,
-			int componentId) {
-		OutputStream stream = new OutputStream(9);
-		stream.writePacket(player, 103);
-		stream.writeIntV2(emoteId);
-		stream.writeInt(interfaceId << 16 | componentId);
-		// ////session.write(stream);
-
-	}
-
-	public void sendItemOnIComponent(int interfaceid, int componentId, int id,
-			int amount) {
-		OutputStream stream = new OutputStream(11);
-		stream.writePacket(player, 152);
-		stream.writeShort128(id);
-		stream.writeIntV1(amount);
-		stream.writeIntV2(interfaceid << 16 | componentId);
-		// ////session.write(stream);
-
-	}
-
-	public void sendEntityOnIComponent(boolean isPlayer, int entityId,
-			int interfaceId, int componentId) {
-		if (isPlayer)
-			sendPlayerOnIComponent(interfaceId, componentId);
-		else
-			sendNPCOnIComponent(interfaceId, componentId, entityId);
-	}
-
-	public void sendObjectAnimation(WorldObject object, Animation animation) {
-		OutputStream stream = new OutputStream(10);
-		stream.writePacket(player, 76);
-		stream.writeInt(animation.getIds()[0]);
-		stream.writeByteC((object.getType() << 2)
-				+ (object.getRotation() & 0x3));
-		stream.writeIntLE(object.getTileHash());
-		// ////session.write(stream);
-	}
-
 	public void sendTileMessage(String message, WorldTile tile, int color) {
 		sendTileMessage(message, tile, 5000, 255, color);
 	}
@@ -963,55 +1054,6 @@ public class WorldPacketsEncoder extends Encoder {
 		// ////session.write(stream);
 	}
 
-	public void sendSpawnedObject(WorldObject object) {
-		OutputStream stream = createWorldTileStream(object);
-		int localX = object.getLocalX(player.getLastLoadedMapRegionTile(),
-				player.getMapSize());
-		int localY = object.getLocalY(player.getLastLoadedMapRegionTile(),
-				player.getMapSize());
-		int offsetX = localX - ((localX >> 3) << 3);
-		int offsetY = localY - ((localY >> 3) << 3);
-		stream.writePacket(player, 120);
-		stream.writeByte((offsetX << 4) | offsetY);
-		stream.writeByte((object.getType() << 2) + (object.getRotation() & 0x3));
-		stream.writeIntLE(object.getId());
-		// ////session.write(stream);
-
-	}
-
-	public void sendDestroyObject(WorldObject object) {
-		OutputStream stream = createWorldTileStream(object);
-		int localX = object.getLocalX(player.getLastLoadedMapRegionTile(),
-				player.getMapSize());
-		int localY = object.getLocalY(player.getLastLoadedMapRegionTile(),
-				player.getMapSize());
-		int offsetX = localX - ((localX >> 3) << 3);
-		int offsetY = localY - ((localY >> 3) << 3);
-		stream.writePacket(player, 45);
-		stream.writeByteC((object.getType() << 2)
-				+ (object.getRotation() & 0x3));
-		stream.writeByte128((offsetX << 4) | offsetY);
-		// ////session.write(stream);
-
-	}
-
-	public void sendPlayerOnIComponent(int interfaceId, int componentId) {
-		OutputStream stream = new OutputStream(5);
-		stream.writePacket(player, 23);
-		stream.writeIntV2(interfaceId << 16 | componentId);
-		// ////session.write(stream);
-
-	}
-
-	public void sendNPCOnIComponent(int interfaceId, int componentId, int npcId) {
-		OutputStream stream = new OutputStream(9);
-		stream.writePacket(player, 31);
-		stream.writeInt(npcId);
-		stream.writeInt(interfaceId << 16 | componentId);
-		// ////session.write(stream);
-
-	}
-
 	public void sendRandomOnIComponent(int interfaceId, int componentId, int id) {
 		/*
 		 * OutputStream stream = new OutputStream(); stream.writePacket(player,
@@ -1030,17 +1072,6 @@ public class WorldPacketsEncoder extends Encoder {
 		 * stream.writeShortLE128(look1); stream.writeShortLE128(look2);
 		 * stream.writeShort128(look2); //////session.write(stream);
 		 */
-	}
-
-	public void sendFriendsChatChannel() {
-		FriendChatsManager manager = player.getCurrentFriendChat();
-		OutputStream stream = new OutputStream(manager == null ? 3
-				: manager.getDataBlock().length + 3);
-		stream.writePacketVarShort(player, 117);
-		if (manager != null)
-			stream.writeBytes(manager.getDataBlock());
-		stream.endPacketVarShort();
-		// ////session.write(stream);
 	}
 
 //	public void sendClanChannel(ClansManager manager, boolean myClan) {
@@ -1064,49 +1095,6 @@ public class WorldPacketsEncoder extends Encoder {
 //		stream.endPacketVarShort();
 //		// ////session.write(stream);
 //	}
-
-	public void sendFriends() {
-		OutputStream stream = new OutputStream();
-		stream.writePacketVarShort(player, 2);
-		for (String username : player.getFriendsIgnores().getFriends()) {
-			String displayName;
-			Player p2 = World.getPlayerByDisplayName(username);
-			if (p2 != null)
-				displayName = p2.getDisplayName();
-			else
-				displayName = Utils.formatPlayerNameForDisplay(username);
-			player.getPackets().sendFriend(
-					Utils.formatPlayerNameForDisplay(username), displayName, 1,
-					p2 != null && player.getFriendsIgnores().isOnline(p2),
-					false, stream);
-		}
-		stream.endPacketVarShort();
-		// ////session.write(stream);
-	}
-
-	public void sendFriend(String username, String displayName, int world,
-			boolean putOnline, boolean warnMessage) {
-		OutputStream stream = new OutputStream();
-		stream.writePacketVarShort(player, 2);
-		sendFriend(username, displayName, world, putOnline, warnMessage, stream);
-		stream.endPacketVarShort();
-		// ////session.write(stream);
-	}
-
-	public void sendFriend(String username, String displayName, int world,
-			boolean putOnline, boolean warnMessage, OutputStream stream) {
-		stream.writeByte(warnMessage ? 0 : 1);
-		stream.writeString(displayName);
-		stream.writeString(displayName.equals(username) ? "" : username);
-		stream.writeShort(putOnline ? world : 0);
-		stream.writeByte(player.getFriendsIgnores().getRank(
-				Utils.formatPlayerNameForProtocol(username)));
-		stream.writeByte(0);
-		if (putOnline) {
-			stream.writeString(Settings.SERVER_NAME);
-			stream.writeByte(0);
-		}
-	}
 
 	public void sendIgnores() {
 		OutputStream stream = new OutputStream();
@@ -1141,16 +1129,6 @@ public class WorldPacketsEncoder extends Encoder {
 		// ////session.write(stream);
 	}
 
-	public void sendPrivateMessage(String username, ChatMessage message) {
-		OutputStream stream = new OutputStream();
-		stream.writePacketVarShort(player, 130);
-		stream.writeString(username);
-		Huffman.sendEncryptMessage(stream,
-				message.getMessage(player.getDetails().isProfanityFilter()));
-		stream.endPacketVarShort();
-		// ////session.write(stream);
-	}
-
 	public void sendGameBarStages() {
 		player.getVarsManager().sendVar(1054, player.getDetails().getClanStatus());
 		player.getVarsManager().sendVar(1055, player.getDetails().getAssistStatus());
@@ -1173,23 +1151,6 @@ public class WorldPacketsEncoder extends Encoder {
 		OutputStream stream = new OutputStream(2);
 		stream.writePacket(player, 75);
 		stream.writeByte(player.getFriendsIgnores().getPrivateStatus());
-		// ////session.write(stream);
-	}
-
-	public void receivePrivateMessage(String name, String display, int rights,
-			ChatMessage message) {
-		OutputStream stream = new OutputStream();
-		stream.writePacketVarShort(player, 105);
-		stream.writeByte(name.equals(display) ? 0 : 1);
-		stream.writeString(display);
-		if (!name.equals(display))
-			stream.writeString(name);
-		for (int i = 0; i < 5; i++)
-			stream.writeByte(Utils.getRandom(255));
-		stream.writeByte(rights);
-		Huffman.sendEncryptMessage(stream,
-				message.getMessage(player.getDetails().isProfanityFilter()));
-		stream.endPacketVarShort();
 		// ////session.write(stream);
 	}
 
@@ -1388,30 +1349,6 @@ public class WorldPacketsEncoder extends Encoder {
 		// ////session.write(stream);
 	}
 
-	public void sendGraphics(Graphics graphics, Object target) {
-		OutputStream stream = new OutputStream(13);
-		int hash = 0;
-		if (target instanceof Player) {
-			Player p = (Player) target;
-			hash = p.getIndex() & 0xffff | 1 << 28;
-		} else if (target instanceof NPC) {
-			NPC n = (NPC) target;
-			hash = n.getIndex() & 0xffff | 1 << 29;
-		} else {
-			WorldTile tile = (WorldTile) target;
-			hash = tile.getPlane() << 28 | tile.getX() << 14 | tile.getY()
-					& 0x3fff | 1 << 30;
-		}
-		stream.writePacket(player, 90);
-		stream.writeShort(graphics.getId());
-		stream.writeByte128(0); // slot id used for entitys
-		stream.writeShort(graphics.getSpeed());
-		stream.writeByte128(graphics.getSettings2Hash());
-		stream.writeShort(graphics.getHeight());
-		stream.writeIntLE(hash);
-		// ////session.write(stream);
-	}
-
 	public void sendDelayedGraphics(Graphics graphics, int delay, WorldTile tile) {
 
 	}
@@ -1452,13 +1389,6 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeShort(interfaceId);
 		stream.writeInt(xteas[3]);
 		stream.writeInt(xteas[0]);
-		// ////session.write(stream);
-	}
-
-	public void sendSystemUpdate(int delay) {
-		OutputStream stream = new OutputStream(3);
-		stream.writePacket(player, 141);
-		stream.writeShort((int) (delay * 1.6));
 		// ////session.write(stream);
 	}
 

@@ -13,7 +13,6 @@ import com.rs.game.player.ChatMessage;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
-import com.rs.game.player.PublicChatMessage;
 import com.rs.game.player.QuickChatMessage;
 import com.rs.game.player.Skills;
 import com.rs.game.player.actions.PlayerFollow;
@@ -36,13 +35,10 @@ import com.rs.utils.Huffman;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
 
-@SuppressWarnings("all")
 public final class WorldPacketsDecoder extends Decoder {
 
 	/**
 	 * The packet sizes.
-	 * TODO: Fix incoming & outgoing packets
-	 * TODO: fix packet reading, etc..
 	 */
 	public static final byte[] PACKET_SIZES = new byte[256];
 
@@ -67,60 +63,61 @@ public final class WorldPacketsDecoder extends Decoder {
 	public final static int ACTION_BUTTON8_PACKET = 12;
 	public final static int ACTION_BUTTON9_PACKET = 18;
 	public final static int ACTION_BUTTON10_PACKET = 74;
-	// Not converted
-	// found
-	private final static int PUBLIC_QUICK_CHAT_PACKET = 63;
-	private final static int OBJECT_EXAMINE_PACKET = 67;
-	private final static int SWITCH_INTERFACE_COMPONENTS_PACKET = 7238;
-	private final static int CLOSE_INTERFACE_PACKET = 50;
-	private final static int SCREEN_PACKET = 3445;
-	private final static int MOUVE_MOUSE_PACKET = 44588;
-	private final static int KEY_TYPED_PACKET = 89545;
-	private final static int OBJECT_CLICK1_PACKET = 75;
-	private final static int ITEM_TAKE_PACKET = 24;
 	private final static int NPC_CLICK1_PACKET = 22;
-	private static final int NPC_EXAMINE_PACKET = 15;
+	private final static int NPC_CLICK2_PACKET = 24;
+	private final static int NPC_CLICK3_PACKET = 27;
+	private final static int NPC_CLICK4_PACKET = 80;	
+	private final static int DONE_LOADING_REGION_PACKET = 4;
+	private final static int PUBLIC_QUICK_CHAT_PACKET = 69;
+	private final static int INTERFACE_ON_NPC = 2;
+	private final static int INTERFACE_ON_OBJECT = 58;
+	private final static int INTERFACE_ON_INTERFACE = 33;
+	private final static int INTERFACE_ON_PLAYER = 34;
 
-	private final static int AFK_PACKET = -1;
-	public final static int WORLD_MAP_CLICK = -1;
-	public final static int RECEIVE_PACKET_COUNT_PACKET = -1;
-	private final static int PLAYER_OPTION_3_PACKET = -1;
-	private final static int PLAYER_OPTION_4_PACKET = -1;
-	private final static int PLAYER_OPTION_6_PACKET = -1;
-	private final static int INTERFACE_ON_OBJECT = -1;
-	private final static int INTERFACE_ON_INTERFACE = -1;
-	private final static int DONE_LOADING_REGION_PACKET = -1;
-	private final static int ADD_FRIEND_PACKET = -1;
-	private final static int ADD_IGNORE_PACKET = -1;
+	private final static int SWITCH_INTERFACE_COMPONENTS_PACKET = 10;
+	private final static int SCREEN_PACKET = 62;
+	private static final int NPC_EXAMINE_PACKET = 15;
+	private final static int ENTER_INTEGER_PACKET = 81;
+	private final static int CLOSE_INTERFACE_PACKET = 50;
+	private final static int PLAYER_OPTION_1_PACKET = 25;
+	private final static int PLAYER_OPTION_2_PACKET = 76;
+	private final static int PLAYER_OPTION_3_PACKET = 44;
+	private final static int PLAYER_OPTION_4_PACKET = 51;
+	private final static int ENTER_NAME_PACKET = 20; 
+	private final static int ITEM_TAKE_PACKET = 30;
+	public final static int WORLD_MAP_CLICK = 23;
+	public final static int RECEIVE_PACKET_COUNT_PACKET = 71;
+	private final static int DIALOGUE_CONTINUE_PACKET = 61;
+	
+	// Convert stream order
+	private final static int ADD_FRIEND_PACKET = 79;
+	private final static int ADD_IGNORE_PACKET = 7;
+	private final static int REMOVE_FRIEND_PACKET = 17;
+	private final static int SEND_FRIEND_MESSAGE_PACKET = 40;
+	private final static int SEND_FRIEND_QUICK_CHAT_PACKET = 49;
+	private final static int JOIN_FRIEND_CHAT_PACKET = 1;
+	private final static int KICK_FRIEND_CHAT_PACKET = 64;
+	
+	private final static int KEY_TYPED_PACKET = 63;
+	private final static int AFK_PACKET = 8;
+	private final static int MOUVE_MOUSE_PACKET = 3;
+	private final static int OBJECT_CLICK1_PACKET = 75;
+	private final static int OBJECT_CLICK2_PACKET = 26;
+	private final static int OBJECT_CLICK3_PACKET = 6;
+	private final static int OBJECT_CLICK4_PACKET = 13; 
+	private final static int OBJECT_CLICK5_PACKET = 37;
+	private final static int OBJECT_EXAMINE_PACKET = 67;
+	private final static int GRAND_EXCHANGE_ITEM_SELECT_PACKET = 42;
+
+	// Not converted
 	private final static int REMOVE_IGNORE_PACKET = -1;
-	private final static int JOIN_FRIEND_CHAT_PACKET = -1;
 	private final static int CHANGE_FRIEND_CHAT_PACKET = -1;
-	private final static int KICK_FRIEND_CHAT_PACKET = -1;
 	private final static int KICK_CLAN_CHAT_PACKET = -1;
-	private final static int REMOVE_FRIEND_PACKET = -1;
-	private final static int SEND_FRIEND_MESSAGE_PACKET = -1;
-	private final static int SEND_FRIEND_QUICK_CHAT_PACKET = -1;
-	private final static int OBJECT_CLICK2_PACKET = -1;
-	private final static int OBJECT_CLICK3_PACKET = -1;
-	private final static int OBJECT_CLICK4_PACKET = -1;
-	private final static int OBJECT_CLICK5_PACKET = -1;
-	private final static int NPC_CLICK2_PACKET = 23;
-	private final static int NPC_CLICK3_PACKET = -1;
-	private final static int NPC_CLICK4_PACKET = -1;
-	private final static int PLAYER_OPTION_1_PACKET = -1;
-	private final static int PLAYER_OPTION_2_PACKET = -1;
-	private final static int PLAYER_OPTION_9_PACKET = -1;
-	private final static int DIALOGUE_CONTINUE_PACKET = -1;
-	private final static int ENTER_INTEGER_PACKET = -1;
-	private final static int ENTER_NAME_PACKET = -1;
 	private final static int ENTER_LONG_TEXT_PACKET = -1;
-	private final static int INTERFACE_ON_PLAYER = -1;
-	private final static int INTERFACE_ON_NPC = -1;
-	private final static int COLOR_ID_PACKET = -1;
-	private static final int FORUM_THREAD_ID_PACKET = -1;
-	private final static int OPEN_URL_PACKET = -1;
 	private final static int REPORT_ABUSE_PACKET = -1;
-	private final static int GRAND_EXCHANGE_ITEM_SELECT_PACKET = -1;
+	private final static int PLAYER_OPTION_6_PACKET = -1;
+	private final static int PLAYER_OPTION_9_PACKET = -1;
+	private final static int OPEN_URL_PACKET = -1;
 
 	private Player player;
 	private int chatType;
@@ -129,8 +126,6 @@ public final class WorldPacketsDecoder extends Decoder {
 	}
 
 	public static void loadPacketSizes() {
-		for (int i : PACKET_SIZES)
-			PACKET_SIZES[i] = -3;
 		PACKET_SIZES[17] = -1;
 		PACKET_SIZES[76] = 3;
 		PACKET_SIZES[46] = 3;
@@ -173,7 +168,8 @@ public final class WorldPacketsDecoder extends Decoder {
 		PACKET_SIZES[18] = 8;
 		PACKET_SIZES[23] = 4;
 		PACKET_SIZES[40] = -1;
-		PACKET_SIZES[63] = -1;
+		PACKET_SIZES[63] = 3;
+		PACKET_SIZES[69] = 4;
 		PACKET_SIZES[58] = 15;
 		PACKET_SIZES[39] = 0;
 		PACKET_SIZES[42] = 2;
@@ -215,7 +211,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		PACKET_SIZES[6] = 7;
 		PACKET_SIZES[15] = 2;
 		PACKET_SIZES[47] = 3;
-		PACKET_SIZES[0] = 7;
+		PACKET_SIZES[0] = 0;
 
 	}
 
@@ -269,7 +265,7 @@ public final class WorldPacketsDecoder extends Decoder {
 	public static void decodeLogicPacket(final Player player, LogicPacket packet) {
 		int packetId = packet.getId();
 		InputStream stream = new InputStream(packet.getData());
-//		System.out.println("packet: " + packetId);
+		System.out.println("packet: " + packetId);
 		if (packetId == WALKING_PACKET || packetId == MINI_WALKING_PACKET) {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
@@ -318,11 +314,11 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
 				return;
-			final int itemId = stream.readUnsignedShort();
-			int playerIndex = stream.readUnsignedShort();
-			int interfaceHash = stream.readIntV2();
-			int interfaceSlot = stream.readUnsignedShortLE128();
-			final boolean forceRun = stream.read128Byte() == 1;
+			final int itemId = stream.readUnsignedShort128();
+			int interfaceSlot = stream.readUnsignedShortLE();
+			int playerIndex = stream.readUnsignedShortLE128();
+			final boolean forceRun = stream.readUnsignedByteC() == 1;
+			int interfaceHash = stream.readInt();
 			int interfaceId = interfaceHash >> 16;
 			int componentId = interfaceHash - (interfaceId << 16);
 			if (Utils.getInterfaceDefinitionsSize() <= interfaceId)
@@ -555,14 +551,15 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
 				return;
-			boolean forceRun = stream.readByte() == 1;
-			int interfaceHash = stream.readInt();
-			int npcIndex = stream.readUnsignedShortLE();
-			int interfaceSlot = stream.readUnsignedShortLE128();
 			@SuppressWarnings("unused")
-			int junk2 = stream.readUnsignedShortLE();
+			int itemId = stream.readUnsignedShortLE128();
+			int interfaceHash = stream.readIntV2();
+			int interfaceSlot = stream.readUnsignedShort128();
+			int npcIndex = stream.readUnsignedShortLE128();
+			boolean forceRun = stream.readUnsignedByte128() == 1;
 			int interfaceId = interfaceHash >> 16;
 			int componentId = interfaceHash - (interfaceId << 16);
+			
 			if (Utils.getInterfaceDefinitionsSize() <= interfaceId)
 				return;
 			if (!player.getInterfaceManager().containsInterface(interfaceId))
@@ -785,13 +782,13 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (Settings.DEBUG)
 				System.out.println("Spell:" + componentId);
 		} else if (packetId == INTERFACE_ON_OBJECT) {
-			boolean forceRun = stream.readByte128() == 1;
-			int itemId = stream.readShortLE128();
-			int y = stream.readShortLE128();
-			int objectId = stream.readIntV2();
+			int slot = stream.readShort();
+			int itemId = stream.readShortLE();
+			int objectId = stream.readShortLE();
+			int y = stream.readShort();
+			boolean forceRun = stream.readByteC() == 1;
 			int interfaceHash = stream.readInt();
 			final int interfaceId = interfaceHash >> 16;
-			int slot = stream.readShortLE();
 			int x = stream.readShort128();
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
@@ -829,8 +826,8 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
-			boolean forceRun = stream.readUnsignedByte() == 1;
-			int playerIndex = stream.readUnsignedShortLE128();
+			int playerIndex = stream.readUnsignedShort128();
+			boolean forceRun = stream.readUnsignedByte128() == 1;
 			Player p2 = World.getPlayers().get(playerIndex);
 			if (forceRun)
 				player.setRun(forceRun);
@@ -879,8 +876,8 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
+			int playerIndex = stream.readUnsignedShort();
 			boolean forceRun = stream.readUnsignedByte() == 1;
-			int playerIndex = stream.readUnsignedShortLE128();
 			Player p2 = World.getPlayers().get(playerIndex);
 			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
@@ -895,7 +892,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.getActionManager().setAction(new PlayerFollow(p2));
 		} else if (packetId == PLAYER_OPTION_3_PACKET) {
 			final boolean forceRun = stream.readUnsignedByte() == 1;
-			int playerIndex = stream.readUnsignedShortLE128();
+			int playerIndex = stream.readUnsignedShort128();
 			final Player p2 = World.getPlayers().get(playerIndex);
 			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
@@ -913,8 +910,8 @@ public final class WorldPacketsDecoder extends Decoder {
 				}
 			}));
 		} else if (packetId == PLAYER_OPTION_4_PACKET) {
-			boolean forceRun = stream.readUnsignedByte() == 1;
 			int playerIndex = stream.readUnsignedShortLE128();
+			boolean forceRun = stream.readUnsignedByte() == 1;
 			final Player p2 = World.getPlayers().get(playerIndex);
 			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
@@ -981,8 +978,8 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (forceRun)
 				player.setRun(forceRun);
 			player.stopAll();
-			if (player.getDetails().getRights().isStaff())
-				player.getDialogueManager().startDialogue("ModReportD", p2);
+//			if (player.getRights().isStaff())
+//				player.getDialogueManager().startDialogue("ModReportD", p2);
 //			else
 //				ReportAbuse.report(player, p2.getDisplayName());
 		} else if (packetId == PLAYER_OPTION_9_PACKET) {
@@ -1068,9 +1065,9 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			if (player.isLocked())
 				return;
-			int y = stream.readUnsignedShort();
+			int x = stream.readUnsignedShort128();
 			final int id = stream.readUnsignedShort();
-			int x = stream.readUnsignedShort();
+			int y = stream.readUnsignedShortLE128();
 			boolean forceRun = stream.readByte() == 1;
 			final WorldTile tile = new WorldTile(x, y, player.getPlane());
 			final int regionId = tile.getRegionId();
@@ -1105,7 +1102,6 @@ public final class WorldPacketsDecoder extends Decoder {
 				}
 			}));
 		}
-		
 		NPCDispatcher.executeMobInteraction(player, stream, packetId == NPC_CLICK1_PACKET ? 1 :packetId ==  NPC_CLICK2_PACKET ? 2 :packetId ==  NPC_CLICK3_PACKET ? 3 : packetId == NPC_CLICK4_PACKET ? 4 : 5);
 	}
 
@@ -1117,16 +1113,14 @@ public final class WorldPacketsDecoder extends Decoder {
 			// USELESS PACKET
 		} else if (packetId == KEY_TYPED_PACKET) {
 			// USELESS PACKET
-			int read = stream.readUnsignedByte();
-			System.out.println("key"+read);
 		} else if (packetId == RECEIVE_PACKET_COUNT_PACKET) {
 			// interface packets
-			stream.readInt();
+			stream.readShort();
 
 		} else if (packetId == INTERFACE_ON_INTERFACE) {
 			RSInterfaceDispatcher.handleInterfaceOnInterface(player, stream);
 		} else if (packetId == AFK_PACKET) {
-			player.getSession().getChannel().close();
+			//player.getSession().getChannel().close();
 		} else if (packetId == CLOSE_INTERFACE_PACKET) {
 			if (player.isStarted() && !player.hasFinished()
 					&& !player.isRunning()) { // used
@@ -1178,8 +1172,8 @@ public final class WorldPacketsDecoder extends Decoder {
 			}
 			clicked = true;
 		} else if (packetId == DIALOGUE_CONTINUE_PACKET) {
-			int interfaceHash = stream.readInt();
-			int junk = stream.readShort128();
+			int junk = stream.readShortLE128();
+			int interfaceHash = stream.readIntV2();
 			int interfaceId = interfaceHash >> 16;
 			int buttonId = (interfaceHash & 0xFF);
 			if (Utils.getInterfaceDefinitionsSize() <= interfaceId) {
@@ -1198,7 +1192,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.getDialogueManager().continueDialogue(interfaceId,
 					componentId);
 		} else if (packetId == WORLD_MAP_CLICK) {
-			int coordinateHash = stream.readInt();
+			int coordinateHash = stream.readIntV2();
 			int x = coordinateHash >> 14;
 			int y = coordinateHash & 0x3fff;
 			int plane = coordinateHash >> 28;
@@ -1213,10 +1207,18 @@ public final class WorldPacketsDecoder extends Decoder {
 						-1, true);
 				player.getVarsManager().sendVar(1159, coordinateHash);
 			}
-		} else if (packetId == ACTION_BUTTON1_PACKET || packetId == ACTION_BUTTON2_PACKET || packetId == ACTION_BUTTON4_PACKET || packetId == ACTION_BUTTON5_PACKET || packetId == ACTION_BUTTON6_PACKET || packetId == ACTION_BUTTON7_PACKET || packetId == ACTION_BUTTON8_PACKET || packetId == ACTION_BUTTON3_PACKET || packetId == ACTION_BUTTON9_PACKET || packetId == ACTION_BUTTON10_PACKET) {
+		} else if (packetId == ACTION_BUTTON1_PACKET
+				|| packetId == ACTION_BUTTON2_PACKET
+				|| packetId == ACTION_BUTTON4_PACKET
+				|| packetId == ACTION_BUTTON5_PACKET
+				|| packetId == ACTION_BUTTON6_PACKET
+				|| packetId == ACTION_BUTTON7_PACKET
+				|| packetId == ACTION_BUTTON8_PACKET
+				|| packetId == ACTION_BUTTON3_PACKET
+				|| packetId == ACTION_BUTTON9_PACKET
+				|| packetId == ACTION_BUTTON10_PACKET) {
 			RSInterfaceDispatcher.handleButtons(player, stream, packetId);
-		} 
-		else if (packetId == ENTER_NAME_PACKET) {
+		} else if (packetId == ENTER_NAME_PACKET) {
 			if (!player.isRunning() || player.isDead())
 				return;
 			String value = stream.readString();
@@ -1378,21 +1380,21 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == SWITCH_INTERFACE_COMPONENTS_PACKET) {
 
 			int fromInterfaceHash = stream.readInt();
-			int toSlot = stream.readUnsignedShortLE();
+			int idk2 = stream.readUnsignedShortLE128();
+			int toSlot = stream.readUnsignedShortLE128();
 			int toInterfaceHash = stream.readIntV1();
-			int idk1 = stream.readUnsignedShort();
 			int fromSlot = stream.readUnsignedShortLE128();
-			int idk = stream.readUnsignedShortLE128();
-
-			// System.out.println(fromInterfaceHash + " IDK:" + idk + " "
-			// + toInterfaceHash + " " + idk1 + " " + fromSlot + " "
-			// + toSlot);
+			int idk = stream.readUnsignedShort();
 
 			int toInterfaceId = toInterfaceHash >> 16;
 			int toComponentId = toInterfaceHash - (toInterfaceId << 16);
 			int fromInterfaceId = fromInterfaceHash >> 16;
 			int fromComponentId = fromInterfaceHash - (fromInterfaceId << 16);
-
+			
+			// System.out.println(fromInterfaceHash + " IDK:" + idk + " "
+			// + toInterfaceHash + " " + idk1 + " " + fromSlot + " "
+			// + toSlot);
+			
 			// System.out.println(toInterfaceId + " " + fromInterfaceId + " "
 			// + fromComponentId + " " + toComponentId);
 
@@ -1450,7 +1452,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == DONE_LOADING_REGION_PACKET) {
 			/*
 			 * if(!player.isClientLoadedMapRegion()) { //load objects and items
-			 * here player.setisClientLoadedMapRegion(); }
+			 * here player.setClientHasLoadedMapRegion(); }
 			 * //player.refreshSpawnedObjects(); //player.refreshSpawnedItems();
 			 */
 		} else if (packetId == WALKING_PACKET
@@ -1474,15 +1476,14 @@ public final class WorldPacketsDecoder extends Decoder {
 				|| packetId == OBJECT_CLICK3_PACKET
 				|| packetId == OBJECT_CLICK4_PACKET
 				|| packetId == OBJECT_CLICK5_PACKET
-				|| packetId == 3 || packetId == 2 || packetId == 8 || packetId == KEY_TYPED_PACKET
 				|| packetId == INTERFACE_ON_OBJECT)
 			player.addLogicPacketToQueue(new LogicPacket(packetId, length,
 					stream));
 		else if (packetId == OBJECT_EXAMINE_PACKET) {
+			System.out.println("examine packet");
 			ObjectDispatcher.handleOption(player, stream, -1);
 		} else if (packetId == NPC_EXAMINE_PACKET) {
-//			NPCDispatcher.handleExamine(player, stream);
-			//doesn't work, examines might be handled elsewhere..
+//			NPCHandler.handleExamine(player, stream);
 		} else if (packetId == JOIN_FRIEND_CHAT_PACKET) {
 			if (!player.isStarted())
 				return;
@@ -1598,16 +1599,19 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == CHAT_PACKET) {
 			if (!player.isStarted())
 				return;
-			int effects = stream.readUnsignedByte();
-			int numChars = stream.readUnsignedByte();
+			if (player.getLastPublicMessage() > Utils.currentTimeMillis())
+				return;
+			player.setLastPublicMessage(Utils.currentTimeMillis() + 300);
+			int colorEffect = stream.readUnsignedByte();
+			int moveEffect = stream.readUnsignedByte();
 			String message = Huffman.readEncryptedMessage(200, stream);
-			System.out.println(message);
 			if (message == null || message.replaceAll(" ", "").equals(""))
 				return;
 			if (message.startsWith("::") || message.startsWith(";;")) {
 				// if command exists and processed wont send message as public
 				// message
-				CommandDispatcher.processCommand(player, message.replace("::", "").replace(";;", ""), false, false);
+				CommandDispatcher.processCommand(player, message.replace("::", "")
+						.replace(";;", ""), false, false);
 				return;
 			}
 			if (player.getDetails().getMuted() > Utils.currentTimeMillis()) {
@@ -1615,6 +1619,7 @@ public final class WorldPacketsDecoder extends Decoder {
 						"You temporary muted. Recheck in 48 hours.");
 				return;
 			}
+			int effects = (colorEffect << 8) | (moveEffect & 0xff);
 //			if (chatType == 1)
 //				player.sendFriendsChannelMessage(new ChatMessage(message));
 //			else if (chatType == 2)
@@ -1622,7 +1627,8 @@ public final class WorldPacketsDecoder extends Decoder {
 //			else if (chatType == 3)
 //				player.sendGuestClanChannelMessage(new ChatMessage(message));
 //			else
-				player.sendPublicChatMessage(new PublicChatMessage(message, effects));
+//				player.sendPublicChatMessage(new PublicChatMessage(message,
+//						effects));
 			if (Settings.DEBUG)
 				Logger.log(this, "Chat type: " + chatType);
 		} else if (packetId == COMMANDS_PACKET) {
@@ -1632,18 +1638,9 @@ public final class WorldPacketsDecoder extends Decoder {
 			@SuppressWarnings("unused")
 			boolean unknown = stream.readUnsignedByte() == 1;
 			String command = stream.readString();
-			if (!CommandDispatcher.processCommand(player, command, true, clientCommand) && Settings.DEBUG)
+			if (!CommandDispatcher.processCommand(player, command, true, clientCommand)
+					&& Settings.DEBUG)
 				Logger.log(this, "Command: " + command);
-				Logger.log(this, "Command: " + command);
-		} else if (packetId == COLOR_ID_PACKET) {
-			if (!player.isStarted())
-				return;
-			int colorId = stream.readUnsignedShort();
-//			if (player.getTemporaryAttributtes().get("SkillcapeCustomize") != null)
-//				SkillCapeCustomizer.handleSkillCapeCustomizerColor(player,
-//						colorId);
-//			else if (player.getTemporaryAttributtes().get("MottifCustomize") != null)
-//				ClansManager.setMottifColor(player, colorId);
 		} else if (packetId == REPORT_ABUSE_PACKET) {
 			if (!player.isStarted())
 				return;
