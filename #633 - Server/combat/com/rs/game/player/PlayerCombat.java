@@ -146,7 +146,7 @@ public class PlayerCombat extends Action {
 						continue;
 					for (int playerIndex : playerIndexes) {
 						Player p2 = World.getPlayers().get(playerIndex);
-						if (p2 == null || p2 == player || p2 == target || p2.isDead() || !p2.hasStarted()
+						if (p2 == null || p2 == player || p2 == target || p2.isDead() || !p2.isStarted()
 								|| p2.hasFinished() || !p2.isCanPvp() || !p2.isAtMultiArea()
 								|| !p2.withinDistance(target, maxDistance) || !player.getControlerManager().canHit(p2))
 							continue;

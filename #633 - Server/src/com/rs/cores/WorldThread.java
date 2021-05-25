@@ -31,7 +31,7 @@ public final class WorldThread extends Thread {
 			}
 			try {
 				for (Player player : World.getPlayers()) {
-					if (player == null || !player.hasStarted() || player.hasFinished())
+					if (player == null || !player.isStarted() || player.hasFinished())
 						continue;
 					player.processEntity();
 				}
@@ -45,7 +45,7 @@ public final class WorldThread extends Thread {
 			}
 			try {
 				for (Player player : World.getPlayers()) {
-					if (player == null || !player.hasStarted() || player.hasFinished())
+					if (player == null || !player.isStarted() || player.hasFinished())
 						continue;
 					player.processEntityUpdate();
 				}
@@ -63,7 +63,7 @@ public final class WorldThread extends Thread {
 				// debug = Utils.currentTimeMillis();
 
 				for (Player player : World.getPlayers()) {
-					if (player == null || !player.hasStarted() || player.hasFinished())
+					if (player == null || !player.isStarted() || player.hasFinished())
 						continue;
 					player.getPackets().sendLocalPlayersUpdate();
 					player.getPackets().sendLocalNPCsUpdate();
@@ -76,7 +76,7 @@ public final class WorldThread extends Thread {
 				// "+World.getPlayers().size()+", "+World.getNPCs().size());
 				// debug = Utils.currentTimeMillis();
 				for (Player player : World.getPlayers()) {
-					if (player == null || !player.hasStarted() || player.hasFinished())
+					if (player == null || !player.isStarted() || player.hasFinished())
 						continue;
 					player.resetMasks();
 				}

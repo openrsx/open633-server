@@ -288,7 +288,7 @@ public final class MusicsManager {
 	}
 
 	public void playMusic(int musicId) {
-		if (!player.hasStarted())
+		if (!player.isStarted())
 			return;
 		playingMusicDelay = Utils.currentTimeMillis();
 		if (musicId == -2) {

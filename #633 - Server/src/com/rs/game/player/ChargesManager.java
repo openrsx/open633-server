@@ -1,6 +1,5 @@
 package com.rs.game.player;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
 import com.rs.cache.loaders.ItemDefinitions;

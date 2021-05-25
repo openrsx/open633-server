@@ -381,7 +381,7 @@ public final class World {
 				if (musicId != -1)
 					player.getMusicsManager().checkMusic(musicId);
 				player.getControlerManager().moved();
-				if (player.hasStarted())
+				if (player.isStarted())
 					checkControlersAtMove(player);
 			} else {
 				if (entity.getLastRegionId() > 0)
@@ -394,7 +394,7 @@ public final class World {
 			if (entity instanceof Player) {
 				Player player = (Player) entity;
 				player.getControlerManager().moved();
-				if (player.hasStarted())
+				if (player.isStarted())
 					checkControlersAtMove(player);
 			}
 			entity.checkMultiArea();
@@ -850,7 +850,7 @@ public final class World {
 		exiting_start = Utils.currentTimeMillis();
 		exiting_delay = delay;
 		for (Player player : World.getPlayers()) {
-			if (player == null || !player.hasStarted() || player.hasFinished())
+			if (player == null || !player.isStarted() || player.hasFinished())
 				continue;
 			player.getPackets().sendSystemUpdate(delay);
 		}
@@ -859,7 +859,7 @@ public final class World {
 			public void run() {
 				try {
 					for (Player player : World.getPlayers()) {
-						if (player == null || !player.hasStarted())
+						if (player == null || !player.isStarted())
 							continue;
 						player.realFinish(true);
 					}
@@ -1004,7 +1004,7 @@ public final class World {
 		}
 		floorItem.setInvisible(false);
 		for (Player player : players) {
-			if (player == null || player == realOwner || !player.hasStarted() || player.hasFinished()
+			if (player == null || player == realOwner || !player.isStarted() || player.hasFinished()
 					|| player.getPlane() != floorItem.getTile().getPlane()
 					|| !player.getMapRegionsIds().contains(regionId))
 				continue;
@@ -1022,7 +1022,7 @@ public final class World {
 		final Region region = getRegion(tile.getRegionId());
 		region.getGroundItemsSafe().add(floorItem);
 		for (Player player : players) {
-			if (player == null || !player.hasStarted() || player.hasFinished()
+			if (player == null || !player.isStarted() || player.hasFinished()
 					|| player.getPlane() != floorItem.getTile().getPlane()
 					|| !player.getMapRegionsIds().contains(regionId))
 				continue;
@@ -1070,7 +1070,7 @@ public final class World {
 			// visible
 			int regionId = tile.getRegionId();
 			for (Player player : players) {
-				if (player == null || !player.hasStarted() || player.hasFinished()
+				if (player == null || !player.isStarted() || player.hasFinished()
 						|| player.getPlane() != tile.getPlane() || !player.getMapRegionsIds().contains(regionId))
 					continue;
 				player.getPackets().sendGroundItem(floorItem);
@@ -1105,7 +1105,7 @@ public final class World {
 						return;
 					region.getGroundItemsSafe().remove(floorItem);
 					for (Player player : World.getPlayers()) {
-						if (player == null || !player.hasStarted() || player.hasFinished()
+						if (player == null || !player.isStarted() || player.hasFinished()
 								|| player.getPlane() != floorItem.getTile().getPlane()
 								|| !player.getMapRegionsIds().contains(regionId))
 							continue;
@@ -1140,7 +1140,7 @@ public final class World {
 			return true;
 		} else {
 			for (Player p2 : World.getPlayers()) {
-				if (p2 == null || !p2.hasStarted() || p2.hasFinished()
+				if (p2 == null || !p2.isStarted() || p2.hasFinished()
 						|| p2.getPlane() != floorItem.getTile().getPlane() || !p2.getMapRegionsIds().contains(regionId))
 					continue;
 				p2.getPackets().sendRemoveGroundItem(floorItem);
@@ -1168,7 +1168,7 @@ public final class World {
 	public static final void sendObjectAnimation(Entity creator, WorldObject object, Animation animation) {
 		if (creator == null) {
 			for (Player player : World.getPlayers()) {
-				if (player == null || !player.hasStarted() || player.hasFinished() || !player.withinDistance(object))
+				if (player == null || !player.isStarted() || player.hasFinished() || !player.withinDistance(object))
 					continue;
 				player.getPackets().sendObjectAnimation(object, animation);
 			}
@@ -1179,7 +1179,7 @@ public final class World {
 					continue;
 				for (Integer playerIndex : playersIndexes) {
 					Player player = players.get(playerIndex);
-					if (player == null || !player.hasStarted() || player.hasFinished()
+					if (player == null || !player.isStarted() || player.hasFinished()
 							|| !player.withinDistance(object))
 						continue;
 					player.getPackets().sendObjectAnimation(object, animation);
@@ -1191,7 +1191,7 @@ public final class World {
 	public static final void sendGraphics(Entity creator, Graphics graphics, WorldTile tile) {
 		if (creator == null) {
 			for (Player player : World.getPlayers()) {
-				if (player == null || !player.hasStarted() || player.hasFinished() || !player.withinDistance(tile))
+				if (player == null || !player.isStarted() || player.hasFinished() || !player.withinDistance(tile))
 					continue;
 				player.getPackets().sendGraphics(graphics, tile);
 			}
@@ -1202,7 +1202,7 @@ public final class World {
 					continue;
 				for (Integer playerIndex : playersIndexes) {
 					Player player = players.get(playerIndex);
-					if (player == null || !player.hasStarted() || player.hasFinished() || !player.withinDistance(tile))
+					if (player == null || !player.isStarted() || player.hasFinished() || !player.withinDistance(tile))
 						continue;
 					player.getPackets().sendGraphics(graphics, tile);
 				}
@@ -1218,7 +1218,7 @@ public final class World {
 				continue;
 			for (Integer playerIndex : playersIndexes) {
 				Player player = players.get(playerIndex);
-				if (player == null || !player.hasStarted() || player.hasFinished()
+				if (player == null || !player.isStarted() || player.hasFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
 					continue;
 				player.getPackets().sendProjectile(null, startTile, receiver, gfxId, startHeight, endHeight, speed,
@@ -1235,7 +1235,7 @@ public final class World {
 				continue;
 			for (Integer playerIndex : playersIndexes) {
 				Player player = players.get(playerIndex);
-				if (player == null || !player.hasStarted() || player.hasFinished()
+				if (player == null || !player.isStarted() || player.hasFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
 					continue;
 				player.getPackets().sendProjectile(receiver, shooter, receiver, gfxId, startHeight, endHeight, speed,
@@ -1252,7 +1252,7 @@ public final class World {
 				continue;
 			for (Integer playerIndex : playersIndexes) {
 				Player player = players.get(playerIndex);
-				if (player == null || !player.hasStarted() || player.hasFinished()
+				if (player == null || !player.isStarted() || player.hasFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
 					continue;
 				player.getPackets().sendProjectile(null, shooter, receiver, gfxId, startHeight, endHeight, speed, delay,
@@ -1269,7 +1269,7 @@ public final class World {
 				continue;
 			for (Integer playerIndex : playersIndexes) {
 				Player player = players.get(playerIndex);
-				if (player == null || !player.hasStarted() || player.hasFinished()
+				if (player == null || !player.isStarted() || player.hasFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
 					continue;
 				int size = shooter.getSize();

@@ -141,7 +141,7 @@ public final class TormentedDemon extends NPC {
 			if (playerIndexes != null) {
 				for (int npcIndex : playerIndexes) {
 					Player player = World.getPlayers().get(npcIndex);
-					if (player == null || player.isDead() || player.hasFinished() || !player.hasStarted()
+					if (player == null || player.isDead() || player.hasFinished() || !player.isStarted()
 							|| !player.withinDistance(tile, 3))
 						continue;
 					player.getPackets().sendGameMessage("The demon's magical attack splashes on you.");

@@ -57,7 +57,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				InventoryDispatcher.execute(player, item, 1);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON2_PACKET:
-				if (player.isEquipDisabled())
+				if (player.isDisableEquip())
 					return;
 				if (player.getSwitchItemCache().isEmpty()) {
 					player.getSwitchItemCache().add(slotId);

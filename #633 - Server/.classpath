@@ -5,7 +5,7 @@
 	<classpathentry kind="src" path="network"/>
 	<classpathentry kind="src" path="fs"/>
 	<classpathentry kind="src" path="plugins"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_241">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="data/library/guava-22.0.jar"/>
 	<classpathentry kind="lib" path="data/library/netty-3.6.6.Final.jar"/>
 	<classpathentry kind="lib" path="data/library/fastutil-8.2.1.jar"/>
+	<classpathentry kind="lib" path="data/library/lombok-1.18.20.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

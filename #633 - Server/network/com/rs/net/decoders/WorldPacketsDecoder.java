@@ -271,7 +271,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		InputStream stream = new InputStream(packet.getData());
 //		System.out.println("packet: " + packetId);
 		if (packetId == WALKING_PACKET || packetId == MINI_WALKING_PACKET) {
-			if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
+			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
 			if (player.isLocked())
@@ -313,7 +313,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				player.getPackets().sendResetMinimapFlag();
 			}
 		} else if (packetId == INTERFACE_ON_PLAYER) {
-			if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
+			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
 			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
@@ -550,7 +550,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (Settings.DEBUG)
 				System.out.println("Spell:" + componentId);
 		} else if (packetId == INTERFACE_ON_NPC) {
-			if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
+			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
 			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
@@ -793,7 +793,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			final int interfaceId = interfaceHash >> 16;
 			int slot = stream.readShortLE();
 			int x = stream.readShort128();
-			if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
+			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
 			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
@@ -826,7 +826,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				break;
 			}
 		} else if (packetId == PLAYER_OPTION_1_PACKET) {
-			if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
+			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
 			boolean forceRun = stream.readUnsignedByte() == 1;
@@ -876,7 +876,7 @@ public final class WorldPacketsDecoder extends Decoder {
 
 			player.getActionManager().setAction(new PlayerCombat(p2));
 		} else if (packetId == PLAYER_OPTION_2_PACKET) {
-			if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
+			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
 			boolean forceRun = stream.readUnsignedByte() == 1;
@@ -929,7 +929,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					if (!player.getControlerManager().canPlayerOption4(p2))
 						return;
 					player.stopAll();
-					if (player.isStarter()) {
+					if (player.isStarted()) {
 						player.getPackets()
 								.sendGameMessage(
 										"You can't trade for the first half hour after creating account.");
@@ -967,7 +967,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				}
 			}));
 		} else if (packetId == PLAYER_OPTION_6_PACKET) {
-			if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
+			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
 			boolean forceRun = stream.readUnsignedByte() == 1;
@@ -1000,7 +1000,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			
 //			ClansManager.viewInvite(player, p2);
 		} else if (packetId == ATTACK_NPC) {
-			if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
+			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
 			boolean forceRun = stream.readByteC() == 1;
@@ -1063,7 +1063,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		else if (packetId == OBJECT_CLICK5_PACKET)
 			ObjectDispatcher.handleOption(player, stream, 5);
 		else if (packetId == ITEM_TAKE_PACKET) {
-			if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
+			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
 			if (player.isLocked())
@@ -1128,7 +1128,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == AFK_PACKET) {
 			player.getSession().getChannel().close();
 		} else if (packetId == CLOSE_INTERFACE_PACKET) {
-			if (player.hasStarted() && !player.hasFinished()
+			if (player.isStarted() && !player.hasFinished()
 					&& !player.isRunning()) { // used
 				// for
 				// old
@@ -1152,7 +1152,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.setScreenHeight((short) stream.readUnsignedShort());
 			@SuppressWarnings("unused")
 			boolean switchScreenMode = stream.readUnsignedByte() == 1;
-			if (!player.hasStarted() || player.hasFinished()
+			if (!player.isStarted() || player.hasFinished()
 					|| displayMode == player.getDisplayMode()
 					|| !player.getInterfaceManager().containsInterface(742))
 				return;
@@ -1449,8 +1449,8 @@ public final class WorldPacketsDecoder extends Decoder {
 						+ fromSlot + ", " + toSlot);
 		} else if (packetId == DONE_LOADING_REGION_PACKET) {
 			/*
-			 * if(!player.clientHasLoadedMapRegion()) { //load objects and items
-			 * here player.setClientHasLoadedMapRegion(); }
+			 * if(!player.isClientLoadedMapRegion()) { //load objects and items
+			 * here player.setisClientLoadedMapRegion(); }
 			 * //player.refreshSpawnedObjects(); //player.refreshSpawnedItems();
 			 */
 		} else if (packetId == WALKING_PACKET
@@ -1484,18 +1484,18 @@ public final class WorldPacketsDecoder extends Decoder {
 //			NPCDispatcher.handleExamine(player, stream);
 			//doesn't work, examines might be handled elsewhere..
 		} else if (packetId == JOIN_FRIEND_CHAT_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			FriendChatsManager.joinChat(stream.readString(), player);
 		} else if (packetId == KICK_FRIEND_CHAT_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			player.setLastPublicMessage(Utils.currentTimeMillis() + 1000); // avoids
 			// message
 			// appearing
 			player.kickPlayerFromFriendsChannel(stream.readString());
 		} else if (packetId == KICK_CLAN_CHAT_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			player.setLastPublicMessage(Utils.currentTimeMillis() + 1000); // avoids
 			// message
@@ -1506,30 +1506,30 @@ public final class WorldPacketsDecoder extends Decoder {
 			stream.readUnsignedShort();
 //			player.kickPlayerFromClanChannel(stream.readString());
 		} else if (packetId == CHANGE_FRIEND_CHAT_PACKET) {
-			if (!player.hasStarted()
+			if (!player.isStarted()
 					|| !player.getInterfaceManager().containsInterface(1108))
 				return;
 			player.getFriendsIgnores().changeRank(stream.readString(),
 					stream.readUnsignedByte128());
 		} else if (packetId == ADD_FRIEND_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			player.getFriendsIgnores().addFriend(stream.readString());
 		} else if (packetId == REMOVE_FRIEND_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			player.getFriendsIgnores().removeFriend(stream.readString());
 		} else if (packetId == ADD_IGNORE_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			player.getFriendsIgnores().addIgnore(stream.readString(),
 					stream.readUnsignedByte() == 1);
 		} else if (packetId == REMOVE_IGNORE_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			player.getFriendsIgnores().removeIgnore(stream.readString());
 		} else if (packetId == SEND_FRIEND_MESSAGE_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			if (player.getDetails().getMuted() > Utils.currentTimeMillis()) {
 				player.getPackets().sendGameMessage(
@@ -1544,7 +1544,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.getFriendsIgnores().sendMessage(p2,
 					new ChatMessage(Huffman.readEncryptedMessage(150, stream)));
 		} else if (packetId == SEND_FRIEND_QUICK_CHAT_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			String username = stream.readString();
 			int fileId = stream.readUnsignedShort();
@@ -1562,7 +1562,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.getFriendsIgnores().sendQuickChatMessage(p2,
 					new QuickChatMessage(fileId, data));
 		} else if (packetId == PUBLIC_QUICK_CHAT_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			if (player.getLastPublicMessage() > Utils.currentTimeMillis())
 				return;
@@ -1596,7 +1596,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == CHAT_TYPE_PACKET) {
 			chatType = stream.readUnsignedByte();
 		} else if (packetId == CHAT_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			int effects = stream.readUnsignedByte();
 			int numChars = stream.readUnsignedByte();
@@ -1636,7 +1636,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				Logger.log(this, "Command: " + command);
 				Logger.log(this, "Command: " + command);
 		} else if (packetId == COLOR_ID_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			int colorId = stream.readUnsignedShort();
 //			if (player.getTemporaryAttributtes().get("SkillcapeCustomize") != null)
@@ -1645,7 +1645,7 @@ public final class WorldPacketsDecoder extends Decoder {
 //			else if (player.getTemporaryAttributtes().get("MottifCustomize") != null)
 //				ClansManager.setMottifColor(player, colorId);
 		} else if (packetId == REPORT_ABUSE_PACKET) {
-			if (!player.hasStarted())
+			if (!player.isStarted())
 				return;
 			String displayName = stream.readString();
 			int type = stream.readUnsignedByte();

@@ -364,7 +364,7 @@ public final class LocalPlayerUpdate {
 			maskData |= 0x40;
 
 		
-		if (p.getTemporaryMoveType() != -1) //15
+		if (p.getTemporaryMovementType() != -1) //15
 			maskData |= 0x8000;
 
 		
@@ -407,7 +407,7 @@ public final class LocalPlayerUpdate {
 		if (p.getNextGraphics1() != null) //13
 			applyGraphicsMask1(p, data);
 
-		if (p.getTemporaryMoveType() != -1) //15
+		if (p.getTemporaryMovementType() != -1) //15
 			applyTemporaryMoveTypeMask(p, data);
 		
 		/*
@@ -475,7 +475,7 @@ public final class LocalPlayerUpdate {
 	}
 
 	private void applyTemporaryMoveTypeMask(Player p, OutputStream data) {
-		data.writeByteC(p.getTemporaryMoveType());
+		data.writeByteC(p.getTemporaryMovementType());
 	}
 
 	private void applyMoveTypeMask(Player p, OutputStream data) {
