@@ -2,7 +2,6 @@ package com.rs.game.item;
 
 import com.rs.Settings;
 import com.rs.cache.loaders.ItemDefinitions;
-import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
 import com.rs.game.player.Skills;
@@ -196,13 +195,6 @@ public class ItemConstants {
 //								"You need to complete at least once fight cave minigame to use this cape.");
 //				return false;
 //			}
-		} else if (item.getId() == 8856) {
-			if (!WarriorsGuild.inCatapultArea(player)) {
-				player.getPackets()
-						.sendGameMessage(
-								"You may not equip this shield outside of the catapult room in the Warrior's Guild.");
-				return false;
-			}
 		}
 		return true;
 	}

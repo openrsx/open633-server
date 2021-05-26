@@ -14,7 +14,6 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.minigames.GodWarsBosses;
-import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.corp.CorporealBeast;
 import com.rs.game.npc.dragons.KingBlackDragon;
@@ -30,7 +29,6 @@ import com.rs.game.npc.godwars.zammorak.KrilTstsaroth;
 import com.rs.game.npc.others.AbyssalDemon;
 import com.rs.game.npc.others.BanditCampBandits;
 import com.rs.game.npc.others.Bork;
-import com.rs.game.npc.others.Cyclopse;
 import com.rs.game.npc.others.Jadinko;
 import com.rs.game.npc.others.KalphiteQueen;
 import com.rs.game.npc.others.Kurask;
@@ -48,6 +46,8 @@ import com.rs.game.player.content.LivingRockCavern;
 import com.rs.game.player.controllers.DuelControler;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.route.Flags;
+import com.rs.game.task.Task;
+import com.rs.game.task.TaskManager;
 import com.rs.utils.AntiFlood;
 import com.rs.utils.Logger;
 import com.rs.utils.ShopsHandler;
@@ -71,7 +71,6 @@ public final class World {
 		addRestoreShopItemsTask();
 		addOwnedObjectsTask();
 		LivingRockCavern.init();
-		WarriorsGuild.init();
 	}
 
 	private static void addRestoreShopItemsTask() {
@@ -282,8 +281,6 @@ public final class World {
 
 		if (id == 1926 || id == 1931)
 			n = new BanditCampBandits(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 6078 || id == 6079 || id == 4292 || id == 4291 || id == 6080 || id == 6081)
-			n = new Cyclopse(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
 		else if (id == 7134)
 			n = new Bork(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
 		else if (id >= 8832 && id <= 8834)
@@ -1386,5 +1383,40 @@ public final class World {
 			pl.getPackets().sendProjectile(null, startTile, endTile, gfxId, startHeight, endHeight, speed, delay, curve,
 					startOffset, 1);
 		}
+	}
+
+		/**
+	 * An implementation of the singleton pattern to prevent indirect
+	 * instantiation of this class file.
+	 */
+	private static final World singleton = new World();
+	
+	/**
+	 * Returns the singleton pattern implementation.
+	 * @return The returned implementation.
+	 */
+	public static World get() {
+		return singleton;
+	}
+	
+	/**
+	 * The manager for the queue of game tasks.
+	 */
+	public final TaskManager taskManager = new TaskManager();
+	
+	/**
+	 * Submits {@code t} to the backing {@link TaskManager}.
+	 * @param t the task to submit to the queue.
+	 */
+	public void submit(Task t) {
+		taskManager.submit(t);
+	}
+
+	/**
+	 * Gets the manager for the queue of game tasks.
+	 * @return the queue of tasks.
+	 */
+	public TaskManager getTask() {
+		return taskManager;
 	}
 }

@@ -16,8 +16,7 @@ import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.content.Foods.Food;
 import com.rs.game.player.content.Pots.Pot;
 import com.rs.game.player.controllers.Controller;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utils.Logger;
@@ -118,14 +117,14 @@ public class DuelArena extends Controller {
 							player.getLastDuelRules().getStake().clear();
 							player.getInventory().init();
 							oldTarget.getInventory().init();
-							WorldTasksManager.schedule(new WorldTask() {
-
+							World.get().submit(new Task(1) {
 								@Override
-								public void run() {
+								protected void execute() {
 									player.getControlerManager().startControler("DuelControler");
 									oldTarget.getControlerManager().startControler("DuelControler");
+									this.cancel();
 								}
-							}, 1);
+							});
 						} else {
 							removeEquipment();
 							targetConfiguration.removeEquipment();
@@ -349,11 +348,12 @@ public class DuelArena extends Controller {
 		victor.reset();
 		victor.closeInterfaces();
 		victor.getControlerManager().removeControlerWithoutCheck();
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(1) {
 			@Override
-			public void run() {
+			protected void execute() {
 				loser.getControlerManager().startControler("DuelControler");
 				victor.getControlerManager().startControler("DuelControler");
+				this.cancel();
 			}
 		});
 	}
@@ -399,22 +399,22 @@ public class DuelArena extends Controller {
 		player.getTemporaryAttributtes().put("canFight", false);
 		player.setCanPvp(true);
 		player.getHintIconsManager().addHintIcon(target, 1, -1, false);
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(3) {
 			int count = 3;
-
 			@Override
-			public void run() {
+			protected void execute() {
 				if (count > 0)
 					player.setNextForceTalk(new ForceTalk("" + count));
 				if (count == 0) {
 					player.getTemporaryAttributtes().put("canFight", true);
 					player.setNextForceTalk(new ForceTalk("FIGHT!"));
-					this.stop();
+					this.cancel();
 					return;
 				}
 				count--;
+				this.cancel();
 			}
-		}, 0, 2);
+		});
 	}
 
 	@Override
@@ -490,11 +490,10 @@ public class DuelArena extends Controller {
 	public boolean sendDeath() {
 		player.lock(7);
 		player.stopAll();
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(1) {
 			int loop;
-
 			@Override
-			public void run() {
+			protected void execute() {
 				player.stopAll();
 				if (loop == 0) {
 					player.setNextAnimation(new Animation(836));
@@ -503,11 +502,12 @@ public class DuelArena extends Controller {
 				} else if (loop == 3) {
 					player.setNextAnimation(new Animation(-1));
 					end(DUEL_END_LOSE);
-					this.stop();
+					this.cancel();
 				}
 				loop++;
+				this.cancel();
 			}
-		}, 0, 1);
+		});
 		return false;
 	}
 

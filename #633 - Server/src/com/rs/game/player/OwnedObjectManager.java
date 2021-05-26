@@ -7,8 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.rs.game.World;
 import com.rs.game.WorldObject;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
 public class OwnedObjectManager {
@@ -84,10 +83,11 @@ public class OwnedObjectManager {
 					&& manager.getCurrentObject().getPlane() == object
 							.getPlane()
 					&& manager.getCurrentObject().getId() == object.getId()) {
-				WorldTasksManager.schedule(new WorldTask() {
+				World.get().submit(new Task(1) {
 					@Override
-					public void run() {
+					protected void execute() {
 						manager.delete();
+						this.cancel();
 					}
 				});
 				return true;

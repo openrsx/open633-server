@@ -15,7 +15,6 @@ import com.rs.io.InputStream;
 import com.rs.utils.Logger;
 import com.rs.utils.MapArchiveKeys;
 import com.rs.utils.NPCSpawning;
-import com.rs.utils.ObjectSpawns;
 import com.rs.utils.Utils;
 import com.rs.utils.json.GsonHandler;
 import com.rs.utils.json.impl.NPCAutoSpawn;
@@ -89,7 +88,7 @@ public class Region {
 	}
 
 	private void loadObjectSpawns() {
-		ObjectSpawns.loadObjectSpawns(regionId);
+//		ObjectSpawns.loadObjectSpawns(regionId);
 	}
 	
 	/**

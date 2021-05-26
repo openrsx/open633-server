@@ -5,12 +5,12 @@ import com.rs.game.Entity;
 import com.rs.game.Graphics;
 import com.rs.game.Hit;
 import com.rs.game.Hit.HitLook;
+import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.content.Summoning.Pouch;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utils.Utils;
 
@@ -55,10 +55,9 @@ public class Forgeregent extends Familiar {
 		getOwner().setNextAnimation(new Animation(7660));
 		setNextAnimation(new Animation(7871));
 		setNextGraphics(new Graphics(1394));
-		WorldTasksManager.schedule(new WorldTask() {
-
+		World.get().submit(new Task(2) {
 			@Override
-			public void run() {
+			protected void execute() {
 				if (target instanceof Player) {
 					Player playerTarget = (Player) target;
 					int weaponId = playerTarget.getEquipment().getWeaponId();
@@ -74,8 +73,9 @@ public class Forgeregent extends Familiar {
 				}
 				target.setNextGraphics(new Graphics(1393));
 				target.applyHit(new Hit(getOwner(), Utils.random(200), HitLook.MELEE_DAMAGE));
+				this.cancel();
 			}
-		}, 2);
+		});
 		return true;
 	}
 }

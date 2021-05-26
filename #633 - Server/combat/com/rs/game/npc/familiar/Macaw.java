@@ -6,8 +6,7 @@ import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 
 public class Macaw extends Familiar {
 
@@ -65,20 +64,20 @@ public class Macaw extends Familiar {
 		getOwner().setNextAnimation(new Animation(7660));
 		setNextAnimation(new Animation(8013));
 		final WorldTile tile = new WorldTile(getOwner().getX() - 1, getOwner().getY(), getOwner().getPlane());
-		WorldTasksManager.schedule(new WorldTask() {
-
+		World.get().submit(new Task(2) {
 			@Override
-			public void run() {
+			protected void execute() {
 				World.sendGraphics(getOwner(), new Graphics(1321), tile);
-				WorldTasksManager.schedule(new WorldTask() {
-
+				World.get().submit(new Task(2) {
 					@Override
-					public void run() {
+					protected void execute() {
 						setNextAnimation(new Animation(8014));
+						this.cancel();
 					}
-				}, 3);
+				});
+				this.cancel();
 			}
-		}, 2);
+		});
 //	Herbs herb;
 //	if (Utils.getRandom(100) >= 5)
 //	    herb = Herbs.values()[Utils.random(Herbs.values().length)];

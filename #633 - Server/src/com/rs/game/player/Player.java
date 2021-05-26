@@ -23,7 +23,6 @@ import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
-import com.rs.game.minigames.WarriorsGuild;
 import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.minigames.duel.DuelRules;
 import com.rs.game.npc.NPC;
@@ -33,14 +32,12 @@ import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Notes;
 import com.rs.game.player.content.pet.PetManager;
 import com.rs.game.player.controllers.ControlerManager;
-import com.rs.game.player.controllers.Controller;
 import com.rs.game.player.controllers.GodWars;
 import com.rs.game.player.controllers.JailControler;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.decoders.WorldPacketsDecoder;
@@ -706,459 +703,25 @@ public class Player extends Entity {
 			World.sendProjectile(user, this, 2263, 11, 11, 20, 5, 0, 0);
 		user.heal(hit.getDamage() / 5);
 		prayer.drainPrayer(hit.getDamage() / 5);
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(1) {
 			@Override
-			public void run() {
+			protected void execute() {
 				setNextGraphics(new Graphics(2264));
 				if (hit.getDamage() > 0)
 					World.sendProjectile(target, user, 2263, 11, 11, 20, 5, 0,
 							0);
+				this.cancel();
 			}
-		}, 0);
+		});
 	}
 
 	@Override
 	public void handleIngoingHit(final Hit hit) {
-		if (hit.getLook() != HitLook.MELEE_DAMAGE
-				&& hit.getLook() != HitLook.RANGE_DAMAGE
-				&& hit.getLook() != HitLook.MAGIC_DAMAGE)
-			return;
-		if (invulnerable) {
-			hit.setDamage(0);
-			return;
-		}
-		Entity source = hit.getSource();
-		if (source == null)
-			return;
-		if (prayer.hasPrayersOn() && hit.getDamage() != 0) {
-			if (hit.getLook() == HitLook.MAGIC_DAMAGE) {
-				if (prayer.usingPrayer(0, 17))
-					hit.setDamage((int) (hit.getDamage() * source
-							.getMagePrayerMultiplier()));
-				else if (prayer.usingPrayer(1, 7)) {
-					int deflectedDamage = (int) (hit.getDamage() * 0.1);
-					hit.setDamage((int) (hit.getDamage() * source
-							.getMagePrayerMultiplier()));
-					if (deflectedDamage > 0) {
-						source.applyHit(new Hit(this, deflectedDamage,
-								HitLook.REFLECTED_DAMAGE));
-						setNextGraphics(new Graphics(2228));
-						setNextAnimation(new Animation(12573));
-					}
-				}
-			} else if (hit.getLook() == HitLook.RANGE_DAMAGE) {
-				if (prayer.usingPrayer(0, 18))
-					hit.setDamage((int) (hit.getDamage() * source
-							.getRangePrayerMultiplier()));
-				else if (prayer.usingPrayer(1, 8)) {
-					int deflectedDamage = (int) (hit.getDamage() * 0.1);
-					hit.setDamage((int) (hit.getDamage() * source
-							.getRangePrayerMultiplier()));
-					if (deflectedDamage > 0) {
-						source.applyHit(new Hit(this, deflectedDamage,
-								HitLook.REFLECTED_DAMAGE));
-						setNextGraphics(new Graphics(2229));
-						setNextAnimation(new Animation(12573));
-					}
-				}
-			} else if (hit.getLook() == HitLook.MELEE_DAMAGE) {
-				if (prayer.usingPrayer(0, 19))
-					hit.setDamage((int) (hit.getDamage() * source
-							.getMeleePrayerMultiplier()));
-				else if (prayer.usingPrayer(1, 9)) {
-					int deflectedDamage = (int) (hit.getDamage() * 0.1);
-					hit.setDamage((int) (hit.getDamage() * source
-							.getMeleePrayerMultiplier()));
-					if (deflectedDamage > 0) {
-						source.applyHit(new Hit(this, deflectedDamage,
-								HitLook.REFLECTED_DAMAGE));
-						setNextGraphics(new Graphics(2230));
-						setNextAnimation(new Animation(12573));
-					}
-				}
-			}
-		}
-		if (hit.getDamage() > 200) {
-			if (hit.getLook() == HitLook.MELEE_DAMAGE) {
-				int reducedDamage = (hit.getDamage() - 200)
-						* combatDefinitions.getBonuses()[CombatDefinitions.ABSORB_MELEE]
-						/ 100;
-				if (reducedDamage > 0) {
-					hit.setDamage(hit.getDamage() - reducedDamage);
-					hit.setSoaking(new Hit(source, reducedDamage,
-							HitLook.ABSORB_DAMAGE));
-				}
-			} else if (hit.getLook() == HitLook.RANGE_DAMAGE) {
-				int reducedDamage = (hit.getDamage() - 200)
-						* combatDefinitions.getBonuses()[CombatDefinitions.ABSORB_RANGE]
-						/ 100;
-				if (reducedDamage > 0) {
-					hit.setDamage(hit.getDamage() - reducedDamage);
-					hit.setSoaking(new Hit(source, reducedDamage,
-							HitLook.ABSORB_DAMAGE));
-				}
-			} else if (hit.getLook() == HitLook.MAGIC_DAMAGE) {
-				int reducedDamage = (hit.getDamage() - 200)
-						* combatDefinitions.getBonuses()[CombatDefinitions.ABSORB_MAGIC]
-						/ 100;
-				if (reducedDamage > 0) {
-					hit.setDamage(hit.getDamage() - reducedDamage);
-					hit.setSoaking(new Hit(source, reducedDamage,
-							HitLook.ABSORB_DAMAGE));
-				}
-			}
-		}
-		int shieldId = equipment.getShieldId();
-		if (shieldId == 13742) { // elsyian
-			if (Utils.getRandom(100) <= 70)
-				hit.setDamage((int) (hit.getDamage() * 0.75));
-		} else if (shieldId == 13740) { // divine
-			int drain = (int) (Math.ceil(hit.getDamage() * 0.3) / 2);
-			if (prayer.getPrayerpoints() >= drain) {
-				hit.setDamage((int) (hit.getDamage() * 0.70));
-				prayer.drainPrayer(drain);
-			}
-		}
-		if (source instanceof Player) {
-			final Player p2 = (Player) source;
-			if (p2.prayer.hasPrayersOn()) {
-				if (p2.prayer.usingPrayer(0, 24)) { // smite
-					int drain = hit.getDamage() / 4;
-					if (drain > 0)
-						prayer.drainPrayer(drain);
-				} else {
-					if (hit.getDamage() == 0)
-						return;
-					if (!p2.prayer.isBoostedLeech()) {
-						if (hit.getLook() == HitLook.MELEE_DAMAGE) {
-							if (p2.prayer.usingPrayer(1, 19)) {
-								if (Utils.getRandom(4) == 0) {
-									p2.prayer.increaseTurmoilBonus(this);
-									p2.prayer.setBoostedLeech(true);
-									return;
-								}
-							} else if (p2.prayer.usingPrayer(1, 1)) { // sap att
-								if (Utils.getRandom(4) == 0) {
-									if (p2.prayer.reachedMax(0)) {
-										p2.getPackets()
-												.sendGameMessage(
-														"Your opponent has been weakened so much that your sap curse has no effect.",
-														true);
-									} else {
-										p2.prayer.increaseLeechBonus(0);
-										p2.getPackets()
-												.sendGameMessage(
-														"Your curse drains Attack from the enemy, boosting your Attack.",
-														true);
-									}
-									p2.setNextAnimation(new Animation(12569));
-									p2.setNextGraphics(new Graphics(2214));
-									p2.prayer.setBoostedLeech(true);
-									World.sendProjectile(p2, this, 2215, 35,
-											35, 20, 5, 0, 0);
-									WorldTasksManager.schedule(new WorldTask() {
-										@Override
-										public void run() {
-											setNextGraphics(new Graphics(2216));
-										}
-									}, 1);
-									return;
-								}
-							} else {
-								if (p2.prayer.usingPrayer(1, 10)) {
-									if (Utils.getRandom(7) == 0) {
-										if (p2.prayer.reachedMax(3)) {
-											p2.getPackets()
-													.sendGameMessage(
-															"Your opponent has been weakened so much that your leech curse has no effect.",
-															true);
-										} else {
-											p2.prayer.increaseLeechBonus(3);
-											p2.getPackets()
-													.sendGameMessage(
-															"Your curse drains Attack from the enemy, boosting your Attack.",
-															true);
-										}
-										p2.setNextAnimation(new Animation(12575));
-										p2.prayer.setBoostedLeech(true);
-										World.sendProjectile(p2, this, 2231,
-												35, 35, 20, 5, 0, 0);
-										WorldTasksManager.schedule(
-												new WorldTask() {
-													@Override
-													public void run() {
-														setNextGraphics(new Graphics(
-																2232));
-													}
-												}, 1);
-										return;
-									}
-								}
-								if (p2.prayer.usingPrayer(1, 14)) {
-									if (Utils.getRandom(7) == 0) {
-										if (p2.prayer.reachedMax(7)) {
-											p2.getPackets()
-													.sendGameMessage(
-															"Your opponent has been weakened so much that your leech curse has no effect.",
-															true);
-										} else {
-											p2.prayer.increaseLeechBonus(7);
-											p2.getPackets()
-													.sendGameMessage(
-															"Your curse drains Strength from the enemy, boosting your Strength.",
-															true);
-										}
-										p2.setNextAnimation(new Animation(12575));
-										p2.prayer.setBoostedLeech(true);
-										World.sendProjectile(p2, this, 2248,
-												35, 35, 20, 5, 0, 0);
-										WorldTasksManager.schedule(
-												new WorldTask() {
-													@Override
-													public void run() {
-														setNextGraphics(new Graphics(
-																2250));
-													}
-												}, 1);
-										return;
-									}
-								}
-
-							}
-						}
-						if (hit.getLook() == HitLook.RANGE_DAMAGE) {
-							if (p2.prayer.usingPrayer(1, 2)) { // sap range
-								if (Utils.getRandom(4) == 0) {
-									if (p2.prayer.reachedMax(1)) {
-										p2.getPackets()
-												.sendGameMessage(
-														"Your opponent has been weakened so much that your sap curse has no effect.",
-														true);
-									} else {
-										p2.prayer.increaseLeechBonus(1);
-										p2.getPackets()
-												.sendGameMessage(
-														"Your curse drains Range from the enemy, boosting your Range.",
-														true);
-									}
-									p2.setNextAnimation(new Animation(12569));
-									p2.setNextGraphics(new Graphics(2217));
-									p2.prayer.setBoostedLeech(true);
-									World.sendProjectile(p2, this, 2218, 35,
-											35, 20, 5, 0, 0);
-									WorldTasksManager.schedule(new WorldTask() {
-										@Override
-										public void run() {
-											setNextGraphics(new Graphics(2219));
-										}
-									}, 1);
-									return;
-								}
-							} else if (p2.prayer.usingPrayer(1, 11)) {
-								if (Utils.getRandom(7) == 0) {
-									if (p2.prayer.reachedMax(4)) {
-										p2.getPackets()
-												.sendGameMessage(
-														"Your opponent has been weakened so much that your leech curse has no effect.",
-														true);
-									} else {
-										p2.prayer.increaseLeechBonus(4);
-										p2.getPackets()
-												.sendGameMessage(
-														"Your curse drains Range from the enemy, boosting your Range.",
-														true);
-									}
-									p2.setNextAnimation(new Animation(12575));
-									p2.prayer.setBoostedLeech(true);
-									World.sendProjectile(p2, this, 2236, 35,
-											35, 20, 5, 0, 0);
-									WorldTasksManager.schedule(new WorldTask() {
-										@Override
-										public void run() {
-											setNextGraphics(new Graphics(2238));
-										}
-									});
-									return;
-								}
-							}
-						}
-						if (hit.getLook() == HitLook.MAGIC_DAMAGE) {
-							if (p2.prayer.usingPrayer(1, 3)) { // sap mage
-								if (Utils.getRandom(4) == 0) {
-									if (p2.prayer.reachedMax(2)) {
-										p2.getPackets()
-												.sendGameMessage(
-														"Your opponent has been weakened so much that your sap curse has no effect.",
-														true);
-									} else {
-										p2.prayer.increaseLeechBonus(2);
-										p2.getPackets()
-												.sendGameMessage(
-														"Your curse drains Magic from the enemy, boosting your Magic.",
-														true);
-									}
-									p2.setNextAnimation(new Animation(12569));
-									p2.setNextGraphics(new Graphics(2220));
-									p2.prayer.setBoostedLeech(true);
-									World.sendProjectile(p2, this, 2221, 35,
-											35, 20, 5, 0, 0);
-									WorldTasksManager.schedule(new WorldTask() {
-										@Override
-										public void run() {
-											setNextGraphics(new Graphics(2222));
-										}
-									}, 1);
-									return;
-								}
-							} else if (p2.prayer.usingPrayer(1, 12)) {
-								if (Utils.getRandom(7) == 0) {
-									if (p2.prayer.reachedMax(5)) {
-										p2.getPackets()
-												.sendGameMessage(
-														"Your opponent has been weakened so much that your leech curse has no effect.",
-														true);
-									} else {
-										p2.prayer.increaseLeechBonus(5);
-										p2.getPackets()
-												.sendGameMessage(
-														"Your curse drains Magic from the enemy, boosting your Magic.",
-														true);
-									}
-									p2.setNextAnimation(new Animation(12575));
-									p2.prayer.setBoostedLeech(true);
-									World.sendProjectile(p2, this, 2240, 35,
-											35, 20, 5, 0, 0);
-									WorldTasksManager.schedule(new WorldTask() {
-										@Override
-										public void run() {
-											setNextGraphics(new Graphics(2242));
-										}
-									}, 1);
-									return;
-								}
-							}
-						}
-
-						// overall
-
-						if (p2.prayer.usingPrayer(1, 13)) { // leech defence
-							if (Utils.getRandom(10) == 0) {
-								if (p2.prayer.reachedMax(6)) {
-									p2.getPackets()
-											.sendGameMessage(
-													"Your opponent has been weakened so much that your leech curse has no effect.",
-													true);
-								} else {
-									p2.prayer.increaseLeechBonus(6);
-									p2.getPackets()
-											.sendGameMessage(
-													"Your curse drains Defence from the enemy, boosting your Defence.",
-													true);
-								}
-								p2.setNextAnimation(new Animation(12575));
-								p2.prayer.setBoostedLeech(true);
-								World.sendProjectile(p2, this, 2244, 35, 35,
-										20, 5, 0, 0);
-								WorldTasksManager.schedule(new WorldTask() {
-									@Override
-									public void run() {
-										setNextGraphics(new Graphics(2246));
-									}
-								}, 1);
-								return;
-							}
-						}
-
-						if (p2.prayer.usingPrayer(1, 15)) {
-							if (Utils.getRandom(10) == 0) {
-								if (getRunEnergy() <= 0) {
-									p2.getPackets()
-											.sendGameMessage(
-													"Your opponent has been weakened so much that your leech curse has no effect.",
-													true);
-								} else {
-									p2.setRunEnergy(p2.getRunEnergy() > 90 ? 100
-											: p2.getRunEnergy() + 10);
-									setRunEnergy(p2.getRunEnergy() > 10 ? getRunEnergy() - 10
-											: 0);
-								}
-								p2.setNextAnimation(new Animation(12575));
-								p2.prayer.setBoostedLeech(true);
-								World.sendProjectile(p2, this, 2256, 35, 35,
-										20, 5, 0, 0);
-								WorldTasksManager.schedule(new WorldTask() {
-									@Override
-									public void run() {
-										setNextGraphics(new Graphics(2258));
-									}
-								}, 1);
-								return;
-							}
-						}
-
-						if (p2.prayer.usingPrayer(1, 16)) {
-							if (Utils.getRandom(10) == 0) {
-								if (combatDefinitions
-										.getSpecialAttackPercentage() <= 0) {
-									p2.getPackets()
-											.sendGameMessage(
-													"Your opponent has been weakened so much that your leech curse has no effect.",
-													true);
-								} else {
-									p2.combatDefinitions.restoreSpecialAttack();
-									combatDefinitions
-											.desecreaseSpecialAttack(10);
-								}
-								p2.setNextAnimation(new Animation(12575));
-								p2.prayer.setBoostedLeech(true);
-								World.sendProjectile(p2, this, 2252, 35, 35,
-										20, 5, 0, 0);
-								WorldTasksManager.schedule(new WorldTask() {
-									@Override
-									public void run() {
-										setNextGraphics(new Graphics(2254));
-									}
-								}, 1);
-								return;
-							}
-						}
-
-						if (p2.prayer.usingPrayer(1, 4)) { // sap spec
-							if (Utils.getRandom(10) == 0) {
-								p2.setNextAnimation(new Animation(12569));
-								p2.setNextGraphics(new Graphics(2223));
-								p2.prayer.setBoostedLeech(true);
-								if (combatDefinitions
-										.getSpecialAttackPercentage() <= 0) {
-									p2.getPackets()
-											.sendGameMessage(
-													"Your opponent has been weakened so much that your sap curse has no effect.",
-													true);
-								} else {
-									combatDefinitions
-											.desecreaseSpecialAttack(10);
-								}
-								World.sendProjectile(p2, this, 2224, 35, 35,
-										20, 5, 0, 0);
-								WorldTasksManager.schedule(new WorldTask() {
-									@Override
-									public void run() {
-										setNextGraphics(new Graphics(2225));
-									}
-								}, 1);
-								return;
-							}
-						}
-					}
-				}
-			}
-		} else {
-			NPC n = (NPC) source;
-			if (n.getId() == 13448)
-				sendSoulSplit(hit, n);
-		}
+		PlayerCombat.handleIncomingHit(this, hit);
 	}
 
+	//TODO: Redo Actor Death system
+	@SuppressWarnings("unused")
 	@Override
 	public void sendDeath(final Entity source) {
 		if (prayer.hasPrayersOn()
@@ -1221,35 +784,35 @@ public class Player extends Entity {
 										.getLevelForXp(Skills.PRAYER) * 2.5)),
 								HitLook.REGULAR_DAMAGE));
 				}
-				WorldTasksManager.schedule(new WorldTask() {
-					@Override
-					public void run() {
-						World.sendGraphics(target, new Graphics(438),
-								new WorldTile(target.getX() - 1, target.getY(),
-										target.getPlane()));
-						World.sendGraphics(target, new Graphics(438),
-								new WorldTile(target.getX() + 1, target.getY(),
-										target.getPlane()));
-						World.sendGraphics(target, new Graphics(438),
-								new WorldTile(target.getX(), target.getY() - 1,
-										target.getPlane()));
-						World.sendGraphics(target, new Graphics(438),
-								new WorldTile(target.getX(), target.getY() + 1,
-										target.getPlane()));
-						World.sendGraphics(target, new Graphics(438),
-								new WorldTile(target.getX() - 1,
-										target.getY() - 1, target.getPlane()));
-						World.sendGraphics(target, new Graphics(438),
-								new WorldTile(target.getX() - 1,
-										target.getY() + 1, target.getPlane()));
-						World.sendGraphics(target, new Graphics(438),
-								new WorldTile(target.getX() + 1,
-										target.getY() - 1, target.getPlane()));
-						World.sendGraphics(target, new Graphics(438),
-								new WorldTile(target.getX() + 1,
-										target.getY() + 1, target.getPlane()));
-					}
-				});
+//				WorldTasksManager.schedule(new WorldTask() {
+//					@Override
+//					public void run() {
+//						World.sendGraphics(target, new Graphics(438),
+//								new WorldTile(target.getX() - 1, target.getY(),
+//										target.getPlane()));
+//						World.sendGraphics(target, new Graphics(438),
+//								new WorldTile(target.getX() + 1, target.getY(),
+//										target.getPlane()));
+//						World.sendGraphics(target, new Graphics(438),
+//								new WorldTile(target.getX(), target.getY() - 1,
+//										target.getPlane()));
+//						World.sendGraphics(target, new Graphics(438),
+//								new WorldTile(target.getX(), target.getY() + 1,
+//										target.getPlane()));
+//						World.sendGraphics(target, new Graphics(438),
+//								new WorldTile(target.getX() - 1,
+//										target.getY() - 1, target.getPlane()));
+//						World.sendGraphics(target, new Graphics(438),
+//								new WorldTile(target.getX() - 1,
+//										target.getY() + 1, target.getPlane()));
+//						World.sendGraphics(target, new Graphics(438),
+//								new WorldTile(target.getX() + 1,
+//										target.getY() - 1, target.getPlane()));
+//						World.sendGraphics(target, new Graphics(438),
+//								new WorldTile(target.getX() + 1,
+//										target.getY() + 1, target.getPlane()));
+//					}
+//				});
 			} else if (prayer.usingPrayer(1, 17)) {
 				World.sendProjectile(this, new WorldTile(getX() + 2,
 						getY() + 2, getPlane()), 2260, 24, 0, 41, 35, 30, 0);
@@ -1270,110 +833,110 @@ public class Player extends Entity {
 				World.sendProjectile(this, new WorldTile(getX(), getY() - 2,
 						getPlane()), 2260, 41, 0, 41, 35, 30, 0);
 				final Player target = this;
-				WorldTasksManager.schedule(new WorldTask() {
-					@Override
-					public void run() {
-						setNextGraphics(new Graphics(2259));
-
-						if (isAtMultiArea()) {
-							for (int regionId : getMapRegionsIds()) {
-								List<Integer> playersIndexes = World.getRegion(
-										regionId).getPlayerIndexes();
-								if (playersIndexes != null) {
-									for (int playerIndex : playersIndexes) {
-										Player player = World.getPlayers().get(
-												playerIndex);
-										if (player == null
-												|| !player.isStarted()
-												|| player.isDead()
-												|| player.hasFinished()
-												|| !player.isCanPvp()
-												|| !player.withinDistance(
-														target, 2)
-												|| !target
-														.getControlerManager()
-														.canHit(player))
-											continue;
-										player.applyHit(new Hit(
-												target,
-												Utils.getRandom((skills
-														.getLevelForXp(Skills.PRAYER) * 3)),
-												HitLook.REGULAR_DAMAGE));
-									}
-								}
-								List<Integer> npcsIndexes = World.getRegion(
-										regionId).getNPCsIndexes();
-								if (npcsIndexes != null) {
-									for (int npcIndex : npcsIndexes) {
-										NPC npc = World.getNPCs().get(npcIndex);
-										if (npc == null
-												|| npc.isDead()
-												|| npc.hasFinished()
-												|| !npc.withinDistance(target,
-														2)
-												|| !npc.getDefinitions()
-														.hasAttackOption()
-												|| !target
-														.getControlerManager()
-														.canHit(npc))
-											continue;
-										npc.applyHit(new Hit(
-												target,
-												Utils.getRandom((skills
-														.getLevelForXp(Skills.PRAYER) * 3)),
-												HitLook.REGULAR_DAMAGE));
-									}
-								}
-							}
-						} else {
-							if (source != null && source != target
-									&& !source.isDead()
-									&& !source.hasFinished()
-									&& source.withinDistance(target, 2))
-								source.applyHit(new Hit(
-										target,
-										Utils.getRandom((skills
-												.getLevelForXp(Skills.PRAYER) * 3)),
-										HitLook.REGULAR_DAMAGE));
-						}
-
-						World.sendGraphics(target, new Graphics(2260),
-								new WorldTile(getX() + 2, getY() + 2,
-										getPlane()));
-						World.sendGraphics(target, new Graphics(2260),
-								new WorldTile(getX() + 2, getY(), getPlane()));
-						World.sendGraphics(target, new Graphics(2260),
-								new WorldTile(getX() + 2, getY() - 2,
-										getPlane()));
-
-						World.sendGraphics(target, new Graphics(2260),
-								new WorldTile(getX() - 2, getY() + 2,
-										getPlane()));
-						World.sendGraphics(target, new Graphics(2260),
-								new WorldTile(getX() - 2, getY(), getPlane()));
-						World.sendGraphics(target, new Graphics(2260),
-								new WorldTile(getX() - 2, getY() - 2,
-										getPlane()));
-
-						World.sendGraphics(target, new Graphics(2260),
-								new WorldTile(getX(), getY() + 2, getPlane()));
-						World.sendGraphics(target, new Graphics(2260),
-								new WorldTile(getX(), getY() - 2, getPlane()));
-
-						World.sendGraphics(target, new Graphics(2260),
-								new WorldTile(getX() + 1, getY() + 1,
-										getPlane()));
-						World.sendGraphics(target, new Graphics(2260),
-								new WorldTile(getX() + 1, getY() - 1,
-										getPlane()));
-						World.sendGraphics(target, new Graphics(2260),
-								new WorldTile(getX() - 1, getY() + 1,
-										getPlane()));
-						World.sendGraphics(target, new Graphics(2260),
-								new WorldTile(getX() - 1, getY() - 1,
-										getPlane()));
-					}
-				});
+//				WorldTasksManager.schedule(new WorldTask() {
+//					@Override
+//					public void run() {
+//						setNextGraphics(new Graphics(2259));
+//
+//						if (isAtMultiArea()) {
+//							for (int regionId : getMapRegionsIds()) {
+//								List<Integer> playersIndexes = World.getRegion(
+//										regionId).getPlayerIndexes();
+//								if (playersIndexes != null) {
+//									for (int playerIndex : playersIndexes) {
+//										Player player = World.getPlayers().get(
+//												playerIndex);
+//										if (player == null
+//												|| !player.isStarted()
+//												|| player.isDead()
+//												|| player.hasFinished()
+//												|| !player.isCanPvp()
+//												|| !player.withinDistance(
+//														target, 2)
+//												|| !target
+//														.getControlerManager()
+//														.canHit(player))
+//											continue;
+//										player.applyHit(new Hit(
+//												target,
+//												Utils.getRandom((skills
+//														.getLevelForXp(Skills.PRAYER) * 3)),
+//												HitLook.REGULAR_DAMAGE));
+//									}
+//								}
+//								List<Integer> npcsIndexes = World.getRegion(
+//										regionId).getNPCsIndexes();
+//								if (npcsIndexes != null) {
+//									for (int npcIndex : npcsIndexes) {
+//										NPC npc = World.getNPCs().get(npcIndex);
+//										if (npc == null
+//												|| npc.isDead()
+//												|| npc.hasFinished()
+//												|| !npc.withinDistance(target,
+//														2)
+//												|| !npc.getDefinitions()
+//														.hasAttackOption()
+//												|| !target
+//														.getControlerManager()
+//														.canHit(npc))
+//											continue;
+//										npc.applyHit(new Hit(
+//												target,
+//												Utils.getRandom((skills
+//														.getLevelForXp(Skills.PRAYER) * 3)),
+//												HitLook.REGULAR_DAMAGE));
+//									}
+//								}
+//							}
+//						} else {
+//							if (source != null && source != target
+//									&& !source.isDead()
+//									&& !source.hasFinished()
+//									&& source.withinDistance(target, 2))
+//								source.applyHit(new Hit(
+//										target,
+//										Utils.getRandom((skills
+//												.getLevelForXp(Skills.PRAYER) * 3)),
+//										HitLook.REGULAR_DAMAGE));
+//						}
+//
+//						World.sendGraphics(target, new Graphics(2260),
+//								new WorldTile(getX() + 2, getY() + 2,
+//										getPlane()));
+//						World.sendGraphics(target, new Graphics(2260),
+//								new WorldTile(getX() + 2, getY(), getPlane()));
+//						World.sendGraphics(target, new Graphics(2260),
+//								new WorldTile(getX() + 2, getY() - 2,
+//										getPlane()));
+//
+//						World.sendGraphics(target, new Graphics(2260),
+//								new WorldTile(getX() - 2, getY() + 2,
+//										getPlane()));
+//						World.sendGraphics(target, new Graphics(2260),
+//								new WorldTile(getX() - 2, getY(), getPlane()));
+//						World.sendGraphics(target, new Graphics(2260),
+//								new WorldTile(getX() - 2, getY() - 2,
+//										getPlane()));
+//
+//						World.sendGraphics(target, new Graphics(2260),
+//								new WorldTile(getX(), getY() + 2, getPlane()));
+//						World.sendGraphics(target, new Graphics(2260),
+//								new WorldTile(getX(), getY() - 2, getPlane()));
+//
+//						World.sendGraphics(target, new Graphics(2260),
+//								new WorldTile(getX() + 1, getY() + 1,
+//										getPlane()));
+//						World.sendGraphics(target, new Graphics(2260),
+//								new WorldTile(getX() + 1, getY() - 1,
+//										getPlane()));
+//						World.sendGraphics(target, new Graphics(2260),
+//								new WorldTile(getX() - 1, getY() + 1,
+//										getPlane()));
+//						World.sendGraphics(target, new Graphics(2260),
+//								new WorldTile(getX() - 1, getY() - 1,
+//										getPlane()));
+//					}
+//				});
 			}
 		}
 		setNextAnimation(new Animation(-1));
@@ -1383,24 +946,24 @@ public class Player extends Entity {
 		stopAll();
 		if (familiar != null)
 			familiar.sendDeath(this);
-		WorldTasksManager.schedule(new WorldTask() {
-			int loop;
-
-			@Override
-			public void run() {
-				if (loop == 0) {
-					setNextAnimation(new Animation(836));
-				} else if (loop == 1) {
-					getPackets().sendGameMessage("Oh dear, you have died.");
-				} else if (loop == 3) {
-					setNextWorldTile(Settings.START_PLAYER_LOCATION);
-				} else if (loop == 4) {
-					getPackets().sendMusicEffect(90);
-					stop();
-				}
-				loop++;
-			}
-		}, 0, 1);
+//		WorldTasksManager.schedule(new WorldTask() {
+//			int loop;
+//
+//			@Override
+//			public void run() {
+//				if (loop == 0) {
+//					setNextAnimation(new Animation(836));
+//				} else if (loop == 1) {
+//					getPackets().sendGameMessage("Oh dear, you have died.");
+//				} else if (loop == 3) {
+//					setNextWorldTile(Settings.START_PLAYER_LOCATION);
+//				} else if (loop == 4) {
+//					getPackets().sendMusicEffect(90);
+//					stop();
+//				}
+//				loop++;
+//			}
+//		}, 0, 1);
 	}
 
 	/*
@@ -1539,9 +1102,9 @@ public class Player extends Entity {
 		if (useDelay == 0)
 			setNextWorldTile(dest);
 		else {
-			WorldTasksManager.schedule(new WorldTask() {
+			World.get().submit(new Task(useDelay - 1) {
 				@Override
-				public void run() {
+				protected void execute() {
 					if (isDead())
 						return;
 					if (resetAnimation)
@@ -1549,8 +1112,9 @@ public class Player extends Entity {
 					setNextWorldTile(dest);
 					if (message != null)
 						getPackets().sendGameMessage(message);
+					this.cancel();
 				}
-			}, useDelay - 1);
+			});
 		}
 	}
 
@@ -1710,7 +1274,7 @@ public class Player extends Entity {
 			specAmt *= 0.9;
 		if (combatDefinitions.getSpecialAttackPercentage() < specAmt) {
 			getPackets().sendGameMessage("You don't have enough power left.");
-			combatDefinitions.desecreaseSpecialAttack(0);
+			combatDefinitions.decreaseSpecialAttack(0);
 			return;
 		}
 		if (this.getSwitchItemCache().size() > 0) {
@@ -1745,7 +1309,7 @@ public class Player extends Entity {
 			combat.delayNormalHit(weaponId, attackStyle, combat.getMeleeHit(
 					this, combat.getRandomMaxHit(this, weaponId, attackStyle,
 							false, true, 1.1, true)));
-			combatDefinitions.desecreaseSpecialAttack(specAmt);
+			combatDefinitions.decreaseSpecialAttack(specAmt);
 			break;
 		case 1377:
 		case 13472:
@@ -1762,7 +1326,7 @@ public class Player extends Entity {
 			skills.set(Skills.RANGE, range);
 			skills.set(Skills.MAGIC, magic);
 			skills.set(Skills.STRENGTH, strength);
-			combatDefinitions.desecreaseSpecialAttack(specAmt);
+			combatDefinitions.decreaseSpecialAttack(specAmt);
 			break;
 		case 35:// Excalibur
 		case 8280:
@@ -1775,24 +1339,24 @@ public class Player extends Entity {
 					Skills.DEFENCE,
 					enhanced ? (int) (skills.getLevelForXp(Skills.DEFENCE) * 1.15D)
 							: (skills.getLevel(Skills.DEFENCE) + 8));
-			WorldTasksManager.schedule(new WorldTask() {
+			World.get().submit(new Task(4) {
 				int count = 5;
-
 				@Override
-				public void run() {
+				protected void execute() {
 					if (isDead() || hasFinished()
 							|| getHitpoints() >= getMaxHitpoints()) {
-						stop();
+						this.cancel();
 						return;
 					}
 					heal(enhanced ? 80 : 40);
 					if (count-- == 0) {
-						stop();
+						this.cancel();
 						return;
 					}
+					this.cancel();
 				}
-			}, 4, 2);
-			combatDefinitions.desecreaseSpecialAttack(specAmt);
+			});
+			combatDefinitions.decreaseSpecialAttack(specAmt);
 			break;
 		}
 	}
@@ -1810,21 +1374,6 @@ public class Player extends Entity {
 	public void refreshToogleLootShare() {
 		// need to force cuz autoactivates when u click on it even if no chat
 		varsManager.forceSendVarBit(4071, toogleLootShare ? 1 : 0);
-	}
-
-	public void setWarriorPoints(int index, double pointsDifference) {
-		getDetails().getWarriorPoints()[index] += pointsDifference;
-		if (getDetails().getWarriorPoints()[index] < 0) {
-			Controller controler = getControlerManager().getControler();
-			if (controler == null || !(controler instanceof WarriorsGuild))
-				return;
-			WarriorsGuild guild = (WarriorsGuild) controler;
-			guild.inCyclopse = false;
-			setNextWorldTile(WarriorsGuild.CYCLOPS_LOBBY);
-			getDetails().getWarriorPoints()[index] = 0;
-		} else if (getDetails().getWarriorPoints()[index] > 65535)
-			getDetails().getWarriorPoints()[index] = 65535;
-		refreshWarriorPoints(index);
 	}
 
 	public void refreshWarriorPoints(int index) {

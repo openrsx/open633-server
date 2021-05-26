@@ -2,11 +2,10 @@ package com.rs.plugin.impl.interfaces;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.TimerTask;
 
 import com.rs.Settings;
 import com.rs.cache.io.InputStream;
-import com.rs.cores.CoresManager;
+import com.rs.cores.WorldThread;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
@@ -21,8 +20,7 @@ import com.rs.game.player.Skills;
 import com.rs.game.player.content.Foods;
 import com.rs.game.player.content.Pots;
 import com.rs.game.route.CoordsEvent;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.plugin.InventoryDispatcher;
 import com.rs.plugin.RSInterfaceDispatcher;
@@ -59,31 +57,23 @@ public class InventoryInterfacePlugin implements RSInterface {
 			case WorldPacketsDecoder.ACTION_BUTTON2_PACKET:
 				if (player.isDisableEquip())
 					return;
+				long passedTime = Utils.currentTimeMillis() - WorldThread.WORLD_CYCLE;
 				if (player.getSwitchItemCache().isEmpty()) {
 					player.getSwitchItemCache().add(slotId);
-					CoresManager.fastExecutor.schedule(new TimerTask() {
+					World.get().submit(new Task(passedTime >= 600 ? 0 : passedTime > 330 ? 1 : 0) {
+						
 						@Override
-						public void run() {
-							try {
-								WorldTasksManager.schedule(new WorldTask() {
-
-									@Override
-									public void run() {
-										List<Byte> slots = player
-												.getSwitchItemCache();
-										int[] slot = new int[slots.size()];
-										for (int i = 0; i < slot.length; i++)
-											slot[i] = slots.get(i);
-										player.getSwitchItemCache().clear();
-										RSInterfaceDispatcher.sendWear(player, slot);
-										player.stopAll(false, true, false);
-									}
-								}, 0);
-							} catch (Throwable e) {
-								Logger.handle(e);
-							}
+						protected void execute() {
+							List<Byte> slots = player.getSwitchItemCache();
+							int[] slot = new int[slots.size()];
+							for (int i = 0; i < slot.length; i++)
+								slot[i] = slots.get(i);
+							player.getSwitchItemCache().clear();
+							RSInterfaceDispatcher.sendWear(player, slot);
+							player.stopAll(false, true, false);
+							this.cancel();
 						}
-					}, 300);
+					});
 				} else if (!player.getSwitchItemCache().contains(slotId)) {
 					player.getSwitchItemCache().add(slotId);
 				}
@@ -323,7 +313,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 		player.getEquipment().refresh(targetSlot,
 				targetSlot == 3 ? 5 : targetSlot == 3 ? 0 : 3);
 		if (targetSlot == 3)
-			player.getCombatDefinitions().desecreaseSpecialAttack(0);
+			player.getCombatDefinitions().decreaseSpecialAttack(0);
 		player.getDetails().getCharges().wear(targetSlot);
 		return true;
 	}

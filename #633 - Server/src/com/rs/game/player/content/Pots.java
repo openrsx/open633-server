@@ -4,13 +4,13 @@ import com.rs.game.Animation;
 import com.rs.game.Graphics;
 import com.rs.game.Hit;
 import com.rs.game.Hit.HitLook;
+import com.rs.game.World;
 import com.rs.game.item.Item;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.player.controllers.Wilderness;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
 public final class Pots {
@@ -536,20 +536,20 @@ public final class Pots {
 
 			@Override
 			public void extra(final Player player) {
-//		player.setOverloadDelay(501);
-				WorldTasksManager.schedule(new WorldTask() {
+				//		player.setOverloadDelay(501);
+				World.get().submit(new Task(2) {
 					int count = 4;
-
 					@Override
-					public void run() {
+					protected void execute() {
 						if (count == 0)
-							stop();
+							this.cancel();
 						player.setNextAnimation(new Animation(3170));
 						player.setNextGraphics(new Graphics(560));
 						player.applyHit(new Hit(player, 100, HitLook.REGULAR_DAMAGE, 0));
 						count--;
+						this.cancel();
 					}
-				}, 0, 2);
+				});
 			}
 		},
 		SUPER_PRAYER() {

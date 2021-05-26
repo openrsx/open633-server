@@ -1,11 +1,11 @@
 package com.rs.game.player.controllers;
 
 import com.rs.game.Animation;
+import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
 public class JailControler extends Controller {
@@ -31,11 +31,10 @@ public class JailControler extends Controller {
 
 	@Override
 	public boolean sendDeath() {
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(1) {
 			int loop;
-
 			@Override
-			public void run() {
+			protected void execute() {
 				player.stopAll();
 				if (loop == 0) {
 					player.setNextAnimation(new Animation(836));
@@ -50,8 +49,9 @@ public class JailControler extends Controller {
 					player.unlock();
 				}
 				loop++;
+				this.cancel();
 			}
-		}, 0, 1);
+		});
 		return true;
 	}
 

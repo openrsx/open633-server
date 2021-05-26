@@ -28,7 +28,6 @@ import com.rs.utils.MapAreas;
 import com.rs.utils.MusicHints;
 import com.rs.utils.NPCBonuses;
 import com.rs.utils.NPCCombatDefinitionsL;
-import com.rs.utils.ObjectSpawns;
 import com.rs.utils.ShopsHandler;
 import com.rs.utils.json.GsonHandler;
 import com.rs.utils.json.impl.MobDropTableLoader;
@@ -90,7 +89,6 @@ public class GameLoader {
 			EquipData.init();
 			ItemBonuses.init();
 			Censor.init();
-			ObjectSpawns.init();
 			NPCCombatDefinitionsL.init();
 			NPCBonuses.init();
 			return null;

@@ -470,13 +470,13 @@ public final class CombatDefinitions {
 	}
 
 	public void resetSpecialAttack() {
-		desecreaseSpecialAttack(0);
+		decreaseSpecialAttack(0);
 		specialAttackPercentage = 100;
 		refreshSpecialAttackPercentage();
 	}
 
 	public void setSpecialAttack(int special) {
-		desecreaseSpecialAttack(0);
+		decreaseSpecialAttack(0);
 		specialAttackPercentage = (byte) special;
 		refreshSpecialAttackPercentage();
 	}
@@ -547,7 +547,7 @@ public final class CombatDefinitions {
 		refreshUsingSpecialAttack();
 	}
 
-	public void desecreaseSpecialAttack(int ammount) {
+	public void decreaseSpecialAttack(int ammount) {
 		usingSpecialAttack = false;
 		refreshUsingSpecialAttack();
 		if (ammount > 0) {

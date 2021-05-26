@@ -3,13 +3,13 @@ package com.rs.game.player.controllers;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.ForceMovement;
+import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
 public class Wilderness extends Controller {
@@ -160,17 +160,18 @@ public class Wilderness extends Controller {
 
 			player.setNextForceMovement(new ForceMovement(new WorldTile(player), 1, toTile, 2,
 					object.getRotation() == 0 || object.getRotation() == 2 ? ForceMovement.SOUTH : ForceMovement.EAST));
-			WorldTasksManager.schedule(new WorldTask() {
+			World.get().submit(new Task(2) {
 				@Override
-				public void run() {
+				protected void execute() {
 					player.setNextWorldTile(toTile);
 					player.faceObject(object);
 					removeIcon();
 					removeControler();
 					player.resetReceivedDamage();
 					player.unlock();
+					this.cancel();
 				}
-			}, 2);
+			});
 			return false;
 		} else if (object.getId() == 2557 || object.getId() == 65717) {
 			player.getPackets().sendGameMessage("It seems it is locked, maybe you should try something else.");
@@ -198,34 +199,35 @@ public class Wilderness extends Controller {
 	public boolean sendDeath() {
 		player.lock(7);
 		player.stopAll();
-		WorldTasksManager.schedule(new WorldTask() {
-			int loop;
-
-			@Override
-			public void run() {
-				if (loop == 0) {
-					player.setNextAnimation(new Animation(836));
-				} else if (loop == 1) {
-					player.getPackets().sendGameMessage("Oh dear, you have died.");
-				} else if (loop == 3) {
-					Player killer = player.getMostDamageReceivedSourcePlayer();
-					if (killer != null) {
-						killer.removeDamage(player);
-						killer.setAttackedByDelay(Utils.currentTimeMillis() + 8000); // imunity
-					}
-					player.sendItemsOnDeath(killer);
-					player.reset();
-//		    player.setNextWorldTile(DeathEvent.HUBS[2]); // edgevile
-					player.setNextAnimation(new Animation(-1));
-				} else if (loop == 4) {
-					removeIcon();
-					removeControler();
-					player.getPackets().sendMusicEffect(90);
-					stop();
-				}
-				loop++;
-			}
-		}, 0, 1);
+		//TODO: REDO THIS BIT
+//		WorldTasksManager.schedule(new WorldTask() {
+//			int loop;
+//
+//			@Override
+//			public void run() {
+//				if (loop == 0) {
+//					player.setNextAnimation(new Animation(836));
+//				} else if (loop == 1) {
+//					player.getPackets().sendGameMessage("Oh dear, you have died.");
+//				} else if (loop == 3) {
+//					Player killer = player.getMostDamageReceivedSourcePlayer();
+//					if (killer != null) {
+//						killer.removeDamage(player);
+//						killer.setAttackedByDelay(Utils.currentTimeMillis() + 8000); // imunity
+//					}
+//					player.sendItemsOnDeath(killer);
+//					player.reset();
+////		    player.setNextWorldTile(DeathEvent.HUBS[2]); // edgevile
+//					player.setNextAnimation(new Animation(-1));
+//				} else if (loop == 4) {
+//					removeIcon();
+//					removeControler();
+//					player.getPackets().sendMusicEffect(90);
+//					stop();
+//				}
+//				loop++;
+//			}
+//		}, 0, 1);
 		return false;
 	}
 

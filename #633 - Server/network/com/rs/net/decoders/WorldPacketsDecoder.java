@@ -17,7 +17,6 @@ import com.rs.game.player.PublicChatMessage;
 import com.rs.game.player.QuickChatMessage;
 import com.rs.game.player.Skills;
 import com.rs.game.player.actions.PlayerFollow;
-import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Magic;
 import com.rs.game.player.content.Shop;
 import com.rs.game.player.content.pet.Pets;

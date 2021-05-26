@@ -2,11 +2,11 @@ package com.rs.game.npc.others;
 
 import com.rs.game.Animation;
 import com.rs.game.Entity;
+import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
 public class Werewolf extends NPC {
@@ -33,16 +33,16 @@ public class Werewolf extends NPC {
 			if (!hasWolfbane(target)) {
 				setNextAnimation(new Animation(6554));
 				setCantInteract(true);
-				WorldTasksManager.schedule(new WorldTask() {
+				World.get().submit(new Task(1) {
 					@Override
-					public void run() {
+					protected void execute() {
 						setNextNPCTransformation((short) (realId - 20));
 						setNextAnimation(new Animation(-1));
 						setCantInteract(false);
 						setTarget(target);
+						this.cancel();
 					}
-				}, 1);
-				return;
+				});
 			}
 		}
 		super.processNPC();
