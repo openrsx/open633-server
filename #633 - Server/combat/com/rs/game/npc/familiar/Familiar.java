@@ -148,7 +148,7 @@ public abstract class Familiar extends NPC implements Serializable {
 				return false;
 		}
 		return !target.isDead()
-				&& ((owner.isAtMultiArea() && isAtMultiArea() && target.isAtMultiArea())
+				&& ((owner.isMultiArea() && isMultiArea() && target.isMultiArea())
 						|| (owner.isForceMultiArea() && target.isForceMultiArea()))
 				&& owner.getControlerManager().canAttack(target);
 	}
@@ -300,7 +300,7 @@ public abstract class Familiar extends NPC implements Serializable {
 			checkNearDirs = Utils.getCoordOffsetsNear(size);
 			sendMainConfigs();
 		} else
-			removeTarget();
+			getCombat().removeTarget();
 		WorldTile teleTile = null;
 		for (int dir = 0; dir < checkNearDirs[0].length; dir++) {
 			final WorldTile tile = new WorldTile(new WorldTile(owner.getX() + checkNearDirs[0][dir],
@@ -427,13 +427,13 @@ public abstract class Familiar extends NPC implements Serializable {
 
 	public void setSpecial(boolean on) {
 		if (!on)
-			owner.getTemporaryAttributtes().remove("FamiliarSpec");
+			owner.getTemporaryAttributes().remove("FamiliarSpec");
 		else {
 			if (specialEnergy < getSpecialAmount()) {
 				owner.getPackets().sendGameMessage("Your special move bar is too low to use this scroll.");
 				return;
 			}
-			owner.getTemporaryAttributtes().put("FamiliarSpec", Boolean.TRUE);
+			owner.getTemporaryAttributes().put("FamiliarSpec", Boolean.TRUE);
 		}
 	}
 
@@ -451,7 +451,7 @@ public abstract class Familiar extends NPC implements Serializable {
 	}
 
 	public boolean hasSpecialOn() {
-		if (owner.getTemporaryAttributtes().remove("FamiliarSpec") != null) {
+		if (owner.getTemporaryAttributes().remove("FamiliarSpec") != null) {
 			int scrollId = Summoning.getScrollId(pouch.getRealPouchId());
 			if (!owner.getInventory().containsItem(scrollId, 1)) {
 				owner.getPackets().sendGameMessage("You don't have the scrolls to use this move.");

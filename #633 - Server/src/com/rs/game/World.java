@@ -362,7 +362,7 @@ public final class World {
 				getRegion(entity.getLastRegionId()).removeNPCIndex(entity.getIndex());
 			return;
 		}
-		int regionId = entity.getRegionId();
+		short regionId = (short) entity.getRegionId();
 		if (entity.getLastRegionId() != regionId) { // map region entity at
 			// changed
 			if (entity instanceof Player) {

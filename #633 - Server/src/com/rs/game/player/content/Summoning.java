@@ -324,7 +324,7 @@ public class Summoning {
 				"Infuse-5<col=FF9040>", "Infuse-10<col=FF9040>", "Infuse-X<col=FF9040>", "Infuse-All<col=FF9040>",
 				"List<col=FF9040>");
 		player.getPackets().sendIComponentSettings(POUCHES_INTERFACE, 16, 0, 462, 190);
-		player.getTemporaryAttributtes().put("infusing_scroll", false);
+		player.getTemporaryAttributes().put("infusing_scroll", false);
 	}
 
 	public static void openScrollInfusionInterface(Player player) {
@@ -333,7 +333,7 @@ public class Summoning {
 				"Transform-5<col=FF9040>", "Transform-10<col=FF9040>", "Transform-X<col=FF9040>",
 				"Transform-All<col=FF9040>");
 		player.getPackets().sendIComponentSettings(SCROLLS_INTERFACE, 16, 0, 462, 126);
-		player.getTemporaryAttributtes().put("infusing_scroll", true);
+		player.getTemporaryAttributes().put("infusing_scroll", true);
 	}
 
 	public static void handlePouchInfusion(Player player, int slotId, int creationCount) {
@@ -341,7 +341,7 @@ public class Summoning {
 		Pouch pouch = Pouch.values()[slotValue];
 		if (pouch == null)
 			return;
-		boolean infusingScroll = (boolean) player.getTemporaryAttributtes().remove("infusing_scroll"),
+		boolean infusingScroll = (boolean) player.getTemporaryAttributes().remove("infusing_scroll"),
 				hasRequirements = false;
 		ItemDefinitions def = ItemDefinitions.getItemDefinitions(pouch.getRealPouchId());
 		List<Item> itemReq = def.getCreateItemRequirements(infusingScroll);
@@ -369,7 +369,7 @@ public class Summoning {
 			}
 		}
 		if (!hasRequirements) {
-			player.getTemporaryAttributtes().put("infusing_scroll", infusingScroll);
+			player.getTemporaryAttributes().put("infusing_scroll", infusingScroll);
 			return;
 		}
 		player.closeInterfaces();
@@ -378,7 +378,7 @@ public class Summoning {
 	}
 
 	public static void switchInfusionOption(Player player) {
-		boolean infusingScroll = (boolean) player.getTemporaryAttributtes().get("infusing_scroll");
+		boolean infusingScroll = (boolean) player.getTemporaryAttributes().get("infusing_scroll");
 		if (infusingScroll)
 			openInfusionInterface(player);
 		else

@@ -48,7 +48,7 @@ public class DuelArena extends Controller {
 				sendOptions(player);
 				player.getLastDuelRules().getStake().clear();
 			}
-			player.getTemporaryAttributtes().put("acceptedDuel", false);
+			player.getTemporaryAttributes().put("acceptedDuel", false);
 			player.getPackets().sendItems(134, false, player.getLastDuelRules().getStake());
 			player.getPackets().sendItems(134, true, player.getLastDuelRules().getStake());
 			player.getPackets().sendIComponentText(ifFriendly ? 637 : 631, ifFriendly ? 16 : 38,
@@ -56,7 +56,7 @@ public class DuelArena extends Controller {
 			player.getPackets().sendIComponentText(ifFriendly ? 637 : 631, ifFriendly ? 18 : 40,
 					"" + (target.getSkills().getCombatLevel()));
 			player.getVarsManager().sendVar(286, 0);
-			player.getTemporaryAttributtes().put("firstScreen", true);
+			player.getTemporaryAttributes().put("firstScreen", true);
 			player.getInterfaceManager().sendInterface(ifFriendly ? 637 : 631);
 			refreshScreenMessage(true, ifFriendly);
 			player.setCloseInterfacesEvent(new Runnable() {
@@ -72,7 +72,7 @@ public class DuelArena extends Controller {
 		synchronized (this) {
 			if (!hasTarget())
 				return;
-			boolean targetAccepted = (Boolean) target.getTemporaryAttributtes().get("acceptedDuel");
+			boolean targetAccepted = (Boolean) target.getTemporaryAttributes().get("acceptedDuel");
 			DuelRules rules = player.getLastDuelRules();
 			if (!rules.canAccept(player.getLastDuelRules().getStake()))
 				return;
@@ -88,7 +88,7 @@ public class DuelArena extends Controller {
 					}
 					return;
 				}
-				player.getTemporaryAttributtes().put("acceptedDuel", true);
+				player.getTemporaryAttributes().put("acceptedDuel", true);
 				refreshScreenMessages(firstStage, ifFriendly);
 			}
 		}
@@ -151,7 +151,7 @@ public class DuelArena extends Controller {
 
 	private void reset() {
 		target = null;
-		player.getTemporaryAttributtes().put("acceptedDuel", false);
+		player.getTemporaryAttributes().put("acceptedDuel", false);
 	}
 
 	public void addItem(int slot, int amount) {
@@ -238,12 +238,12 @@ public class DuelArena extends Controller {
 
 	public void cancelAccepted() {
 		boolean canceled = false;
-		if ((Boolean) player.getTemporaryAttributtes().get("acceptedDuel")) {
-			player.getTemporaryAttributtes().put("acceptedDuel", false);
+		if ((Boolean) player.getTemporaryAttributes().get("acceptedDuel")) {
+			player.getTemporaryAttributes().put("acceptedDuel", false);
 			canceled = true;
 		}
-		if ((Boolean) target.getTemporaryAttributtes().get("acceptedDuel")) {
-			target.getTemporaryAttributtes().put("acceptedDuel", false);
+		if ((Boolean) target.getTemporaryAttributes().get("acceptedDuel")) {
+			target.getTemporaryAttributes().put("acceptedDuel", false);
 			canceled = true;
 		}
 		if (canceled)
@@ -267,9 +267,9 @@ public class DuelArena extends Controller {
 	}
 
 	private String getAcceptMessage(boolean firstStage) {
-		if (target.getTemporaryAttributtes().get("acceptedDuel") == Boolean.TRUE)
+		if (target.getTemporaryAttributes().get("acceptedDuel") == Boolean.TRUE)
 			return "Other player has accepted.";
-		else if (player.getTemporaryAttributtes().get("acceptedDuel") == Boolean.TRUE)
+		else if (player.getTemporaryAttributes().get("acceptedDuel") == Boolean.TRUE)
 			return "Waiting for other player...";
 		return firstStage ? "" : "Please look over the agreements to the duel.";
 	}
@@ -284,7 +284,7 @@ public class DuelArena extends Controller {
 			closeDuelInteraction(DuelStage.NO_SPACE);
 			return false;
 		}
-		player.getTemporaryAttributtes().put("acceptedDuel", false);
+		player.getTemporaryAttributes().put("acceptedDuel", false);
 		openConfirmationScreen(false);
 		player.getInterfaceManager().removeInventoryInterface();
 		return true;
@@ -395,8 +395,8 @@ public class DuelArena extends Controller {
 		player.stopAll();
 		player.lock(2); // fixes mass click steps
 		player.reset();
-		player.getTemporaryAttributtes().put("startedDuel", true);
-		player.getTemporaryAttributtes().put("canFight", false);
+		player.getTemporaryAttributes().put("startedDuel", true);
+		player.getTemporaryAttributes().put("canFight", false);
 		player.setCanPvp(true);
 		player.getHintIconsManager().addHintIcon(target, 1, -1, false);
 		World.get().submit(new Task(3) {
@@ -406,7 +406,7 @@ public class DuelArena extends Controller {
 				if (count > 0)
 					player.setNextForceTalk(new ForceTalk("" + count));
 				if (count == 0) {
-					player.getTemporaryAttributtes().put("canFight", true);
+					player.getTemporaryAttributes().put("canFight", true);
 					player.setNextForceTalk(new ForceTalk("FIGHT!"));
 					this.cancel();
 					return;
@@ -532,7 +532,7 @@ public class DuelArena extends Controller {
 	public boolean keepCombating(Entity victim) {
 		DuelRules rules = player.getLastDuelRules();
 		boolean isRanging = PlayerCombat.isRanging(player) != 0;
-		if (player.getTemporaryAttributtes().get("canFight") == Boolean.FALSE) {
+		if (player.getTemporaryAttributes().get("canFight") == Boolean.FALSE) {
 			player.getPackets().sendGameMessage("The duel hasn't started yet.");
 			return false;
 		}

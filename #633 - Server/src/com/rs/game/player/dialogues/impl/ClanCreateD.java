@@ -13,7 +13,7 @@ public class ClanCreateD extends Dialogue {
     @Override
     public void run(int interfaceId, int componentId) {
 	if (stage == -1) {
-	    player.getTemporaryAttributtes().put("setclan", Boolean.TRUE);
+	    player.getTemporaryAttributes().put("setclan", Boolean.TRUE);
 	    player.getPackets().sendInputNameScript("Enter the clan name you'd like to have.");
 	    end();
 	}

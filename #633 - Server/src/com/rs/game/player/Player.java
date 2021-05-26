@@ -185,7 +185,7 @@ public class Player extends Entity {
 		notes.setPlayer(this);
 		friendsIgnores.setPlayer(this);
 		petManager.setPlayer(this);
-		setDirection(Utils.getFaceDirection(0, -1));
+		setDirection((byte) Utils.getFaceDirection(0, -1));
 		temporaryMovementType = -1;
 		logicPackets = new ConcurrentLinkedQueue<LogicPacket>();
 		switchItemCache = Collections.synchronizedList(new ArrayList<Byte>());
@@ -512,11 +512,11 @@ public class Player extends Entity {
 			return;
 		boolean isAtMultiArea = isForceMultiArea() ? true : World
 				.isMultiArea(this);
-		if (isAtMultiArea && !isAtMultiArea()) {
-			setAtMultiArea(isAtMultiArea);
+		if (isAtMultiArea && !isMultiArea()) {
+			setMultiArea(isAtMultiArea);
 			getPackets().sendGlobalConfig(616, 1);
-		} else if (!isAtMultiArea && isAtMultiArea()) {
-			setAtMultiArea(isAtMultiArea);
+		} else if (!isAtMultiArea && isMultiArea()) {
+			setMultiArea(isAtMultiArea);
 			getPackets().sendGlobalConfig(616, 0);
 		}
 	}
@@ -725,11 +725,11 @@ public class Player extends Entity {
 	@Override
 	public void sendDeath(final Entity source) {
 		if (prayer.hasPrayersOn()
-				&& getTemporaryAttributtes().get("startedDuel") != Boolean.TRUE) {
+				&& getTemporaryAttributes().get("startedDuel") != Boolean.TRUE) {
 			if (prayer.usingPrayer(0, 22)) {
 				setNextGraphics(new Graphics(437));
 				final Player target = this;
-				if (isAtMultiArea()) {
+				if (isMultiArea()) {
 					for (int regionId : getMapRegionsIds()) {
 						List<Integer> playersIndexes = World
 								.getRegion(regionId).getPlayerIndexes();
@@ -1195,25 +1195,25 @@ public class Player extends Entity {
 	}
 
 	public void setTeleBlockDelay(long teleDelay) {
-		getTemporaryAttributtes().put("TeleBlocked",
+		getTemporaryAttributes().put("TeleBlocked",
 				teleDelay + Utils.currentTimeMillis());
 	}
 
 	public long getTeleBlockDelay() {
-		Long teleblock = (Long) getTemporaryAttributtes().get("TeleBlocked");
+		Long teleblock = (Long) getTemporaryAttributes().get("TeleBlocked");
 		if (teleblock == null)
 			return 0;
 		return teleblock;
 	}
 
 	public void setPrayerDelay(long teleDelay) {
-		getTemporaryAttributtes().put("PrayerBlocked",
+		getTemporaryAttributes().put("PrayerBlocked",
 				teleDelay + Utils.currentTimeMillis());
 		prayer.closeProtectionPrayers();
 	}
 
 	public long getPrayerDelay() {
-		Long teleblock = (Long) getTemporaryAttributtes().get("PrayerBlocked");
+		Long teleblock = (Long) getTemporaryAttributes().get("PrayerBlocked");
 		if (teleblock == null)
 			return 0;
 		return teleblock;

@@ -22,7 +22,7 @@ public class Strykewyrm extends NPC {
 		super.processNPC();
 		if (isDead())
 			return;
-		if (getId() != stompId && !isCantInteract() && !isUnderCombat()) {
+		if (getId() != stompId && !isCantInteract() && !getCombat().underCombat()) {
 			setNextAnimation(new Animation(12796));
 			setCantInteract(true);
 			World.get().submit(new Task(1) {
@@ -55,7 +55,7 @@ public class Strykewyrm extends NPC {
 	public static void handleStomping(final Player player, final NPC npc) {
 		if (npc.isCantInteract())
 			return;
-		if (!npc.isAtMultiArea() || !player.isAtMultiArea()) {
+		if (!npc.isMultiArea() || !player.isMultiArea()) {
 			if (player.getAttackedBy() != npc && player.getAttackedByDelay() > Utils.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("You are already in combat.");
 				return;

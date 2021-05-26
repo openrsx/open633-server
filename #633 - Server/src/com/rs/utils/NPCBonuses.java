@@ -13,6 +13,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.util.HashMap;
 
+import lombok.Cleanup;
+
 public final class NPCBonuses {
 	private final static HashMap<Short, short[]> npcBonuses = new HashMap<Short, short[]>();
 	private static final String PACKED_PATH = "data/npcs/packedBonuses.nb";
@@ -31,7 +33,9 @@ public final class NPCBonuses {
 	private static void loadUnpackedNPCBonuses() {
 		Logger.log("NPCBonuses", "Packing npc bonuses...");
 		try {
+			@Cleanup
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
+			@Cleanup
 			BufferedReader in = new BufferedReader(new FileReader("data/npcs/unpackedBonuses.txt"));
 			while (true) {
 				String line = in.readLine();
@@ -60,8 +64,6 @@ public final class NPCBonuses {
 				}
 				npcBonuses.put(npcId, bonuses);
 			}
-			in.close();
-			out.close();
 		} catch (Throwable e) {
 			Logger.handle(e);
 		}
@@ -69,6 +71,7 @@ public final class NPCBonuses {
 
 	private static void loadPackedNPCBonuses() {
 		try {
+			@Cleanup
 			RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
 			FileChannel channel = in.getChannel();
 			ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
@@ -79,8 +82,6 @@ public final class NPCBonuses {
 					bonuses[i] = buffer.getShort();
 				npcBonuses.put(npcId, bonuses);
 			}
-			channel.close();
-			in.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

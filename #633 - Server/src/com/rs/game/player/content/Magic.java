@@ -367,7 +367,7 @@ public class Magic {
 			if (set == 0)
 				player.getCombatDefinitions().setAutoCastSpell(spellId);
 			else
-				player.getTemporaryAttributtes().put("tempCastSpell", spellId);
+				player.getTemporaryAttributes().put("tempCastSpell", spellId);
 		}
 		return true;
 	}
@@ -442,7 +442,7 @@ public class Magic {
 				player.getPackets().sendGameMessage("Your Magic level is not high enough for this spell.");
 				return;
 			}
-			Long lastVeng = (Long) player.getTemporaryAttributtes().get("LAST_VENG");
+			Long lastVeng = (Long) player.getTemporaryAttributes().get("LAST_VENG");
 			if (lastVeng != null && lastVeng + 30000 > Utils.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
@@ -458,7 +458,7 @@ public class Magic {
 			if (!checkRunes(player, true, ASTRAL_RUNE, 3, DEATH_RUNE, 2, EARTH_RUNE, 10))
 				return;
 			player.setNextAnimation(new Animation(4411));
-			player.getTemporaryAttributtes().put("LAST_VENG", Utils.currentTimeMillis());
+			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			((Player) target).setNextGraphics(new Graphics(725, 0, 100));
 //			((Player) target).setCastVeng(true);
@@ -477,7 +477,7 @@ public class Magic {
 				player.getPackets().sendGameMessage("You need a Defence level of 40 for this spell");
 				return;
 			}
-			Long lastVeng = (Long) player.getTemporaryAttributtes().get("LAST_VENG");
+			Long lastVeng = (Long) player.getTemporaryAttributes().get("LAST_VENG");
 			if (lastVeng != null && lastVeng + 30000 > Utils.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
@@ -487,7 +487,7 @@ public class Magic {
 			player.setNextGraphics(new Graphics(726, 0, 100));
 			player.setNextAnimation(new Animation(4410));
 //			player.setCastVeng(true);
-			player.getTemporaryAttributtes().put("LAST_VENG", Utils.currentTimeMillis());
+			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			break;
 		case 39:
@@ -498,7 +498,7 @@ public class Magic {
 				player.getPackets().sendGameMessage("Your Magic level is not high enough for this spell.");
 				return;
 			}
-			lastVeng = (Long) player.getTemporaryAttributtes().get("LAST_VENG");
+			lastVeng = (Long) player.getTemporaryAttributes().get("LAST_VENG");
 			if (lastVeng != null && lastVeng + 30000 > Utils.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
@@ -529,7 +529,7 @@ public class Magic {
 				}
 			}
 			player.setNextAnimation(new Animation(4411));
-			player.getTemporaryAttributtes().put("LAST_VENG", Utils.currentTimeMillis());
+			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
 			player.getPackets().sendGameMessage("The spell affected " + affectedPeopleCount + " nearby people.");
 			break;
 		case 43: // moonclan teleport
@@ -883,7 +883,7 @@ public class Magic {
 						player.getPackets().sendSound(5524, 0, 2);
 						player.setNextFaceWorldTile(
 								new WorldTile(teleTile.getX(), teleTile.getY() - 1, teleTile.getPlane()));
-						player.setDirection(6);
+						player.setDirection((byte) 6);
 					}
 					removeDamage = true;
 				} else {
@@ -935,7 +935,7 @@ public class Magic {
 						teleControlersCheck(player, teleTile);
 					player.setNextFaceWorldTile(
 							new WorldTile(teleTile.getX(), teleTile.getY() - 1, teleTile.getPlane()));
-					player.setDirection(6);
+					player.setDirection((byte) 6);
 					player.setNextAnimation(new Animation(-1));
 					stage = 2;
 				} else if (stage == 2) {

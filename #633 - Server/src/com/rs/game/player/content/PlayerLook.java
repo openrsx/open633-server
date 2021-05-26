@@ -32,16 +32,16 @@ public final class PlayerLook {
 			// player.getTemporaryAttributtes().remove("ViewWearDesignD");
 			player.getAppearence().generateAppearenceData();
 		} else if (buttonId >= 48 && buttonId <= 67) {
-			player.getTemporaryAttributtes().put("ViewWearDesign",
+			player.getTemporaryAttributes().put("ViewWearDesign",
 					(buttonId - 48));
-			player.getTemporaryAttributtes().put("ViewWearDesignD", 0);
+			player.getTemporaryAttributes().put("ViewWearDesignD", 0);
 			setDesign(player, buttonId - 48, 0);
 		} else if (buttonId >= 83 && buttonId <= 88) {
-			Integer index = (Integer) player.getTemporaryAttributtes().get(
+			Integer index = (Integer) player.getTemporaryAttributes().get(
 					"ViewWearDesign");
 			if (index == null)
 				return;
-			player.getTemporaryAttributtes().put("ViewWearDesignD",
+			player.getTemporaryAttributes().put("ViewWearDesignD",
 					(buttonId - 83));
 			setDesign(player, index, buttonId - 83);
 		} else if (buttonId == 38 || buttonId == 39) {
@@ -50,10 +50,10 @@ public final class PlayerLook {
 			setSkin(player, slotId);
 
 		} else if (buttonId >= 95 && buttonId <= 100) {// select the index
-			player.getTemporaryAttributtes().put("SelectWearDesignD",
+			player.getTemporaryAttributes().put("SelectWearDesignD",
 					(buttonId - 95));
 		} else if (buttonId == 107) {
-			Integer index = (Integer) player.getTemporaryAttributtes().get(
+			Integer index = (Integer) player.getTemporaryAttributes().get(
 					"SelectWearDesignD");
 			if (index == null || index == 1) {
 				boolean male = player.getAppearence().isMale();
@@ -90,7 +90,7 @@ public final class PlayerLook {
 				player.getAppearence().setBeardStyle(
 						(short) ClientScriptMap.getMap(3307).getIntValue(slotId));
 		} else if (buttonId == 111) {
-			Integer index = (Integer) player.getTemporaryAttributtes().get(
+			Integer index = (Integer) player.getTemporaryAttributes().get(
 					"SelectWearDesignD");
 			if (index == null || index == 0)
 				setSkin(player, slotId);
@@ -118,9 +118,9 @@ public final class PlayerLook {
 			player.getAppearence().female();
 		else
 			player.getAppearence().male();
-		Integer index1 = (Integer) player.getTemporaryAttributtes().get(
+		Integer index1 = (Integer) player.getTemporaryAttributes().get(
 				"ViewWearDesign");
-		Integer index2 = (Integer) player.getTemporaryAttributtes().get(
+		Integer index2 = (Integer) player.getTemporaryAttributes().get(
 				"ViewWearDesignD");
 		setDesign(player, index1 != null ? index1 : 0, index2 != null ? index2
 				: 0);
@@ -164,7 +164,7 @@ public final class PlayerLook {
 	public static void handleMageMakeOverButtons(Player player, int buttonId) {
 		if (buttonId == 14 || buttonId == 16 || buttonId == 15
 				|| buttonId == 17)
-			player.getTemporaryAttributtes().put("MageMakeOverGender",
+			player.getTemporaryAttributes().put("MageMakeOverGender",
 					buttonId == 14 || buttonId == 16);
 		else if (buttonId >= 20 && buttonId <= 31) {
 
@@ -193,11 +193,11 @@ public final class PlayerLook {
 				skin = 1;
 			else
 				skin = 0;
-			player.getTemporaryAttributtes().put("MageMakeOverSkin", skin);
+			player.getTemporaryAttributes().put("MageMakeOverSkin", skin);
 		} else if (buttonId == 33) {
-			Boolean male = (Boolean) player.getTemporaryAttributtes().remove(
+			Boolean male = (Boolean) player.getTemporaryAttributes().remove(
 					"MageMakeOverGender");
-			Integer skin = (Integer) player.getTemporaryAttributtes().remove(
+			Integer skin = (Integer) player.getTemporaryAttributes().remove(
 					"MageMakeOverSkin");
 			player.closeInterfaces();
 			if (male == null || skin == null)
@@ -240,13 +240,13 @@ public final class PlayerLook {
 		// and
 		// do ++, but cant find button ids
 		if (buttonId == 6)
-			player.getTemporaryAttributtes().put("hairSaloon", true);
+			player.getTemporaryAttributes().put("hairSaloon", true);
 		else if (buttonId == 7)
-			player.getTemporaryAttributtes().put("hairSaloon", false);
+			player.getTemporaryAttributes().put("hairSaloon", false);
 		else if (buttonId == 18) {
 			player.closeInterfaces();
 		} else if (buttonId == 10) {
-			Boolean hairSalon = (Boolean) player.getTemporaryAttributtes().get(
+			Boolean hairSalon = (Boolean) player.getTemporaryAttributes().get(
 					"hairSaloon");
 			if (hairSalon != null && hairSalon) {
 				int value = (int) ClientScriptMap.getMap(
@@ -276,21 +276,21 @@ public final class PlayerLook {
 				player.getAppearence().isMale() ? 0 : 1);
 		player.getVarsManager().sendVarBit(6099,
 				player.getAppearence().getSkinColor());
-		player.getTemporaryAttributtes().put("MageMakeOverGender",
+		player.getTemporaryAttributes().put("MageMakeOverGender",
 				player.getAppearence().isMale());
-		player.getTemporaryAttributtes().put("MageMakeOverSkin",
+		player.getTemporaryAttributes().put("MageMakeOverSkin",
 				player.getAppearence().getSkinColor());
 	}
 
 	public static void handleThessaliasMakeOverButtons(Player player,
 			int buttonId, int slotId) {
 		if (buttonId == 6)
-			player.getTemporaryAttributtes().put("ThessaliasMakeOver", 0);
+			player.getTemporaryAttributes().put("ThessaliasMakeOver", 0);
 		else if (buttonId == 7) {
 			if (ClientScriptMap.getMap(
 					player.getAppearence().isMale() ? 690 : 1591)
 					.getKeyForValue(player.getAppearence().getTopStyle()) >= 32) {
-				player.getTemporaryAttributtes().put("ThessaliasMakeOver", 1);
+				player.getTemporaryAttributes().put("ThessaliasMakeOver", 1);
 			} else
 				player.getPackets().sendGameMessage(
 						"You can't select different arms to go with that top.");
@@ -298,17 +298,17 @@ public final class PlayerLook {
 			if (ClientScriptMap.getMap(
 					player.getAppearence().isMale() ? 690 : 1591)
 					.getKeyForValue(player.getAppearence().getTopStyle()) >= 32) {
-				player.getTemporaryAttributtes().put("ThessaliasMakeOver", 2);
+				player.getTemporaryAttributes().put("ThessaliasMakeOver", 2);
 			} else
 				player.getPackets()
 						.sendGameMessage(
 								"You can't select different wrists to go with that top.");
 		} else if (buttonId == 9)
-			player.getTemporaryAttributtes().put("ThessaliasMakeOver", 3);
+			player.getTemporaryAttributes().put("ThessaliasMakeOver", 3);
 		else if (buttonId == 19) { // confirm
 			player.closeInterfaces();
 		} else if (buttonId == 12) { // set part
-			Integer stage = (Integer) player.getTemporaryAttributtes().get(
+			Integer stage = (Integer) player.getTemporaryAttributes().get(
 					"ThessaliasMakeOver");
 			if (stage == null || stage == 0) {
 				player.getAppearence().setTopStyle(
@@ -335,7 +335,7 @@ public final class PlayerLook {
 								.getIntValue(slotId / 2));
 
 		} else if (buttonId == 17) {// color
-			Integer stage = (Integer) player.getTemporaryAttributtes().get(
+			Integer stage = (Integer) player.getTemporaryAttributes().get(
 					"ThessaliasMakeOver");
 			if (stage == null || stage == 0 || stage == 1)
 				player.getAppearence().setTopColor(
@@ -358,7 +358,7 @@ public final class PlayerLook {
 		player.setNextAnimation(new Animation(11623));
 		player.getInterfaceManager().sendInterface(729);
 		player.getPackets().sendIComponentText(729, 21, "Free!");
-		player.getTemporaryAttributtes().put("ThessaliasMakeOver", 0);
+		player.getTemporaryAttributes().put("ThessaliasMakeOver", 0);
 		player.getPackets().sendUnlockIComponentOptionSlots(729, 12, 0, 100, 0);
 		player.getPackets().sendUnlockIComponentOptionSlots(729, 17, 0,
 				ClientScriptMap.getMap(3282).getSize() * 2, 0);
@@ -370,7 +370,7 @@ public final class PlayerLook {
 						548, "A marvellous choise. You look splendid!");
 				player.setNextAnimation(new Animation(-1));
 				player.getAppearence().getAppeareanceData();
-				player.getTemporaryAttributtes().remove("ThessaliasMakeOver");
+				player.getTemporaryAttributes().remove("ThessaliasMakeOver");
 			}
 
 		});
@@ -406,7 +406,7 @@ public final class PlayerLook {
 		player.getPackets().sendUnlockIComponentOptionSlots(309, 16, 0,
 				ClientScriptMap.getMap(2345).getSize() * 2, 0);
 		player.getPackets().sendIComponentText(309, 20, "Free!");
-		player.getTemporaryAttributtes().put("hairSaloon", true);
+		player.getTemporaryAttributes().put("hairSaloon", true);
 		player.setCloseInterfacesEvent(new Runnable() {
 
 			@Override
@@ -419,7 +419,7 @@ public final class PlayerLook {
 										: "lady") + ".");
 				player.setNextAnimation(new Animation(-1));
 				player.getAppearence().getAppeareanceData();
-				player.getTemporaryAttributtes().remove("hairSaloon");
+				player.getTemporaryAttributes().remove("hairSaloon");
 			}
 
 		});
@@ -438,7 +438,7 @@ public final class PlayerLook {
 		player.setNextAnimation(new Animation(11623));
 		player.getInterfaceManager().sendInterface(728);
 		player.getPackets().sendIComponentText(728, 16, "Free");
-		player.getTemporaryAttributtes().put("YrsaBoot", 0);
+		player.getTemporaryAttributes().put("YrsaBoot", 0);
 		player.getPackets().sendUnlockIComponentOptionSlots(728, 12, 0, 500, 0);
 		player.getPackets().sendUnlockIComponentOptionSlots(728, 7, 0,
 				ClientScriptMap.getMap(3297).getSize() * 2, 0);
@@ -450,7 +450,7 @@ public final class PlayerLook {
 						548, "Hey, They look great!");
 				player.setNextAnimation(new Animation(-1));
 				player.getAppearence().getAppeareanceData();
-				player.getTemporaryAttributtes().remove("YrsaBoot");
+				player.getTemporaryAttributes().remove("YrsaBoot");
 			}
 		});
 	}

@@ -71,7 +71,7 @@ public class PlayerCombat extends Action {
 		}
 		int maxDistance = isRanging != 0 || spellId > 0 ? 7 : 0;
 		double multiplier = 1.0;
-		if (player.getTemporaryAttributtes().get("miasmic_effect") == Boolean.TRUE)
+		if (player.getTemporaryAttributes().get("miasmic_effect") == Boolean.TRUE)
 			multiplier = 1.5;
 		int size = player.getSize();
 		if (!player.clipedProjectile(target, maxDistance == 0))
@@ -135,7 +135,7 @@ public class PlayerCombat extends Action {
 	public Entity[] getMultiAttackTargets(Player player, int maxDistance, int maxAmtTargets) {
 		List<Entity> possibleTargets = new ArrayList<Entity>();
 		possibleTargets.add(target);
-		if (target.isAtMultiArea()) {
+		if (target.isMultiArea()) {
 			y: for (int regionId : target.getMapRegionsIds()) {
 				Region region = World.getRegion(regionId);
 				if (target instanceof Player) {
@@ -145,7 +145,7 @@ public class PlayerCombat extends Action {
 					for (int playerIndex : playerIndexes) {
 						Player p2 = World.getPlayers().get(playerIndex);
 						if (p2 == null || p2 == player || p2 == target || p2.isDead() || !p2.isStarted()
-								|| p2.hasFinished() || !p2.isCanPvp() || !p2.isAtMultiArea()
+								|| p2.hasFinished() || !p2.isCanPvp() || !p2.isMultiArea()
 								|| !p2.withinDistance(target, maxDistance) || !player.getControlerManager().canHit(p2))
 							continue;
 						possibleTargets.add(p2);
@@ -159,7 +159,7 @@ public class PlayerCombat extends Action {
 					for (int npcIndex : npcIndexes) {
 						NPC n = World.getNPCs().get(npcIndex);
 						if (n == null || n == target || n == player.getFamiliar() || n.isDead() || n.hasFinished()
-								|| !n.isAtMultiArea() || !n.withinDistance(target, maxDistance)
+								|| !n.isMultiArea() || !n.withinDistance(target, maxDistance)
 								|| !n.getDefinitions().hasAttackOption() || !player.getControlerManager().canHit(n))
 							continue;
 						possibleTargets.add(n);
@@ -518,23 +518,23 @@ public class PlayerCombat extends Action {
 				base_mage_xp = 35;
 				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 200)));
 				World.sendProjectile(player, target, 1846, 43, 22, 51, 50, 16, 0);
-				if (target.getTemporaryAttributtes().get("miasmic_immunity") == Boolean.TRUE) {
+				if (target.getTemporaryAttributes().get("miasmic_immunity") == Boolean.TRUE) {
 					return 4;
 				}
 				if (target instanceof Player) {
 					((Player) target).getPackets().sendGameMessage("You feel slowed down.");
 				}
-				target.getTemporaryAttributtes().put("miasmic_immunity", Boolean.TRUE);
-				target.getTemporaryAttributtes().put("miasmic_effect", Boolean.TRUE);
+				target.getTemporaryAttributes().put("miasmic_immunity", Boolean.TRUE);
+				target.getTemporaryAttributes().put("miasmic_effect", Boolean.TRUE);
 				final Entity t = target;
 				World.get().submit(new Task(20) {
 					@Override
 					protected void execute() {
-						t.getTemporaryAttributtes().remove("miasmic_effect");
+						t.getTemporaryAttributes().remove("miasmic_effect");
 						World.get().submit(new Task(15) {
 							@Override
 							protected void execute() {
-								t.getTemporaryAttributtes().remove("miasmic_immunity");
+								t.getTemporaryAttributes().remove("miasmic_immunity");
 								this.cancel();
 							}
 						});
@@ -549,23 +549,23 @@ public class PlayerCombat extends Action {
 				base_mage_xp = 48;
 				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 280)));
 				World.sendProjectile(player, target, 1852, 43, 22, 51, 50, 16, 0);
-				if (target.getTemporaryAttributtes().get("miasmic_immunity") == Boolean.TRUE) {
+				if (target.getTemporaryAttributes().get("miasmic_immunity") == Boolean.TRUE) {
 					return 4;
 				}
 				if (target instanceof Player) {
 					((Player) target).getPackets().sendGameMessage("You feel slowed down.");
 				}
-				target.getTemporaryAttributtes().put("miasmic_immunity", Boolean.TRUE);
-				target.getTemporaryAttributtes().put("miasmic_effect", Boolean.TRUE);
+				target.getTemporaryAttributes().put("miasmic_immunity", Boolean.TRUE);
+				target.getTemporaryAttributes().put("miasmic_effect", Boolean.TRUE);
 				final Entity t0 = target;
 				World.get().submit(new Task(60) {
 					@Override
 					protected void execute() {
-						t0.getTemporaryAttributtes().remove("miasmic_effect");
+						t0.getTemporaryAttributes().remove("miasmic_effect");
 						World.get().submit(new Task(15) {
 							@Override
 							protected void execute() {
-								t0.getTemporaryAttributtes().remove("miasmic_immunity");
+								t0.getTemporaryAttributes().remove("miasmic_immunity");
 								this.cancel();
 							}
 						});
@@ -585,21 +585,21 @@ public class PlayerCombat extends Action {
 						base_mage_xp = 42;
 						int damage = getRandomMagicMaxHit(player, 240);
 						delayMagicHit(2, getMagicHit(player, damage));
-						if (target.getTemporaryAttributtes().get("miasmic_immunity") != Boolean.TRUE) {
+						if (target.getTemporaryAttributes().get("miasmic_immunity") != Boolean.TRUE) {
 							if (target instanceof Player) {
 								((Player) target).getPackets().sendGameMessage("You feel slowed down.");
 							}
-							target.getTemporaryAttributtes().put("miasmic_immunity", Boolean.TRUE);
-							target.getTemporaryAttributtes().put("miasmic_effect", Boolean.TRUE);
+							target.getTemporaryAttributes().put("miasmic_immunity", Boolean.TRUE);
+							target.getTemporaryAttributes().put("miasmic_effect", Boolean.TRUE);
 							final Entity t = target;
 							World.get().submit(new Task(40) {
 								@Override
 								protected void execute() {
-									t.getTemporaryAttributtes().remove("miasmic_effect");
+									t.getTemporaryAttributes().remove("miasmic_effect");
 									World.get().submit(new Task(15) {
 										@Override
 										protected void execute() {
-											t.getTemporaryAttributtes().remove("miasmic_immunity");
+											t.getTemporaryAttributes().remove("miasmic_immunity");
 											this.cancel();
 										}
 									});
@@ -630,20 +630,20 @@ public class PlayerCombat extends Action {
 						base_mage_xp = 54;
 						int damage = getRandomMagicMaxHit(player, 320);
 						delayMagicHit(2, getMagicHit(player, damage));
-						if (target.getTemporaryAttributtes().get("miasmic_immunity") != Boolean.TRUE) {
+						if (target.getTemporaryAttributes().get("miasmic_immunity") != Boolean.TRUE) {
 							if (target instanceof Player) {
 								((Player) target).getPackets().sendGameMessage("You feel slowed down.");
 							}
-							target.getTemporaryAttributtes().put("miasmic_immunity", Boolean.TRUE);
-							target.getTemporaryAttributtes().put("miasmic_effect", Boolean.TRUE);
+							target.getTemporaryAttributes().put("miasmic_immunity", Boolean.TRUE);
+							target.getTemporaryAttributes().put("miasmic_effect", Boolean.TRUE);
 							final Entity t = target;
 							World.get().submit(new Task(80) {
 								@Override
 								protected void execute() {
-									t.getTemporaryAttributtes().remove("miasmic_effect");
+									t.getTemporaryAttributes().remove("miasmic_effect");
 									World.get().submit(new Task(15) {
 										protected void execute() {
-											t.getTemporaryAttributtes().remove("miasmic_immunity");
+											t.getTemporaryAttributes().remove("miasmic_immunity");
 											this.cancel();
 										}
 									});
@@ -2667,7 +2667,7 @@ public class PlayerCombat extends Action {
 							p2.getActionManager().setAction(new PlayerCombat(player));
 					} else {
 						NPC n = (NPC) target;
-						if (!n.isUnderCombat() || n.canBeAttackedByAutoRelatie())
+						if (!n.getCombat().underCombat() || n.canBeAttackedByAutoRelatie())
 							n.setTarget(player);
 					}
 
@@ -3004,7 +3004,7 @@ public class PlayerCombat extends Action {
 		}
 		if (!(target instanceof NPC && ((NPC) target).isForceMultiAttacked())) {
 
-			if (!target.isAtMultiArea() || !player.isAtMultiArea()) {
+			if (!target.isMultiArea() || !player.isMultiArea()) {
 				if (player.getAttackedBy() != target && player.getAttackedByDelay() > Utils.currentTimeMillis()) {
 					player.getPackets().sendGameMessage("You are already in combat.");
 					return false;

@@ -91,7 +91,7 @@ public abstract class MobCombatInterface {
 							targetPlayer.getActionManager().setAction(new PlayerCombat(npc));
 					} else {
 						NPC targetNPC = (NPC) target;
-						if (!targetNPC.isUnderCombat() || targetNPC.canBeAttackedByAutoRelatie())
+						if (!targetNPC.getCombat().underCombat() || targetNPC.canBeAttackedByAutoRelatie())
 							targetNPC.setTarget(npc);
 					}
 

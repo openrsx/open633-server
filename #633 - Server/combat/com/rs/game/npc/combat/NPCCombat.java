@@ -122,9 +122,14 @@ public final class NPCCombat {
 		int distanceY = npc.getY() - npc.getRespawnTile().getY();
 		int size = npc.getSize();
 		int maxDistance;
-		int agroRatio = npc.getCombatDefinitions().getAgroRatio();
+//		Player n = (Player) target;
+//		boolean agressive = n.getWatchMap().get("TOLERANCE").elapsed(Settings.TOLERANCE_SECONDS, TimeUnit.SECONDS);
+//		if (agressive) {
+//			npc.resetCombat();
+//			npc.resetWalkSteps();
+//		}
 		if (!npc.isNoDistanceCheck() && !npc.isCantFollowUnderCombat()) {
-			maxDistance = agroRatio > 32 ? agroRatio : 32;
+			maxDistance = 32;
 			if (!(npc instanceof Familiar)) {
 
 				if (npc.getMapAreaNameHash() != -1) {
@@ -136,18 +141,17 @@ public final class NPCCombat {
 					}
 				} else if (distanceX > size + maxDistance || distanceX < -1 - maxDistance
 						|| distanceY > size + maxDistance || distanceY < -1 - maxDistance) {
-					// if more than 32 distance from respawn place
+					// if more than 64 distance from respawn place
 					npc.forceWalkRespawnTile();
 					return false;
 				}
 			}
-			maxDistance = agroRatio > 16 ? agroRatio : 16;
+			maxDistance = 16;
 			distanceX = target.getX() - npc.getX();
 			distanceY = target.getY() - npc.getY();
 			if (distanceX > size + maxDistance || distanceX < -1 - maxDistance || distanceY > size + maxDistance
-					|| distanceY < -1 - maxDistance) {
+					|| distanceY < -1 - maxDistance)
 				return false; // if target distance higher 16
-			}
 		} else {
 			distanceX = target.getX() - npc.getX();
 			distanceY = target.getY() - npc.getY();
@@ -159,7 +163,7 @@ public final class NPCCombat {
 				return false;
 		} else {
 			if (!npc.isForceMultiAttacked()) {
-				if (!target.isAtMultiArea() || !npc.isAtMultiArea()) {
+				if (!target.isMultiArea() || !npc.isMultiArea()) {
 					if (npc.getAttackedBy() != target && npc.getAttackedByDelay() > Utils.currentTimeMillis())
 						return false;
 					if (target.getAttackedBy() != npc && target.getAttackedByDelay() > Utils.currentTimeMillis())
@@ -170,18 +174,18 @@ public final class NPCCombat {
 		if (!npc.isCantFollowUnderCombat()) {
 			// if is under
 			int targetSize = target.getSize();
-			/*
-			 * if (distanceX < size && distanceX > -targetSize && distanceY < size &&
-			 * distanceY > -targetSize && !target.hasWalkSteps()) {
-			 */
-			if (!target.hasWalkSteps()
-					&& Utils.colides(npc.getX(), npc.getY(), size, target.getX(), target.getY(), targetSize)) {
+			if (distanceX < size && distanceX > -targetSize && distanceY < size && distanceY > -targetSize
+					&& !target.hasWalkSteps()) {
+
+				/*
+				 * System.out.println(size + maxDistance); System.out.println(-1 - maxDistance);
+				 */
 				npc.resetWalkSteps();
-				if (!npc.addWalkSteps(target.getX() + targetSize, npc.getY())) {
+				if (!npc.addWalkSteps(target.getX() + 1, npc.getY())) {
 					npc.resetWalkSteps();
 					if (!npc.addWalkSteps(target.getX() - size, npc.getY())) {
 						npc.resetWalkSteps();
-						if (!npc.addWalkSteps(npc.getX(), target.getY() + targetSize)) {
+						if (!npc.addWalkSteps(npc.getX(), target.getY() + 1)) {
 							npc.resetWalkSteps();
 							if (!npc.addWalkSteps(npc.getX(), target.getY() - size)) {
 								return true;
@@ -194,24 +198,31 @@ public final class NPCCombat {
 			if (npc.getCombatDefinitions().getAttackStyle() == NPCCombatDefinitions.MELEE && targetSize == 1
 					&& size == 1 && Math.abs(npc.getX() - target.getX()) == 1
 					&& Math.abs(npc.getY() - target.getY()) == 1 && !target.hasWalkSteps()) {
+
 				if (!npc.addWalkSteps(target.getX(), npc.getY(), 1))
 					npc.addWalkSteps(npc.getX(), target.getY(), 1);
 				return true;
 			}
+
 			int attackStyle = npc.getCombatDefinitions().getAttackStyle();
-			maxDistance = npc.isForceFollowClose() ? 0
-					: (attackStyle == NPCCombatDefinitions.MELEE || attackStyle == NPCCombatDefinitions.MAGE_FOLLOW
-							|| attackStyle == NPCCombatDefinitions.RANGE_FOLLOW) ? 0 : 7;
-			npc.resetWalkSteps();
-			if ((!npc.clipedProjectile(target, maxDistance == 0 && !forceCheckClipAsRange(target))) || !Utils
-					.isOnRange(npc.getX(), npc.getY(), size, target.getX(), target.getY(), targetSize, maxDistance)) {
-				if (!npc.calcFollow(target, npc.getRun() ? 2 : 1, true, npc.isIntelligentRouteFinder())
-						&& combatDelay < 3 && attackStyle == NPCCombatDefinitions.MELEE)
-					combatDelay = 3;
-				return true;
-			}
+				maxDistance = npc.isForceFollowClose() ? 0
+						: (attackStyle == NPCCombatDefinitions.MELEE || attackStyle == NPCCombatDefinitions.SPECIAL2)
+								? 0
+								: 7;
+				npc.resetWalkSteps();
+				// is far from target, moves to it till can attack
+				if ((!npc.clipedProjectile(target, maxDistance == 0)) || distanceX > size + maxDistance
+						|| distanceX < -1 - maxDistance || distanceY > size + maxDistance
+						|| distanceY < -1 - maxDistance) {
+					if (!npc.addWalkStepsInteract(target.getX(), target.getY(), 2, size, true) && combatDelay < 3)
+						combatDelay = 3;
+					return true;
+				}
+				// if under target, moves
+
+			
 		}
-		return true;
+		return true /* && !agressive */;
 	}
 
 	private boolean forceCheckClipAsRange(Entity target) {

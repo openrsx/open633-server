@@ -474,7 +474,7 @@ public final class Pots {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
-				Long time = (Long) player.getTemporaryAttributtes().get("Recover_Special_Pot");
+				Long time = (Long) player.getTemporaryAttributes().get("Recover_Special_Pot");
 				if (time != null && Utils.currentTimeMillis() - time < 30000) {
 					player.getPackets().sendGameMessage("You may only use this pot every 30 seconds.");
 					return false;
@@ -484,7 +484,7 @@ public final class Pots {
 
 			@Override
 			public void extra(Player player) {
-				player.getTemporaryAttributtes().put("Recover_Special_Pot", Utils.currentTimeMillis());
+				player.getTemporaryAttributes().put("Recover_Special_Pot", Utils.currentTimeMillis());
 				player.getCombatDefinitions().restoreSpecialAttack(25);
 			}
 		},

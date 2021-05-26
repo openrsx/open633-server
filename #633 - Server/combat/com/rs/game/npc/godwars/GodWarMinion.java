@@ -39,6 +39,7 @@ public class GodWarMinion extends NPC {
 		setNextAnimation(null);
 		World.get().submit(new Task(1) {
 			int loop;
+
 			@Override
 			protected void execute() {
 				if (loop == 0) {
@@ -69,7 +70,7 @@ public class GodWarMinion extends NPC {
 	public void respawn() {
 		setFinished(false);
 		World.addNPC(this);
-		setLastRegionId(0);
+		setLastRegionId((short) 0);
 		World.updateEntityRegion(this);
 		loadMapRegions();
 		checkMultiArea();

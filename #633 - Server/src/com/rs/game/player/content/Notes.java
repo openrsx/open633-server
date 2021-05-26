@@ -39,7 +39,7 @@ public final class Notes implements Serializable {
 	}
 
 	public int getCurrentNote() {
-		Integer note = (Integer) player.getTemporaryAttributtes().get(
+		Integer note = (Integer) player.getTemporaryAttributes().get(
 				"CURRENT_NOTE");
 		if (note == null)
 			return -1;
@@ -49,12 +49,12 @@ public final class Notes implements Serializable {
 	public void setCurrentNote(int id) {
 		if (id >= 30)
 			return;
-		player.getTemporaryAttributtes().put("CURRENT_NOTE", id);
+		player.getTemporaryAttributes().put("CURRENT_NOTE", id);
 		player.getVarsManager().sendVar(1439, id);
 	}
 
 	public void removeCurrentNote() {
-		player.getTemporaryAttributtes().remove("CURRENT_NOTE");
+		player.getTemporaryAttributes().remove("CURRENT_NOTE");
 		player.getVarsManager().sendVar(1439, -1);
 	}
 

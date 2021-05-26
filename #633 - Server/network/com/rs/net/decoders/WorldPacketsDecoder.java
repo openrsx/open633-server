@@ -423,7 +423,7 @@ public final class WorldPacketsDecoder extends Decoder {
 											"You can only attack players in a player-vs-player area.");
 							return;
 						}
-						if (!p2.isAtMultiArea() || !player.isAtMultiArea()) {
+						if (!p2.isMultiArea() || !player.isMultiArea()) {
 							if (player.getAttackedBy() != p2
 									&& player.getAttackedByDelay() > Utils
 											.currentTimeMillis()) {
@@ -502,7 +502,7 @@ public final class WorldPacketsDecoder extends Decoder {
 											"You can only attack players in a player-vs-player area.");
 							return;
 						}
-						if (!p2.isAtMultiArea() || !player.isAtMultiArea()) {
+						if (!p2.isMultiArea() || !player.isMultiArea()) {
 							if (player.getAttackedBy() != p2
 									&& player.getAttackedByDelay() > Utils
 											.currentTimeMillis()) {
@@ -682,7 +682,7 @@ public final class WorldPacketsDecoder extends Decoder {
 								return;
 							}
 						} else if (!npc.isForceMultiAttacked()) {
-							if (!npc.isAtMultiArea() || !player.isAtMultiArea()) {
+							if (!npc.isMultiArea() || !player.isMultiArea()) {
 								if (player.getAttackedBy() != npc
 										&& player.getAttackedByDelay() > Utils
 												.currentTimeMillis()) {
@@ -753,7 +753,7 @@ public final class WorldPacketsDecoder extends Decoder {
 								return;
 							}
 						} else if (!npc.isForceMultiAttacked()) {
-							if (!npc.isAtMultiArea() || !player.isAtMultiArea()) {
+							if (!npc.isMultiArea() || !player.isMultiArea()) {
 								if (player.getAttackedBy() != npc
 										&& player.getAttackedByDelay() > Utils
 												.currentTimeMillis()) {
@@ -850,7 +850,7 @@ public final class WorldPacketsDecoder extends Decoder {
 								"You can only attack players in a player-vs-player area.");
 				return;
 			}
-			if (!p2.isAtMultiArea() || !player.isAtMultiArea()) {
+			if (!p2.isMultiArea() || !player.isMultiArea()) {
 				if (player.getAttackedBy() != p2
 						&& player.getAttackedByDelay() > Utils
 								.currentTimeMillis()) {
@@ -952,13 +952,13 @@ public final class WorldPacketsDecoder extends Decoder {
 								"Unable to find target " + p2.getDisplayName());
 						return;
 					}
-					if (p2.getTemporaryAttributtes().get("TradeTarget") == player) {
-						p2.getTemporaryAttributtes().remove("TradeTarget");
+					if (p2.getTemporaryAttributes().get("TradeTarget") == player) {
+						p2.getTemporaryAttributes().remove("TradeTarget");
 						player.getTrade().openTrade(p2);
 						p2.getTrade().openTrade(player);
 						return;
 					}
-					player.getTemporaryAttributtes().put("TradeTarget", p2);
+					player.getTemporaryAttributes().put("TradeTarget", p2);
 					player.getPackets().sendGameMessage(
 							"Sending " + p2.getDisplayName() + " a request...");
 					p2.getPackets().sendTradeRequestMessage(player);
@@ -1031,7 +1031,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					return;
 				}
 			} else if (!npc.isForceMultiAttacked()) {
-				if (!npc.isAtMultiArea() || !player.isAtMultiArea()) {
+				if (!npc.isMultiArea() || !player.isMultiArea()) {
 					if (player.getAttackedBy() != npc
 							&& player.getAttackedByDelay() > Utils
 									.currentTimeMillis()) {
@@ -1198,13 +1198,13 @@ public final class WorldPacketsDecoder extends Decoder {
 			int x = coordinateHash >> 14;
 			int y = coordinateHash & 0x3fff;
 			int plane = coordinateHash >> 28;
-			Integer hash = (Integer) player.getTemporaryAttributtes().get(
+			Integer hash = (Integer) player.getTemporaryAttributes().get(
 					"worldHash");
 			if (hash == null || coordinateHash != hash)
-				player.getTemporaryAttributtes().put("worldHash",
+				player.getTemporaryAttributes().put("worldHash",
 						coordinateHash);
 			else {
-				player.getTemporaryAttributtes().remove("worldHash");
+				player.getTemporaryAttributes().remove("worldHash");
 				player.getHintIconsManager().addHintIcon(x, y, plane, 20, 0, 2,
 						-1, true);
 				player.getVarsManager().sendVar(1159, coordinateHash);
@@ -1229,10 +1229,10 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (player.getInterfaceManager().containsInterface(1108))
 				player.getFriendsIgnores().setChatPrefix(value);
 			
-			else if (player.getTemporaryAttributtes().remove(
+			else if (player.getTemporaryAttributes().remove(
 					"forum_authuserinput") == Boolean.TRUE) {
-				player.getTemporaryAttributtes().put("forum_authuser", value);
-				player.getTemporaryAttributtes().put("forum_authpasswordinput",
+				player.getTemporaryAttributes().put("forum_authuser", value);
+				player.getTemporaryAttributes().put("forum_authpasswordinput",
 						true);
 				player.getPackets().sendInputNameScript(
 						"Enter your forum password:");
@@ -1243,11 +1243,11 @@ public final class WorldPacketsDecoder extends Decoder {
 			String value = stream.readString();
 			if (value.equals(""))
 				return;
-			if (player.getTemporaryAttributtes().remove("entering_note") == Boolean.TRUE)
+			if (player.getTemporaryAttributes().remove("entering_note") == Boolean.TRUE)
 				player.getNotes().add(value);
-			else if (player.getTemporaryAttributtes().remove("editing_note") == Boolean.TRUE)
+			else if (player.getTemporaryAttributes().remove("editing_note") == Boolean.TRUE)
 				player.getNotes().edit(value);
-			else if (player.getTemporaryAttributtes().remove("change_pass") == Boolean.TRUE) {
+			else if (player.getTemporaryAttributes().remove("change_pass") == Boolean.TRUE) {
 				if (value.length() < 5 || value.length() > 15) {
 					player.getPackets().sendGameMessage(
 							"Password length is limited to 5-15 characters.");
@@ -1257,7 +1257,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				player.getPackets().sendGameMessage(
 						"You have changed your password! Your new password is \""
 								+ value + "\".");
-			} else if (player.getTemporaryAttributtes().remove(
+			} else if (player.getTemporaryAttributes().remove(
 					"change_troll_name") == Boolean.TRUE) {
 				value = Utils.formatPlayerNameForDisplay(value);
 				if (value.length() < 3 || value.length() > 14) {
@@ -1276,7 +1276,7 @@ public final class WorldPacketsDecoder extends Decoder {
 						player.getPet().setName(value);
 					}
 				}
-			} else if (player.getTemporaryAttributtes().remove("yellcolor") == Boolean.TRUE) {
+			} else if (player.getTemporaryAttributes().remove("yellcolor") == Boolean.TRUE) {
 				if (value.length() != 6) {
 					player.getPackets()
 							.sendGameMessage(
@@ -1304,12 +1304,12 @@ public final class WorldPacketsDecoder extends Decoder {
 					.getInterfaceManager().containsInterface(763))
 					|| player.getInterfaceManager().containsInterface(11)) {
 				Integer bank_item_X_Slot = (Integer) player
-						.getTemporaryAttributtes().remove("bank_item_X_Slot");
+						.getTemporaryAttributes().remove("bank_item_X_Slot");
 				if (bank_item_X_Slot == null)
 					return;
 				player.getBank().setLastX(value);
 				player.getBank().refreshLastX();
-				if (player.getTemporaryAttributtes().remove("bank_isWithdraw") != null)
+				if (player.getTemporaryAttributes().remove("bank_isWithdraw") != null)
 					player.getBank().withdrawItem(bank_item_X_Slot, value);
 				else
 					player.getBank()
@@ -1322,10 +1322,10 @@ public final class WorldPacketsDecoder extends Decoder {
 			} else if (player.getInterfaceManager().containsInterface(206)
 					&& player.getInterfaceManager().containsInterface(207)) {
 				Integer pc_item_X_Slot = (Integer) player
-						.getTemporaryAttributtes().remove("pc_item_X_Slot");
+						.getTemporaryAttributes().remove("pc_item_X_Slot");
 				if (pc_item_X_Slot == null)
 					return;
-				if (player.getTemporaryAttributtes().remove("pc_isRemove") != null)
+				if (player.getTemporaryAttributes().remove("pc_isRemove") != null)
 					player.getPriceCheckManager().removeItem(pc_item_X_Slot,
 							value);
 				else
@@ -1337,10 +1337,10 @@ public final class WorldPacketsDecoder extends Decoder {
 						|| player.getFamiliar().getBob() == null)
 					return;
 				Integer bob_item_X_Slot = (Integer) player
-						.getTemporaryAttributtes().remove("bob_item_X_Slot");
+						.getTemporaryAttributes().remove("bob_item_X_Slot");
 				if (bob_item_X_Slot == null)
 					return;
-				if (player.getTemporaryAttributtes().remove("bob_isRemove") != null)
+				if (player.getTemporaryAttributes().remove("bob_isRemove") != null)
 					player.getFamiliar().getBob()
 							.removeItem(bob_item_X_Slot, value);
 				else
@@ -1349,23 +1349,23 @@ public final class WorldPacketsDecoder extends Decoder {
 			} else if (player.getInterfaceManager().containsInterface(335)
 					&& player.getInterfaceManager().containsInterface(336)) {
 				Integer trade_item_X_Slot = (Integer) player
-						.getTemporaryAttributtes().remove("trade_item_X_Slot");
+						.getTemporaryAttributes().remove("trade_item_X_Slot");
 				if (trade_item_X_Slot == null)
 					return;
-				if (player.getTemporaryAttributtes().remove("trade_isRemove") != null)
+				if (player.getTemporaryAttributes().remove("trade_isRemove") != null)
 					player.getTrade().removeItem(trade_item_X_Slot, value);
 				else
 					player.getTrade().addItem(trade_item_X_Slot, value);
-			} else if (player.getTemporaryAttributtes().remove("xformring") == Boolean.TRUE)
+			} else if (player.getTemporaryAttributes().remove("xformring") == Boolean.TRUE)
 				player.getAppearence().transformIntoNPC(value);
-			else if (player.getTemporaryAttributtes().get("skillId") != null) {
+			else if (player.getTemporaryAttributes().get("skillId") != null) {
 				if (player.getEquipment().wearingArmour()) {
 					player.getDialogueManager().finishDialogue();
 					player.getDialogueManager().startDialogue("SimpleMessage",
 							"You cannot do this while having armour on!");
 					return;
 				}
-				int skillId = (Integer) player.getTemporaryAttributtes()
+				int skillId = (Integer) player.getTemporaryAttributes()
 						.remove("skillId");
 				if (skillId == Skills.HITPOINTS && value <= 9)
 					value = 10;
@@ -1438,9 +1438,9 @@ public final class WorldPacketsDecoder extends Decoder {
 						toComponentId);
 			} else if (fromInterfaceId == 1265
 					&& toInterfaceId == 1266
-					&& player.getTemporaryAttributtes().get("is_buying") != null) {
-				if ((boolean) player.getTemporaryAttributtes().get("is_buying") == true) {
-					Shop shop = (Shop) player.getTemporaryAttributtes().get(
+					&& player.getTemporaryAttributes().get("is_buying") != null) {
+				if ((boolean) player.getTemporaryAttributes().get("is_buying") == true) {
+					Shop shop = (Shop) player.getTemporaryAttributes().get(
 							"shop_instance");
 					if (shop == null)
 						return;

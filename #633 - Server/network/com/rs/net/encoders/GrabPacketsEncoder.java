@@ -10,13 +10,18 @@ import com.rs.cache.Cache;
 import com.rs.io.OutputStream;
 import com.rs.net.Session;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public final class GrabPacketsEncoder extends Encoder {
 
-	private static byte[] UKEYS_FILE;
+	private byte[] UKEYS_FILE;
 
 	private int encryptionValue;
 
-	public static final ChannelBuffer getUkeysFile() {
+	public final ChannelBuffer getUkeysFile() {
 		if (UKEYS_FILE == null)
 			UKEYS_FILE = Cache.generateUkeysFile();
 		return getContainerPacketData(255, 255, UKEYS_FILE);
@@ -106,13 +111,4 @@ public final class GrabPacketsEncoder extends Encoder {
 		}
 		return stream;
 	}
-
-	public void setEncryptionValue(int encryptionValue) {
-		this.encryptionValue = encryptionValue;
-	}
-
-	public int getEncryptionValue() {
-		return encryptionValue;
-	}
-
 }

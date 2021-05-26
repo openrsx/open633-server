@@ -33,7 +33,7 @@ public final class CombatDefinitions {
 	private byte autoCastSpell;
 
 	public int getSpellId() {
-		Integer tempCastSpell = (Integer) player.getTemporaryAttributtes().get("tempCastSpell");
+		Integer tempCastSpell = (Integer) player.getTemporaryAttributes().get("tempCastSpell");
 		if (tempCastSpell != null)
 			return tempCastSpell + 256;
 		return autoCastSpell;
@@ -44,7 +44,7 @@ public final class CombatDefinitions {
 	}
 
 	public void resetSpells(boolean removeAutoSpell) {
-		player.getTemporaryAttributtes().remove("tempCastSpell");
+		player.getTemporaryAttributes().remove("tempCastSpell");
 		if (removeAutoSpell) {
 			setAutoCastSpell(0);
 			refreshAutoCastSpell();

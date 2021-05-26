@@ -61,35 +61,35 @@ public class DuelControler extends Controller {
 	    player.getPackets().sendGameMessage("The other player is busy.");
 	    return false;
 	}
-	if (target.getTemporaryAttributtes().get("DuelChallenged") == player) {
+	if (target.getTemporaryAttributes().get("DuelChallenged") == player) {
 	    player.getControlerManager().removeControlerWithoutCheck();
 	    target.getControlerManager().removeControlerWithoutCheck();
-	    target.getTemporaryAttributtes().remove("DuelChallenged");
+	    target.getTemporaryAttributes().remove("DuelChallenged");
 	    player.setLastDuelRules(new DuelRules(player, target));
 	    target.setLastDuelRules(new DuelRules(target, player));
-	    player.getControlerManager().startControler("DuelArena", target, target.getTemporaryAttributtes().get("DuelFriendly"));
-	    target.getControlerManager().startControler("DuelArena", player, target.getTemporaryAttributtes().remove("DuelFriendly"));
+	    player.getControlerManager().startControler("DuelArena", target, target.getTemporaryAttributes().get("DuelFriendly"));
+	    target.getControlerManager().startControler("DuelArena", player, target.getTemporaryAttributes().remove("DuelFriendly"));
 	    return false;
 	}
-	player.getTemporaryAttributtes().put("DuelTarget", target);
+	player.getTemporaryAttributes().put("DuelTarget", target);
 	player.getInterfaceManager().sendInterface(640);
-	player.getTemporaryAttributtes().put("WillDuelFriendly", true);
+	player.getTemporaryAttributes().put("WillDuelFriendly", true);
 	player.getVarsManager().sendVar(283, 67108864);
 	return false;
     }
 
     public static void challenge(Player player) {
 	player.closeInterfaces();
-	Boolean friendly = (Boolean) player.getTemporaryAttributtes().remove("WillDuelFriendly");
+	Boolean friendly = (Boolean) player.getTemporaryAttributes().remove("WillDuelFriendly");
 	if (friendly == null)
 	    return;
-	Player target = (Player) player.getTemporaryAttributtes().remove("DuelTarget");
+	Player target = (Player) player.getTemporaryAttributes().remove("DuelTarget");
 	if (target == null || target.hasFinished() || !target.withinDistance(player, 14) || !(target.getControlerManager().getControler() instanceof DuelControler)) {
 	    player.getPackets().sendGameMessage("Unable to find " + (target == null ? "your target" : target.getDisplayName()));
 	    return;
 	}
-	player.getTemporaryAttributtes().put("DuelChallenged", target);
-	player.getTemporaryAttributtes().put("DuelFriendly", friendly);
+	player.getTemporaryAttributes().put("DuelChallenged", target);
+	player.getTemporaryAttributes().put("DuelFriendly", friendly);
 	player.getPackets().sendGameMessage("Sending " + target.getDisplayName() + " a request...");
 	target.getPackets().sendDuelChallengeRequestMessage(player, friendly);
     }

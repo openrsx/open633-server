@@ -516,11 +516,11 @@ public final class RSInterfaceDispatcher {
 		player.getPackets().sendIComponentSettings(667, 7, 0, 14, 1538);
 		refreshEquipBonuses(player);
 		if (banking) {
-			player.getTemporaryAttributtes().put("Banking", Boolean.TRUE);
+			player.getTemporaryAttributes().put("Banking", Boolean.TRUE);
 			player.setCloseInterfacesEvent(new Runnable() {
 				@Override
 				public void run() {
-					player.getTemporaryAttributtes().remove("Banking");
+					player.getTemporaryAttributes().remove("Banking");
 					player.getVarsManager().sendVarBit(4894, 0);
 				}
 			});

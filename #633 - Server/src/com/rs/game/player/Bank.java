@@ -117,21 +117,21 @@ public class Bank {
 	}
 
 	private byte[] getRequestedPin() {
-		byte[] pin = (byte[]) player.getTemporaryAttributtes().get(
+		byte[] pin = (byte[]) player.getTemporaryAttributes().get(
 				"temporary_pin");
 		if (pin == null)
-			return (byte[]) player.getTemporaryAttributtes().put(
+			return (byte[]) player.getTemporaryAttributes().put(
 					"temporary_pin", new byte[4]);
 		return pin;
 	}
 
 	private void setRequestedPin(byte value) {
-		byte[] pin = (byte[]) player.getTemporaryAttributtes().get(
+		byte[] pin = (byte[]) player.getTemporaryAttributes().get(
 				"temporary_pin");
 		if (pin == null)
 			pin = new byte[5];
 		pin[stage] = value;
-		player.getTemporaryAttributtes().put("temporary_pin", pin);
+		player.getTemporaryAttributes().put("temporary_pin", pin);
 	}
 
 	public void removeItem(int id) {

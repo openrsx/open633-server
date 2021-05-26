@@ -63,7 +63,7 @@ public class CommanderZilyana extends NPC {
 				try {
 					setFinished(false);
 					World.addNPC(npc);
-					npc.setLastRegionId(0);
+					npc.setLastRegionId((short) 0);
 					World.updateEntityRegion(npc);
 					loadMapRegions();
 					checkMultiArea();

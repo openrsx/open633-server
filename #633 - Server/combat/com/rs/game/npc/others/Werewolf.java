@@ -28,7 +28,7 @@ public class Werewolf extends NPC {
 	public void processNPC() {
 		if (isDead() || isCantInteract())
 			return;
-		if (isUnderCombat() && getId() == realId && Utils.random(5) == 0) {
+		if (getCombat().underCombat() && getId() == realId && Utils.random(5) == 0) {
 			final Entity target = getCombat().getTarget();
 			if (!hasWolfbane(target)) {
 				setNextAnimation(new Animation(6554));

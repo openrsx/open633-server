@@ -7,6 +7,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.util.HashMap;
 
+import lombok.Cleanup;
+
 public final class ItemBonuses {
 
 	private static HashMap<Integer, int[]> itemBonuses;
@@ -25,6 +27,7 @@ public final class ItemBonuses {
 
 	private static final void loadItemBonuses() {
 		try {
+			@Cleanup
 			RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
 			FileChannel channel = in.getChannel();
 			ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0,
@@ -39,8 +42,6 @@ public final class ItemBonuses {
 				}
 				itemBonuses.put(itemId, bonuses);
 			}
-			channel.close();
-			in.close();
 		} catch (Throwable e) {
 			Logger.handle(e);
 		}
