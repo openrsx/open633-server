@@ -17,6 +17,7 @@ import com.rs.game.player.PublicChatMessage;
 import com.rs.game.player.QuickChatMessage;
 import com.rs.game.player.Skills;
 import com.rs.game.player.actions.PlayerFollow;
+import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Magic;
 import com.rs.game.player.content.Shop;
 import com.rs.game.player.content.pet.Pets;
@@ -126,6 +127,8 @@ public final class WorldPacketsDecoder extends Decoder {
 	}
 
 	public static void loadPacketSizes() {
+		for (int i : PACKET_SIZES)
+			PACKET_SIZES[i] = -3;
 		PACKET_SIZES[17] = -1;
 		PACKET_SIZES[76] = 3;
 		PACKET_SIZES[46] = 3;
@@ -168,8 +171,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		PACKET_SIZES[18] = 8;
 		PACKET_SIZES[23] = 4;
 		PACKET_SIZES[40] = -1;
-		PACKET_SIZES[63] = 3;
-		PACKET_SIZES[69] = 4;
+		PACKET_SIZES[63] = -1;
 		PACKET_SIZES[58] = 15;
 		PACKET_SIZES[39] = 0;
 		PACKET_SIZES[42] = 2;
@@ -211,10 +213,9 @@ public final class WorldPacketsDecoder extends Decoder {
 		PACKET_SIZES[6] = 7;
 		PACKET_SIZES[15] = 2;
 		PACKET_SIZES[47] = 3;
-		PACKET_SIZES[0] = 0;
+		PACKET_SIZES[0] = 7;
 
 	}
-
 	public WorldPacketsDecoder(Session session, Player player) {
 		super(session);
 		this.player = player;
@@ -926,12 +927,12 @@ public final class WorldPacketsDecoder extends Decoder {
 					if (!player.getControlerManager().canPlayerOption4(p2))
 						return;
 					player.stopAll();
-					if (player.isStarted()) {
-						player.getPackets()
-								.sendGameMessage(
-										"You can't trade for the first half hour after creating account.");
-						return;
-					}
+//					if (player.isStarter()) {
+//						player.getPackets()
+//								.sendGameMessage(
+//										"You can't trade for the first half hour after creating account.");
+//						return;
+//					}
 					if (player.isCantTrade()
 							|| player.getControlerManager().getControler() != null) {
 						player.getPackets().sendGameMessage("You are busy.");
@@ -978,8 +979,8 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (forceRun)
 				player.setRun(forceRun);
 			player.stopAll();
-//			if (player.getRights().isStaff())
-//				player.getDialogueManager().startDialogue("ModReportD", p2);
+			if (player.getDetails().getRights().isStaff())
+				player.getDialogueManager().startDialogue("ModReportD", p2);
 //			else
 //				ReportAbuse.report(player, p2.getDisplayName());
 		} else if (packetId == PLAYER_OPTION_9_PACKET) {
@@ -1048,7 +1049,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				}
 			}
 			player.getActionManager().setAction(new PlayerCombat(npc));
-		}
+		} 
 		else if (packetId == OBJECT_CLICK1_PACKET)
 			ObjectDispatcher.handleOption(player, stream, 1);
 		else if (packetId == OBJECT_CLICK2_PACKET)
@@ -1484,11 +1485,11 @@ public final class WorldPacketsDecoder extends Decoder {
 			System.out.println("examine packet");
 			ObjectDispatcher.handleOption(player, stream, -1);
 		} else if (packetId == NPC_EXAMINE_PACKET) {
-//			NPCHandler.handleExamine(player, stream);
+//			NPCDispatcher.handleExamine(player, stream);
 		} else if (packetId == JOIN_FRIEND_CHAT_PACKET) {
 			if (!player.isStarted())
 				return;
-//			FriendChatsManager.joinChat(stream.readString(), player);
+			FriendChatsManager.joinChat(stream.readString(), player);
 		} else if (packetId == KICK_FRIEND_CHAT_PACKET) {
 			if (!player.isStarted())
 				return;
@@ -1582,21 +1583,15 @@ public final class WorldPacketsDecoder extends Decoder {
 				stream.readBytes(data);
 			}
 			data = Utils.completeQuickMessage(player, fileId, data);
-			if (chatType == 0)
-				player.sendPublicChatMessage(new QuickChatMessage(fileId, data));
-			else if (chatType == 1)
-				player.sendFriendsChannelQuickMessage(new QuickChatMessage(
-						fileId, data));
-//			else if (chatType == 2)
-//				player.sendClanChannelQuickMessage(new QuickChatMessage(fileId,
-//						data));
-//			else if (chatType == 3)
-//				player.sendGuestClanChannelQuickMessage(new QuickChatMessage(
+//			if (chatType == 0)
+//				player.sendPublicChatMessage(new QuickChatMessage(fileId, data));
+//			else if (chatType == 1)
+//				player.sendFriendsChannelQuickMessage(new QuickChatMessage(
 //						fileId, data));
 			 if (Settings.DEBUG)
 				Logger.log(this, "Unknown chat type: " + chatType);
 		} else if (packetId == CHAT_TYPE_PACKET) {
-			chatType = stream.readUnsignedByte();
+//			chatType = stream.readUnsignedByte();
 		} else if (packetId == CHAT_PACKET) {
 			if (!player.isStarted())
 				return;
@@ -1621,15 +1616,14 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			}
 			int effects = (colorEffect << 8) | (moveEffect & 0xff);
-			if (chatType == 1)
-				player.sendFriendsChannelMessage(new ChatMessage(message));
+//			if (chatType == 1)
+//				player.sendFriendsChannelMessage(new ChatMessage(message));
 //			else if (chatType == 2)
 //				player.sendClanChannelMessage(new ChatMessage(message));
 //			else if (chatType == 3)
 //				player.sendGuestClanChannelMessage(new ChatMessage(message));
 //			else
-				player.sendPublicChatMessage(new PublicChatMessage(message,
-						effects));
+				player.sendPublicChatMessage(new PublicChatMessage(message, effects));
 			if (Settings.DEBUG)
 				Logger.log(this, "Chat type: " + chatType);
 		} else if (packetId == COMMANDS_PACKET) {
@@ -1651,6 +1645,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			@SuppressWarnings("unused")
 			String unknown2 = stream.readString();
 //			ReportAbuse.report(player, displayName, type, mute);
+		
 //		} else if (packetId == FORUM_THREAD_ID_PACKET) {
 //			String threadId = stream.readString();
 //			if (player.getInterfaceManager().containsInterface(1100))
