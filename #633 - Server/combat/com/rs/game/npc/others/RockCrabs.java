@@ -6,10 +6,10 @@ import com.rs.game.npc.NPC;
 
 public class RockCrabs extends NPC {
 
-	private int realId;
+	private short realId;
 
-	public RockCrabs(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+	public RockCrabs(short id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
 		realId = id;
 		setForceAgressive(true); // to ignore combat lvl
 	}
@@ -17,7 +17,7 @@ public class RockCrabs extends NPC {
 	@Override
 	public void setTarget(Entity entity) {
 		if (realId == getId()) {
-			this.setNextNPCTransformation(realId - 1);
+			this.setNextNPCTransformation((short) (realId - 1));
 			setHitpoints(getMaxHitpoints()); // rock/bulders have no hp
 		}
 		super.setTarget(entity);

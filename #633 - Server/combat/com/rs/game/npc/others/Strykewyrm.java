@@ -10,10 +10,10 @@ import com.rs.utils.Utils;
 
 public class Strykewyrm extends NPC {
 
-	private int stompId;
+	private short stompId;
 
-	public Strykewyrm(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, false);
+	public Strykewyrm(short id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
 		stompId = id;
 	}
 
@@ -98,7 +98,7 @@ public class Strykewyrm extends NPC {
 			@Override
 			public void run() {
 				npc.setNextAnimation(new Animation(12795));
-				npc.setNextNPCTransformation(((Strykewyrm) npc).stompId + 1);
+				npc.setNextNPCTransformation((short) (((Strykewyrm) npc).stompId + 1));
 				stop();
 				WorldTasksManager.schedule(new WorldTask() {
 					@Override

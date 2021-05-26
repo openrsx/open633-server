@@ -79,11 +79,11 @@ public class StrykewyrmCombat extends CombatScript {
 		public void run() {
 		    if (count == 0) {
 
-			npc.setNextNPCTransformation(((Strykewyrm)npc).getStompId());
+			npc.setNextNPCTransformation((short) ((Strykewyrm)npc).getStompId());
 			npc.setForceWalk(tile);
 			count++;
 		    } else if (count == 1 && !npc.hasForceWalk()) {
-			npc.setNextNPCTransformation(((Strykewyrm)npc).getStompId() + 1);
+			npc.setNextNPCTransformation((short) (((Strykewyrm)npc).getStompId() + 1));
 			npc.setNextAnimation(new Animation(12795));
 			int distanceX = target.getX() - npc.getX();
 			int distanceY = target.getY() - npc.getY();

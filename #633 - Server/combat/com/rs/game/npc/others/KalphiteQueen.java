@@ -13,8 +13,8 @@ public class KalphiteQueen extends NPC {
 
 	public KalphiteQueen(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea,
 			boolean spawned) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		setLureDelay(0);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
+		setLureDelay((short) 0);
 		setForceAgressive(true);
 		setIntelligentRouteFinder(true);
 	}
@@ -35,7 +35,7 @@ public class KalphiteQueen extends NPC {
 				} else if (loop >= defs.getDeathDelay()) {
 					if (getId() == 1158) {
 						setCantInteract(true);
-						setNextNPCTransformation(1160);
+						setNextNPCTransformation((short) 1160);
 						setNextGraphics(new Graphics(1055));
 						setNextAnimation(new Animation(6270));
 						WorldTasksManager.schedule(new WorldTask() {
@@ -55,7 +55,7 @@ public class KalphiteQueen extends NPC {
 						finish();
 						if (!isSpawned())
 							setRespawnTask();
-						setNextNPCTransformation(1158);
+						setNextNPCTransformation((short) 1158);
 					}
 					stop();
 				}

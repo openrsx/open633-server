@@ -17,7 +17,7 @@ public class DarkEnergyCore extends NPC {
 	private Entity target;
 
 	public DarkEnergyCore(CorporealBeast beast) {
-		super(8127, beast, -1, true, true);
+		super((short) 8127, beast, (byte) -1, true, true);
 		setForceMultiArea(true);
 		this.beast = beast;
 		changeTarget = 2;

@@ -26,7 +26,7 @@ public final class TormentedDemon extends NPC {
 
 	public TormentedDemon(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea,
 			boolean spawned) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
 		demonPrayer = new boolean[3];
 		cachedDamage = new int[3];
 		shieldTimer = 0;
@@ -38,7 +38,7 @@ public final class TormentedDemon extends NPC {
 			type = 2;
 		else if (type == 2)
 			type = 1;
-		setNextNPCTransformation(8349 + type);
+		setNextNPCTransformation((short) (8349 + type));
 		demonPrayer[type] = true;
 		resetPrayerTimer();
 	}

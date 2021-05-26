@@ -20,7 +20,7 @@ public class LivingRock extends NPC {
 	private long deathTime;
 
 	public LivingRock(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
 	}
 
 	@Override
@@ -50,9 +50,9 @@ public class LivingRock extends NPC {
 	public void transformIntoRemains(Entity source) {
 		this.source = source;
 		deathTime = Utils.currentTimeMillis();
-		final int remainsId = getId() + 5;
+		final short remainsId = (short) (getId() + 5);
 		setNextNPCTransformation(remainsId);
-		setRandomWalk(0);
+		setWalkType((byte) 0);
 		CoresManager.slowExecutor.schedule(new Runnable() {
 			@Override
 			public void run() {
@@ -72,12 +72,11 @@ public class LivingRock extends NPC {
 	}
 
 	public void takeRemains() {
-		setNPC(getId() - 5);
+		setNPC((short) (getId() - 5));
 		setLocation(getRespawnTile());
-		setRandomWalk(NORMAL_WALK);
+		setWalkType(NORMAL_WALK);
 		finish();
 		if (!isSpawned())
 			setRespawnTask();
 	}
-
 }

@@ -10,7 +10,7 @@ import com.rs.utils.Utils;
 public class AbyssalDemon extends NPC {
 
 	public AbyssalDemon(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
 	}
 
 	@Override

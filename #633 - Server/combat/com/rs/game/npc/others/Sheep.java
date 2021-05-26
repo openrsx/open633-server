@@ -5,10 +5,10 @@ import com.rs.game.npc.NPC;
 
 public class Sheep extends NPC {
 
-	int ticks, origonalId;
+	short ticks, origonalId;
 
-	public Sheep(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
+	public Sheep(short id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
 		origonalId = id;
 	}
 

@@ -84,7 +84,7 @@ public class Region {
 			return;
 		}
 		for (NPCSpawning spawn : spawns) {
-			World.spawnNPC(spawn.getId(), spawn.getTile(), -1, true);
+			World.spawnNPC(spawn.getId(), spawn.getTile(), (byte) -1, true);
 		}
 	}
 

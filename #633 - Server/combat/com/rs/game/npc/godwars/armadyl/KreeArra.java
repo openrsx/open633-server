@@ -16,7 +16,7 @@ import com.rs.game.tasks.WorldTasksManager;
 public class KreeArra extends NPC {
 
 	public KreeArra(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
 		setIntelligentRouteFinder(true);
 	}
 

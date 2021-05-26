@@ -664,7 +664,7 @@ public final class EmotesManager {
 					@Override
 					public void run() { // TODO fix delays
 						if (step == 0) {
-							npc = new NPC(1224, npcTile, -1, true);
+							npc = new NPC((short) 1224, npcTile, (byte) -1, true);
 							npc.setNextAnimation(new Animation(1434));
 							npc.setNextGraphics(new Graphics(1482));
 							player.setNextAnimation(new Animation(1179));
@@ -939,8 +939,8 @@ public final class EmotesManager {
 				player.getPackets().sendGameMessage("You can't do this here.");
 				return;
 			}
-			final NPC n = new NPC(14388, new WorldTile(player.getX(),
-					player.getY() + 2, player.getPlane()), 0, false);
+			final NPC n = new NPC((short) 14388, new WorldTile(player.getX(),
+					player.getY() + 2, player.getPlane()), (byte) 0, false);
 			n.setLocation(n);
 			n.setNextFaceEntity(player);
 			player.setNextFaceEntity(n);

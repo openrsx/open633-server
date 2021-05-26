@@ -8,11 +8,11 @@ public class CorporealBeast extends NPC {
 
 	private DarkEnergyCore core;
 
-	public CorporealBeast(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea,
+	public CorporealBeast(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea,
 			boolean spawned) {
 		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		setCapDamage(1000);
-		setLureDelay(3000);
+		setCapDamage((short) 1000);
+		setLureDelay((short) 3000);
 		setIntelligentRouteFinder(true);
 	}
 

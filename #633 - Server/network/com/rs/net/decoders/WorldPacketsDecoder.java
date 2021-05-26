@@ -1489,7 +1489,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == JOIN_FRIEND_CHAT_PACKET) {
 			if (!player.isStarted())
 				return;
-			FriendChatsManager.joinChat(stream.readString(), player);
+//			FriendChatsManager.joinChat(stream.readString(), player);
 		} else if (packetId == KICK_FRIEND_CHAT_PACKET) {
 			if (!player.isStarted())
 				return;
@@ -1583,11 +1583,11 @@ public final class WorldPacketsDecoder extends Decoder {
 				stream.readBytes(data);
 			}
 			data = Utils.completeQuickMessage(player, fileId, data);
-//			if (chatType == 0)
-//				player.sendPublicChatMessage(new QuickChatMessage(fileId, data));
-//			else if (chatType == 1)
-//				player.sendFriendsChannelQuickMessage(new QuickChatMessage(
-//						fileId, data));
+			if (chatType == 0)
+				player.sendPublicChatMessage(new QuickChatMessage(fileId, data));
+			else if (chatType == 1)
+				player.sendFriendsChannelQuickMessage(new QuickChatMessage(
+						fileId, data));
 //			else if (chatType == 2)
 //				player.sendClanChannelQuickMessage(new QuickChatMessage(fileId,
 //						data));
@@ -1622,8 +1622,8 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			}
 			int effects = (colorEffect << 8) | (moveEffect & 0xff);
-//			if (chatType == 1)
-//				player.sendFriendsChannelMessage(new ChatMessage(message));
+			if (chatType == 1)
+				player.sendFriendsChannelMessage(new ChatMessage(message));
 //			else if (chatType == 2)
 //				player.sendClanChannelMessage(new ChatMessage(message));
 //			else if (chatType == 3)

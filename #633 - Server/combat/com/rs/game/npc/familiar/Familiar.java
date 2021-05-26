@@ -33,7 +33,7 @@ public abstract class Familiar extends NPC implements Serializable {
 	private Pouch pouch;
 
 	public Familiar(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
-		super(Summoning.getNPCId(pouch.getRealPouchId()), tile, mapAreaNameHash, canBeAttackFromOutOfArea, false);
+		super((short) Summoning.getNPCId(pouch.getRealPouchId()), tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea, false);
 		this.owner = owner;
 		this.pouch = pouch;
 		resetTickets();
@@ -119,14 +119,14 @@ public abstract class Familiar extends NPC implements Serializable {
 			}
 			sendTimeRemaining();
 		}
-		int originalId = getOriginalId() + 1;
+		short originalId = (short) (getOriginalId() + 1);
 		if (owner.isCanPvp() && getId() == getOriginalId()) {
 			setNextNPCTransformation(originalId);
 			call(false);
 			return;
 		} else if (!owner.isCanPvp() && getId() == originalId && pouch != Pouch.MAGPIE && pouch != Pouch.IBIS
 				&& pouch != Pouch.BEAVER && pouch != Pouch.MACAW && pouch != Pouch.FRUIT_BAT) {
-			setNextNPCTransformation(originalId - 1);
+			setNextNPCTransformation((short) (originalId - 1));
 			call(false);
 			return;
 		} else if (!withinDistance(owner, 12)) {

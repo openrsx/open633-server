@@ -129,7 +129,7 @@ public final class NPCCombat {
 
 				if (npc.getMapAreaNameHash() != -1) {
 					// if out his area
-					if (!MapAreas.isAtArea(npc.getMapAreaNameHash(), npc) || (!npc.canBeAttackFromOutOfArea()
+					if (!MapAreas.isAtArea(npc.getMapAreaNameHash(), npc) || (!npc.isCanBeAttackFromOutOfArea()
 							&& !MapAreas.isAtArea(npc.getMapAreaNameHash(), target))) {
 						npc.forceWalkRespawnTile();
 						return false;

@@ -3074,7 +3074,7 @@ public class PlayerCombat extends Action {
 				if (!familiar.canAttack(target))
 					return false;
 			} else {
-				if (!n.canBeAttackFromOutOfArea() && !MapAreas.isAtArea(n.getMapAreaNameHash(), player)) {
+				if (!n.isCanBeAttackFromOutOfArea() && !MapAreas.isAtArea(n.getMapAreaNameHash(), player)) {
 					return false;
 				}
 				if (n.getId() == 879) {

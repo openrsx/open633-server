@@ -7,8 +7,8 @@ public class KingBlackDragon extends NPC {
 
 	public KingBlackDragon(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea,
 			boolean spawned) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		setLureDelay(0);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		setLureDelay((short) 0);
 		setDropRateFactor(1); // double chance
 	}
 

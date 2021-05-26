@@ -18,7 +18,7 @@ public class AnimatedArmor extends NPC {
 	private transient Player player;
 
 	public AnimatedArmor(Player player, int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
 		this.player = player;
 	}
 

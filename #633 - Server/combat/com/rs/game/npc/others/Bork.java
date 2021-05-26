@@ -17,8 +17,8 @@ public class Bork extends NPC {
 	public static long deadTime;
 
 	public Bork(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		setLureDelay(0);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
+		setLureDelay((short) 0);
 		setForceAgressive(true);
 	}
 
