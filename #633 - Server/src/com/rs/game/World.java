@@ -1210,6 +1210,7 @@ public final class World {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static final void sendProjectile(Entity shooter, WorldTile startTile, WorldTile receiver, int gfxId,
 			int startHeight, int endHeight, int speed, int delay, int curve, int startDistanceOffset) {
 		for (int regionId : shooter.getMapRegionsIds()) {
@@ -1227,6 +1228,7 @@ public final class World {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static final void sendProjectile(WorldTile shooter, Entity receiver, int gfxId, int startHeight,
 			int endHeight, int speed, int delay, int curve, int startDistanceOffset) {
 		for (int regionId : receiver.getMapRegionsIds()) {
@@ -1244,6 +1246,7 @@ public final class World {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static final void sendProjectile(Entity shooter, WorldTile receiver, int gfxId, int startHeight,
 			int endHeight, int speed, int delay, int curve, int startDistanceOffset) {
 		for (int regionId : shooter.getMapRegionsIds()) {
@@ -1261,6 +1264,7 @@ public final class World {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static final void sendProjectile(Entity shooter, Entity receiver, int gfxId, int startHeight, int endHeight,
 			int speed, int delay, int curve, int startDistanceOffset) {
 		for (int regionId : shooter.getMapRegionsIds()) {
@@ -1376,6 +1380,7 @@ public final class World {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static final void sendProjectile(WorldObject object, WorldTile startTile, WorldTile endTile, int gfxId,
 			int startHeight, int endHeight, int speed, int delay, int curve, int startOffset) {
 		for (Player pl : players) {

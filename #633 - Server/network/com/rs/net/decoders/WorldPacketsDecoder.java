@@ -13,6 +13,7 @@ import com.rs.game.player.ChatMessage;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
+import com.rs.game.player.PublicChatMessage;
 import com.rs.game.player.QuickChatMessage;
 import com.rs.game.player.Skills;
 import com.rs.game.player.actions.PlayerFollow;
@@ -1105,6 +1106,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		NPCDispatcher.executeMobInteraction(player, stream, packetId == NPC_CLICK1_PACKET ? 1 :packetId ==  NPC_CLICK2_PACKET ? 2 :packetId ==  NPC_CLICK3_PACKET ? 3 : packetId == NPC_CLICK4_PACKET ? 4 : 5);
 	}
 
+	@SuppressWarnings("unused")
 	public void processPackets(final int packetId, InputStream stream,
 			int length) {
 		if (packetId == PING_PACKET) {
@@ -1627,8 +1629,8 @@ public final class WorldPacketsDecoder extends Decoder {
 //			else if (chatType == 3)
 //				player.sendGuestClanChannelMessage(new ChatMessage(message));
 //			else
-//				player.sendPublicChatMessage(new PublicChatMessage(message,
-//						effects));
+				player.sendPublicChatMessage(new PublicChatMessage(message,
+						effects));
 			if (Settings.DEBUG)
 				Logger.log(this, "Chat type: " + chatType);
 		} else if (packetId == COMMANDS_PACKET) {
