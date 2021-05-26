@@ -542,7 +542,7 @@ public class NPC extends Entity {
 		resetWalkSteps();
 		combat.removeTarget();
 		setNextAnimation(null);
-		World.get().submit(new Task(1) {
+		World.get().submit(new Task(2) {
 			int loop;
 			@Override
 			protected void execute() {
@@ -566,18 +566,21 @@ public class NPC extends Entity {
 					this.cancel();
 				}
 				loop++;
-				this.cancel();
 			}
 		});
 	}
 
 	public void drop() {
-		if (getCombatDefinitions() == NPCCombatDefinitionsL.DEFAULT_DEFINITION)
-			return;
-		Player killer = getMostDamageReceivedSourcePlayer();
-		if (killer == null)
-			return;
-		DropManager.dropItems(killer, this);
+		try {
+			Player killer = getMostDamageReceivedSourcePlayer();
+			if (killer == null)
+				return;
+			DropManager.dropItems(killer, this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} catch (Error e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
