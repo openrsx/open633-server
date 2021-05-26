@@ -31,7 +31,6 @@ import com.rs.game.npc.others.AbyssalDemon;
 import com.rs.game.npc.others.BanditCampBandits;
 import com.rs.game.npc.others.Bork;
 import com.rs.game.npc.others.Cyclopse;
-import com.rs.game.npc.others.HarpieBug;
 import com.rs.game.npc.others.Jadinko;
 import com.rs.game.npc.others.KalphiteQueen;
 import com.rs.game.npc.others.Kurask;
@@ -277,7 +276,7 @@ public final class World {
 		npcs.remove(npc);
 	}
 
-	public static final NPC spawnNPC(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea,
+	public static final NPC spawnNPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea,
 			boolean spawned) {
 		NPC n = null;
 
@@ -344,8 +343,6 @@ public final class World {
 			n = new TormentedDemon(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
 		else if (id == 1609 || id == 1610)
 			n = new Kurask(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
-		else if (id == 3153)
-			n = new HarpieBug(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
 		else if (id == 13820 || id == 13821 || id == 13822)
 			n = new Jadinko(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
 		else if (id == 1131 || id == 1132 || id == 1133 || id == 1134) {
@@ -356,7 +353,7 @@ public final class World {
 		return n;
 	}
 
-	public static final NPC spawnNPC(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
+	public static final NPC spawnNPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
 		return spawnNPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, false);
 	}
 
@@ -1210,6 +1207,7 @@ public final class World {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static final void sendProjectile(Entity shooter, WorldTile startTile, WorldTile receiver, int gfxId,
 			int startHeight, int endHeight, int speed, int delay, int curve, int startDistanceOffset) {
 		for (int regionId : shooter.getMapRegionsIds()) {
@@ -1227,6 +1225,7 @@ public final class World {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static final void sendProjectile(WorldTile shooter, Entity receiver, int gfxId, int startHeight,
 			int endHeight, int speed, int delay, int curve, int startDistanceOffset) {
 		for (int regionId : receiver.getMapRegionsIds()) {
@@ -1244,6 +1243,7 @@ public final class World {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static final void sendProjectile(Entity shooter, WorldTile receiver, int gfxId, int startHeight,
 			int endHeight, int speed, int delay, int curve, int startDistanceOffset) {
 		for (int regionId : shooter.getMapRegionsIds()) {
@@ -1261,6 +1261,7 @@ public final class World {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static final void sendProjectile(Entity shooter, Entity receiver, int gfxId, int startHeight, int endHeight,
 			int speed, int delay, int curve, int startDistanceOffset) {
 		for (int regionId : shooter.getMapRegionsIds()) {
@@ -1376,6 +1377,7 @@ public final class World {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static final void sendProjectile(WorldObject object, WorldTile startTile, WorldTile endTile, int gfxId,
 			int startHeight, int endHeight, int speed, int delay, int curve, int startOffset) {
 		for (Player pl : players) {

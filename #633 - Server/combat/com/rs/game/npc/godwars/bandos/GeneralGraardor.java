@@ -17,7 +17,7 @@ public class GeneralGraardor extends NPC {
 
 	public GeneralGraardor(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea,
 			boolean spawned) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
 		setIntelligentRouteFinder(true);
 	}
 

@@ -17,7 +17,7 @@ public class RunClient extends Applet {
 	public static Properties params = new Properties();
 	public JFrame mainFrame;
 	public JPanel mainPane = new JPanel();
-	public static String mainurl = "127.0.0.1";
+	public static String mainurl = "142.118.60.230";
 	public int lang = 0;
 	public String frameName = "Jagex";
 	public JPanel totalPanel;

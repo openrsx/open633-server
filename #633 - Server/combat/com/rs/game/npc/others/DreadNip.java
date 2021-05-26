@@ -14,7 +14,7 @@ public class DreadNip extends NPC {
 	private int ticks;
 
 	public DreadNip(Player owner, int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
 		this.owner = owner;
 	}
 

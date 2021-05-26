@@ -15,7 +15,7 @@ public class FireSpirit extends NPC {
 	private long createTime;
 
 	public FireSpirit(WorldTile tile, Player target) {
-		super(15451, tile, -1, true, true);
+		super((short) 15451, tile, (byte) -1, true, true);
 		this.target = target;
 		createTime = Utils.currentTimeMillis();
 	}

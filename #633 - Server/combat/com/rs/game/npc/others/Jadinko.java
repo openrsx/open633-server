@@ -8,7 +8,7 @@ import com.rs.game.player.Player;
 public class Jadinko extends NPC {
 
 	public Jadinko(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
 	}
 
 	@Override

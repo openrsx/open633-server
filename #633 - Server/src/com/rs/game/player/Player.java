@@ -108,6 +108,7 @@ public class Player extends Entity {
 
 	// saving stuff
 	private String displayName;
+	
 	/**
 	 * Personal details & information stored for a Player
 	 */
@@ -354,15 +355,14 @@ public class Player extends Entity {
 	@Override
 	public void processEntity() {
 		processLogicPackets();
+		if (isDead())
+			return;
+		super.processEntity();
 		actionManager.process();
 		if (routeEvent != null && routeEvent.processEvent(this))
 			routeEvent = null;
-		super.processEntity();
-//		getDetails().getCharges().process();
 		prayer.processPrayer();
 		controlerManager.process();
-		if (isDead())
-			return;
 		if (musicsManager.musicEnded())
 			musicsManager.replayMusic();
 //		if (hasSkull()) {
@@ -446,12 +446,6 @@ public class Player extends Entity {
 		getDetails().setLastIP(getSession().getIP());
 		interfaceManager.sendInterfaces();
 		getPackets().sendRunEnergy();
-		refreshAllowChatEffects();
-		refreshAcceptAid();
-		refreshMouseButtons();
-		refreshProfanityFilter();
-		refreshPrivateChatSetup();
-		refreshOtherChatsSetup();
 		sendRunButtonConfig();
 		World.addGroundItem(new Item(1050), this, this, false, 180);
 		getPackets().sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
@@ -470,9 +464,6 @@ public class Player extends Entity {
 		refreshHitPoints();
 		prayer.refreshPrayerPoints();
 		getPoison().refresh();
-//		getVarsManager().sendVar(281, 1000); // unlock can't do this on tutorial
-//		getVarsManager().sendVar(1160, -1); // unlock summoning orb
-//		getVarsManager().sendVar(1159, 1);
 		getPackets().sendGameBarStages();
 		musicsManager.init();
 		emotesManager.init();
@@ -1562,53 +1553,6 @@ public class Player extends Entity {
 			}, useDelay - 1);
 		}
 	}
-	
-	public void switchMouseButtons() {
-		getDetails().setMouseButtons(!getDetails().isMouseButtons());
-		refreshMouseButtons();
-	}
-
-	public void switchAllowChatEffects() {
-		getDetails().setAllowChatEffects(!getDetails().isAllowChatEffects());
-		refreshAllowChatEffects();
-	}
-
-	public void switchAcceptAid() {
-		getDetails().setAcceptAid(!getDetails().isAcceptAid());
-		refreshAcceptAid();
-	}
-
-	public void switchProfanityFilter() {
-		getDetails().setProfanityFilter(!getDetails().isProfanityFilter());
-		refreshProfanityFilter();
-	}
-
-
-	public void refreshAllowChatEffects() {
-		getVarsManager().sendVar(171, getDetails().isAllowChatEffects() ? 0 : 1);
-	}
-
-	public void refreshAcceptAid() {
-		getVarsManager().sendVar(427, getDetails().isAcceptAid() ? 1 : 0);
-	}
-
-	public void refreshProfanityFilter() {
-		getVarsManager().sendVarBit(8780, getDetails().isProfanityFilter() ? 0 : 1);
-	}
-
-	public void refreshMouseButtons() {
-		getVarsManager().sendVar(170, getDetails().isMouseButtons() ? 0 : 1);
-	}
-
-	public void refreshPrivateChatSetup() {
-		getVarsManager().sendVar(287, getDetails().getPrivateChatSetup());
-	}
-
-	public void refreshOtherChatsSetup() {
-		getVarsManager().setVarBit(9188, getDetails().getFriendChatSetup());
-		getVarsManager().setVarBit(3612, getDetails().getClanChatSetup());
-		getVarsManager().forceSendVarBit(9191, getDetails().getGuestChatSetup());
-	}
 
 	@Override
 	public void heal(int ammount, int extra) {
@@ -1887,18 +1831,8 @@ public class Player extends Entity {
 		varsManager.sendVarBit(index + 8662, (int) getDetails().getWarriorPoints()[index]);
 	}
 	
-	/**
-	 * Gets the Players Details
-	 * @return details
-	 */
-	public PlayerDetails getDetails() {
-		return details;
-	}
-	
 	public String getDisplayName() {
-		if (displayName != null)
-			return displayName;
-		return Utils.formatPlayerNameForDisplay(username);
+		return hasDisplayName() ? getDisplayName() : Utils.formatPlayerNameForDisplay(username);
 	}
 
 	public boolean hasDisplayName() {

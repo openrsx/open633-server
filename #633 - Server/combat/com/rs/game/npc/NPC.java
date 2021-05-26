@@ -28,16 +28,21 @@ import com.rs.utils.NPCBonuses;
 import com.rs.utils.NPCCombatDefinitionsL;
 import com.rs.utils.Utils;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class NPC extends Entity {
 
-	public static int NORMAL_WALK = 0x2, WATER_WALK = 0x4, FLY_WALK = 0x8;
+	public static byte NORMAL_WALK = 0x2, WATER_WALK = 0x4, FLY_WALK = 0x8;
 
-	private int id;
+	private short id;
 	private WorldTile respawnTile;
-	private int mapAreaNameHash;
+	private byte mapAreaNameHash;
 	private boolean canBeAttackFromOutOfArea;
-	private int walkType;
-	private int[] bonuses; // 0 stab, 1 slash, 2 crush,3 mage, 4 range, 5 stab
+	private byte walkType;
+	private short[] bonuses; // 0 stab, 1 slash, 2 crush,3 mage, 4 range, 5 stab
 	// def, blahblah till 9
 	private boolean spawned;
 	private transient NPCCombat combat;
@@ -45,11 +50,11 @@ public class NPC extends Entity {
 
 	private long lastAttackedByTarget;
 	private boolean cantInteract;
-	private int capDamage;
-	private int lureDelay;
+	private short capDamage;
+	private short lureDelay;
 	private boolean cantFollowUnderCombat;
 	private boolean forceAgressive;
-	private int forceTargetDistance;
+	private byte forceTargetDistance;
 	private boolean forceFollowClose;
 	private boolean forceMultiAttacked;
 	private boolean noDistanceCheck;
@@ -60,19 +65,19 @@ public class NPC extends Entity {
 	// name changing masks
 	private String name;
 	private transient boolean changedName;
-	private int combatLevel;
+	private short combatLevel;
 	private transient boolean changedCombatLevel;
 	private transient boolean locked;
 	private transient double dropRateFactor;
 
-	public NPC(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
+	public NPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
 		this(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, false);
 	}
 
 	/*
 	 * creates and adds npc
 	 */
-	public NPC(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
+	public NPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
 		super(tile);
 		this.id = id;
 		this.respawnTile = new WorldTile(tile);
@@ -83,7 +88,7 @@ public class NPC extends Entity {
 		setHitpoints(getMaxHitpoints());
 		setDirection(getRespawnDirection());
 		// int walkType = t(id);
-		setRandomWalk(getDefinitions().walkMask);
+		setWalkType(getDefinitions().walkMask);
 		setBonuses();
 		combat = new NPCCombat(this);
 		capDamage = -1;
@@ -100,8 +105,8 @@ public class NPC extends Entity {
 	public void setBonuses() {
 		bonuses = NPCBonuses.getBonuses(id);
 		if (bonuses == null) {
-			bonuses = new int[10];
-			int level = getCombatLevel();
+			bonuses = new short[10];
+			short level = getCombatLevel();
 			for (int i = 0; i < bonuses.length; i++)
 				bonuses[i] = level;
 		}
@@ -115,7 +120,7 @@ public class NPC extends Entity {
 												 */;
 	}
 
-	public void setNextNPCTransformation(int id) {
+	public void setNextNPCTransformation(short id) {
 		setNPC(id);
 		nextTransformation = new Transformation(id);
 		if (getCustomCombatLevel() != -1)
@@ -124,7 +129,7 @@ public class NPC extends Entity {
 			changedName = true;
 	}
 
-	public void setNPC(int id) {
+	public void setNPC(short id) {
 		this.id = id;
 		setBonuses();
 	}
@@ -136,18 +141,6 @@ public class NPC extends Entity {
 		changedCombatLevel = false;
 		changedName = false;
 
-	}
-
-	public int getMapAreaNameHash() {
-		return mapAreaNameHash;
-	}
-
-	public void setCanBeAttackFromOutOfArea(boolean b) {
-		canBeAttackFromOutOfArea = b;
-	}
-
-	public boolean canBeAttackFromOutOfArea() {
-		return canBeAttackFromOutOfArea;
 	}
 
 	public NPCDefinitions getDefinitions() {
@@ -162,11 +155,7 @@ public class NPC extends Entity {
 	public int getMaxHitpoints() {
 		return getCombatDefinitions().getHitpoints();
 	}
-
-	public int getId() {
-		return id;
-	}
-
+	
 	public void processNPC() {
 		if (isDead() || locked)
 			return;
@@ -592,10 +581,6 @@ public class NPC extends Entity {
 		return getCombatDefinitions().getMaxHit();
 	}
 
-	public int[] getBonuses() {
-		return bonuses;
-	}
-
 	@Override
 	public double getMagePrayerMultiplier() {
 		return 0;
@@ -729,38 +714,10 @@ public class NPC extends Entity {
 		return false;
 	}
 
-	public boolean isCantInteract() {
-		return cantInteract;
-	}
-
 	public void setCantInteract(boolean cantInteract) {
 		this.cantInteract = cantInteract;
 		if (cantInteract)
 			combat.reset();
-	}
-
-	public int getCapDamage() {
-		return capDamage;
-	}
-
-	public void setCapDamage(int capDamage) {
-		this.capDamage = capDamage;
-	}
-
-	public int getLureDelay() {
-		return lureDelay;
-	}
-
-	public void setLureDelay(int lureDelay) {
-		this.lureDelay = lureDelay;
-	}
-
-	public boolean isCantFollowUnderCombat() {
-		return cantFollowUnderCombat;
-	}
-
-	public void setCantFollowUnderCombat(boolean canFollowUnderCombat) {
-		this.cantFollowUnderCombat = canFollowUnderCombat;
 	}
 
 	public Transformation getNextTransformation() {
@@ -770,42 +727,6 @@ public class NPC extends Entity {
 	@Override
 	public String toString() {
 		return getDefinitions().getName() + " - " + id + " - " + getX() + " " + getY() + " " + getPlane();
-	}
-
-	public boolean isForceAgressive() {
-		return forceAgressive;
-	}
-
-	public void setForceAgressive(boolean forceAgressive) {
-		this.forceAgressive = forceAgressive;
-	}
-
-	public int getForceTargetDistance() {
-		return forceTargetDistance;
-	}
-
-	public void setForceTargetDistance(int forceTargetDistance) {
-		this.forceTargetDistance = forceTargetDistance;
-	}
-
-	public boolean isForceFollowClose() {
-		return forceFollowClose;
-	}
-
-	public void setForceFollowClose(boolean forceFollowClose) {
-		this.forceFollowClose = forceFollowClose;
-	}
-
-	public boolean isForceMultiAttacked() {
-		return forceMultiAttacked;
-	}
-
-	public void setForceMultiAttacked(boolean forceMultiAttacked) {
-		this.forceMultiAttacked = forceMultiAttacked;
-	}
-
-	public void setRandomWalk(int forceRandomWalk) {
-		this.walkType = forceRandomWalk;
 	}
 
 	public String getCustomName() {
@@ -821,15 +742,15 @@ public class NPC extends Entity {
 		return combatLevel;
 	}
 
-	public int getCombatLevel() {
-		return combatLevel >= 0 ? combatLevel : getDefinitions().combatLevel;
+	public short getCombatLevel() {
+		return (short) (combatLevel >= 0 ? combatLevel : getDefinitions().combatLevel);
 	}
 
 	public String getName() {
 		return name != null ? name : getDefinitions().getName();
 	}
 
-	public void setCombatLevel(int level) {
+	public void setCombatLevel(short level) {
 		combatLevel = getDefinitions().combatLevel == level ? -1 : level;
 		changedCombatLevel = true;
 	}

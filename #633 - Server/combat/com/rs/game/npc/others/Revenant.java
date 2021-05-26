@@ -6,7 +6,7 @@ import com.rs.game.npc.NPC;
 
 public class Revenant extends NPC {
 
-	public Revenant(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
+	public Revenant(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
 		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
 		setDropRateFactor(1); // duplicates
 	}

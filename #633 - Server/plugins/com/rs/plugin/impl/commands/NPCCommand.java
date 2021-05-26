@@ -13,7 +13,7 @@ public final class NPCCommand implements Command {
 	@Override
 	public void execute(Player player, String[] cmd, String command) throws Exception {
 		try {
-			World.addNPC(new NPC(Integer.parseInt(cmd[1]), player, -1, true,
+			World.addNPC(new NPC(Short.parseShort(cmd[1]), player, (byte) -1, true,
 					true));
 			return;
 		} catch (NumberFormatException e) {

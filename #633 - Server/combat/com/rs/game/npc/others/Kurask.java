@@ -9,7 +9,7 @@ import com.rs.game.player.PlayerCombat;
 public class Kurask extends NPC {
 
 	public Kurask(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
 	}
 
 	@Override

@@ -55,8 +55,8 @@ public final class Pet extends NPC {
 	 * @param owner  The owner.
 	 * @param tile   The world tile.
 	 */
-	public Pet(int id, int itemId, Player owner, WorldTile tile, PetDetails details) {
-		super(id, tile, -1, false);
+	public Pet(short id, int itemId, Player owner, WorldTile tile, PetDetails details) {
+		super(id, tile, (byte) -1, false);
 		this.owner = owner;
 		this.itemId = itemId;
 		this.checkNearDirs = Utils.getCoordOffsetsNear(super.getSize());
@@ -127,7 +127,7 @@ public final class Pet extends NPC {
 		owner.getPetManager().setItemId(itemId);
 		owner.getPetManager().setNpcId(npcId);
 		finish();
-		Pet newPet = new Pet(npcId, itemId, owner, owner, details);
+		Pet newPet = new Pet((short) npcId, itemId, owner, owner, details);
 		newPet.growthRate = growthRate;
 		owner.setPet(newPet);
 		owner.getPackets().sendGameMessage("<col=ff0000>Your pet has grown larger.</col>");

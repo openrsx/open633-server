@@ -18,7 +18,7 @@ public class GodwarsSaradominFaction extends NPC {
 
 	public GodwarsSaradominFaction(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea,
 			boolean spawned) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
 	}
 
 	@Override

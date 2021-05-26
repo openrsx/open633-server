@@ -72,7 +72,7 @@ public abstract class CombatScript {
     }
 
     public static int getRandomMaxHit(NPC npc, int maxHit, int attackStyle, Entity target) {
-	int[] bonuses = npc.getBonuses();
+	short[] bonuses = npc.getBonuses();
 	double att = bonuses == null ? 0 : attackStyle == NPCCombatDefinitions.RANGE ? bonuses[CombatDefinitions.RANGE_ATTACK] : attackStyle == NPCCombatDefinitions.MAGE ? bonuses[CombatDefinitions.MAGIC_ATTACK] : bonuses[CombatDefinitions.STAB_ATTACK];
 	double def;
 	if (target instanceof Player) {

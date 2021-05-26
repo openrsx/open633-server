@@ -11,10 +11,10 @@ import com.rs.utils.Utils;
 
 public class Werewolf extends NPC {
 
-	private int realId;
+	private short realId;
 
-	public Werewolf(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+	public Werewolf(short id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
 		realId = id;
 	}
 
@@ -36,7 +36,7 @@ public class Werewolf extends NPC {
 				WorldTasksManager.schedule(new WorldTask() {
 					@Override
 					public void run() {
-						setNextNPCTransformation(realId - 20);
+						setNextNPCTransformation((short) (realId - 20));
 						setNextAnimation(new Animation(-1));
 						setCantInteract(false);
 						setTarget(target);

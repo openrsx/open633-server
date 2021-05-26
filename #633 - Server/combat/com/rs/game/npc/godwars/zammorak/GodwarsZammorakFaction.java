@@ -18,7 +18,7 @@ public class GodwarsZammorakFaction extends NPC {
 
 	public GodwarsZammorakFaction(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea,
 			boolean spawned) {
-		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
 	}
 
 	@Override

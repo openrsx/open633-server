@@ -111,7 +111,7 @@ public class WarriorsGuild extends Controller {
 	 * Catapult Activity (Defence)
 	 */
 	private static final WorldTile CATAPULT_TARGET = new WorldTile(2842, 3541, 1);
-	private static final NPC CATAPULT_PROJECTILE_BASE = new NPC(1957, new WorldTile(2842, 3550, 1), -1, false);
+	private static final NPC CATAPULT_PROJECTILE_BASE = new NPC((short) 1957, new WorldTile(2842, 3550, 1), (byte) -1, false);
 	private static final Animation[] DEFENCIVE_ANIMATIONS = new Animation[] { new Animation(4169), new Animation(4168),
 			new Animation(4171), new Animation(4170) };
 	private static final WorldObject CATAPULT = new WorldObject(15616, 10, 0, 2840, 3548, 1);

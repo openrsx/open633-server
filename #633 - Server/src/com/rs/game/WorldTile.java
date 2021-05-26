@@ -3,6 +3,9 @@ package com.rs.game;
 import com.rs.Settings;
 import com.rs.utils.Utils;
 
+import lombok.Data;
+
+@Data
 public class WorldTile {
 
 	private short x, y;
@@ -54,10 +57,6 @@ public class WorldTile {
 		this.plane = (byte) plane;
 	}
 
-	public int getX() {
-		return x;
-	}
-
 	public int getXInRegion() {
 		return x & 0x3F;
 	}
@@ -72,10 +71,6 @@ public class WorldTile {
 
 	public int getYInChunk() {
 		return y & 0x7;
-	}
-
-	public int getY() {
-		return y;
 	}
 
 	public int getPlane() {

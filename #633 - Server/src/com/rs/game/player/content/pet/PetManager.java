@@ -80,7 +80,7 @@ public final class PetManager {
 			player.getPackets().sendGameMessage("This is not the right pet, grow the pet correctly.");
 			return true;
 		}
-		int npcId = pets.getNpcId(details.getStage());
+		short npcId = (short) pets.getNpcId(details.getStage());
 		if (npcId > 0) {
 			Pet pet = new Pet(npcId, itemId, player, player, details);
 			this.npcId = npcId;

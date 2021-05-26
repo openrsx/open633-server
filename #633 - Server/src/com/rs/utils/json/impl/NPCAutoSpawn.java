@@ -29,7 +29,7 @@ public class NPCAutoSpawn extends GsonLoader<NPCSpawning> {
 		String line;
 		while ((line = reader.readLine()) != null) {
 			String[] data = line.split("-");
-			int id = Integer.parseInt(data[0]);
+			short id = Short.parseShort(data[0]);
 			int x = Integer.parseInt(data[1]);
 			int y = Integer.parseInt(data[2]);
 			int z = Integer.parseInt(data[3]);

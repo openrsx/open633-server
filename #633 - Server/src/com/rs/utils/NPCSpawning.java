@@ -9,11 +9,12 @@ import com.rs.utils.json.impl.NPCAutoSpawn.Direction;
  */
 public class NPCSpawning implements Comparable<NPCSpawning> {
 
-	private int x, y, z, id;
+	private int x, y, z;
+	short id;
 
 	private Direction direction;
 
-	public NPCSpawning(int x, int y, int z, int id, Direction direction) {
+	public NPCSpawning(int x, int y, int z, short id, Direction direction) {
 		this.setX(x);
 		this.setY(y);
 		this.setZ(z);
@@ -33,7 +34,7 @@ public class NPCSpawning implements Comparable<NPCSpawning> {
 		return z;
 	}
 
-	public int getId() {
+	public short getId() {
 		return id;
 	}
 
@@ -53,7 +54,7 @@ public class NPCSpawning implements Comparable<NPCSpawning> {
 		this.z = z;
 	}
 
-	public void setId(int id) {
+	public void setId(short id) {
 		this.id = id;
 	}
 
