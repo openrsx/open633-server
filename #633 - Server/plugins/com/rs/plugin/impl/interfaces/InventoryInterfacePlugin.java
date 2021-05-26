@@ -35,7 +35,6 @@ public class InventoryInterfacePlugin implements RSInterface {
 	@Override
 	public void execute(Player player, int interfaceId, int componentId, int packetId, byte slotId, int slotId2) throws Exception {
 		if (componentId == 0) {
-			System.out.println("?");
 			if (slotId > 27 || player.getInterfaceManager().containsInventoryInter())
 				return;
 			Item item = player.getInventory().getItem(slotId);

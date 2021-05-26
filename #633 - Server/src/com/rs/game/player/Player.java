@@ -1377,7 +1377,7 @@ public class Player extends Entity {
 	}
 
 	public void refreshWarriorPoints(int index) {
-		varsManager.sendVarBit(index + 8662, (int) getDetails().getWarriorPoints()[index]);
+//		varsManager.sendVarBit(index + 8662, (int) getDetails().getWarriorPoints()[index]);
 	}
 	
 	public String getDisplayName() {

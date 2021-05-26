@@ -730,13 +730,14 @@ public final class Pots {
 		Pot pot = getPot(item.getId());
 		if (pot == null)
 			return false;
-//	if (player.getPotDelay() > Utils.currentTimeMillis())
-//	    return true;
+		if (!player.getDetails().getWatchMap().get("DRINKS").elapsed(1800)) {
+			return false;
+		}
 		if (!player.getControlerManager().canPot(pot))
 			return true;
 		if (!pot.effect.canDrink(player))
 			return true;
-//	player.addPotDelay(1075);
+		player.getDetails().getWatchMap().get("DRINKS").reset();
 		pot.effect.extra(player);
 		int dosesLeft = getDoses(pot, item) - 1;
 		if (dosesLeft == 0 && pot.isFlask())

@@ -1,5 +1,10 @@
 package com.rs.game.npc.combat;
 
+import java.util.concurrent.TimeUnit;
+
+import com.rs.Settings;
+import java.util.concurrent.TimeUnit;
+
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.npc.NPC;
@@ -8,6 +13,8 @@ import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
 import com.rs.utils.MapAreas;
 import com.rs.utils.Utils;
+
+import lombok.NonNull;
 
 public final class NPCCombat {
 
@@ -122,12 +129,13 @@ public final class NPCCombat {
 		int distanceY = npc.getY() - npc.getRespawnTile().getY();
 		int size = npc.getSize();
 		int maxDistance;
-//		Player n = (Player) target;
-//		boolean agressive = n.getWatchMap().get("TOLERANCE").elapsed(Settings.TOLERANCE_SECONDS, TimeUnit.SECONDS);
-//		if (agressive) {
-//			npc.resetCombat();
-//			npc.resetWalkSteps();
-//		}
+		Player player = (Player) target;
+		boolean agressive = player.getDetails().getWatchMap().get("TOLERANCE").elapsed(Settings.TOLERANCE_SECONDS, TimeUnit.SECONDS);
+		System.out.println(agressive);
+		if (agressive) {
+			npc.resetCombat();
+			npc.resetWalkSteps();
+		}
 		if (!npc.isNoDistanceCheck() && !npc.isCantFollowUnderCombat()) {
 			maxDistance = 32;
 			if (!(npc instanceof Familiar)) {
@@ -222,7 +230,7 @@ public final class NPCCombat {
 
 			
 		}
-		return true /* && !agressive */;
+		return true && !agressive;
 	}
 
 	private boolean forceCheckClipAsRange(Entity target) {

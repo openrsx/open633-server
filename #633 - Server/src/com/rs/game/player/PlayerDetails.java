@@ -1,9 +1,11 @@
 package com.rs.game.player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.rs.utils.Stopwatch;
 import com.rs.utils.Utils;
 
 import lombok.Data;
@@ -27,11 +29,13 @@ public final class PlayerDetails {
 		allowChatEffects = true;
 		mouseButtons = true;
 		profanityFilter = true;
-		warriorPoints = new double[6];
 		charges = new ChargesManager();
 		ownedObjectsManagerKeys = new LinkedList<String>();
 		passwordList = new ArrayList<String>();
 		ipList = new ArrayList<String>();
+		if (watchMap == null)
+			watchMap = new HashMap<>();
+		
 	}
 
 	/**
@@ -112,6 +116,11 @@ public final class PlayerDetails {
 	 * The Run Engery amount a Player has
 	 */
 	private byte runEnergy;
+	
+	/**
+	 * A collection of Stopwatches
+	 */
+	public HashMap<String, Stopwatch> watchMap = new HashMap<>();
 
 	/**
 	 * TODO: Add documentation to rest of these imports. Documentation is super
@@ -128,7 +137,6 @@ public final class PlayerDetails {
 	private boolean forceNextMapLoadRefresh;
 	private long poisonImmune; // to redo
 	private long fireImmune; // to redo
-	private double[] warriorPoints;
 
 	private long banned;
 	private boolean permBanned;
@@ -151,4 +159,14 @@ public final class PlayerDetails {
 
 	private byte summoningLeftClickOption;
 	private List<String> ownedObjectsManagerKeys;
+	
+	
+	/**
+	 * Populates the {@link #watchMap}
+	 */
+	{
+		watchMap.put("FOOD", new Stopwatch());
+		watchMap.put("DRINKS", new Stopwatch());
+		watchMap.put("TOLERANCE", new Stopwatch());
+	}
 }
