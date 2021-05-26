@@ -79,7 +79,7 @@ public final class NPCCombat {
 		if (Utils.colides(npc.getX(), npc.getY(), size, target.getX(), target.getY(), targetSize))
 			return 0;
 		addAttackedByDelay(target);
-		return CombatScriptsHandler.specialAttack(npc, target);
+		return NPCCombatDispatcher.execute((Player) target, npc);
 	}
 
 	protected void doDefenceEmote(Entity target) {

@@ -8,7 +8,7 @@ import com.rs.cores.BlockingExecutorService;
 import com.rs.cores.CoresManager;
 import com.rs.game.World;
 import com.rs.game.map.MapBuilder;
-import com.rs.game.npc.combat.CombatScriptsHandler;
+import com.rs.game.npc.combat.NPCCombatDispatcher;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.controllers.ControlerHandler;
 import com.rs.game.player.dialogues.DialogueHandler;
@@ -101,7 +101,6 @@ public class GameLoader {
 		});
 		getBackgroundLoader().submit(() -> {
 			ControlerHandler.init();
-			CombatScriptsHandler.init();
 			DialogueHandler.init();
 			FriendChatsManager.init();
 			World.init();
@@ -115,6 +114,7 @@ public class GameLoader {
 			ObjectDispatcher.load();
 			CommandDispatcher.load();
 			NPCDispatcher.load();
+			NPCCombatDispatcher.load();
 			return null;
 		});
 	}
