@@ -3,8 +3,6 @@ package com.rs.game.npc.combat;
 import java.util.concurrent.TimeUnit;
 
 import com.rs.Settings;
-import java.util.concurrent.TimeUnit;
-
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.npc.NPC;
@@ -13,8 +11,6 @@ import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
 import com.rs.utils.MapAreas;
 import com.rs.utils.Utils;
-
-import lombok.NonNull;
 
 public final class NPCCombat {
 
@@ -131,7 +127,6 @@ public final class NPCCombat {
 		int maxDistance;
 		Player player = (Player) target;
 		boolean agressive = player.getDetails().getWatchMap().get("TOLERANCE").elapsed(Settings.TOLERANCE_SECONDS, TimeUnit.SECONDS);
-		System.out.println(agressive);
 		if (agressive) {
 			npc.resetCombat();
 			npc.resetWalkSteps();

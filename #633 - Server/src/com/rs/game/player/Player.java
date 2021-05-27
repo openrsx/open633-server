@@ -14,7 +14,6 @@ import com.rs.cores.CoresManager;
 import com.rs.cores.WorldThread;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.ForceTalk;
 import com.rs.game.Graphics;
 import com.rs.game.Hit;
 import com.rs.game.Hit.HitLook;
@@ -22,7 +21,6 @@ import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
-import com.rs.game.item.Item;
 import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.minigames.duel.DuelRules;
 import com.rs.game.npc.NPC;
@@ -42,7 +40,6 @@ import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
-import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utils.IsaacKeyPair;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
@@ -130,11 +127,12 @@ public class Player extends Entity {
 	public Player(String password) {
 		super(Settings.START_PLAYER_LOCATION);
 		setHitpoints(100);
-		details = new PlayerDetails();
-		getDetails().setPassword(password);
 		appearence = new Appearance();
 		inventory = new Inventory();
 		equipment = new Equipment();
+		getDetails().getCharges().setPlayer(this);
+		details = new PlayerDetails();
+		getDetails().setPassword(password);
 		skills = new Skills();
 		combatDefinitions = new CombatDefinitions();
 		prayer = new Prayer();
@@ -355,11 +353,14 @@ public class Player extends Entity {
 		if (isDead())
 			return;
 		super.processEntity();
-		actionManager.process();
+		if (coordsEvent != null && coordsEvent.processEvent(this))
+			coordsEvent = null;
 		if (routeEvent != null && routeEvent.processEvent(this))
 			routeEvent = null;
+		actionManager.process();
 		prayer.processPrayer();
 		controlerManager.process();
+//		getDetails().getCharges().process();
 		if (musicsManager.musicEnded())
 			musicsManager.replayMusic();
 //		if (hasSkull()) {
@@ -367,8 +368,6 @@ public class Player extends Entity {
 //			if (!hasSkull())
 //				appearence.generateAppearenceData();
 //		}
-		if (coordsEvent != null && coordsEvent.processEvent(this))
-			coordsEvent = null;
 	}
 
 	@Override
@@ -441,51 +440,38 @@ public class Player extends Entity {
 			getPackets().sendSystemUpdate(World.exiting_delay - delayPassed);
 		}
 		getDetails().setLastIP(getSession().getIP());
-		interfaceManager.sendInterfaces();
+		getInterfaceManager().sendInterfaces();
 		getPackets().sendRunEnergy();
 		sendRunButtonConfig();
-		World.addGroundItem(new Item(1050), this, this, false, 180);
 		getPackets().sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
 		
 		Settings.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> getDetails().setRights(staff.getValue()));
 		
 		sendDefaultPlayersOptions();
 		checkMultiArea();
-		inventory.init();
-		equipment.checkItems();
-		equipment.init();
-		skills.init();
-		combatDefinitions.init();
-		prayer.init();
-		friendsIgnores.init();
+		getInventory().init();
+		getEquipment().checkItems();
+		getEquipment().init();
+		getSkills().init();
+		getCombatDefinitions().init();
+		getPrayer().init();
+		getFriendsIgnores().init();
 		refreshHitPoints();
-		prayer.refreshPrayerPoints();
+		getPrayer().refreshPrayerPoints();
 		getPoison().refresh();
 		getPackets().sendGameBarStages();
-		musicsManager.init();
-		emotesManager.init();
-		notes.init();
-//		sendUnlockedObjectConfigs();
-		if (getDetails().getCurrentFriendChatOwner() != null) {
-			FriendChatsManager.joinChat(getDetails().getCurrentFriendChatOwner(), this);
-			if (currentFriendChat == null) // failed
-				getDetails().setCurrentFriendChatOwner(null);
-		}
-		if (familiar != null)
-			familiar.respawnFamiliar(this);
+		getMusicsManager().init();
+		getEmotesManager().init();
+		getNotes().init();
+		if (getFamiliar() != null)
+			getFamiliar().respawnFamiliar(this);
 		else
-			petManager.init();
-		running = true;
-		updateMovementType = true;
-		appearence.generateAppearenceData();
-		controlerManager.login(); // checks what to do on login after welcome
+			getPetManager().init();
+		setRunning(true);
+		setUpdateMovementType(true);
+		getAppearence().generateAppearenceData();
+		getControlerManager().login(); // checks what to do on login after welcome
 		OwnedObjectManager.linkKeys(this);
-	}
-
-	@SuppressWarnings("unused")
-	private void sendUnlockedObjectConfigs() {
-		//Jadinko tree
-		getVarsManager().sendVarBit(9513, 1);
 	}
 
 	public void updateIPnPass() {
@@ -508,7 +494,7 @@ public class Player extends Entity {
 
 	@Override
 	public void checkMultiArea() {
-		if (!started)
+		if (!isStarted())
 			return;
 		boolean isAtMultiArea = isForceMultiArea() ? true : World
 				.isMultiArea(this);
@@ -553,7 +539,7 @@ public class Player extends Entity {
 
 	public void forceLogout() {
 		getPackets().sendLogout(false);
-		running = false;
+		setRunning(false);
 		realFinish(false);
 	}
 
@@ -565,19 +551,19 @@ public class Player extends Entity {
 	}
 
 	public void finish(final int tryCount) {
-		if (finishing || hasFinished())
+		if (isFinishing() || hasFinished())
 			return;
-		finishing = true;
+		setFinishing(true);
 		// if combating doesnt stop when xlog this way ends combat
 		stopAll(false, true,
-				!(actionManager.getAction() instanceof PlayerCombat));
+				!(getActionManager().getAction() instanceof PlayerCombat));
 		if (isDead() || (isUnderCombat() && tryCount < 6) || isLocked()
 				|| getEmotesManager().isDoingEmote()) {
 			CoresManager.slowExecutor.schedule(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						finishing = false;
+						setFinishing(false);
 						finish(tryCount + 1);
 					} catch (Throwable e) {
 						Logger.handle(e);
@@ -1243,122 +1229,6 @@ public class Player extends Entity {
 		if (getDetails().getOwnedObjectsManagerKeys() == null) // temporary
 			getDetails().setOwnedObjectsManagerKeys(new LinkedList<String>());
 		return getDetails().getOwnedObjectsManagerKeys();
-	}
-
-	public boolean hasInstantSpecial(final int weaponId) {
-		switch (weaponId) {
-		case 4153:
-		case 15486:
-		case 22207:
-		case 22209:
-		case 22211:
-		case 22213:
-		case 1377:
-		case 13472:
-		case 35:// Excalibur
-		case 8280:
-		case 14632:
-		case 24455:
-		case 24456:
-		case 24457:
-		case 14679:
-			return true;
-		default:
-			return false;
-		}
-	}
-
-	public void performInstantSpecial(final int weaponId) {
-		int specAmt = PlayerCombat.getSpecialAmmount(weaponId);
-		if (combatDefinitions.hasRingOfVigour())
-			specAmt *= 0.9;
-		if (combatDefinitions.getSpecialAttackPercentage() < specAmt) {
-			getPackets().sendGameMessage("You don't have enough power left.");
-			combatDefinitions.decreaseSpecialAttack(0);
-			return;
-		}
-		if (this.getSwitchItemCache().size() > 0) {
-			RSInterfaceDispatcher.submitSpecialRequest(this);
-			return;
-		}
-		switch (weaponId) {
-		case 24455:
-		case 24456:
-		case 24457:
-			getPackets().sendGameMessage("Aren't you strong enough already?");
-			break;
-		case 4153:
-		case 14679:
-			if (!(getActionManager().getAction() instanceof PlayerCombat)) {
-				getPackets()
-						.sendGameMessage(
-								"Warning: Since the maul's special is an instant attack, it will be wasted when used on a first strike.");
-				combatDefinitions.switchUsingSpecialAttack();
-				return;
-			}
-			PlayerCombat combat = (PlayerCombat) getActionManager().getAction();
-			Entity target = combat.getTarget();
-			if (!Utils.isOnRange(getX(), getY(), getSize(), target.getX(),
-					target.getY(), target.getSize(), 5)) {
-				combatDefinitions.switchUsingSpecialAttack();
-				return;
-			}
-			setNextAnimation(new Animation(1667));
-			setNextGraphics(new Graphics(340, 0, 96 << 16));
-			int attackStyle = getCombatDefinitions().getAttackStyle();
-			combat.delayNormalHit(weaponId, attackStyle, combat.getMeleeHit(
-					this, combat.getRandomMaxHit(this, weaponId, attackStyle,
-							false, true, 1.1, true)));
-			combatDefinitions.decreaseSpecialAttack(specAmt);
-			break;
-		case 1377:
-		case 13472:
-			setNextAnimation(new Animation(1056));
-			setNextGraphics(new Graphics(246));
-			setNextForceTalk(new ForceTalk("Raarrrrrgggggghhhhhhh!"));
-			int defence = (int) (skills.getLevelForXp(Skills.DEFENCE) * 0.90D);
-			int attack = (int) (skills.getLevelForXp(Skills.ATTACK) * 0.90D);
-			int range = (int) (skills.getLevelForXp(Skills.RANGE) * 0.90D);
-			int magic = (int) (skills.getLevelForXp(Skills.MAGIC) * 0.90D);
-			int strength = (int) (skills.getLevelForXp(Skills.STRENGTH) * 1.2D);
-			skills.set(Skills.DEFENCE, defence);
-			skills.set(Skills.ATTACK, attack);
-			skills.set(Skills.RANGE, range);
-			skills.set(Skills.MAGIC, magic);
-			skills.set(Skills.STRENGTH, strength);
-			combatDefinitions.decreaseSpecialAttack(specAmt);
-			break;
-		case 35:// Excalibur
-		case 8280:
-		case 14632:
-			setNextAnimation(new Animation(1168));
-			setNextGraphics(new Graphics(247));
-			setNextForceTalk(new ForceTalk("For " + Settings.SERVER_NAME + "!"));
-			final boolean enhanced = weaponId == 14632;
-			skills.set(
-					Skills.DEFENCE,
-					enhanced ? (int) (skills.getLevelForXp(Skills.DEFENCE) * 1.15D)
-							: (skills.getLevel(Skills.DEFENCE) + 8));
-			World.get().submit(new Task(4) {
-				int count = 5;
-				@Override
-				protected void execute() {
-					if (isDead() || hasFinished()
-							|| getHitpoints() >= getMaxHitpoints()) {
-						this.cancel();
-						return;
-					}
-					heal(enhanced ? 80 : 40);
-					if (count-- == 0) {
-						this.cancel();
-						return;
-					}
-					this.cancel();
-				}
-			});
-			combatDefinitions.decreaseSpecialAttack(specAmt);
-			break;
-		}
 	}
 
 	public void disableLootShare() {

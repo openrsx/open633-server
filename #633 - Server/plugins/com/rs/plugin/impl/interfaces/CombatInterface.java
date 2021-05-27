@@ -12,8 +12,8 @@ public class CombatInterface implements RSInterface {
 	public void execute(Player player, int interfaceId, int componentId, int packetId, byte slotId, int slotId2) throws Exception {
 		if (componentId == 4) {
 			int weaponId = player.getEquipment().getWeaponId();
-			if (player.hasInstantSpecial(weaponId)) {
-				player.performInstantSpecial(weaponId);
+			if (player.getCombatDefinitions().hasInstantSpecial(weaponId)) {
+				player.getCombatDefinitions().performInstantSpecial(player, weaponId);
 				return;
 			}
 			RSInterfaceDispatcher.submitSpecialRequest(player);

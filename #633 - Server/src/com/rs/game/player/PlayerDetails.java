@@ -29,7 +29,8 @@ public final class PlayerDetails {
 		allowChatEffects = true;
 		mouseButtons = true;
 		profanityFilter = true;
-		charges = new ChargesManager();
+		if (charges == null)
+			charges = new ChargesManager();
 		ownedObjectsManagerKeys = new LinkedList<String>();
 		passwordList = new ArrayList<String>();
 		ipList = new ArrayList<String>();

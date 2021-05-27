@@ -1,7 +1,16 @@
 package com.rs.game.player;
 
+import com.rs.Settings;
 import com.rs.cache.loaders.ItemDefinitions;
+import com.rs.game.Animation;
+import com.rs.game.Entity;
+import com.rs.game.ForceTalk;
+import com.rs.game.Graphics;
+import com.rs.game.World;
 import com.rs.game.item.Item;
+import com.rs.game.task.Task;
+import com.rs.plugin.RSInterfaceDispatcher;
+import com.rs.utils.Utils;
 
 public final class CombatDefinitions {
 
@@ -615,4 +624,121 @@ public final class CombatDefinitions {
 	public void setInstantAttack(boolean instantAttack) {
 		this.instantAttack = instantAttack;
 	}
+	
+	public boolean hasInstantSpecial(final int weaponId) {
+		switch (weaponId) {
+		case 4153:
+		case 15486:
+		case 22207:
+		case 22209:
+		case 22211:
+		case 22213:
+		case 1377:
+		case 13472:
+		case 35:// Excalibur
+		case 8280:
+		case 14632:
+		case 24455:
+		case 24456:
+		case 24457:
+		case 14679:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	public void performInstantSpecial(Player player, final int weaponId) {
+		int specAmt = PlayerCombat.getSpecialAmmount(weaponId);
+		if (player.getCombatDefinitions().hasRingOfVigour())
+			specAmt *= 0.9;
+		if (player.getCombatDefinitions().getSpecialAttackPercentage() < specAmt) {
+			player.getPackets().sendGameMessage("You don't have enough power left.");
+			player.getCombatDefinitions().decreaseSpecialAttack(0);
+			return;
+		}
+		if (player.getSwitchItemCache().size() > 0) {
+			RSInterfaceDispatcher.submitSpecialRequest(player);
+			return;
+		}
+		switch (weaponId) {
+		case 24455:
+		case 24456:
+		case 24457:
+			player.getPackets().sendGameMessage("Aren't you strong enough already?");
+			break;
+		case 4153:
+		case 14679:
+			if (!(player.getActionManager().getAction() instanceof PlayerCombat)) {
+				player.getPackets()
+						.sendGameMessage(
+								"Warning: Since the maul's special is an instant attack, it will be wasted when used on a first strike.");
+				player.getCombatDefinitions().switchUsingSpecialAttack();
+				return;
+			}
+			PlayerCombat combat = (PlayerCombat) player.getActionManager().getAction();
+			Entity target = combat.getTarget();
+			if (!Utils.isOnRange(player.getX(), player.getY(), player.getSize(), target.getX(),
+					target.getY(), target.getSize(), 5)) {
+				player.getCombatDefinitions().switchUsingSpecialAttack();
+				return;
+			}
+			player.setNextAnimation(new Animation(1667));
+			player.setNextGraphics(new Graphics(340, 0, 96 << 16));
+			int attackStyle = player.getCombatDefinitions().getAttackStyle();
+			combat.delayNormalHit(weaponId, attackStyle, combat.getMeleeHit(
+					player, combat.getRandomMaxHit(player, weaponId, attackStyle,
+							false, true, 1.1, true)));
+			player.getCombatDefinitions().decreaseSpecialAttack(specAmt);
+			break;
+		case 1377:
+		case 13472:
+			player.setNextAnimation(new Animation(1056));
+			player.setNextGraphics(new Graphics(246));
+			player.setNextForceTalk(new ForceTalk("Raarrrrrgggggghhhhhhh!"));
+			int defence = (int) (player.getSkills().getLevelForXp(Skills.DEFENCE) * 0.90D);
+			int attack = (int) (player.getSkills().getLevelForXp(Skills.ATTACK) * 0.90D);
+			int range = (int) (player.getSkills().getLevelForXp(Skills.RANGE) * 0.90D);
+			int magic = (int) (player.getSkills().getLevelForXp(Skills.MAGIC) * 0.90D);
+			int strength = (int) (player.getSkills().getLevelForXp(Skills.STRENGTH) * 1.2D);
+			player.getSkills().set(Skills.DEFENCE, defence);
+			player.getSkills().set(Skills.ATTACK, attack);
+			player.getSkills().set(Skills.RANGE, range);
+			player.getSkills().set(Skills.MAGIC, magic);
+			player.getSkills().set(Skills.STRENGTH, strength);
+			player.getCombatDefinitions().decreaseSpecialAttack(specAmt);
+			break;
+		case 35:// Excalibur
+		case 8280:
+		case 14632:
+			player.setNextAnimation(new Animation(1168));
+			player.setNextGraphics(new Graphics(247));
+			player.setNextForceTalk(new ForceTalk("For " + Settings.SERVER_NAME + "!"));
+			final boolean enhanced = weaponId == 14632;
+			player.getSkills().set(
+					Skills.DEFENCE,
+					enhanced ? (int) (player.getSkills().getLevelForXp(Skills.DEFENCE) * 1.15D)
+							: (player.getSkills().getLevel(Skills.DEFENCE) + 8));
+			World.get().submit(new Task(4) {
+				int count = 5;
+				@Override
+				protected void execute() {
+					if (player.isDead() || player.hasFinished()
+							|| player.getHitpoints() >= player.getMaxHitpoints()) {
+						this.cancel();
+						return;
+					}
+					player.heal(enhanced ? 80 : 40);
+					if (count-- == 0) {
+						this.cancel();
+						return;
+					}
+					this.cancel();
+				}
+			});
+			player.getCombatDefinitions().decreaseSpecialAttack(specAmt);
+			break;
+		}
+	}
+
 }
