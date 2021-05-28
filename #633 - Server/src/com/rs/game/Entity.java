@@ -14,11 +14,15 @@ import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.game.Hit.HitLook;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
+import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
+import com.rs.game.player.type.CombatEffectType;
+import com.rs.game.player.type.PoisonType;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.EntityStrategy;
 import com.rs.game.route.strategy.ObjectStrategy;
+import com.rs.utils.MutableNumber;
 import com.rs.utils.Utils;
 
 import lombok.Getter;
@@ -83,12 +87,10 @@ public abstract class Entity extends WorldTile {
 	private int mapSize; // default 0, can be setted other value usefull on
 	// static maps
 	private boolean run;
-	private Poison poison;
 
 	// creates Entity and saved classes
 	public Entity(WorldTile tile) {
 		super(tile);
-		poison = new Poison();
 	}
 
 	@Override
@@ -107,7 +109,6 @@ public abstract class Entity extends WorldTile {
 		nextWalkDirection = (byte) (nextRunDirection - 1);
 		lastFaceEntity = -1;
 		nextFaceEntity = -2;
-		poison.setEntity(this);
 	}
 
 	public int getReceivedDamage(Entity source) {
@@ -141,7 +142,6 @@ public abstract class Entity extends WorldTile {
 		receivedHits.clear();
 		resetCombat();
 		walkSteps.clear();
-		poison.reset();
 		resetReceivedDamage();
 		setAttackedBy(null);
 		setAttackedByDelay(0);
@@ -911,7 +911,7 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void processEntity() {
-		poison.processPoison();
+//		poison.processPoison();
 	}
 
 	public void loadMapRegions() {
@@ -1317,5 +1317,37 @@ public abstract class Entity extends WorldTile {
 			if (lastTile[0] == destX && lastTile[1] == destY)
 				return true;
 		}
+	}
+	
+	/**
+	 * The amount of poison damage this entity has.
+	 */
+	private final MutableNumber poisonDamage = new MutableNumber();
+	
+	/**
+	 * Determines if this entity is poisoned.
+	 * @return {@code true} if this entity is poisoned, {@code false}
+	 * otherwise.
+	 */
+	public final boolean isPoisoned() {
+		return poisonDamage.get() > 0;
+	}
+	
+	/**
+	 * The type of poison that was previously applied.
+	 */
+	private PoisonType poisonType;
+	
+	/**
+	 * Applies poison with an intensity of {@code type} to the entity.
+	 * @param type the poison type to apply.
+	 */
+	public void poison(PoisonType type) {
+		poisonType = type;
+		if (this instanceof Player) {
+			Player player = (Player) this;
+			player.getPackets().sendGameMessage("You have been poisoned!");
+		}
+		Combat.effect(this, CombatEffectType.POISON);
 	}
 }

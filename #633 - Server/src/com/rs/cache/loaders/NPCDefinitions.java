@@ -470,4 +470,8 @@ public final class NPCDefinitions {
     public String getName() {
 	return name;
     }
+    
+	public int getCombatLevel() {
+		return combatLevel;
+	}
 }

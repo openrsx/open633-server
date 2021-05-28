@@ -33,11 +33,11 @@ public class Rest extends Action {
 
 	@Override
 	public boolean process(Player player) {
-		if (player.getPoison().isPoisoned()) {
-			player.getPackets().sendGameMessage(
-					"You can't rest while you're poisoned.");
-			return false;
-		}
+//		if (player.getPoison().isPoisoned()) {
+//			player.getPackets().sendGameMessage(
+//					"You can't rest while you're poisoned.");
+//			return false;
+//		}
 		if (player.isUnderCombat()) {
 			player.getPackets().sendGameMessage(
 					"You can't rest until 10 seconds after the end of combat.");

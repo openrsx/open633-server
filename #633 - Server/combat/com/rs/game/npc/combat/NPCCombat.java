@@ -12,6 +12,9 @@ import com.rs.game.player.Player;
 import com.rs.utils.MapAreas;
 import com.rs.utils.Utils;
 
+import lombok.Data;
+
+@Data
 public final class NPCCombat {
 
 	private NPC npc;
@@ -21,11 +24,7 @@ public final class NPCCombat {
 	public NPCCombat(NPC npc) {
 		this.npc = npc;
 	}
-
-	public int getCombatDelay() {
-		return combatDelay;
-	}
-
+	
 	/*
 	 * returns if under combat
 	 */
@@ -86,19 +85,11 @@ public final class NPCCombat {
 	}
 
 	protected void doDefenceEmote(Entity target) {
-		/*
-		 * if (target.getNextAnimation() != null) // if has att emote already return;
-		 */
 		target.setNextAnimationNoPriority(new Animation(Combat.getDefenceEmote(target)));
 	}
 
-	public Entity getTarget() {
-		return target;
-	}
 
-	public void addAttackedByDelay(Entity target) { // prevents multithread
-		// issues
-
+	public void addAttackedByDelay(Entity target) {
 		target.setAttackedBy(npc);
 		target.setAttackedByDelay(Utils.currentTimeMillis() + npc.getCombatDefinitions().getAttackDelay() * 600 + 600); // 8seconds
 	}
@@ -225,19 +216,11 @@ public final class NPCCombat {
 
 			
 		}
-		return true && !agressive;
+		return true && agressive;
 	}
 
 	private boolean forceCheckClipAsRange(Entity target) {
 		return target != null;
-	}
-
-	public void addCombatDelay(int delay) {
-		combatDelay += delay;
-	}
-
-	public void setCombatDelay(int delay) {
-		combatDelay = delay;
 	}
 
 	public boolean underCombat() {
@@ -253,5 +236,4 @@ public final class NPCCombat {
 		combatDelay = 0;
 		target = null;
 	}
-
 }

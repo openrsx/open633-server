@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
+import com.rs.game.player.type.impl.AntifireDetails;
+import com.rs.utils.MutableNumber;
 import com.rs.utils.Stopwatch;
 import com.rs.utils.Utils;
 
@@ -161,6 +164,30 @@ public final class PlayerDetails {
 	private byte summoningLeftClickOption;
 	private List<String> ownedObjectsManagerKeys;
 	
+	
+	private final MutableNumber poisonImmunity = new MutableNumber(), skullTimer = new MutableNumber();
+	
+
+	/**
+	 * Holds an optional wrapped inside the Antifire details.
+	 */
+	private Optional<AntifireDetails> antifireDetails = Optional.empty();
+	
+	/**
+	 * Sets the new anti-fire instance for this class directly.
+	 * @param details the anti-fire instance to set.
+	 */
+	public void setAntifireDetail(AntifireDetails details) {
+		setAntifireDetail(details == null ? Optional.empty() : Optional.of(details));
+	}
+	
+	/**
+	 * Sets a new anti-fire instance for this class.
+	 * @param details the anti-fire instance to set.
+	 */
+	public void setAntifireDetail(Optional<AntifireDetails> details) {
+		this.antifireDetails = details;
+	}
 	
 	/**
 	 * Populates the {@link #watchMap}

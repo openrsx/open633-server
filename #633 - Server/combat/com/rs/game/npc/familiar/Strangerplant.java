@@ -8,9 +8,12 @@ import com.rs.game.Hit.HitLook;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.player.content.Summoning.Pouch;
+import com.rs.game.player.type.CombatEffectType;
+import com.rs.game.player.type.PoisonType;
 import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
@@ -78,7 +81,7 @@ public class Strangerplant extends Familiar {
 			protected void execute() {
 				target.applyHit(new Hit(getOwner(), Utils.random(20), HitLook.MAGIC_DAMAGE));
 				if (Utils.random(1) == 0)
-					target.getPoison().makePoisoned(60);
+					target.poison(PoisonType.STRONG_MELEE);
 				target.setNextGraphics(new Graphics(1511));
 				this.cancel();
 			}

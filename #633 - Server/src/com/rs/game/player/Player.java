@@ -33,9 +33,11 @@ import com.rs.game.player.controllers.ControlerManager;
 import com.rs.game.player.controllers.GodWars;
 import com.rs.game.player.controllers.JailControler;
 import com.rs.game.player.controllers.Wilderness;
+import com.rs.game.player.type.CombatEffect;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
 import com.rs.game.task.Task;
+import com.rs.game.task.impl.CombatEffectTask;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.decoders.WorldPacketsDecoder;
@@ -130,7 +132,6 @@ public class Player extends Entity {
 		appearence = new Appearance();
 		inventory = new Inventory();
 		equipment = new Equipment();
-		getDetails().getCharges().setPlayer(this);
 		details = new PlayerDetails();
 		getDetails().setPassword(password);
 		skills = new Skills();
@@ -443,6 +444,10 @@ public class Player extends Entity {
 		getInterfaceManager().sendInterfaces();
 		getPackets().sendRunEnergy();
 		sendRunButtonConfig();
+		CombatEffect.values().forEach($it -> {
+			if($it.onLogin(this))
+				World.get().submit(new CombatEffectTask(this, $it));
+		});
 		getPackets().sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
 		
 		Settings.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> getDetails().setRights(staff.getValue()));
@@ -458,7 +463,6 @@ public class Player extends Entity {
 		getFriendsIgnores().init();
 		refreshHitPoints();
 		getPrayer().refreshPrayerPoints();
-		getPoison().refresh();
 		getPackets().sendGameBarStages();
 		getMusicsManager().init();
 		getEmotesManager().init();
@@ -1257,4 +1261,5 @@ public class Player extends Entity {
 	public boolean hasDisplayName() {
 		return displayName != null;
 	}
+	
 }
