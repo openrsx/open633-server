@@ -67,6 +67,14 @@ public class Config {
 	public boolean getBoolean(String string) {
 		return Boolean.parseBoolean(properties.getProperty(string));
 	}
+	
+	public Byte getByte(String key) {
+		return Byte.parseByte(properties.getProperty(key));
+	}
+	
+	public Short getShort(String key) {
+		return Short.parseShort(properties.getProperty(key));
+	}
 
 	/**
 	 * The getter

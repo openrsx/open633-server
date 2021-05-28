@@ -800,7 +800,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			int regionId = tile.getRegionId();
 			if (!player.getMapRegionsIds().contains(regionId))
 				return;
-			WorldObject mapObject = World.getObjectWithId(tile, objectId);
+			WorldObject mapObject = WorldObject.getObjectWithId(tile, objectId);
 			if (mapObject == null || mapObject.getId() != objectId)
 				return;
 			final WorldObject object = mapObject;
@@ -1089,7 +1089,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					if (item == null)
 						return;
 					// player.setNextFaceWorldTile(tile);
-					if (World.removeGroundItem(player, item))
+					if (FloorItem.removeGroundItem(player, item))
 						Logger.globalLog(
 								player.getUsername(),
 								player.getSession().getIP(),
@@ -1107,8 +1107,7 @@ public final class WorldPacketsDecoder extends Decoder {
 	}
 
 	@SuppressWarnings("unused")
-	public void processPackets(final int packetId, InputStream stream,
-			int length) {
+	public void processPackets(final int packetId, InputStream stream, int length) {
 		if (packetId == PING_PACKET) {
 			// kk we ping :)
 		} else if (packetId == MOUVE_MOUSE_PACKET) {

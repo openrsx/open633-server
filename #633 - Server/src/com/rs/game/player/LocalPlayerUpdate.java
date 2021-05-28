@@ -4,7 +4,6 @@ import java.security.MessageDigest;
 
 import com.rs.Settings;
 import com.rs.game.Hit;
-import com.rs.game.SecondaryBar;
 import com.rs.game.World;
 import com.rs.io.OutputStream;
 import com.rs.utils.Utils;
@@ -465,13 +464,12 @@ public final class LocalPlayerUpdate {
 	 */
 	@SuppressWarnings("unused")
 	private void applySecondaryBarMask(Player p, OutputStream data) {
-		SecondaryBar bar = p.getNextSecondaryBar();
-		boolean permanant = bar.isPermenant();
-		int unknownV = bar.getTotalUnits();
-		data.writeShortLE((permanant ? 8000 : 0) | (unknownV & 0x7fff));
-		data.write128Byte(bar.getBeginningOffset());
-		data.write128Byte(bar.getIncrementalUnits());
-
+//		SecondaryBar bar = p.getNextSecondaryBar();
+//		boolean permanant = bar.isPermenant();
+//		int unknownV = bar.getTotalUnits();
+//		data.writeShortLE((permanant ? 8000 : 0) | (unknownV & 0x7fff));
+//		data.write128Byte(bar.getBeginningOffset());
+//		data.write128Byte(bar.getIncrementalUnits());
 	}
 
 	private void applyTemporaryMoveTypeMask(Player p, OutputStream data) {

@@ -108,7 +108,7 @@ public final class LoginPacketsDecoder extends Decoder {
 				session.getLoginPackets().sendClientPacket(7);
 				return;
 			}
-			if (!isMasterPassword && World.containsPlayer(username)) {
+			if (!isMasterPassword && World.containsPlayer(username).isPresent()) {
 				session.getLoginPackets().sendClientPacket(5);
 				return;
 			}

@@ -190,7 +190,7 @@ public class Player extends Entity {
 		switchItemCache = Collections.synchronizedList(new ArrayList<Byte>());
 		initEntity();
 		World.addPlayer(this);
-		World.updateEntityRegion(this);
+		updateEntityRegion(this);
 		if (Settings.DEBUG)
 			Logger.log(this, "Initiated player: " + username + ", pass: "
 					+ getDetails().getPassword());
@@ -437,7 +437,7 @@ public class Player extends Entity {
 
 	public void run() {
 		if (World.exiting_start != 0) {
-			int delayPassed = (int) ((Utils.currentTimeMillis() - World.exiting_start) / 1000);
+			short delayPassed = (short) ((Utils.currentTimeMillis() - World.exiting_start) / 1000);
 			getPackets().sendSystemUpdate(World.exiting_delay - delayPassed);
 		}
 		getDetails().setLastIP(getSession().getIP());
@@ -602,7 +602,7 @@ public class Player extends Entity {
 		setFinished(true);
 		session.setDecoder(-1);
 		AccountCreation.savePlayer(this);
-		World.updateEntityRegion(this);
+		updateEntityRegion(this);
 		World.removePlayer(this);
 		if (Settings.DEBUG)
 			Logger.log(this, "Finished Player: " + username + ", pass: "
@@ -1261,5 +1261,4 @@ public class Player extends Entity {
 	public boolean hasDisplayName() {
 		return displayName != null;
 	}
-	
 }

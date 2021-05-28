@@ -2,6 +2,8 @@ package com.rs.game;
 
 import com.rs.game.player.Player;
 
+import lombok.Data;
+
 /**
  * These actually need to be looked into once hp bars and such are fixed; we
  * technically don't use any hitmarks besides hit and miss (generic hit mask), so
@@ -10,6 +12,7 @@ import com.rs.game.player.Player;
  * @author Dennis
  *
  */
+@Data
 public final class Hit {
 
 	public static enum HitLook {
@@ -77,41 +80,4 @@ public final class Hit {
 			mark += 14;
 		return 3;
 	}
-
-	public HitLook getLook() {
-		return look;
-	}
-
-	public int getDamage() {
-		return damage;
-	}
-
-	public void setDamage(int damage) {
-		this.damage = damage;
-	}
-
-	public Entity getSource() {
-		return source;
-	}
-
-	public void setSource(Entity source) {
-		this.source = source;
-	}
-
-	public boolean isCriticalHit() {
-		return critical;
-	}
-
-	public Hit getSoaking() {
-		return soaking;
-	}
-
-	public void setSoaking(Hit soaking) {
-		this.soaking = soaking;
-	}
-
-	public int getDelay() {
-		return delay;
-	}
-
 }

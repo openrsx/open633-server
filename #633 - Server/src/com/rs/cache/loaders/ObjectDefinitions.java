@@ -3,18 +3,16 @@ package com.rs.cache.loaders;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
-import com.rs.plugin.listener.ObjectType;
-import com.rs.plugin.wrapper.ObjectSignature;
 import com.rs.utils.Utils;
 
-@SuppressWarnings("unused")
+import lombok.Data;
+
+@Data
 public class ObjectDefinitions {
 
 	private static final ConcurrentHashMap<Integer, ObjectDefinitions> objectDefinitions = new ConcurrentHashMap<Integer, ObjectDefinitions>();
@@ -128,8 +126,7 @@ public class ObjectDefinitions {
 		System.out.println("Var config: " + defs.configFileId);
 		System.out.println(Arrays.toString(defs.toObjectIds));
 		System.out.println(Arrays.toString(defs.modelIds));
-		System.out.println(defs.toObjectIds != null ? defs.toObjectIds.length
-				: 0);
+		System.out.println(defs.toObjectIds != null ? defs.toObjectIds.length : 0);
 		System.out.println(Arrays.toString(defs.animations));
 		System.out.println(Arrays.toString(defs.possibleTypes));
 	}
@@ -142,6 +139,7 @@ public class ObjectDefinitions {
 		for (int i = 0; i < open.modelIds.length; i++)
 			length += open.modelIds[i].length;
 
+		@SuppressWarnings("unused")
 		int[] allModels = new int[length];
 
 		int[] pairs = new int[100];
@@ -221,6 +219,7 @@ public class ObjectDefinitions {
 		return false;
 	}
 
+	@SuppressWarnings("unused")
 	private void readValues(InputStream stream, int opcode) {
 		// System.out.println(opcode);
 		if (opcode != 1 && opcode != 5) {
@@ -243,14 +242,12 @@ public class ObjectDefinitions {
 											// and 1
 											clipType = 1;
 										else if (opcode == 28)
-											anInt3892 = (stream
-													.readUnsignedByte() << 2);
+											anInt3892 = (stream.readUnsignedByte() << 2);
 										else if (opcode != 29) {
 											if (opcode != 39) {
 												if (opcode < 30 || opcode >= 35) {
 													if (opcode == 40) {
-														int i_53_ = (stream
-																.readUnsignedByte());
+														int i_53_ = (stream.readUnsignedByte());
 														originalColors = new short[i_53_];
 														modifiedColors = new short[i_53_];
 														for (int i_54_ = 0; i_53_ > i_54_; i_54_++) {
@@ -260,8 +257,7 @@ public class ObjectDefinitions {
 																	.readUnsignedShort());
 														}
 													} else if (44 == opcode) {
-														int i_86_ = (short) stream
-																.readUnsignedShort();
+														int i_86_ = (short) stream.readUnsignedShort();
 														int i_87_ = 0;
 														for (int i_88_ = i_86_; i_88_ > 0; i_88_ >>= 1)
 															i_87_++;
@@ -275,8 +271,7 @@ public class ObjectDefinitions {
 																unknownArray3[i_90_] = (byte) -1;
 														}
 													} else if (opcode == 45) {
-														int i_91_ = (short) stream
-																.readUnsignedShort();
+														int i_91_ = (short) stream.readUnsignedShort();
 														int i_92_ = 0;
 														for (int i_93_ = i_91_; i_93_ > 0; i_93_ >>= 1)
 															i_92_++;
@@ -295,17 +290,14 @@ public class ObjectDefinitions {
 															if (opcode != 62) {
 																if (opcode != 64) {
 																	if (opcode == 65)
-																		anInt3902 = stream
-																				.readUnsignedShort();
+																		anInt3902 = stream.readUnsignedShort();
 																	else if (opcode != 66) {
 																		if (opcode != 67) {
 																			if (opcode == 69)
-																				cflag = stream
-																						.readUnsignedByte();
+																				cflag = stream.readUnsignedByte();
 																			else if (opcode != 70) {
 																				if (opcode == 71)
-																					anInt3889 = stream
-																							.readShort() << 2;
+																					anInt3889 = stream.readShort() << 2;
 																				else if (opcode != 72) {
 																					if (opcode == 73)
 																						secondBool = true;
@@ -322,8 +314,8 @@ public class ObjectDefinitions {
 																							} else if (opcode != 79) {
 																								if (opcode == 81) {
 																									aByte3912 = (byte) 2;
-																									anInt3882 = 256 * stream
-																											.readUnsignedByte();
+																									anInt3882 = 256
+																											* stream.readUnsignedByte();
 																								} else if (opcode != 82) {
 																									if (opcode == 88)
 																										aBoolean3853 = false;
@@ -379,7 +371,7 @@ public class ObjectDefinitions {
 																																		&& opcode < 155) {
 																																	options[opcode
 																																			+ -150] = stream
-																																			.readString();
+																																					.readString();
 																																} else if (opcode != 160) {
 																																	if (opcode == 162) {
 																																		aByte3912 = (byte) 3;
@@ -439,8 +431,9 @@ public class ObjectDefinitions {
 																																									anIntArray4534,
 																																									-1);
 																																						}
-																																						anIntArray4534[opcode - 190] = stream
-																																								.readUnsignedShort();
+																																						anIntArray4534[opcode
+																																								- 190] = stream
+																																										.readUnsignedShort();
 																																					} else if (opcode == 249) {
 																																						int length = stream
 																																								.readUnsignedByte();
@@ -542,39 +535,33 @@ public class ObjectDefinitions {
 																								toObjectIds[i_68_] = stream
 																										.readBigSmart();
 																							}
-																							toObjectIds[i_67_ + 1] = i_66_;
+																							toObjectIds[i_67_
+																									+ 1] = i_66_;
 																						}
 																					} else
 																						anInt3855 = stream
 																								.readUnsignedByte();
 																				} else
-																					anInt3915 = stream
-																							.readShort() << 2;
+																					anInt3915 = stream.readShort() << 2;
 																			} else
-																				anInt3883 = stream
-																						.readShort() << 2;
+																				anInt3883 = stream.readShort() << 2;
 																		} else
-																			anInt3917 = stream
-																					.readUnsignedShort();
+																			anInt3917 = stream.readUnsignedShort();
 																	} else
-																		anInt3841 = stream
-																				.readUnsignedShort();
+																		anInt3841 = stream.readUnsignedShort();
 																} else
 																	// 64
 																	aBoolean3872 = false;
 															} else
 																aBoolean3839 = true;
 														} else {
-															int i_69_ = (stream
-																	.readUnsignedByte());
+															int i_69_ = (stream.readUnsignedByte());
 															aByteArray3858 = (new byte[i_69_]);
 															for (int i_70_ = 0; i_70_ < i_69_; i_70_++)
-																aByteArray3858[i_70_] = (byte) (stream
-																		.readByte());
+																aByteArray3858[i_70_] = (byte) (stream.readByte());
 														}
 													} else { // object anim?
-														int i_71_ = (stream
-																.readUnsignedByte());
+														int i_71_ = (stream.readUnsignedByte());
 														aShortArray3920 = new short[i_71_];
 														aShortArray3919 = new short[i_71_];
 														for (int i_72_ = 0; i_71_ > i_72_; i_72_++) {
@@ -585,8 +572,7 @@ public class ObjectDefinitions {
 														}
 													}
 												} else {
-													options[-30 + opcode] = (stream
-															.readString());
+													options[-30 + opcode] = (stream.readString());
 												}
 											} else
 												// 39
@@ -716,8 +702,7 @@ public class ObjectDefinitions {
 	final void method3287() {
 		if (secondInt == -1) {
 			secondInt = 0;
-			if (possibleTypes != null && possibleTypes.length == 1
-					&& possibleTypes[0] == 10)
+			if (possibleTypes != null && possibleTypes.length == 1 && possibleTypes[0] == 10)
 				secondInt = 1;
 			for (int i_13_ = 0; i_13_ < 5; i_13_++) {
 				if (options[i_13_] != null) {
@@ -739,8 +724,7 @@ public class ObjectDefinitions {
 		if (def == null) {
 			def = new ObjectDefinitions();
 			def.id = id;
-			byte[] data = Cache.STORE.getIndexes()[16].getFile(
-					getArchiveId(id), id & 0xff);
+			byte[] data = Cache.STORE.getIndexes()[16].getFile(getArchiveId(id), id & 0xff);
 			if (data == null) {
 				// System.out.println("Failed loading Object " + id + ".");
 			} else
@@ -749,39 +733,17 @@ public class ObjectDefinitions {
 			/*
 			 * if(def.name.equalsIgnoreCase("bank booth") ||
 			 * def.name.equalsIgnoreCase("counter")) { def.notCliped = false;
-			 * def.projectileCliped = true; if (def.clipType == 0) def.clipType
-			 * = 1; } else if (DungeonUtils.isDoor(id) ||
-			 * DungeonUtils.isBossDoor(id)) { def.notCliped = false;
-			 * def.projectileCliped = true; if (def.clipType == 0) def.clipType
-			 * = 1; } if (def.notCliped) { def.projectileCliped = false;
-			 * def.clipType = 0; }
+			 * def.projectileCliped = true; if (def.clipType == 0) def.clipType = 1; } else
+			 * if (DungeonUtils.isDoor(id) || DungeonUtils.isBossDoor(id)) { def.notCliped =
+			 * false; def.projectileCliped = true; if (def.clipType == 0) def.clipType = 1;
+			 * } if (def.notCliped) { def.projectileCliped = false; def.clipType = 0; }
 			 */
 
 			objectDefinitions.put(id, def);
 		}
 		return def;
 	}
-
-	public int getClipType() {
-		return clipType;
-	}
-
-	public boolean isProjectileCliped() {
-		return projectileCliped;
-	}
-
-	public int getSizeX() {
-		return sizeX;
-	}
-
-	public int getSizeY() {
-		return sizeY;
-	}
-
-	public int getAccessBlockFlag() {
-		return cflag;
-	}
-
+	
 	public static void clearObjectDefinitions() {
 		objectDefinitions.clear();
 	}
@@ -800,8 +762,7 @@ public class ObjectDefinitions {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("-- end of " + getClass().getSimpleName()
-				+ " fields --");
+		System.out.println("-- end of " + getClass().getSimpleName() + " fields --");
 	}
 
 	private Object getValue(Field field) throws Throwable {
@@ -825,12 +786,7 @@ public class ObjectDefinitions {
 		return field.get(this);
 	}
 
-	public String getName() {
-		return name;
-	}
-
 	public boolean getNameContaining(String value) {
 		return getName().equalsIgnoreCase(value);
 	}
-
 }

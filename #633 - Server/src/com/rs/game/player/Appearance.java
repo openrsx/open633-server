@@ -1,7 +1,6 @@
 package com.rs.game.player;
 
 import com.rs.cache.loaders.NPCDefinitions;
-import com.rs.game.World;
 import com.rs.game.item.Item;
 import com.rs.io.OutputStream;
 import com.rs.utils.Utils;
@@ -146,7 +145,7 @@ public class Appearance {
 
 		stream.writeShort(getRenderEmote());
 		stream.writeString(player.getDisplayName());
-		boolean pvpArea = World.isPvpArea(player);
+		boolean pvpArea = player.isPvpArea(player);
 		stream.writeByte(
 				pvpArea ? player.getSkills().getCombatLevel() : player.getSkills().getCombatLevelWithSummoning());
 		stream.writeByte(pvpArea ? player.getSkills().getCombatLevelWithSummoning() : 0);

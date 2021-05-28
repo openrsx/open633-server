@@ -2,8 +2,6 @@ package com.rs.cores;
 
 import com.rs.Settings;
 import com.rs.game.World;
-import com.rs.game.npc.NPC;
-import com.rs.game.player.Player;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
 
@@ -19,73 +17,36 @@ public final class WorldThread extends Thread {
 	@Override
 	public final void run() {
 		while (!CoresManager.shutdown) {
-			WORLD_CYCLE++; // made the cycle update at begin instead of end cuz at end theres 600ms then to
-							// next cycle
+			WORLD_CYCLE++;
 			long currentTime = Utils.currentTimeMillis();
-			// long debug = Utils.currentTimeMillis();
 			World.get().taskManager.sequence();
 			
 			try {
-				for (Player player : World.getPlayers()) {
-					if (player == null || !player.isStarted() || player.hasFinished())
-						continue;
-					player.processEntity();
-				}
-				for (NPC npc : World.getNPCs()) {
-					if (npc == null || npc.hasFinished())
-						continue;
-					npc.processEntity();
-				}
+				World.players().forEach(player -> player.processEntity());
+				World.npcs().forEach(npc -> npc.processEntity());
 			} catch (Throwable e) {
 				Logger.handle(e);
 			}
 			try {
-				for (Player player : World.getPlayers()) {
-					if (player == null || !player.isStarted() || player.hasFinished())
-						continue;
-					player.processEntityUpdate();
-				}
-				for (NPC npc : World.getNPCs()) {
-					if (npc == null || npc.hasFinished())
-						continue;
-					npc.processEntityUpdate();
-				}
+				World.players().forEach(player -> player.processEntityUpdate());
+				World.npcs().forEach(npc -> npc.processEntityUpdate());
 			} catch (Throwable e) {
 				Logger.handle(e);
 			}
 			try {
-				// //
-				// System.out.print(" ,NPCS PROCESS: "+(Utils.currentTimeMillis()-debug));
-				// debug = Utils.currentTimeMillis();
-
-				for (Player player : World.getPlayers()) {
-					if (player == null || !player.isStarted() || player.hasFinished())
-						continue;
+				World.players().forEach(player -> {
 					player.getPackets().sendLocalPlayersUpdate();
 					player.getPackets().sendLocalNPCsUpdate();
-				}
+				});
 			} catch (Throwable e) {
 				Logger.handle(e);
 			}
 			try {
-				// System.out.print(" ,PLAYER UPDATE: "+(Utils.currentTimeMillis()-debug)+",
-				// "+World.getPlayers().size()+", "+World.getNPCs().size());
-				// debug = Utils.currentTimeMillis();
-				for (Player player : World.getPlayers()) {
-					if (player == null || !player.isStarted() || player.hasFinished())
-						continue;
-					player.resetMasks();
-				}
-				for (NPC npc : World.getNPCs()) {
-					if (npc == null || npc.hasFinished())
-						continue;
-					npc.resetMasks();
-				}
+				World.players().forEach(player -> player.resetMasks());
+				World.npcs().forEach(npc -> npc.resetMasks());
 			} catch (Throwable e) {
 				Logger.handle(e);
 			}
-			// //
-			// System.out.println(" ,TOTAL: "+(Utils.currentTimeMillis()-currentTime));
 			long sleepTime = Settings.WORLD_CYCLE_TIME + currentTime - Utils.currentTimeMillis();
 			if (sleepTime <= 0)
 				continue;
@@ -96,5 +57,4 @@ public final class WorldThread extends Thread {
 			}
 		}
 	}
-
 }

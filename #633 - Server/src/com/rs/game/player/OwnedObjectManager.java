@@ -188,7 +188,7 @@ public class OwnedObjectManager {
 	}
 
 	private void spawnObject() {
-		World.spawnObject(objects[count]);
+		WorldObject.spawnObject(objects[count]);
 		if (event != null)
 			event.spawnObject(player, getCurrentObject());
 		resetLifeTime();
@@ -223,7 +223,7 @@ public class OwnedObjectManager {
 	}
 
 	public void destroyObject(WorldObject object) {
-		World.removeObject(object);
+		WorldObject.removeObject(object);
 	}
 
 	public static interface ProcessEvent {

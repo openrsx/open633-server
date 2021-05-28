@@ -17,6 +17,7 @@ import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
+import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.player.type.PoisonType;
 import com.rs.game.route.RouteFinder;
@@ -59,7 +60,6 @@ public abstract class Entity extends WorldTile {
 	private transient boolean finished; // if removed
 	private transient long freezeDelay;
 	// entity masks
-	private transient SecondaryBar nextSecondaryBar;
 	private transient Animation nextAnimation;
 	private transient Graphics nextGraphics1;
 	private transient Graphics nextGraphics2;
@@ -343,7 +343,7 @@ public abstract class Entity extends WorldTile {
 			if (this instanceof Player
 					&& ((Player) this).getTemporaryMovementType() == -1)
 				((Player) this).setTemporaryMovementType(Player.TELE_MOVE_TYPE);
-			World.updateEntityRegion(this);
+			updateEntityRegion(this);
 			if (needMapUpdate())
 				loadMapRegions();
 			else if (this instanceof Player && lastPlane != getPlane())
@@ -387,7 +387,7 @@ public abstract class Entity extends WorldTile {
 			moveLocation(Utils.DIRECTION_DELTA_X[dir],
 					Utils.DIRECTION_DELTA_Y[dir], 0);
 		}
-		World.updateEntityRegion(this);
+		updateEntityRegion(this);
 		if (needMapUpdate())
 			loadMapRegions();
 	}
@@ -878,7 +878,7 @@ public abstract class Entity extends WorldTile {
 				|| nextGraphics3 != null || nextGraphics4 != null
 				|| (nextWalkDirection == -1 && nextFaceWorldTile != null)
 				|| !nextHits.isEmpty() || nextForceMovement != null
-				|| nextForceTalk != null || nextSecondaryBar != null;
+				|| nextForceTalk != null;
 	}
 
 	public boolean isDead() {
@@ -897,7 +897,6 @@ public abstract class Entity extends WorldTile {
 		nextForceTalk = null;
 		nextFaceEntity = -2;
 		nextHits.clear();
-		nextSecondaryBar = null;
 	}
 
 	public abstract void finish();
@@ -1256,16 +1255,9 @@ public abstract class Entity extends WorldTile {
 
 	public void playSound(int soundId, int type) {
 		for (int regionId : getMapRegionsIds()) {
-			List<Integer> playerIndexes = World.getRegion(regionId)
-					.getPlayerIndexes();
+			List<Integer> playerIndexes = World.getRegion(regionId).getPlayerIndexes();
 			if (playerIndexes != null) {
-				for (int playerIndex : playerIndexes) {
-					Player player = World.getPlayers().get(playerIndex);
-					if (player == null || !player.isRunning()
-							|| !withinDistance(player))
-						continue;
-					player.getPackets().sendSound(soundId, 0, type);
-				}
+				World.players().filter(p -> !withinDistance(p)).forEach(p -> p.getPackets().sendSound(soundId, 0, type));
 			}
 		}
 	}
@@ -1349,5 +1341,50 @@ public abstract class Entity extends WorldTile {
 			player.getPackets().sendGameMessage("You have been poisoned!");
 		}
 		Combat.effect(this, CombatEffectType.POISON);
+	}
+	
+	public final void updateEntityRegion(Entity entity) {
+		if (entity.hasFinished()) {
+			if (entity instanceof Player)
+				World.getRegion(entity.getLastRegionId()).removePlayerIndex(entity.getIndex());
+			else
+				World.getRegion(entity.getLastRegionId()).removeNPCIndex(entity.getIndex());
+			return;
+		}
+		short regionId = (short) entity.getRegionId();
+		if (entity.getLastRegionId() != regionId) { // map region entity at
+			// changed
+			if (entity instanceof Player) {
+				if (entity.getLastRegionId() > 0)
+					World.getRegion(entity.getLastRegionId()).removePlayerIndex(entity.getIndex());
+				Region region = World.getRegion(regionId);
+				region.addPlayerIndex(entity.getIndex());
+				Player player = (Player) entity;
+				int musicId = region.getRandomMusicId();
+				if (musicId != -1)
+					player.getMusicsManager().checkMusic(musicId);
+				player.getControlerManager().moved();
+				if (player.isStarted())
+					World.checkControlersAtMove(player);
+			} else {
+				if (entity.getLastRegionId() > 0)
+					World.getRegion(entity.getLastRegionId()).removeNPCIndex(entity.getIndex());
+				World.getRegion(regionId).addNPCIndex(entity.getIndex());
+			}
+			entity.checkMultiArea();
+			entity.setLastRegionId(regionId);
+		} else {
+			if (entity instanceof Player) {
+				Player player = (Player) entity;
+				player.getControlerManager().moved();
+				if (player.isStarted())
+					World.checkControlersAtMove(player);
+			}
+			entity.checkMultiArea();
+		}
+	}
+	
+	public final boolean isPvpArea(WorldTile tile) {
+		return Wilderness.isAtWild(tile);
 	}
 }

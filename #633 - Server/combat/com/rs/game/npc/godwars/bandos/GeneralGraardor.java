@@ -63,7 +63,7 @@ public class GeneralGraardor extends NPC {
 				setFinished(false);
 				World.addNPC(npc);
 				npc.setLastRegionId((short) 0);
-				World.updateEntityRegion(npc);
+				updateEntityRegion(npc);
 				loadMapRegions();
 				checkMultiArea();
 				GodWarsBosses.respawnBandosMinions();

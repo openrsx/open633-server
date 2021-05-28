@@ -27,13 +27,13 @@ public class WildernessObelisk {
 			return;
 		}
 		IS_ACTIVE[index] = true;
-		WorldObject object = World.getObjectWithId(center, id);
+		WorldObject object = WorldObject.getObjectWithId(center, id);
 		if (object == null) // still loading objects i guess
 			return;
-		World.sendObjectAnimation(object, new Animation(2226));
-		World.sendObjectAnimation(World.getObjectWithId(center.transform(4, 0, 0), id), new Animation(2226));
-		World.sendObjectAnimation(World.getObjectWithId(center.transform(0, 4, 0), id), new Animation(2226));
-		World.sendObjectAnimation(World.getObjectWithId(center.transform(4, 4, 0), id), new Animation(2226));
+		WorldObject.sendObjectAnimation(object, new Animation(2226));
+		WorldObject.sendObjectAnimation(WorldObject.getObjectWithId(center.transform(4, 0, 0), id), new Animation(2226));
+		WorldObject.sendObjectAnimation(WorldObject.getObjectWithId(center.transform(0, 4, 0), id), new Animation(2226));
+		WorldObject.sendObjectAnimation(WorldObject.getObjectWithId(center.transform(4, 4, 0), id), new Animation(2226));
 		
 		World.get().submit(new Task(8) {
 			@Override

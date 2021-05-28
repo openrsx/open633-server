@@ -10,6 +10,7 @@ import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.cores.CoresManager;
 import com.rs.game.item.FloorItem;
+import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.utils.Logger;
@@ -84,7 +85,7 @@ public class Region {
 			return;
 		}
 		for (NPCSpawning spawn : spawns) {
-			World.spawnNPC(spawn.getId(), spawn.getTile(), (byte) -1, true);
+			NPC.spawnNPC(spawn.getId(), spawn.getTile(), (byte) -1, true);
 		}
 	}
 

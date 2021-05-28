@@ -377,7 +377,7 @@ public class GodWars extends Controller {
 			return;
 		}
 		if (liftBoulder)
-			World.sendObjectAnimation(object, new Animation(318));
+			WorldObject.sendObjectAnimation(object, new Animation(318));
 		boolean isReturning = player.getY() >= 3709;
 		int baseAnimation = liftBoulder ? 3725 : 3466;
 		player.useStairs(isReturning ? baseAnimation-- : baseAnimation,

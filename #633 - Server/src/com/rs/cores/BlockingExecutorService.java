@@ -33,8 +33,7 @@ public class BlockingExecutorService implements ExecutorService {
 	/**
 	 * Creates the executor service.
 	 *
-	 * @param service
-	 *            The service backing this service.
+	 * @param service The service backing this service.
 	 */
 	public BlockingExecutorService(ExecutorService service) {
 		this.service = service;
@@ -42,10 +41,10 @@ public class BlockingExecutorService implements ExecutorService {
 
 	/**
 	 * Waits for pending tasks to complete.
-	 * @return 
+	 * 
+	 * @return
 	 *
-	 * @throws ExecutionException
-	 *             if an error in a task occurred.
+	 * @throws ExecutionException if an error in a task occurred.
 	 */
 	public BlockingExecutorService waitForPendingTasks() throws ExecutionException {
 		while (pendingTasks.size() > 0) {
@@ -83,7 +82,8 @@ public class BlockingExecutorService implements ExecutorService {
 	}
 
 	@Override
-	public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
+	public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+			throws InterruptedException {
 		List<Future<T>> futures = service.invokeAll(tasks, timeout, unit);
 		futures.forEach((future) -> pendingTasks.add(future));
 		return futures;
@@ -95,7 +95,8 @@ public class BlockingExecutorService implements ExecutorService {
 	}
 
 	@Override
-	public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+	public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+			throws InterruptedException, ExecutionException, TimeoutException {
 		return service.invokeAny(tasks, timeout, unit);
 	}
 

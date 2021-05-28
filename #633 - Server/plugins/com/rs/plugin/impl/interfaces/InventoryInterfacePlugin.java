@@ -8,6 +8,7 @@ import com.rs.cache.io.InputStream;
 import com.rs.cores.WorldThread;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
+import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.npc.NPC;
@@ -115,7 +116,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				player.getInventory().deleteItem(slotId, item);
 				if (player.getDetails().getCharges().degradeCompletly(item))
 					return;
-				World.addGroundItem(item, new WorldTile(player), player, false, 180);
+				FloorItem.addGroundItem(item, new WorldTile(player), player, false, 180);
 				player.getPackets().sendSound(2739, 0, 1);
 				break;
 			case 81:

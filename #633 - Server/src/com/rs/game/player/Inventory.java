@@ -2,8 +2,8 @@ package com.rs.game.player;
 
 import java.util.List;
 
-import com.rs.game.World;
 import com.rs.game.WorldTile;
+import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
 import com.rs.utils.Utils;
@@ -53,7 +53,7 @@ public final class Inventory {
 			return false;
 		Item[] itemsBefore = items.getItemsCopy();
 		if (!items.add(new Item(itemId, amount)))
-			World.addGroundItem(new Item(itemId, amount), tile, player, true,
+			FloorItem.addGroundItem(new Item(itemId, amount), tile, player, true,
 					180);
 		else
 			refreshItems(itemsBefore);

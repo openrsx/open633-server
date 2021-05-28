@@ -15,7 +15,9 @@ import com.rs.io.InputStream;
 import com.rs.utils.EquipData;
 import com.rs.utils.ItemBonuses;
 
-@SuppressWarnings("unused")
+import lombok.Data;
+
+@Data
 public final class ItemDefinitions {
 
 	private static final ConcurrentHashMap<Integer, ItemDefinitions> itemsDefinitions = new ConcurrentHashMap<Integer, ItemDefinitions>();
@@ -122,10 +124,6 @@ public final class ItemDefinitions {
 		setDefaultsVariableValues();
 		setDefaultOptions();
 		loadItemDefinitions();
-	}
-
-	public boolean isLoaded() {
-		return loaded;
 	}
 
 	public final void loadItemDefinitions() {
@@ -251,8 +249,8 @@ public final class ItemDefinitions {
 
 	public boolean isWearItem(boolean male) {
 		if (equipSlot < Equipment.SLOT_RING
-				&& (male ? getMaleWornModelId1() == -1
-						: getFemaleWornModelId1() == -1))
+				&& (male ? getMaleEquip1() == -1
+						: getFemaleEquip1() == -1))
 			return false;
 
 		if (!containsInventoryOption(1, "Wield")
@@ -434,18 +432,6 @@ public final class ItemDefinitions {
 		return false;
 	}
 
-	public int getModelZoom() {
-		return modelZoom;
-	}
-
-	public int getModelOffset1() {
-		return modelOffset1;
-	}
-
-	public int getModelOffset2() {
-		return modelOffset2;
-	}
-
 	public int getQuestId() {
 		if (clientScriptData == null)
 			return -1;
@@ -489,11 +475,7 @@ public final class ItemDefinitions {
 		}
 		return items;
 	}
-
-	public HashMap<Integer, Object> getClientScriptData() {
-		return clientScriptData;
-	}
-
+	
 	public HashMap<Integer, Integer> getWearingSkillRequiriments() {
 		if (clientScriptData == null)
 			return null;
@@ -694,8 +676,10 @@ public final class ItemDefinitions {
 			for (int index = 0; index < length; index++)
 				unknownArray2[index] = stream.readUnsignedShort();
 		} else if (opcode == 139) {
+			@SuppressWarnings("unused")
 			int unknownValue = stream.readUnsignedShort();
 		} else if (opcode == 140) {
+			@SuppressWarnings("unused")
 			int unknownValue = stream.readUnsignedShort();
 		} else if (opcode == 249) {
 			int length = stream.readUnsignedByte();
@@ -725,68 +709,12 @@ public final class ItemDefinitions {
 		}
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public int getFemaleWornModelId1() {
-		return femaleEquip1;
-	}
-
-	public int getFemaleWornModelId2() {
-		return femaleEquip2;
-	}
-
-	public int getMaleWornModelId1() {
-		return maleEquip1;
-	}
-
-	public int getMaleWornModelId2() {
-		return maleEquip2;
-	}
-
 	public boolean isOverSized() {
 		return modelZoom > 5000;
 	}
 
-	public boolean isLended() {
-		return lended;
-	}
-
-	public boolean isMembersOnly() {
-		return membersOnly;
-	}
-
 	public boolean isStackable() {
 		return stackable == 1;
-	}
-
-	public boolean isNoted() {
-		return noted;
-	}
-
-	public int getLendId() {
-		return lendId;
-	}
-
-	public int getCertId() {
-		return certId;
-	}
-
-	public int getValue() {
-		return value;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public int getEquipSlot() {
-		return equipSlot;
-	}
-
-	public int getEquipType() {
-		return equipType;
 	}
 
 	public int getAttackSpeed() {

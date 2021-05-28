@@ -19,41 +19,30 @@ public final class Settings {
 	public static final long CONNECTION_TIMEOUT = Config.get().getInteger("connection_timeout");
 
 	/**
-	 * Launching settings
-	 */
-	public static boolean DEBUG = true;
-	public static boolean HOSTED;
-	public static boolean ECONOMY = false;
-	public static boolean ALLOW_MASTER_PASSWORD = true;
-	public static String MASTER_PASSWORD = "localhostmaster";
-
-	/**
 	 * Player settings
 	 */
 	public static final WorldTile START_PLAYER_LOCATION = new WorldTile(3222, 3222, 0);
 	public static final int COMBAT_XP_RATE = Config.get().getInteger("combat_exp_rate");
 	public static final int XP_RATE = Config.get().getInteger("exp_rate");
 	public static final int LAMP_XP_RATE = Config.get().getInteger("lamp_exp_rate");
-	public static final int DROP_RATE = Config.get().getInteger("drop_rate");
-	public static final int DROP_QUANTITY_RATE = Config.get().getInteger("drop_quantity_rate");
 	public static final int DEGRADE_GEAR_RATE = Config.get().getInteger("degrade_rate");
 	public static boolean XP_BONUS_ENABLED = Config.get().getBoolean("bonus_exp_enabled");
 	
 	/**
 	 * The maximum amount of drops that can be rolled from the dynamic drop table.
 	 */
-	public static final byte DROP_THRESHOLD = 2;
+	public static final byte DROP_THRESHOLD = Config.get().getByte("drop_threshold");
 
 	/**
 	 * The attempted looped of randomized rare mob drops.
 	 */
-	public static final byte DROP_RARE_ATTEMPTS = 5;
+	public static final byte DROP_RARE_ATTEMPTS = Config.get().getByte("drop_rare_attempts");
 	
 	/**
 	 * The time in seconds that has to be spent in a region before {@link Mob}s stop
 	 * acting aggressive towards a specific {@link Player}.
 	 */
-	public static final short TOLERANCE_SECONDS = 600;
+	public static final short TOLERANCE_SECONDS = Config.get().getShort("tolerance");
 	
 	/**
 	 * An immutable map of Staff members
@@ -76,11 +65,20 @@ public final class Settings {
 	/**
 	 * Memory settings
 	 */
-	public static final int LOCAL_PLAYERS_LIMIT = 250;
-	public static final int PLAYERS_LIMIT = 2048;
-	public static final int NPCS_LIMIT = Short.MAX_VALUE;
-	public static final int LOCAL_NPCS_LIMIT = 127;
+	public static final Short LOCAL_PLAYERS_LIMIT = 250;
+	public static final Short PLAYERS_LIMIT = 2048;
+	public static final Short NPCS_LIMIT = Short.MAX_VALUE;
+	public static final byte LOCAL_NPCS_LIMIT = 127;
 	public static final int MIN_FREE_MEM_ALLOWED = 30000000;
+	
+	/**
+	 * Launching settings
+	 */
+	public static boolean DEBUG = true;
+	public static boolean HOSTED;
+	public static boolean ECONOMY = false;
+	public static boolean ALLOW_MASTER_PASSWORD = true;
+	public static String MASTER_PASSWORD = "localhostmaster";
 
 	/**
 	 * Game constants
@@ -102,4 +100,9 @@ public final class Settings {
 			"72097355254232856447691049913560861199871800553034733055741658055384003364250497219347734593899555489356266111078966532473452495715069155559968676764261742228476044257420193568926663071665046174428073288830191026953446568088808917389435275071415275652574533602125129106144025101414104744266670316697396691017");
 	public static final BigInteger MODULUS = new BigInteger(
 			"113936108878412835789161783853416560016782768509180808282272938775908500602418191899505497385652508213111369682953925143804409254941488925946653496879733372392766486773043079697715731681861313487249634133583720830388725199461616223203479888577328710259826756810447716575537141200187251284798307012938761310363");
+	
+	/**
+	 * The Max ping delay for packs
+	 */
+	public static final long MAX_PACKETS_DECODER_PING_DELAY = 30000; // 30seconds
 }

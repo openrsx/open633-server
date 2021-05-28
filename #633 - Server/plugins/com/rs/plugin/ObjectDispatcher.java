@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import com.rs.Settings;
 import com.rs.cache.loaders.ObjectDefinitions;
-import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
@@ -141,7 +140,7 @@ public final class ObjectDispatcher {
         	System.out.println("id " + id +" x " + x + " y " + y + " run? " + forceRun);
 		final WorldTile tile = new WorldTile(x, y, player.getPlane());
 		
-		WorldObject mapObject = World.getObjectWithId(tile, id);
+		WorldObject mapObject = WorldObject.getObjectWithId(tile, id);
 		if (mapObject == null || mapObject.getId() != id)
 			return;
 		

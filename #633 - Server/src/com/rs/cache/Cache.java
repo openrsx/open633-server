@@ -10,10 +10,6 @@ public final class Cache {
 
 	public static Store STORE;
 
-	private Cache() {
-
-	}
-
 	public static void init() throws IOException {
 		STORE = new Store(Config.get().getString("cache"));
 	}
@@ -23,5 +19,4 @@ public final class Cache {
 				Settings.GRAB_SERVER_PRIVATE_EXPONENT,
 				Settings.GRAB_SERVER_MODULUS);
 	}
-
 }
