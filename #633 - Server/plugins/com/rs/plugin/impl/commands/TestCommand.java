@@ -2,7 +2,6 @@ package com.rs.plugin.impl.commands;
 
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
-import com.rs.game.player.type.PoisonType;
 import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
 
@@ -17,6 +16,7 @@ public final class TestCommand implements Command {
 	
 	@Override
 	public void execute(Player player, String[] cmd, String command) throws Exception {
-		player.poison(PoisonType.STRONG_MELEE);
+		player.getPackets().sendGameMessage("lol").sendGameMessage("I'm also a builder too.")
+		.sendBlackOut(2);
 	}
 }
