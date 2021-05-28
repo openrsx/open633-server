@@ -157,7 +157,7 @@ public final class Equipment {
 		return !hideHair(item) || name.contains("horns") || name.contains("hat") || name.contains("afro")
 				|| name.contains("cowl") || name.contains("tattoo") || name.contains("headdress")
 				|| name.contains("hood") || (name.contains("mask") && !name.contains("h'ween"))
-				|| (name.contains("helm") && !name.contains("full"));
+				|| (name.contains("helm") && !name.contains("full")) || name.contains("chicken");
 	}
 
 	public static int getItemSlot(int itemId) {
