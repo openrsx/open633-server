@@ -1,5 +1,6 @@
 package com.rs.plugin.impl.interfaces;
 
+import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.plugin.listener.RSInterface;
@@ -27,6 +28,31 @@ public class EquipmentInterface implements RSInterface {
 		} else if (componentId == 39) {
 			RSInterfaceDispatcher.openEquipmentBonuses(player, false);
 		}
+		if (packetId == 11) {
+		if (componentId == 17) 
+			RSInterfaceDispatcher.sendRemove(player, Equipment.SLOT_WEAPON);
+		if (componentId == 8)
+			RSInterfaceDispatcher.sendRemove(player, Equipment.SLOT_HAT);
+		if (componentId == 11)
+			RSInterfaceDispatcher.sendRemove(player, Equipment.SLOT_CAPE);
+		if (componentId == 14)
+			RSInterfaceDispatcher.sendRemove(player, Equipment.SLOT_AMULET);
+		if (componentId == 38)
+			RSInterfaceDispatcher.sendRemove(player, Equipment.SLOT_ARROWS);
+		if (componentId == 20)
+			RSInterfaceDispatcher.sendRemove(player, Equipment.SLOT_CHEST);
+		if (componentId == 26)
+			RSInterfaceDispatcher.sendRemove(player, Equipment.SLOT_LEGS);
+		if (componentId == 29)
+			RSInterfaceDispatcher.sendRemove(player, Equipment.SLOT_HANDS);
+		if (componentId == 32)
+			RSInterfaceDispatcher.sendRemove(player, Equipment.SLOT_FEET);
+		if (componentId == 35)
+			RSInterfaceDispatcher.sendRemove(player, Equipment.SLOT_RING);
+		if (componentId == 23)
+			RSInterfaceDispatcher.sendRemove(player, Equipment.SLOT_SHIELD);
+		}
+		
 //		else if (packetId == WorldPacketsDecoder.ACTION_BUTTON1_PACKET)
 //				RSInterfaceDispatcher.sendRemove(player, Equipment.SLOT_AMULET);
 //			else if (packetId == WorldPacketsDecoder.ACTION_BUTTON8_PACKET)
