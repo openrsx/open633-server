@@ -489,9 +489,12 @@ public class InterfaceManager {
 	 */
 	public int openGameTab(int tabId) {
 		player.getPackets().sendGlobalConfig(168, tabId);
-		int lastTab = 4; // tabId
-		// tab = tabId;
+		int lastTab = 4;
 		return lastTab;
+	}
+
+		public void closeInterface(int one, int two) {
+		player.getPackets().closeInterface(resizableScreen ? two : one);
 	}
 
 }

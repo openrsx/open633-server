@@ -26,6 +26,7 @@ public class EquipmentInterface implements RSInterface {
 			player.getPriceCheckManager().openPriceCheck();
 
 		} else if (componentId == 39) {
+			//TODO: Fix sending inventory non x2 times.
 			RSInterfaceDispatcher.openEquipmentBonuses(player, false);
 		}
 		if (packetId == 11) {
