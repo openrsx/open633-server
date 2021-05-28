@@ -81,8 +81,8 @@ public class Ibis extends Familiar {
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {
-				FloorItem.addGroundItem(new Item(1, 1), firstTile, player, true, 180);
-				FloorItem.addGroundItem(new Item(1, 1), secondTile, player, true, 180);
+				FloorItem.createGroundItem(new Item(1, 1), firstTile, player, true, 180, true);
+				FloorItem.createGroundItem(new Item(1, 1), secondTile, player, true, 180, true);
 				this.cancel();
 			}
 		});

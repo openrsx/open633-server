@@ -276,8 +276,6 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void processReceivedDamage() {
-		if (isDead())
-			return;
 		for (Entity source : receivedDamage.keySet()) {
 			Integer damage = receivedDamage.get(source);
 			if (damage == null || source.hasFinished()) {
@@ -881,9 +879,10 @@ public abstract class Entity extends WorldTile {
 				|| nextForceTalk != null;
 	}
 
-	public boolean isDead() {
-		return hitpoints == 0;
-	}
+	/**
+	 * The flag determining if this entity is dead.
+	 */
+	private transient boolean dead;
 
 	public void resetMasks() {
 		nextAnimation = null;

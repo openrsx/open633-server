@@ -266,7 +266,7 @@ public final class RSInterfaceDispatcher {
 		player.getPackets().sendSound(2240, 0, 1);
 		if (targetSlot == 3)
 			player.getCombatDefinitions().decreaseSpecialAttack(0);
-		player.getDetails().getCharges().wear(targetSlot);
+//		player.getDetails().getCharges().wear(targetSlot);
 		return true;
 	}
 
@@ -381,7 +381,7 @@ public final class RSInterfaceDispatcher {
 				targetSlot == 3 ? 5 : targetSlot == 3 ? 0 : 3);
 		if (targetSlot == 3)
 			player.getCombatDefinitions().decreaseSpecialAttack(0);
-		player.getDetails().getCharges().wear(targetSlot);
+//		player.getDetails().getCharges().wear(targetSlot);
 		return true;
 	}
 

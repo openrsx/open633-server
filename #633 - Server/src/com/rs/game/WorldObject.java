@@ -121,7 +121,7 @@ public class WorldObject extends WorldTile {
 				try {
 					removeObject(object);
 					//seems weird.
-					FloorItem.addGroundItem(new Item(replaceId), object, null, false, 180);
+					FloorItem.createGroundItem(new Item(replaceId), object, null, false, 180, true);
 				} catch (Throwable e) {
 					Logger.handle(e);
 				}

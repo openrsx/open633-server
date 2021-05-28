@@ -45,7 +45,7 @@ public final class DropManager {
 		for (Item drop : dropItems) {
 			if (drop == null)
 				continue;
-			FloorItem.addGroundItem(drop, lastMobLocation, killer, false, 180);
+			FloorItem.createGroundItem(drop, lastMobLocation, killer, false, 180, true);
 		}
 	}
 	

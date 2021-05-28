@@ -609,6 +609,12 @@ public class Region {
 		}
 		return null;
 	}
+	
+	public List<FloorItem> forceGetFloorItems() {
+		if (groundItems == null)
+			groundItems = new CopyOnWriteArrayList<FloorItem>();
+		return groundItems;
+	}
 
 	/**
 	 * Return's list of ground items that are currently loaded. List may be null

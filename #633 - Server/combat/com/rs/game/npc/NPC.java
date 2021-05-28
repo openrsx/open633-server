@@ -11,9 +11,9 @@ import com.rs.game.Entity;
 import com.rs.game.Graphics;
 import com.rs.game.Hit;
 import com.rs.game.Hit.HitLook;
-import com.rs.game.minigames.GodWarsBosses;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
+import com.rs.game.minigames.GodWarsBosses;
 import com.rs.game.npc.combat.NPCCombat;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.npc.corp.CorporealBeast;
@@ -566,41 +566,45 @@ public class NPC extends Entity {
 	
 	@Override
 	public void sendDeath(final Entity source) {
-		final NPCCombatDefinitions defs = getCombatDefinitions();
-		resetWalkSteps();
-		combat.removeTarget();
-		setNextAnimation(null);
-		World.get().submit(new Task(2) {
-			int loop;
-			@Override
-			protected void execute() {
-				if (loop == 0) {
-					setNextAnimation(new Animation(defs.getDeathEmote()));
-				} else if (loop >= defs.getDeathDelay()) {
-					if (source instanceof Player)
-						((Player) source).getControlerManager().processNPCDeath(getId());
-					drop();
-					reset();
-					setLocation(respawnTile);
-					finish();
-					if (!isSpawned())
-						setRespawnTask();
-					if (source.getAttackedBy() == NPC.this) { // no need to wait
-																// after u kill
-						source.setAttackedByDelay(0);
-						source.setAttackedBy(null);
-						source.setFindTargetDelay(0);
-					}
-					this.cancel();
-				}
-				loop++;
-			}
-		});
+		World.get().submit(new NPCDeath(this));
+//		final NPCCombatDefinitions defs = getCombatDefinitions();
+//		resetWalkSteps();
+//		combat.removeTarget();
+//		setNextAnimation(null);
+//		World.get().submit(new Task(2) {
+//			int loop;
+//			@Override
+//			protected void execute() {
+//				if (loop == 0) {
+//					setNextAnimation(new Animation(defs.getDeathEmote()));
+//				} else if (loop >= defs.getDeathDelay()) {
+//					if (source instanceof Player)
+//						((Player) source).getControlerManager().processNPCDeath(getId());
+//					drop();
+//					reset();
+//					setLocation(respawnTile);
+//					finish();
+//					if (!isSpawned())
+//						setRespawnTask();
+//					if (source.getAttackedBy() == NPC.this) { // no need to wait
+//																// after u kill
+//						source.setAttackedByDelay(0);
+//						source.setAttackedBy(null);
+//						source.setFindTargetDelay(0);
+//					}
+//					this.cancel();
+//				}
+//				loop++;
+//			}
+//		});
 	}
 
 	public void drop() {
 		try {
+			
 			Player killer = getMostDamageReceivedSourcePlayer();
+			if (killer == null)
+				return;
 			DropManager.dropItems(killer, this);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -16,14 +16,12 @@ import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
 import com.rs.game.Hit;
-import com.rs.game.Hit.HitLook;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.minigames.duel.DuelRules;
-import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.content.FriendChatsManager;
@@ -132,8 +130,6 @@ public class Player extends Entity {
 		appearence = new Appearance();
 		inventory = new Inventory();
 		equipment = new Equipment();
-		details = new PlayerDetails();
-		getDetails().setPassword(password);
 		skills = new Skills();
 		combatDefinitions = new CombatDefinitions();
 		prayer = new Prayer();
@@ -144,6 +140,8 @@ public class Player extends Entity {
 		notes = new Notes();
 		friendsIgnores = new FriendsIgnores();
 		petManager = new PetManager();
+		details = new PlayerDetails();
+		getDetails().setPassword(password);
 	}
 
 	public void init(Session session, String username, byte displayMode,
@@ -711,249 +709,9 @@ public class Player extends Entity {
 	}
 
 	//TODO: Redo Actor Death system
-	@SuppressWarnings("unused")
 	@Override
 	public void sendDeath(final Entity source) {
-		if (prayer.hasPrayersOn()
-				&& getTemporaryAttributes().get("startedDuel") != Boolean.TRUE) {
-			if (prayer.usingPrayer(0, 22)) {
-				setNextGraphics(new Graphics(437));
-				final Player target = this;
-				if (isMultiArea()) {
-					for (int regionId : getMapRegionsIds()) {
-						List<Integer> playersIndexes = World
-								.getRegion(regionId).getPlayerIndexes();
-						if (playersIndexes != null) {
-							for (int playerIndex : playersIndexes) {
-								Player player = World.getPlayers().get(
-										playerIndex);
-								if (player == null
-										|| !player.isStarted()
-										|| player.isDead()
-										|| player.hasFinished()
-										|| !player.withinDistance(this, 1)
-										|| !player.isCanPvp()
-										|| !target.getControlerManager()
-												.canHit(player))
-									continue;
-								player.applyHit(new Hit(
-										target,
-										Utils.getRandom((int) (skills
-												.getLevelForXp(Skills.PRAYER) * 2.5)),
-										HitLook.REGULAR_DAMAGE));
-							}
-						}
-						List<Integer> npcsIndexes = World.getRegion(regionId)
-								.getNPCsIndexes();
-						if (npcsIndexes != null) {
-							for (int npcIndex : npcsIndexes) {
-								NPC npc = World.getNPCs().get(npcIndex);
-								if (npc == null
-										|| npc.isDead()
-										|| npc.hasFinished()
-										|| !npc.withinDistance(this, 1)
-										|| !npc.getDefinitions()
-												.hasAttackOption()
-										|| !target.getControlerManager()
-												.canHit(npc))
-									continue;
-								npc.applyHit(new Hit(
-										target,
-										Utils.getRandom((int) (skills
-												.getLevelForXp(Skills.PRAYER) * 2.5)),
-										HitLook.REGULAR_DAMAGE));
-							}
-						}
-					}
-				} else {
-					if (source != null && source != this && !source.isDead()
-							&& !source.hasFinished()
-							&& source.withinDistance(this, 1))
-						source.applyHit(new Hit(target, Utils
-								.getRandom((int) (skills
-										.getLevelForXp(Skills.PRAYER) * 2.5)),
-								HitLook.REGULAR_DAMAGE));
-				}
-//				WorldTasksManager.schedule(new WorldTask() {
-//					@Override
-//					public void run() {
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX() - 1, target.getY(),
-//										target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX() + 1, target.getY(),
-//										target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX(), target.getY() - 1,
-//										target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX(), target.getY() + 1,
-//										target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX() - 1,
-//										target.getY() - 1, target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX() - 1,
-//										target.getY() + 1, target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX() + 1,
-//										target.getY() - 1, target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX() + 1,
-//										target.getY() + 1, target.getPlane()));
-//					}
-//				});
-			} else if (prayer.usingPrayer(1, 17)) {
-				World.sendProjectile(this, new WorldTile(getX() + 2,
-						getY() + 2, getPlane()), 2260, 24, 0, 41, 35, 30, 0);
-				World.sendProjectile(this, new WorldTile(getX() + 2, getY(),
-						getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-				World.sendProjectile(this, new WorldTile(getX() + 2,
-						getY() - 2, getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-
-				World.sendProjectile(this, new WorldTile(getX() - 2,
-						getY() + 2, getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-				World.sendProjectile(this, new WorldTile(getX() - 2, getY(),
-						getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-				World.sendProjectile(this, new WorldTile(getX() - 2,
-						getY() - 2, getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-
-				World.sendProjectile(this, new WorldTile(getX(), getY() + 2,
-						getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-				World.sendProjectile(this, new WorldTile(getX(), getY() - 2,
-						getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-				final Player target = this;
-//				WorldTasksManager.schedule(new WorldTask() {
-//					@Override
-//					public void run() {
-//						setNextGraphics(new Graphics(2259));
-//
-//						if (isAtMultiArea()) {
-//							for (int regionId : getMapRegionsIds()) {
-//								List<Integer> playersIndexes = World.getRegion(
-//										regionId).getPlayerIndexes();
-//								if (playersIndexes != null) {
-//									for (int playerIndex : playersIndexes) {
-//										Player player = World.getPlayers().get(
-//												playerIndex);
-//										if (player == null
-//												|| !player.isStarted()
-//												|| player.isDead()
-//												|| player.hasFinished()
-//												|| !player.isCanPvp()
-//												|| !player.withinDistance(
-//														target, 2)
-//												|| !target
-//														.getControlerManager()
-//														.canHit(player))
-//											continue;
-//										player.applyHit(new Hit(
-//												target,
-//												Utils.getRandom((skills
-//														.getLevelForXp(Skills.PRAYER) * 3)),
-//												HitLook.REGULAR_DAMAGE));
-//									}
-//								}
-//								List<Integer> npcsIndexes = World.getRegion(
-//										regionId).getNPCsIndexes();
-//								if (npcsIndexes != null) {
-//									for (int npcIndex : npcsIndexes) {
-//										NPC npc = World.getNPCs().get(npcIndex);
-//										if (npc == null
-//												|| npc.isDead()
-//												|| npc.hasFinished()
-//												|| !npc.withinDistance(target,
-//														2)
-//												|| !npc.getDefinitions()
-//														.hasAttackOption()
-//												|| !target
-//														.getControlerManager()
-//														.canHit(npc))
-//											continue;
-//										npc.applyHit(new Hit(
-//												target,
-//												Utils.getRandom((skills
-//														.getLevelForXp(Skills.PRAYER) * 3)),
-//												HitLook.REGULAR_DAMAGE));
-//									}
-//								}
-//							}
-//						} else {
-//							if (source != null && source != target
-//									&& !source.isDead()
-//									&& !source.hasFinished()
-//									&& source.withinDistance(target, 2))
-//								source.applyHit(new Hit(
-//										target,
-//										Utils.getRandom((skills
-//												.getLevelForXp(Skills.PRAYER) * 3)),
-//										HitLook.REGULAR_DAMAGE));
-//						}
-//
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() + 2, getY() + 2,
-//										getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() + 2, getY(), getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() + 2, getY() - 2,
-//										getPlane()));
-//
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() - 2, getY() + 2,
-//										getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() - 2, getY(), getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() - 2, getY() - 2,
-//										getPlane()));
-//
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX(), getY() + 2, getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX(), getY() - 2, getPlane()));
-//
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() + 1, getY() + 1,
-//										getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() + 1, getY() - 1,
-//										getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() - 1, getY() + 1,
-//										getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() - 1, getY() - 1,
-//										getPlane()));
-//					}
-//				});
-			}
-		}
-		setNextAnimation(new Animation(-1));
-		if (!controlerManager.sendDeath())
-			return;
-		lock(7);
-		stopAll();
-		if (familiar != null)
-			familiar.sendDeath(this);
-//		WorldTasksManager.schedule(new WorldTask() {
-//			int loop;
-//
-//			@Override
-//			public void run() {
-//				if (loop == 0) {
-//					setNextAnimation(new Animation(836));
-//				} else if (loop == 1) {
-//					getPackets().sendGameMessage("Oh dear, you have died.");
-//				} else if (loop == 3) {
-//					setNextWorldTile(Settings.START_PLAYER_LOCATION);
-//				} else if (loop == 4) {
-//					getPackets().sendMusicEffect(90);
-//					stop();
-//				}
-//				loop++;
-//			}
-//		}, 0, 1);
+		World.get().submit(new PlayerDeath(this));
 	}
 
 	/*

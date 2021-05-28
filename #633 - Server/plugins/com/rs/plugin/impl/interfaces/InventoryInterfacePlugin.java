@@ -116,7 +116,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				player.getInventory().deleteItem(slotId, item);
 				if (player.getDetails().getCharges().degradeCompletly(item))
 					return;
-				FloorItem.addGroundItem(item, new WorldTile(player), player, false, 180);
+				FloorItem.createGroundItem(item, new WorldTile(player), player, false, 180, true);
 				player.getPackets().sendSound(2739, 0, 1);
 				break;
 			case 81:
@@ -314,7 +314,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				targetSlot == 3 ? 5 : targetSlot == 3 ? 0 : 3);
 		if (targetSlot == 3)
 			player.getCombatDefinitions().decreaseSpecialAttack(0);
-		player.getDetails().getCharges().wear(targetSlot);
+//		player.getDetails().getCharges().wear(targetSlot);
 		return true;
 	}
 }

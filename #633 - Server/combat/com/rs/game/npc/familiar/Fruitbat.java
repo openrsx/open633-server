@@ -70,7 +70,7 @@ public class Fruitbat extends Familiar {
 			if (World.isTileFree(this.getPlane(), tile.getX(), tile.getY(), player.getSize()))
 				return true;
 			World.sendGraphics(player, new Graphics(1331), tile);
-			FloorItem.addGroundItem(new Item(FRUITS[Utils.random(FRUITS.length)], 1), tile, player, true, 120);
+			FloorItem.createGroundItem(new Item(FRUITS[Utils.random(FRUITS.length)], 1), tile, player, true, 120, true);
 		}
 		return false;
 	}

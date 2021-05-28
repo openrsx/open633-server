@@ -53,8 +53,8 @@ public final class Inventory {
 			return false;
 		Item[] itemsBefore = items.getItemsCopy();
 		if (!items.add(new Item(itemId, amount)))
-			FloorItem.addGroundItem(new Item(itemId, amount), tile, player, true,
-					180);
+			FloorItem.createGroundItem(new Item(itemId, amount), tile, player, true,
+					180, true);
 		else
 			refreshItems(itemsBefore);
 		return true;

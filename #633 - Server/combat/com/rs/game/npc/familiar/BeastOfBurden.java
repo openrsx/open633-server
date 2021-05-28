@@ -45,7 +45,7 @@ public class BeastOfBurden implements Serializable {
 		for (int i = 0; i < beastItems.getSize(); i++) {
 			Item item = beastItems.get(i);
 			if (item != null)
-				FloorItem.addGroundItem(item, WorldTile, player, false, -1);
+				FloorItem.createGroundItem(item, WorldTile, player, false, -1, true);
 		}
 		beastItems.reset();
 	}
