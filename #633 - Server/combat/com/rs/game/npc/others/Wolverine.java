@@ -18,7 +18,7 @@ public class Wolverine extends NPC {
 		setWalkType(NORMAL_WALK);
 		setForceAgressive(true);
 		setAttackedBy(target);
-		setAtMultiArea(true);
+		setMultiArea(true);
 		faceEntity(target);
 	}
 }

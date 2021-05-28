@@ -10,8 +10,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.minigames.GodWarsBosses;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 
 public class CommanderZilyana extends NPC {
 
@@ -30,11 +29,10 @@ public class CommanderZilyana extends NPC {
 		resetWalkSteps();
 		getCombat().removeTarget();
 		setNextAnimation(null);
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(1) {
 			int loop;
-
 			@Override
-			public void run() {
+			protected void execute() {
 				if (loop == 0) {
 					setNextAnimation(new Animation(defs.getDeathEmote()));
 				} else if (loop >= defs.getDeathDelay()) {
@@ -43,11 +41,12 @@ public class CommanderZilyana extends NPC {
 					setLocation(getRespawnTile());
 					finish();
 					setRespawnTask();
-					stop();
+					this.cancel();
 				}
 				loop++;
+				this.cancel();
 			}
-		}, 0, 1);
+		});
 	}
 
 	@Override
@@ -64,7 +63,7 @@ public class CommanderZilyana extends NPC {
 				try {
 					setFinished(false);
 					World.addNPC(npc);
-					npc.setLastRegionId(0);
+					npc.setLastRegionId((short) 0);
 					World.updateEntityRegion(npc);
 					loadMapRegions();
 					checkMultiArea();

@@ -15,10 +15,10 @@ import com.rs.io.InputStream;
 import com.rs.utils.Logger;
 import com.rs.utils.MapArchiveKeys;
 import com.rs.utils.NPCSpawning;
-import com.rs.utils.ObjectSpawns;
 import com.rs.utils.Utils;
 import com.rs.utils.json.GsonHandler;
 import com.rs.utils.json.impl.NPCAutoSpawn;
+import com.rs.utils.json.impl.ObjectSpawnLoader;
 
 public class Region {
 	public static final int[] OBJECT_SLOTS = new int[] { 0, 0, 0, 0, 1, 1, 1,
@@ -89,7 +89,7 @@ public class Region {
 	}
 
 	private void loadObjectSpawns() {
-		ObjectSpawns.loadObjectSpawns(regionId);
+		ObjectSpawnLoader.loadObjectSpawns(regionId);
 	}
 	
 	/**

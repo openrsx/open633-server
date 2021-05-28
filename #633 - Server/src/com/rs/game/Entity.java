@@ -21,24 +21,29 @@ import com.rs.game.route.strategy.EntityStrategy;
 import com.rs.game.route.strategy.ObjectStrategy;
 import com.rs.utils.Utils;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public abstract class Entity extends WorldTile {
 
 	private final static AtomicInteger hashCodeGenerator = new AtomicInteger();
 
 	// transient stuff
 	private transient int index;
-	private transient int lastRegionId; // the last region the entity was at
+	private transient short lastRegionId; // the last region the entity was at
 	private transient WorldTile lastLoadedMapRegionTile;
 	private transient CopyOnWriteArrayList<Integer> mapRegionsIds; // called by
 	// more than
 	// 1thread
 	// so
 	// concurent
-	private transient int direction;
+	private transient byte direction;
 	private transient WorldTile lastWorldTile;
 	private transient WorldTile nextWorldTile;
-	private transient int nextWalkDirection;
-	private transient int nextRunDirection;
+	private transient byte nextWalkDirection;
+	private transient byte nextRunDirection;
 	private transient Rectangle nextFaceWorldTile;
 	private transient boolean teleported;
 	private transient ConcurrentLinkedQueue<Object[]> walkSteps;// called by
@@ -71,7 +76,7 @@ public abstract class Entity extends WorldTile {
 	private transient long frozenBlocked;
 	private transient long findTargetDelay;
 	private transient ConcurrentHashMap<Object, Object> temporaryAttributes;
-	private transient int hashCode;
+	private transient short hashCode;
 
 	// saving stuff
 	private int hitpoints;
@@ -92,14 +97,14 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public final void initEntity() {
-		hashCode = hashCodeGenerator.getAndIncrement();
+		hashCode = (short) hashCodeGenerator.getAndIncrement();
 		mapRegionsIds = new CopyOnWriteArrayList<Integer>();
 		walkSteps = new ConcurrentLinkedQueue<Object[]>();
 		receivedHits = new ConcurrentLinkedQueue<Hit>();
 		receivedDamage = new ConcurrentHashMap<Entity, Integer>();
 		temporaryAttributes = new ConcurrentHashMap<Object, Object>();
 		nextHits = new ArrayList<Hit>();
-		nextWalkDirection = nextRunDirection - 1;
+		nextWalkDirection = (byte) (nextRunDirection - 1);
 		lastFaceEntity = -1;
 		nextFaceEntity = -2;
 		poison.setEntity(this);
@@ -325,7 +330,7 @@ public abstract class Entity extends WorldTile {
 					lastFaceEntity - 32768) : World.getNPCs().get(
 					lastFaceEntity);
 			if (target != null)
-				direction = Utils.getFaceDirection(
+				direction = (byte) Utils.getFaceDirection(
 						target.getCoordFaceX(target.getSize()) - getX(),
 						target.getCoordFaceY(target.getSize()) - getY());
 		}
@@ -373,9 +378,9 @@ public abstract class Entity extends WorldTile {
 				break;
 			}
 			if (stepCount == 0) {
-				nextWalkDirection = dir;
+				nextWalkDirection = (byte) dir;
 			} else {
-				nextRunDirection = dir;
+				nextRunDirection = (byte) dir;
 				if (this instanceof Player)
 					((Player) this).drainRunEnergy();
 			}
@@ -390,7 +395,7 @@ public abstract class Entity extends WorldTile {
 	@Override
 	public void moveLocation(int xOffset, int yOffset, int planeOffset) {
 		super.moveLocation(xOffset, yOffset, planeOffset);
-		direction = Utils.getFaceDirection(xOffset, yOffset);
+		direction = (byte) Utils.getFaceDirection(xOffset, yOffset);
 	}
 
 	private boolean needMapUpdate() {
@@ -488,7 +493,7 @@ public abstract class Entity extends WorldTile {
 
 	// checks collisions
 	public boolean canWalkNPC(int toX, int toY, boolean checkUnder) {
-		if (!isAtMultiArea() /*
+		if (!isMultiArea() /*
 							 * || (!checkUnder && !canWalkNPC(getX(), getY(),
 							 * true))
 							 */)
@@ -505,7 +510,7 @@ public abstract class Entity extends WorldTile {
 							|| target.isDead()
 							|| target.hasFinished()
 							|| target.getPlane() != getPlane()
-							|| !target.isAtMultiArea()
+							|| !target.isMultiArea()
 							|| (!(this instanceof Familiar) && target instanceof Familiar))
 						continue;
 					int targetSize = target.getSize();
@@ -928,41 +933,9 @@ public abstract class Entity extends WorldTile {
 		// copy of this
 	}
 
-	public void setIndex(int index) {
-		this.index = index;
-	}
-
-	public int getIndex() {
-		return index;
-	}
-
-	public int getHitpoints() {
-		return hitpoints;
-	}
-
-	public void setHitpoints(int hitpoints) {
-		this.hitpoints = hitpoints;
-	}
-
-	public void setLastRegionId(int lastRegionId) {
-		this.lastRegionId = lastRegionId;
-	}
-
-	public int getLastRegionId() {
-		return lastRegionId;
-	}
-
-	public int getMapSize() {
-		return mapSize;
-	}
-
 	public void setMapSize(int size) {
 		this.mapSize = size;
 		loadMapRegions();
-	}
-
-	public CopyOnWriteArrayList<Integer> getMapRegionsIds() {
-		return mapRegionsIds;
 	}
 
 	public void setNextAnimation(Animation nextAnimation) {
@@ -977,10 +950,6 @@ public abstract class Entity extends WorldTile {
 		if (lastAnimationEnd > Utils.currentTimeMillis())
 			return;
 		setNextAnimation(nextAnimation);
-	}
-
-	public Animation getNextAnimation() {
-		return nextAnimation;
 	}
 
 	public void setNextGraphics(Graphics nextGraphics) {
@@ -1026,7 +995,7 @@ public abstract class Entity extends WorldTile {
 		return nextGraphics4;
 	}
 
-	public void setDirection(int direction) {
+	public void setDirection(byte direction) {
 		this.direction = direction;
 	}
 
@@ -1105,7 +1074,7 @@ public abstract class Entity extends WorldTile {
 		int deltaY = srcY - dstY;
 		direction = 0;
 		if (deltaX != 0 || deltaY != 0)
-			direction = (int) (Math.atan2((double) deltaX, (double) deltaY) * 2607.5945876176133) & 0x3FFF;
+			direction = (byte) ((byte) (Math.atan2((double) deltaX, (double) deltaY) * 2607.5945876176133) & 0x3FFF);
 	}
 
 	public abstract int getSize();
@@ -1182,57 +1151,10 @@ public abstract class Entity extends WorldTile {
 
 	public abstract double getMeleePrayerMultiplier();
 
-	public Entity getAttackedBy() {
-		return attackedBy;
-	}
-
-	public void setAttackedBy(Entity attackedBy) {
-		this.attackedBy = attackedBy;
-	}
-
-	public long getAttackedByDelay() {
-		return attackedByDelay;
-	}
-
-	public void setAttackedByDelay(long attackedByDelay) {
-		this.attackedByDelay = attackedByDelay;
-	}
-
 	public void checkMultiArea() {
 		multiArea = forceMultiArea ? true : World.isMultiArea(this);
 	}
 
-	public boolean isAtMultiArea() {
-		return multiArea;
-	}
-
-	public void setAtMultiArea(boolean multiArea) {
-		this.multiArea = multiArea;
-	}
-
-	public boolean isAtDynamicRegion() {
-		return isAtDynamicRegion;
-	}
-
-	public ForceMovement getNextForceMovement() {
-		return nextForceMovement;
-	}
-
-	public void setNextForceMovement(ForceMovement nextForceMovement) {
-		this.nextForceMovement = nextForceMovement;
-	}
-
-	public Poison getPoison() {
-		return poison;
-	}
-
-	public ForceTalk getNextForceTalk() {
-		return nextForceTalk;
-	}
-
-	public void setNextForceTalk(ForceTalk nextForceTalk) {
-		this.nextForceTalk = nextForceTalk;
-	}
 
 	public void faceEntity(Entity target) {
 		// setNextFaceWorldTile(new
@@ -1327,29 +1249,9 @@ public abstract class Entity extends WorldTile {
 				sizeY);
 	}
 
-	public long getLastAnimationEnd() {
-		return lastAnimationEnd;
-	}
-
-	public ConcurrentHashMap<Object, Object> getTemporaryAttributtes() {
-		return temporaryAttributes;
-	}
-
-	public boolean isForceMultiArea() {
-		return forceMultiArea;
-	}
-
 	public void setForceMultiArea(boolean forceMultiArea) {
 		this.forceMultiArea = forceMultiArea;
 		checkMultiArea();
-	}
-
-	public WorldTile getLastWorldTile() {
-		return lastWorldTile;
-	}
-
-	public ArrayList<Hit> getNextHits() {
-		return nextHits;
 	}
 
 	public void playSound(int soundId, int type) {
@@ -1367,20 +1269,53 @@ public abstract class Entity extends WorldTile {
 			}
 		}
 	}
-
-	public long getFindTargetDelay() {
-		return findTargetDelay;
+	
+	public boolean addWalkStepsInteract(int destX, int destY, int maxStepsCount, int size, boolean calculate) {
+		return addWalkStepsInteract(destX, destY, maxStepsCount, size, size, calculate);
 	}
+	
+	/*
+	 * return added all steps
+	 */
+	public boolean addWalkStepsInteract(final int destX, final int destY, int maxStepsCount, int sizeX, int sizeY, boolean calculate) {
+		int[] lastTile = getLastWalkTile();
+		int myX = lastTile[0];
+		int myY = lastTile[1];
+		int stepCount = 0;
+		while (true) {
+			stepCount++;
+			int myRealX = myX;
+			int myRealY = myY;
 
-	public void setFindTargetDelay(long findTargetDelay) {
-		this.findTargetDelay = findTargetDelay;
-	}
-
-	public SecondaryBar getNextSecondaryBar() {
-		return nextSecondaryBar;
-	}
-
-	public void setNextSecondaryBar(SecondaryBar secondaryBar) {
-		this.nextSecondaryBar = secondaryBar;
+			if (myX < destX)
+				myX++;
+			else if (myX > destX)
+				myX--;
+			if (myY < destY)
+				myY++;
+			else if (myY > destY)
+				myY--;
+			if ((this instanceof NPC && !canWalkNPC(myX, myY)) || !addWalkStep(myX, myY, lastTile[0], lastTile[1], true)) {
+				if (!calculate)
+					return false;
+				myX = myRealX;
+				myY = myRealY;
+				int[] myT = calculatedStep(myRealX, myRealY, destX, destY, lastTile[0], lastTile[1], sizeX, sizeY);
+				if (myT == null)
+					return false;
+				myX = myT[0];
+				myY = myT[1];
+			}
+			int distanceX = myX - destX;
+			int distanceY = myY - destY;
+			if (!(distanceX > sizeX || distanceX < -1 || distanceY > sizeY || distanceY < -1))
+				return true;
+			if (stepCount == maxStepsCount)
+				return true;
+			lastTile[0] = myX;
+			lastTile[1] = myY;
+			if (lastTile[0] == destX && lastTile[1] == destY)
+				return true;
+		}
 	}
 }

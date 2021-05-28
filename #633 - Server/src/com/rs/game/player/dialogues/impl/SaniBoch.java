@@ -13,13 +13,13 @@ public class SaniBoch extends Dialogue {
 	public void start() {
 		clickedObject = (boolean) parameters[0];
 		if (clickedObject) {
-			if (player.getTemporaryAttributtes().get("payed_saniboch") == null) {
+			if (player.getTemporaryAttributes().get("payed_saniboch") == null) {
 				sendNPCDialogue(npcId, MAD,
 						"Hey! You can't go in there without paying.");
 				stage = 5;
 			} else {
 				player.useStairs(-1, new WorldTile(2710, 9564, 0), 1, 2);
-				player.getTemporaryAttributtes().remove("payed_saniboch");
+				player.getTemporaryAttributes().remove("payed_saniboch");
 				end();
 			}
 		} else {
@@ -39,7 +39,7 @@ public class SaniBoch extends Dialogue {
 		if (stage == 0) {
 			sendItemDialogue(995, "You hand Saniboch 875 coins.");
 			player.getInventory().deleteItem(new Item(995, 875));
-			player.getTemporaryAttributtes().put("payed_saniboch", true);
+			player.getTemporaryAttributes().put("payed_saniboch", true);
 			stage = 1;
 		} else if (stage == 1) {
 			sendNPCDialogue(npcId, NORMAL,

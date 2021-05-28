@@ -8,8 +8,7 @@ import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
 public class GodWars extends Controller {
@@ -134,13 +133,13 @@ public class GodWars extends Controller {
 					2863 + (travelingEast ? 0 : -3), 5219, 0);
 			player.setNextForceMovement(new ForceMovement(tile, 1,
 					travelingEast ? ForceMovement.EAST : ForceMovement.WEST));
-			WorldTasksManager.schedule(new WorldTask() {
-
+			World.get().submit(new Task(1) {
 				@Override
-				public void run() {
+				protected void execute() {
 					player.setNextWorldTile(tile);
+					this.cancel();
 				}
-			}, 1);
+			});
 			return false;
 		} else if (object.getId() == 75089) {
 			boolean insideGate = player.getY() <= 5278;
@@ -189,15 +188,14 @@ public class GodWars extends Controller {
 			final boolean withinBandos = inBandosPrepare(player);
 			if (!withinBandos)
 				player.setNextAnimation(new Animation(7002));
-			WorldTasksManager.schedule(new WorldTask() {
-
+			World.get().submit(new Task( withinBandos ? 0 : 1) {
 				@Override
-				public void run() {
-//					ObjectHandler.handleDoor(player, object, 1000);
+				protected void execute() {
 					player.addWalkSteps(withinBandos ? 2851 : 2850, 5334, -1,
 							false);
+					this.cancel();
 				}
-			}, withinBandos ? 0 : 1);
+			});
 			return false;
 		} else if (object.getId() == 26439) {
 //			if (!Agility.hasLevel(player, 70))
@@ -207,10 +205,9 @@ public class GodWars extends Controller {
 					: 5346, 0);
 			player.lock();
 			player.setNextWorldTile(object);
-			WorldTasksManager.schedule(new WorldTask() {
-
+			World.get().submit(new Task(1) {
 				@Override
-				public void run() {
+				protected void execute() {
 					player.setNextAnimation(new Animation(17454));
 					if (withinZamorak)
 						sendInterfaces(0);
@@ -219,17 +216,18 @@ public class GodWars extends Controller {
 						player.getPrayer().drainPrayer();
 					}
 					player.setNextFaceWorldTile(tile);
+					this.cancel();
 				}
-			}, 1);
-			WorldTasksManager.schedule(new WorldTask() {
-
+			});
+			World.get().submit(new Task(5) {
 				@Override
-				public void run() {
+				protected void execute() {
 					player.unlock();
 					player.setNextAnimation(new Animation(-1));
 					player.setNextWorldTile(tile);
+					this.cancel();
 				}
-			}, 5);
+			});
 			return false;
 		} else if (object.getId() == 75462) {
 			if (object.getX() == 2912
@@ -318,13 +316,13 @@ public class GodWars extends Controller {
 //			return;
 		player.faceObject(object);
 		player.addWalkSteps(object.getX(), object.getY());
-		WorldTasksManager.schedule(new WorldTask() {
-
+		World.get().submit(new Task(1) {
 			@Override
-			public void run() {
+			protected void execute() {
 				player.useStairs(emote, tile, delay, delay + 1);
+				this.cancel();
 			}
-		}, 1);
+		});
 	}
 
 	private static final int[] INTERFACES = new int[] { 601, 599, 598 };

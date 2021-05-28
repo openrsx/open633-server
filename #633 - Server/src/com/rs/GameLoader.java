@@ -8,7 +8,7 @@ import com.rs.cores.BlockingExecutorService;
 import com.rs.cores.CoresManager;
 import com.rs.game.World;
 import com.rs.game.map.MapBuilder;
-import com.rs.game.npc.combat.CombatScriptsHandler;
+import com.rs.game.npc.combat.NPCCombatDispatcher;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.controllers.ControlerHandler;
 import com.rs.game.player.dialogues.DialogueHandler;
@@ -28,7 +28,6 @@ import com.rs.utils.MapAreas;
 import com.rs.utils.MusicHints;
 import com.rs.utils.NPCBonuses;
 import com.rs.utils.NPCCombatDefinitionsL;
-import com.rs.utils.ObjectSpawns;
 import com.rs.utils.ShopsHandler;
 import com.rs.utils.json.GsonHandler;
 import com.rs.utils.json.impl.MobDropTableLoader;
@@ -90,7 +89,6 @@ public class GameLoader {
 			EquipData.init();
 			ItemBonuses.init();
 			Censor.init();
-			ObjectSpawns.init();
 			NPCCombatDefinitionsL.init();
 			NPCBonuses.init();
 			return null;
@@ -103,7 +101,6 @@ public class GameLoader {
 		});
 		getBackgroundLoader().submit(() -> {
 			ControlerHandler.init();
-			CombatScriptsHandler.init();
 			DialogueHandler.init();
 			FriendChatsManager.init();
 			World.init();
@@ -117,6 +114,7 @@ public class GameLoader {
 			ObjectDispatcher.load();
 			CommandDispatcher.load();
 			NPCDispatcher.load();
+			NPCCombatDispatcher.load();
 			return null;
 		});
 	}

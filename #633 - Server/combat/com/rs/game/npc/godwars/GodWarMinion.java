@@ -6,8 +6,7 @@ import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 
 public class GodWarMinion extends NPC {
 
@@ -38,11 +37,11 @@ public class GodWarMinion extends NPC {
 		resetWalkSteps();
 		getCombat().removeTarget();
 		setNextAnimation(null);
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(1) {
 			int loop;
 
 			@Override
-			public void run() {
+			protected void execute() {
 				if (loop == 0) {
 					setNextAnimation(new Animation(defs.getDeathEmote()));
 				} else if (loop >= defs.getDeathDelay()) {
@@ -51,11 +50,12 @@ public class GodWarMinion extends NPC {
 					setLocation(getRespawnTile());
 					finish();
 					setRespawnTask();
-					stop();
+					this.cancel();
 				}
 				loop++;
+				this.cancel();
 			}
-		}, 0, 1);
+		});
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class GodWarMinion extends NPC {
 	public void respawn() {
 		setFinished(false);
 		World.addNPC(this);
-		setLastRegionId(0);
+		setLastRegionId((short) 0);
 		World.updateEntityRegion(this);
 		loadMapRegions();
 		checkMultiArea();

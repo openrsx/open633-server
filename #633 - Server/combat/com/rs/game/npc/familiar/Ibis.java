@@ -8,8 +8,7 @@ import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.player.content.Summoning.Pouch;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
 public class Ibis extends Familiar {
@@ -78,14 +77,14 @@ public class Ibis extends Familiar {
 		final WorldTile secondTile = new WorldTile(player.getX() - 1, player.getY() - 1, player.getPlane());
 		World.sendGraphics(player, new Graphics(1337), firstTile);
 		World.sendGraphics(player, new Graphics(1337), secondTile);
-		WorldTasksManager.schedule(new WorldTask() {
-
+		World.get().submit(new Task(2) {
 			@Override
-			public void run() {
+			protected void execute() {
 				World.addGroundItem(new Item(1, 1), firstTile, player, true, 180);
 				World.addGroundItem(new Item(1, 1), secondTile, player, true, 180);
+				this.cancel();
 			}
-		}, 2);
+		});
 		return true;
 	}
 }

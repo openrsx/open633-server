@@ -20,8 +20,7 @@ import com.rs.game.player.Player;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.FixedTileStrategy;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.utils.Logger;
 import com.rs.utils.MapAreas;
 import com.rs.utils.NPCBonuses;
@@ -30,9 +29,11 @@ import com.rs.utils.Utils;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
+@NonNull
 public class NPC extends Entity {
 
 	public static byte NORMAL_WALK = 0x2, WATER_WALK = 0x4, FLY_WALK = 0x8;
@@ -104,12 +105,12 @@ public class NPC extends Entity {
 
 	public void setBonuses() {
 		bonuses = NPCBonuses.getBonuses(id);
-		if (bonuses == null) {
-			bonuses = new short[10];
-			short level = getCombatLevel();
-			for (int i = 0; i < bonuses.length; i++)
-				bonuses[i] = level;
-		}
+//		if (bonuses == null) {
+//			bonuses = new short[10];
+//			short level = getCombatLevel();
+//			for (int i = 0; i < bonuses.length; i++)
+//				bonuses[i] = level;
+//		}
 	}
 
 	@Override
@@ -225,10 +226,10 @@ public class NPC extends Entity {
 		processNPC();
 	}
 
-	public int getRespawnDirection() {
+	public byte getRespawnDirection() {
 		NPCDefinitions definitions = getDefinitions();
 		if (definitions.anInt853 << 32 != 0 && definitions.respawnDirection > 0 && definitions.respawnDirection <= 8)
-			return (4 + definitions.respawnDirection) << 11;
+			return (byte) ((4 + definitions.respawnDirection) << 11);
 		return 0;
 	}
 
@@ -237,14 +238,15 @@ public class NPC extends Entity {
 		if (hit.getDamage() > 0)
 			World.sendProjectile(user, this, 2263, 11, 11, 20, 5, 0, 0);
 		user.heal(hit.getDamage() / 5);
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(1) {
 			@Override
-			public void run() {
+			protected void execute() {
 				setNextGraphics(new Graphics(2264));
 				if (hit.getDamage() > 0)
 					World.sendProjectile(target, user, 2263, 11, 11, 20, 5, 0, 0);
+				this.cancel();
 			}
-		}, 1);
+		});
 	}
 
 	@Override
@@ -255,8 +257,6 @@ public class NPC extends Entity {
 				&& hit.getLook() != HitLook.MAGIC_DAMAGE)
 			return;
 		Entity source = hit.getSource();
-		if (source == null)
-			return;
 		if (source instanceof Player) {
 			final Player p2 = (Player) source;
 			if (p2.getPrayer().hasPrayersOn()) {
@@ -286,12 +286,13 @@ public class NPC extends Entity {
 								p2.setNextGraphics(new Graphics(2214));
 								p2.getPrayer().setBoostedLeech(true);
 								World.sendProjectile(p2, this, 2215, 35, 35, 20, 5, 0, 0);
-								WorldTasksManager.schedule(new WorldTask() {
+								World.get().submit(new Task(1) {
 									@Override
-									public void run() {
+									protected void execute() {
 										setNextGraphics(new Graphics(2216));
+										this.cancel();
 									}
-								}, 1);
+								});
 								return;
 							}
 						} else {
@@ -309,12 +310,13 @@ public class NPC extends Entity {
 									p2.setNextAnimation(new Animation(12575));
 									p2.getPrayer().setBoostedLeech(true);
 									World.sendProjectile(p2, this, 2231, 35, 35, 20, 5, 0, 0);
-									WorldTasksManager.schedule(new WorldTask() {
+									World.get().submit(new Task(1) {
 										@Override
-										public void run() {
+										protected void execute() {
 											setNextGraphics(new Graphics(2232));
+											this.cancel();
 										}
-									}, 1);
+									});
 									return;
 								}
 							}
@@ -333,12 +335,13 @@ public class NPC extends Entity {
 									p2.setNextAnimation(new Animation(12575));
 									p2.getPrayer().setBoostedLeech(true);
 									World.sendProjectile(p2, this, 2248, 35, 35, 20, 5, 0, 0);
-									WorldTasksManager.schedule(new WorldTask() {
+									World.get().submit(new Task(1) {
 										@Override
-										public void run() {
+										protected void execute() {
 											setNextGraphics(new Graphics(2250));
+											this.cancel();
 										}
-									}, 1);
+									});
 									return;
 								}
 							}
@@ -361,12 +364,13 @@ public class NPC extends Entity {
 								p2.setNextGraphics(new Graphics(2217));
 								p2.getPrayer().setBoostedLeech(true);
 								World.sendProjectile(p2, this, 2218, 35, 35, 20, 5, 0, 0);
-								WorldTasksManager.schedule(new WorldTask() {
+								World.get().submit(new Task(1) {
 									@Override
-									public void run() {
+									protected void execute() {
 										setNextGraphics(new Graphics(2219));
+										this.cancel();
 									}
-								}, 1);
+								});
 								return;
 							}
 						} else if (p2.getPrayer().usingPrayer(1, 11)) {
@@ -383,10 +387,11 @@ public class NPC extends Entity {
 								p2.setNextAnimation(new Animation(12575));
 								p2.getPrayer().setBoostedLeech(true);
 								World.sendProjectile(p2, this, 2236, 35, 35, 20, 5, 0, 0);
-								WorldTasksManager.schedule(new WorldTask() {
+								World.get().submit(new Task(1) {
 									@Override
-									public void run() {
+									protected void execute() {
 										setNextGraphics(new Graphics(2238));
+										this.cancel();
 									}
 								});
 								return;
@@ -409,12 +414,13 @@ public class NPC extends Entity {
 								p2.setNextGraphics(new Graphics(2220));
 								p2.getPrayer().setBoostedLeech(true);
 								World.sendProjectile(p2, this, 2221, 35, 35, 20, 5, 0, 0);
-								WorldTasksManager.schedule(new WorldTask() {
+								World.get().submit(new Task(1) {
 									@Override
-									public void run() {
+									protected void execute() {
 										setNextGraphics(new Graphics(2222));
+										this.cancel();
 									}
-								}, 1);
+								});
 								return;
 							}
 						} else if (p2.getPrayer().usingPrayer(1, 12)) {
@@ -431,12 +437,13 @@ public class NPC extends Entity {
 								p2.setNextAnimation(new Animation(12575));
 								p2.getPrayer().setBoostedLeech(true);
 								World.sendProjectile(p2, this, 2240, 35, 35, 20, 5, 0, 0);
-								WorldTasksManager.schedule(new WorldTask() {
+								World.get().submit(new Task(1) {
 									@Override
-									public void run() {
+									protected void execute() {
 										setNextGraphics(new Graphics(2242));
+										this.cancel();
 									}
-								}, 1);
+								});
 								return;
 							}
 						}
@@ -458,12 +465,13 @@ public class NPC extends Entity {
 							p2.setNextAnimation(new Animation(12575));
 							p2.getPrayer().setBoostedLeech(true);
 							World.sendProjectile(p2, this, 2244, 35, 35, 20, 5, 0, 0);
-							WorldTasksManager.schedule(new WorldTask() {
+							World.get().submit(new Task(1) {
 								@Override
-								public void run() {
+								protected void execute() {
 									setNextGraphics(new Graphics(2246));
+									this.cancel();
 								}
-							}, 1);
+							});
 							return;
 						}
 					}
@@ -497,6 +505,15 @@ public class NPC extends Entity {
 			setLocation(respawnTile);
 			finish();
 		}
+		World.get().submit(new Task(getCombatDefinitions().getRespawnDelay() * 600) {
+
+			@Override
+			protected void execute() {
+				spawn();
+				this.cancel();
+			}
+		});
+		
 		CoresManager.slowExecutor.schedule(new Runnable() {
 			@Override
 			public void run() {
@@ -510,35 +527,28 @@ public class NPC extends Entity {
 	}
 
 	public void deserialize() {
-		if (combat == null)
-			combat = new NPCCombat(this);
 		spawn();
 	}
 
 	public void spawn() {
 		setFinished(false);
 		World.addNPC(this);
-		setLastRegionId(0);
+		setLastRegionId((short) 0);
 		World.updateEntityRegion(this);
 		loadMapRegions();
 		checkMultiArea();
 	}
-
-	public NPCCombat getCombat() {
-		return combat;
-	}
-
+	
 	@Override
 	public void sendDeath(final Entity source) {
 		final NPCCombatDefinitions defs = getCombatDefinitions();
 		resetWalkSteps();
 		combat.removeTarget();
 		setNextAnimation(null);
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(2) {
 			int loop;
-
 			@Override
-			public void run() {
+			protected void execute() {
 				if (loop == 0) {
 					setNextAnimation(new Animation(defs.getDeathEmote()));
 				} else if (loop >= defs.getDeathDelay()) {
@@ -556,20 +566,22 @@ public class NPC extends Entity {
 						source.setAttackedBy(null);
 						source.setFindTargetDelay(0);
 					}
-					stop();
+					this.cancel();
 				}
 				loop++;
 			}
-		}, 0, 1);
+		});
 	}
 
 	public void drop() {
-		if (getCombatDefinitions() == NPCCombatDefinitionsL.DEFAULT_DEFINITION)
-			return;
-		Player killer = getMostDamageReceivedSourcePlayer();
-		if (killer == null)
-			return;
-		DropManager.dropItems(killer, this);
+		try {
+			Player killer = getMostDamageReceivedSourcePlayer();
+			DropManager.dropItems(killer, this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} catch (Error e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -596,14 +608,6 @@ public class NPC extends Entity {
 		return 0;
 	}
 
-	public WorldTile getRespawnTile() {
-		return respawnTile;
-	}
-
-	public boolean isUnderCombat() {
-		return combat.underCombat();
-	}
-
 	@Override
 	public void setAttackedBy(Entity target) {
 		super.setAttackedBy(target);
@@ -626,12 +630,6 @@ public class NPC extends Entity {
 		lastAttackedByTarget = Utils.currentTimeMillis();
 	}
 
-	public void removeTarget() {
-		if (combat.getTarget() == null)
-			return;
-		combat.removeTarget();
-	}
-
 	public void forceWalkRespawnTile() {
 		setForceWalk(respawnTile);
 	}
@@ -647,7 +645,7 @@ public class NPC extends Entity {
 
 	public ArrayList<Entity> getPossibleTargets(boolean checkNPCs, boolean checkPlayers) {
 		int size = getSize();
-		int agroRatio = getCombatDefinitions().getAgroRatio();
+		int agroRatio = 32;
 		ArrayList<Entity> possibleTarget = new ArrayList<Entity>();
 		for (int regionId : getMapRegionsIds()) {
 			if (checkPlayers) {
@@ -655,11 +653,11 @@ public class NPC extends Entity {
 				if (playerIndexes != null) {
 					for (int playerIndex : playerIndexes) {
 						Player player = World.getPlayers().get(playerIndex);
-						if (player == null || player.isDead() || player.hasFinished() || !player.isRunning()
+						if (player.isDead() || player.hasFinished() || !player.isRunning()
 								|| player.getAppearence().isHidden()
 								|| !Utils.isOnRange(getX(), getY(), size, player.getX(), player.getY(),
 										player.getSize(), forceTargetDistance > 0 ? forceTargetDistance : agroRatio)
-								|| (!forceMultiAttacked && (!isAtMultiArea() || !player.isAtMultiArea())
+								|| (!forceMultiAttacked && (!isMultiArea() || !player.isMultiArea())
 										&& (player.getAttackedBy() != this
 												&& (player.getAttackedByDelay() > Utils.currentTimeMillis()
 														|| player.getFindTargetDelay() > Utils.currentTimeMillis())))
@@ -675,11 +673,11 @@ public class NPC extends Entity {
 				if (npcsIndexes != null) {
 					for (int npcIndex : npcsIndexes) {
 						NPC npc = World.getNPCs().get(npcIndex);
-						if (npc == null || npc == this || npc.isDead() || npc.hasFinished()
+						if (npc == this || npc.isDead() || npc.hasFinished()
 								|| !Utils.isOnRange(getX(), getY(), size, npc.getX(), npc.getY(), npc.getSize(),
 										forceTargetDistance > 0 ? forceTargetDistance : agroRatio)
 								|| !npc.getDefinitions().hasAttackOption()
-								|| ((!isAtMultiArea() || !npc.isAtMultiArea()) && npc.getAttackedBy() != this
+								|| ((!isMultiArea() || !npc.isMultiArea()) && npc.getAttackedBy() != this
 										&& npc.getAttackedByDelay() > Utils.currentTimeMillis())
 								|| !clipedProjectile(npc, false))
 							continue;
@@ -720,10 +718,6 @@ public class NPC extends Entity {
 			combat.reset();
 	}
 
-	public Transformation getNextTransformation() {
-		return nextTransformation;
-	}
-
 	@Override
 	public String toString() {
 		return getDefinitions().getName() + " - " + id + " - " + getX() + " " + getY() + " " + getPlane();
@@ -755,65 +749,12 @@ public class NPC extends Entity {
 		changedCombatLevel = true;
 	}
 
-	public boolean hasChangedName() {
-		return changedName;
-	}
-
-	public boolean hasChangedCombatLevel() {
-		return changedCombatLevel;
-	}
-
-	public boolean isSpawned() {
-		return spawned;
-	}
-
-	public void setSpawned(boolean spawned) {
-		this.spawned = spawned;
-	}
-
-	public boolean isNoDistanceCheck() {
-		return noDistanceCheck;
-	}
-
-	public void setNoDistanceCheck(boolean noDistanceCheck) {
-		this.noDistanceCheck = noDistanceCheck;
-	}
-
 	public boolean withinDistance(Player tile, int distance) {
 		return super.withinDistance(tile, distance);
 	}
-
-	/**
-	 * Gets the locked.
-	 * 
-	 * @return The locked.
-	 */
-	public boolean isLocked() {
-		return locked;
-	}
-
-	/**
-	 * Sets the locked.
-	 * 
-	 * @param locked The locked to set.
-	 */
-	public void setLocked(boolean locked) {
-		this.locked = locked;
-	}
-
-	public boolean isIntelligentRouteFinder() {
-		return intelligentRouteFinder;
-	}
-
-	public void setIntelligentRouteFinder(boolean intelligentRouteFinder) {
-		this.intelligentRouteFinder = intelligentRouteFinder;
-	}
-
-	public double getDropRateFactor() {
-		return dropRateFactor;
-	}
-
-	public void setDropRateFactor(double dropRateFactor) {
-		this.dropRateFactor = dropRateFactor;
+	
+	public void transformIntoNPC(short id) {
+		setNPC(id);
+		nextTransformation = new Transformation(id);
 	}
 }

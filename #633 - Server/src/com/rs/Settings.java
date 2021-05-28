@@ -4,6 +4,7 @@ import java.math.BigInteger;
 
 import com.google.common.collect.ImmutableMap;
 import com.rs.game.WorldTile;
+import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
 
 public final class Settings {
@@ -47,6 +48,12 @@ public final class Settings {
 	 * The attempted looped of randomized rare mob drops.
 	 */
 	public static final byte DROP_RARE_ATTEMPTS = 5;
+	
+	/**
+	 * The time in seconds that has to be spent in a region before {@link Mob}s stop
+	 * acting aggressive towards a specific {@link Player}.
+	 */
+	public static final short TOLERANCE_SECONDS = 600;
 	
 	/**
 	 * An immutable map of Staff members

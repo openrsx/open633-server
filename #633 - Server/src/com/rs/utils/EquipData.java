@@ -13,6 +13,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.util.HashMap;
 
+import lombok.Cleanup;
+
 public class EquipData {
 
 	public static final byte SLOT = 0, TYPE = 1;
@@ -30,6 +32,7 @@ public class EquipData {
 
 	private static void loadUnpackedEquips() {
 		try {
+			@Cleanup
 			RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
 			FileChannel channel = in.getChannel();
 			ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0,
@@ -40,8 +43,6 @@ public class EquipData {
 				int type = buffer.get();
 				equipData.put(id, new Integer[] { slot, type });
 			}
-			channel.close();
-			in.close();
 		} catch (Throwable e) {
 			Logger.handle(e);
 		}

@@ -5,56 +5,55 @@ import java.util.concurrent.TimeUnit;
 import com.rs.cores.CoresManager;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
+import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
-import com.rs.utils.Utils;
+import com.rs.game.task.Task;
 
 public class Bork extends NPC {
 
 	public static long deadTime;
 
-	public Bork(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
-		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea);
+	public Bork(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
+		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
 		setLureDelay((short) 0);
 		setForceAgressive(true);
 	}
 
 	@Override
 	public void sendDeath(Entity source) {
-		deadTime = Utils.currentTimeMillis() + (1000 * 60 * 60);
+		deadTime = System.currentTimeMillis() + (1000 * 60 * 60);
 		resetWalkSteps();
 		for (Entity e : getPossibleTargets()) {
 			if (e instanceof Player) {
 				final Player player = (Player) e;
 				player.getInterfaceManager().sendInterface(693);
-				player.getDialogueManager().startDialogue("DagonHai", 7137, player, 1);
-				WorldTasksManager.schedule(new WorldTask() {
+//				player.getDialogueManager().startDialogue("DagonHai", 7137, player, 1);
+				//TODO: Dialogue
+				World.get().submit(new Task(8) {
 					@Override
-					public void run() {
+					protected void execute() {
 						player.stopAll();
+						this.cancel();
 					}
-				}, 8);
+				});
 			}
 		}
 		getCombat().removeTarget();
 		setNextAnimation(new Animation(getCombatDefinitions().getDeathEmote()));
-		WorldTasksManager.schedule(new WorldTask() {
-
+		World.get().submit(new Task(4) {
 			@Override
-			public void run() {
+			protected void execute() {
 				drop();
 				reset();
 				setLocation(getRespawnTile());
 				finish();
 				if (!isSpawned())
 					setRespawnTask();
-				stop();
+				this.cancel();
 			}
-
-		}, 4);
+		});
 	}
 
 	@Override
@@ -85,7 +84,7 @@ public class Bork extends NPC {
 	}
 
 	public static int getTime() {
-		return (int) (deadTime - Utils.currentTimeMillis() / 60000);
+		return (int) (deadTime - System.currentTimeMillis() / 60000);
 	}
 
 	public static boolean atBork(WorldTile tile) {

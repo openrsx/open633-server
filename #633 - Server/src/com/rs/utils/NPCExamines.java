@@ -15,6 +15,8 @@ import java.util.HashMap;
 
 import com.rs.game.npc.NPC;
 
+import lombok.Cleanup;
+
 public class NPCExamines {
 
 	private final static HashMap<Integer, String> npcExamines = new HashMap<Integer, String>();
@@ -53,7 +55,9 @@ public class NPCExamines {
 	private static void loadUnpackedNPCExamines() {
 		Logger.log("NPCExamines", "Packing npc examines...");
 		try {
+			@Cleanup
 			BufferedReader in = new BufferedReader(new FileReader(UNPACKED_PATH));
+			@Cleanup
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
 			while (true) {
 				String line = in.readLine();
@@ -74,10 +78,6 @@ public class NPCExamines {
 				writeAlexString(out, splitedLine[1]);
 				npcExamines.put(npcId, splitedLine[1]);
 			}
-
-			in.close();
-			out.flush();
-			out.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

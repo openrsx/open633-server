@@ -11,8 +11,7 @@ import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.player.content.Summoning.Pouch;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
 public class Granitelobster extends Familiar {
@@ -80,15 +79,12 @@ public class Granitelobster extends Familiar {
 		getOwner().setNextAnimation(new Animation(7660));
 		setNextAnimation(new Animation(8118));
 		setNextGraphics(new Graphics(1351));
-		WorldTasksManager.schedule(new WorldTask() {
-
+		World.get().submit(new Task(1) {
 			@Override
-			public void run() {
-
-				WorldTasksManager.schedule(new WorldTask() {
-
+			protected void execute() {
+				World.get().submit(new Task(1) {
 					@Override
-					public void run() {
+					protected void execute() {
 						if (Utils.getRandom(5) == 0) {
 							if (target instanceof Player)
 								((Player) target).getSkills().set(Skills.DEFENCE,
@@ -96,9 +92,11 @@ public class Granitelobster extends Familiar {
 						}
 						target.applyHit(new Hit(getOwner(), Utils.random(140), HitLook.MELEE_DAMAGE));
 						target.setNextGraphics(new Graphics(1353));
+						this.cancel();
 					}
-				}, 2);
+				});
 				World.sendProjectile(npc, target, 1352, 34, 16, 30, 35, 16, 0);
+				this.cancel();
 			}
 		});
 		return true;

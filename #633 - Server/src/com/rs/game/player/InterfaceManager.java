@@ -91,6 +91,13 @@ public class InterfaceManager {
 				resizableScreen ? RESIZABLE_SCREEN_COMPONENT_ID
 						: FIXED_SCREEN_COMPONENT_ID, interfaceId);
 	}
+	
+	public void sendInterface(boolean clickThrough, int interfaceId) {
+		setInterface(clickThrough, resizableScreen ? RESIZABLE_WINDOW_ID
+				: FIXED_WINDOW_ID,
+				resizableScreen ? RESIZABLE_SCREEN_COMPONENT_ID
+						: FIXED_SCREEN_COMPONENT_ID, interfaceId);
+	}
 
 	public void sendInventoryInterface(int interfaceId) {
 		setInterface(false, resizableScreen ? RESIZABLE_WINDOW_ID

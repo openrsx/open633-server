@@ -4,7 +4,6 @@ import com.rs.Settings;
 import com.rs.game.World;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
-import com.rs.game.tasks.WorldTasksManager;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
 
@@ -24,11 +23,8 @@ public final class WorldThread extends Thread {
 							// next cycle
 			long currentTime = Utils.currentTimeMillis();
 			// long debug = Utils.currentTimeMillis();
-			try {
-				WorldTasksManager.processTasks();
-			} catch (Throwable e) {
-				Logger.handle(e);
-			}
+			World.get().taskManager.sequence();
+			
 			try {
 				for (Player player : World.getPlayers()) {
 					if (player == null || !player.isStarted() || player.hasFinished())

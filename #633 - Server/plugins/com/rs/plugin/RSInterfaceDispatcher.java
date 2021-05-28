@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.rs.Settings;
 import com.rs.cores.CoresManager;
+import com.rs.game.World;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.npc.familiar.Familiar.SpecialAttack;
@@ -20,8 +21,7 @@ import com.rs.game.player.Equipment;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.io.InputStream;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
@@ -148,7 +148,7 @@ public final class RSInterfaceDispatcher {
 //		if (Runecrafting.isTiara(item.getId()))
 //			player.getVarsManager().sendVar(491, 0);
 		if (slotId == 3)
-			player.getCombatDefinitions().desecreaseSpecialAttack(0);
+			player.getCombatDefinitions().decreaseSpecialAttack(0);
 	}
 
 	public static boolean sendWear(Player player, int slotId, int itemId) {
@@ -265,7 +265,7 @@ public final class RSInterfaceDispatcher {
 		player.getAppearence().generateAppearenceData();
 		player.getPackets().sendSound(2240, 0, 1);
 		if (targetSlot == 3)
-			player.getCombatDefinitions().desecreaseSpecialAttack(0);
+			player.getCombatDefinitions().decreaseSpecialAttack(0);
 		player.getDetails().getCharges().wear(targetSlot);
 		return true;
 	}
@@ -380,7 +380,7 @@ public final class RSInterfaceDispatcher {
 		player.getEquipment().refresh(targetSlot,
 				targetSlot == 3 ? 5 : targetSlot == 3 ? 0 : 3);
 		if (targetSlot == 3)
-			player.getCombatDefinitions().desecreaseSpecialAttack(0);
+			player.getCombatDefinitions().decreaseSpecialAttack(0);
 		player.getDetails().getCharges().wear(targetSlot);
 		return true;
 	}
@@ -390,16 +390,16 @@ public final class RSInterfaceDispatcher {
 			@Override
 			public void run() {
 				try {
-					WorldTasksManager.schedule(new WorldTask() {
-
+					World.get().submit(new Task(1) {
 						@Override
-						public void run() {
+						protected void execute() {
 							if (player.isDead())
 								return;
 							player.getCombatDefinitions()
 									.switchUsingSpecialAttack();
+							this.cancel();
 						}
-					}, 0);
+					});
 				} catch (Throwable e) {
 					Logger.handle(e);
 				}
@@ -516,11 +516,11 @@ public final class RSInterfaceDispatcher {
 		player.getPackets().sendIComponentSettings(667, 7, 0, 14, 1538);
 		refreshEquipBonuses(player);
 		if (banking) {
-			player.getTemporaryAttributtes().put("Banking", Boolean.TRUE);
+			player.getTemporaryAttributes().put("Banking", Boolean.TRUE);
 			player.setCloseInterfacesEvent(new Runnable() {
 				@Override
 				public void run() {
-					player.getTemporaryAttributtes().remove("Banking");
+					player.getTemporaryAttributes().remove("Banking");
 					player.getVarsManager().sendVarBit(4894, 0);
 				}
 			});

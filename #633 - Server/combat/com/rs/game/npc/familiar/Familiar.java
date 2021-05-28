@@ -14,8 +14,7 @@ import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning;
 import com.rs.game.player.content.Summoning.Pouch;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
 public abstract class Familiar extends NPC implements Serializable {
@@ -149,7 +148,7 @@ public abstract class Familiar extends NPC implements Serializable {
 				return false;
 		}
 		return !target.isDead()
-				&& ((owner.isAtMultiArea() && isAtMultiArea() && target.isAtMultiArea())
+				&& ((owner.isMultiArea() && isMultiArea() && target.isMultiArea())
 						|| (owner.isForceMultiArea() && target.isForceMultiArea()))
 				&& owner.getControlerManager().canAttack(target);
 	}
@@ -301,7 +300,7 @@ public abstract class Familiar extends NPC implements Serializable {
 			checkNearDirs = Utils.getCoordOffsetsNear(size);
 			sendMainConfigs();
 		} else
-			removeTarget();
+			getCombat().removeTarget();
 		WorldTile teleTile = null;
 		for (int dir = 0; dir < checkNearDirs[0].length; dir++) {
 			final WorldTile tile = new WorldTile(new WorldTile(owner.getX() + checkNearDirs[0][dir],
@@ -314,10 +313,11 @@ public abstract class Familiar extends NPC implements Serializable {
 			}
 		}
 		if (login || teleTile != null)
-			WorldTasksManager.schedule(new WorldTask() {
+			World.get().submit(new Task(1) {
 				@Override
-				public void run() {
+				protected void execute() {
 					setNextGraphics(new Graphics(getDefinitions().size > 1 ? 1315 : 1314));
+					this.cancel();
 				}
 			});
 		if (teleTile == null) {
@@ -366,21 +366,21 @@ public abstract class Familiar extends NPC implements Serializable {
 		setCantInteract(true);
 		getCombat().removeTarget();
 		setNextAnimation(null);
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(1) {
 			int loop;
-
 			@Override
-			public void run() {
+			protected void execute() {
 				if (loop == 0) {
 					setNextAnimation(new Animation(defs.getDeathEmote()));
 					owner.getPackets().sendGameMessage("Your familiar slowly begins to fade away..");
 				} else if (loop >= defs.getDeathDelay()) {
 					dissmissFamiliar(false);
-					stop();
+					this.cancel();
 				}
 				loop++;
+				this.cancel();
 			}
-		}, 0, 1);
+		});
 	}
 
 	public void respawnFamiliar(Player owner) {
@@ -427,13 +427,13 @@ public abstract class Familiar extends NPC implements Serializable {
 
 	public void setSpecial(boolean on) {
 		if (!on)
-			owner.getTemporaryAttributtes().remove("FamiliarSpec");
+			owner.getTemporaryAttributes().remove("FamiliarSpec");
 		else {
 			if (specialEnergy < getSpecialAmount()) {
 				owner.getPackets().sendGameMessage("Your special move bar is too low to use this scroll.");
 				return;
 			}
-			owner.getTemporaryAttributtes().put("FamiliarSpec", Boolean.TRUE);
+			owner.getTemporaryAttributes().put("FamiliarSpec", Boolean.TRUE);
 		}
 	}
 
@@ -451,7 +451,7 @@ public abstract class Familiar extends NPC implements Serializable {
 	}
 
 	public boolean hasSpecialOn() {
-		if (owner.getTemporaryAttributtes().remove("FamiliarSpec") != null) {
+		if (owner.getTemporaryAttributes().remove("FamiliarSpec") != null) {
 			int scrollId = Summoning.getScrollId(pouch.getRealPouchId());
 			if (!owner.getInventory().containsItem(scrollId, 1)) {
 				owner.getPackets().sendGameMessage("You don't have the scrolls to use this move.");

@@ -14,7 +14,7 @@
 	<classpathentry kind="lib" path="data/library/gson-2.8.2.jar"/>
 	<classpathentry kind="lib" path="data/library/guava-22.0.jar"/>
 	<classpathentry kind="lib" path="data/library/netty-3.6.6.Final.jar"/>
-	<classpathentry kind="lib" path="data/library/fastutil-8.2.1.jar"/>
 	<classpathentry kind="lib" path="data/library/lombok-1.18.20.jar"/>
+	<classpathentry kind="lib" path="data/library/fastutil-8.2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

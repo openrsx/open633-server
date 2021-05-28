@@ -15,8 +15,7 @@ import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.player.controllers.Wilderness;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
 /*
@@ -368,7 +367,7 @@ public class Magic {
 			if (set == 0)
 				player.getCombatDefinitions().setAutoCastSpell(spellId);
 			else
-				player.getTemporaryAttributtes().put("tempCastSpell", spellId);
+				player.getTemporaryAttributes().put("tempCastSpell", spellId);
 		}
 		return true;
 	}
@@ -443,7 +442,7 @@ public class Magic {
 				player.getPackets().sendGameMessage("Your Magic level is not high enough for this spell.");
 				return;
 			}
-			Long lastVeng = (Long) player.getTemporaryAttributtes().get("LAST_VENG");
+			Long lastVeng = (Long) player.getTemporaryAttributes().get("LAST_VENG");
 			if (lastVeng != null && lastVeng + 30000 > Utils.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
@@ -459,7 +458,7 @@ public class Magic {
 			if (!checkRunes(player, true, ASTRAL_RUNE, 3, DEATH_RUNE, 2, EARTH_RUNE, 10))
 				return;
 			player.setNextAnimation(new Animation(4411));
-			player.getTemporaryAttributtes().put("LAST_VENG", Utils.currentTimeMillis());
+			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			((Player) target).setNextGraphics(new Graphics(725, 0, 100));
 //			((Player) target).setCastVeng(true);
@@ -478,7 +477,7 @@ public class Magic {
 				player.getPackets().sendGameMessage("You need a Defence level of 40 for this spell");
 				return;
 			}
-			Long lastVeng = (Long) player.getTemporaryAttributtes().get("LAST_VENG");
+			Long lastVeng = (Long) player.getTemporaryAttributes().get("LAST_VENG");
 			if (lastVeng != null && lastVeng + 30000 > Utils.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
@@ -488,7 +487,7 @@ public class Magic {
 			player.setNextGraphics(new Graphics(726, 0, 100));
 			player.setNextAnimation(new Animation(4410));
 //			player.setCastVeng(true);
-			player.getTemporaryAttributtes().put("LAST_VENG", Utils.currentTimeMillis());
+			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			break;
 		case 39:
@@ -499,7 +498,7 @@ public class Magic {
 				player.getPackets().sendGameMessage("Your Magic level is not high enough for this spell.");
 				return;
 			}
-			lastVeng = (Long) player.getTemporaryAttributtes().get("LAST_VENG");
+			lastVeng = (Long) player.getTemporaryAttributes().get("LAST_VENG");
 			if (lastVeng != null && lastVeng + 30000 > Utils.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
@@ -530,7 +529,7 @@ public class Magic {
 				}
 			}
 			player.setNextAnimation(new Animation(4411));
-			player.getTemporaryAttributtes().put("LAST_VENG", Utils.currentTimeMillis());
+			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
 			player.getPackets().sendGameMessage("The spell affected " + affectedPeopleCount + " nearby people.");
 			break;
 		case 43: // moonclan teleport
@@ -802,15 +801,16 @@ public class Magic {
 		if (startMessage != null)
 			player.getPackets().sendGameMessage(startMessage, true);
 		player.lock();
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(1) {
 			@Override
-			public void run() {
+			protected void execute() {
 				player.unlock();
 				Magic.sendObjectTeleportSpell(player, false, tile);
 				if (endMessage != null)
 					player.getPackets().sendGameMessage(endMessage, true);
+				this.cancel();
 			}
-		}, 1);
+		});
 	}
 
 	public static final void sendObjectTeleportSpell(Player player, boolean randomize, WorldTile tile) {
@@ -852,12 +852,12 @@ public class Magic {
 		if (teleType == MAGIC_TELEPORT)
 			player.getPackets().sendSound(5527, 0, 2);
 		player.lock(3 + delay);
-		WorldTasksManager.schedule(new WorldTask() {
 
+		World.get().submit(new Task(delay) {
 			boolean removeDamage;
-
+			
 			@Override
-			public void run() {
+			protected void execute() {
 				if (!removeDamage) {
 					WorldTile teleTile = tile;
 					if (randomize) {
@@ -883,15 +883,16 @@ public class Magic {
 						player.getPackets().sendSound(5524, 0, 2);
 						player.setNextFaceWorldTile(
 								new WorldTile(teleTile.getX(), teleTile.getY() - 1, teleTile.getPlane()));
-						player.setDirection(6);
+						player.setDirection((byte) 6);
 					}
 					removeDamage = true;
 				} else {
 					player.resetReceivedHits();
-					stop();
+					this.cancel();
 				}
+				this.cancel();
 			}
-		}, delay, 0);
+		});
 		return true;
 	}
 
@@ -912,11 +913,10 @@ public class Magic {
 		player.lock();
 		player.setNextAnimation(new Animation(9597));
 		player.setNextGraphics(new Graphics(1680));
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(2) {
 			int stage;
-
 			@Override
-			public void run() {
+			protected void execute() {
 				if (stage == 0) {
 					player.setNextAnimation(new Animation(4731));
 					stage = 1;
@@ -935,17 +935,17 @@ public class Magic {
 						teleControlersCheck(player, teleTile);
 					player.setNextFaceWorldTile(
 							new WorldTile(teleTile.getX(), teleTile.getY() - 1, teleTile.getPlane()));
-					player.setDirection(6);
+					player.setDirection((byte) 6);
 					player.setNextAnimation(new Animation(-1));
 					stage = 2;
 				} else if (stage == 2) {
 					player.resetReceivedHits();
 					player.unlock();
-					stop();
+					this.cancel();
 				}
-
+				this.cancel();
 			}
-		}, 2, 1);
+		});
 		return true;
 	}
 
@@ -962,12 +962,13 @@ public class Magic {
 		player.getInventory().deleteItem(item);
 		player.setNextGraphics(new Graphics(1688));
 		player.setNextAnimation(new Animation(9609));
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(6) {
 			@Override
-			public void run() {
+			protected void execute() {
 				sendTeleportSpell(player, 8939, 8941, 1678, 1679, 0, 0, new WorldTile(3662, 3518, 0), 4, true,
 						ITEM_TELEPORT);
+				this.cancel();
 			}
-		}, 6);
+		});
 	}
 }

@@ -1,11 +1,11 @@
 package com.rs.game.npc.others;
 
 import com.rs.game.Animation;
+import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
-import com.rs.game.tasks.WorldTask;
-import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
 public class Strykewyrm extends NPC {
@@ -22,19 +22,21 @@ public class Strykewyrm extends NPC {
 		super.processNPC();
 		if (isDead())
 			return;
-		if (getId() != stompId && !isCantInteract() && !isUnderCombat()) {
+		if (getId() != stompId && !isCantInteract() && !getCombat().underCombat()) {
 			setNextAnimation(new Animation(12796));
 			setCantInteract(true);
-			WorldTasksManager.schedule(new WorldTask() {
+			World.get().submit(new Task(1) {
 				@Override
-				public void run() {
+				protected void execute() {
 					setNextNPCTransformation(stompId);
-					WorldTasksManager.schedule(new WorldTask() {
+					World.get().submit(new Task(1) {
 						@Override
-						public void run() {
+						protected void execute() {
 							setCantInteract(false);
+							this.cancel();
 						}
 					});
+					this.cancel();
 				}
 			});
 		}
@@ -53,7 +55,7 @@ public class Strykewyrm extends NPC {
 	public static void handleStomping(final Player player, final NPC npc) {
 		if (npc.isCantInteract())
 			return;
-		if (!npc.isAtMultiArea() || !player.isAtMultiArea()) {
+		if (!npc.isMultiArea() || !player.isMultiArea()) {
 			if (player.getAttackedBy() != npc && player.getAttackedByDelay() > Utils.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("You are already in combat.");
 				return;
@@ -94,23 +96,24 @@ public class Strykewyrm extends NPC {
 		player.setNextAnimation(new Animation(4278));
 		player.lock(2);
 		npc.setCantInteract(true);
-		WorldTasksManager.schedule(new WorldTask() {
+		World.get().submit(new Task(1) {
 			@Override
-			public void run() {
+			protected void execute() {
 				npc.setNextAnimation(new Animation(12795));
 				npc.setNextNPCTransformation((short) (((Strykewyrm) npc).stompId + 1));
-				stop();
-				WorldTasksManager.schedule(new WorldTask() {
+				this.cancel();
+				World.get().submit(new Task(1) {
 					@Override
-					public void run() {
+					protected void execute() {
 						npc.setTarget(player);
 						npc.setAttackedBy(player);
 						npc.setCantInteract(false);
+						this.cancel();
 					}
 				});
+				this.cancel();
 			}
-
-		}, 1);
+		});
 	}
 
 }
