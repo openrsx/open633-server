@@ -181,6 +181,7 @@ public class Player extends Entity {
 		emotesManager.setPlayer(this);
 		notes.setPlayer(this);
 		friendsIgnores.setPlayer(this);
+		getDetails().getCharges().setPlayer(this);
 		petManager.setPlayer(this);
 		setDirection((byte) Utils.getFaceDirection(0, -1));
 		temporaryMovementType = -1;
@@ -359,7 +360,7 @@ public class Player extends Entity {
 		actionManager.process();
 		prayer.processPrayer();
 		controlerManager.process();
-//		getDetails().getCharges().process();
+		getDetails().getCharges().process();
 		if (musicsManager.musicEnded())
 			musicsManager.replayMusic();
 //		if (hasSkull()) {
