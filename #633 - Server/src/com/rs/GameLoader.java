@@ -32,9 +32,12 @@ import com.rs.utils.ShopsHandler;
 import com.rs.utils.json.GsonHandler;
 import com.rs.utils.json.impl.MobDropTableLoader;
 
+import lombok.Getter;
+
 /**
  *
  * @author Tyluur <itstyluur@gmail.com>
+ * @author Dennis
  * @since Feb 27, 2014
  */
 public class GameLoader {
@@ -42,24 +45,18 @@ public class GameLoader {
 	public GameLoader() {
 		load();
 	}
-
+	
 	/**
-	 * The getter
-	 *
-	 * @return
+	 * The instance of the loader
 	 */
-	public static GameLoader get() {
-		return LOADER;
-	}
-
-	public BlockingExecutorService getBackgroundLoader() {
-		return backgroundLoader;
-	}
-
+	@Getter
+	private static final GameLoader LOADER = new GameLoader();
+	
 	/**
 	 * An executor service which handles background loading tasks.
 	 */
-	private final BlockingExecutorService backgroundLoader = new BlockingExecutorService(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+	@Getter
+	private final BlockingExecutorService backgroundLoader = new BlockingExecutorService(Executors.newCachedThreadPool());
 
 	/**
 	 * Loads everything here
@@ -118,10 +115,4 @@ public class GameLoader {
 			return null;
 		});
 	}
-
-	/**
-	 * The instance of the loader
-	 */
-	private static final GameLoader LOADER = new GameLoader();
-
 }

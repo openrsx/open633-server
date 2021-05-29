@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -18,13 +17,13 @@ import com.rs.game.npc.dragons.KingBlackDragon;
 import com.rs.game.npc.others.Bork;
 import com.rs.game.npc.others.TormentedDemon;
 import com.rs.game.player.Player;
-import com.rs.game.player.content.LivingRockCavern;
 import com.rs.game.player.controllers.DuelControler;
 import com.rs.game.route.Flags;
 import com.rs.game.task.Task;
 import com.rs.game.task.TaskManager;
 import com.rs.game.task.impl.DrainPrayerTask;
 import com.rs.game.task.impl.PlayerOwnedObjectTask;
+import com.rs.game.task.impl.RestoreHitpoints;
 import com.rs.game.task.impl.RestoreRunEnergyTask;
 import com.rs.game.task.impl.RestoreSkillTask;
 import com.rs.game.task.impl.RestoreSpecialTask;
@@ -70,31 +69,9 @@ public final class World {
 		World.get().submit(new ShopRestockTask());
 		World.get().submit(new PlayerOwnedObjectTask());
 		World.get().submit(new RestoreSkillTask());
+		World.get().submit(new RestoreHitpoints());
 		
-		addRestoreHitPointsTask();
-		LivingRockCavern.init();
-	}
-	
-	private static final void addRestoreHitPointsTask() {
-		CoresManager.fastExecutor.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				try {
-					for (Player player : getPlayers()) {
-						if (player == null || player.isDead() || !player.isRunning())
-							continue;
-						player.restoreHitPoints();
-					}
-					for (NPC npc : npcs) {
-						if (npc == null || npc.isDead() || npc.hasFinished())
-							continue;
-						npc.restoreHitPoints();
-					}
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-		}, 0, 6000);
+//		LivingRockCavern.init(); //should check if player is in region
 	}
 
 	public static final Region getRegion(int id) {

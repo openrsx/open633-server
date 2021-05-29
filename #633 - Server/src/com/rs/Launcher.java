@@ -29,7 +29,7 @@ public class Launcher {
 		Settings.DEBUG = Boolean.parseBoolean(args[1]);
 		long currentTime = Utils.currentTimeMillis();
 		
-		GameLoader.get().getBackgroundLoader().waitForPendingTasks().shutdown();
+		GameLoader.getLOADER().getBackgroundLoader().waitForPendingTasks().shutdown();
 		
 		Logger.log("Launcher", "Server took "
 				+ (Utils.currentTimeMillis() - currentTime)
@@ -68,7 +68,6 @@ public class Launcher {
 
 			index.resetCachedFiles();
 		}
-		CoresManager.fastExecutor.purge();
 		System.gc();
 	}
 

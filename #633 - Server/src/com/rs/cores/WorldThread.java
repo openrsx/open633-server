@@ -2,8 +2,9 @@ package com.rs.cores;
 
 import com.rs.Settings;
 import com.rs.game.World;
-import com.rs.utils.Logger;
 import com.rs.utils.Utils;
+
+import lombok.SneakyThrows;
 
 public final class WorldThread extends Thread {
 
@@ -15,46 +16,33 @@ public final class WorldThread extends Thread {
 	}
 
 	@Override
+	@SneakyThrows(Throwable.class)
 	public final void run() {
 		while (!CoresManager.shutdown) {
 			WORLD_CYCLE++;
 			long currentTime = Utils.currentTimeMillis();
-			World.get().taskManager.sequence();
 			
-			try {
-				World.players().forEach(player -> player.processEntity());
-				World.npcs().forEach(npc -> npc.processEntity());
-			} catch (Throwable e) {
-				Logger.handle(e);
-			}
-			try {
-				World.players().forEach(player -> player.processEntityUpdate());
-				World.npcs().forEach(npc -> npc.processEntityUpdate());
-			} catch (Throwable e) {
-				Logger.handle(e);
-			}
-			try {
-				World.players().forEach(player -> {
-					player.getPackets().sendLocalPlayersUpdate();
-					player.getPackets().sendLocalNPCsUpdate();
-				});
-			} catch (Throwable e) {
-				Logger.handle(e);
-			}
-			try {
-				World.players().forEach(player -> player.resetMasks());
-				World.npcs().forEach(npc -> npc.resetMasks());
-			} catch (Throwable e) {
-				Logger.handle(e);
-			}
+			World.get().getTaskManager().sequence();
+			
+			World.players().forEach(player -> player.processEntity());
+			World.npcs().forEach(npc -> npc.processEntity());
+			
+			World.players().forEach(player -> player.processEntityUpdate());
+			World.npcs().forEach(npc -> npc.processEntityUpdate());
+
+			World.players().forEach(player -> {
+				player.getPackets().sendLocalPlayersUpdate();
+				player.getPackets().sendLocalNPCsUpdate();
+			});
+			
+			World.players().forEach(player -> player.resetMasks());
+			World.npcs().forEach(npc -> npc.resetMasks());
+			
 			long sleepTime = Settings.WORLD_CYCLE_TIME + currentTime - Utils.currentTimeMillis();
 			if (sleepTime <= 0)
 				continue;
-			try {
-				Thread.sleep(sleepTime);
-			} catch (InterruptedException e) {
-				Logger.handle(e);
-			}
+			
+			Thread.sleep(sleepTime);
 		}
 	}
 }

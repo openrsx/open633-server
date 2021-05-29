@@ -9,7 +9,6 @@ import com.rs.game.Graphics;
 import com.rs.game.World;
 import com.rs.game.item.Item;
 import com.rs.game.task.Task;
-import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utils.Utils;
 
 public final class CombatDefinitions {
@@ -658,7 +657,9 @@ public final class CombatDefinitions {
 			return;
 		}
 		if (player.getSwitchItemCache().size() > 0) {
-			RSInterfaceDispatcher.submitSpecialRequest(player);
+			if (player.isDead())
+				return;
+			player.task(1, p -> player.getCombatDefinitions().switchUsingSpecialAttack());
 			return;
 		}
 		switch (weaponId) {

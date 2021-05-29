@@ -7,12 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 import com.rs.Settings;
-import com.rs.cores.CoresManager;
-import com.rs.game.World;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.npc.familiar.Familiar.SpecialAttack;
@@ -21,7 +18,6 @@ import com.rs.game.player.Equipment;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.game.task.Task;
 import com.rs.io.InputStream;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
@@ -253,7 +249,7 @@ public final class RSInterfaceDispatcher {
 		player.getPackets().sendSound(2240, 0, 1);
 		if (targetSlot == 3)
 			player.getCombatDefinitions().decreaseSpecialAttack(0);
-//		player.getDetails().getCharges().wear(targetSlot);
+		player.getDetails().getCharges().wear(targetSlot);
 		return true;
 	}
 
@@ -347,29 +343,8 @@ public final class RSInterfaceDispatcher {
 		player.getEquipment().refresh(targetSlot, targetSlot == 3 ? 5 : targetSlot == 3 ? 0 : 3);
 		if (targetSlot == 3)
 			player.getCombatDefinitions().decreaseSpecialAttack(0);
-//		player.getDetails().getCharges().wear(targetSlot);
+		player.getDetails().getCharges().wear(targetSlot);
 		return true;
-	}
-
-	public static void submitSpecialRequest(final Player player) {
-		CoresManager.fastExecutor.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				try {
-					World.get().submit(new Task(1) {
-						@Override
-						protected void execute() {
-							if (player.isDead())
-								return;
-							player.getCombatDefinitions().switchUsingSpecialAttack();
-							this.cancel();
-						}
-					});
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-		}, 300);
 	}
 
 	public static void sendWear(Player player, int[] slotIds) {

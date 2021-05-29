@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import com.rs.Settings;
 import com.rs.cores.CoresManager;
@@ -1019,5 +1020,19 @@ public class Player extends Entity {
 
 	public boolean hasDisplayName() {
 		return displayName != null;
+	}
+	
+	/**
+	 * Sends a delayed task for this player.
+	 */
+	public void task(int delay, Consumer<Player> action) {
+		Player player = this;
+		new Task(delay, false) {
+			@Override
+			protected void execute() {
+				action.accept(player);
+				cancel();
+			}
+		}.submit();
 	}
 }
