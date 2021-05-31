@@ -24,7 +24,7 @@ public final class PlayerLook {
 			int buttonId, int slotId) {
 		if (buttonId == 117) { // confirm
 			player.getPackets().sendRootInterface(
-					player.getInterfaceManager().hasRezizableScreen() ? 746
+					player.getInterfaceManager().isResizableScreen() ? 746
 							: 548, 0);
 			// no need to remove since the interface is still saved!
 			// player.getTemporaryAttributtes().remove("SelectWearDesignD");

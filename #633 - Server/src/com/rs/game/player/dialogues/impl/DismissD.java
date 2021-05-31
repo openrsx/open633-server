@@ -24,7 +24,7 @@ public class DismissD extends Dialogue {
 	    player.getPetManager().setItemId(-1);
 	    player.getPetManager().removeDetails(player.getPet().getItemId());
 	    player.getPet().switchOrb(false);
-	    player.getInterfaceManager().removeWindowInterface(player.getInterfaceManager().hasRezizableScreen() ? 98 : 212);
+	    player.getInterfaceManager().removeWindowInterface(player.getInterfaceManager().isResizableScreen() ? 98 : 212);
 	    player.getPackets().sendIComponentSettings(747, 17, 0, 0, 0);
 	    player.getPet().finish();
 	    player.setPet(null);

@@ -132,12 +132,12 @@ public abstract class Dialogue {
 	for (int line = 0; line < texts.length; line++)
 	    builder.append(" " + texts[line]);
 	String text = builder.toString();
-	player.getInterfaceManager().replaceRealChatBoxInterface(1192);
-	player.getPackets().sendIComponentText(1192, 16, title);
-	player.getPackets().sendIComponentText(1192, 12, text);
-	player.getPackets().sendEntityOnIComponent(type == IS_PLAYER, entityId, 1192, 11);
+	player.getInterfaceManager().replaceRealChatBoxInterface(64);
+	player.getPackets().sendIComponentText(64, 3, title);
+	player.getPackets().sendIComponentText(64, 4, text);
+	player.getPackets().sendEntityOnIComponent(type == IS_PLAYER, entityId, 64, 2);
 	if (animationId != -1)
-	    player.getPackets().sendIComponentAnimation(animationId, 1192, 11);
+	    player.getPackets().sendIComponentAnimation(animationId, 64, 2);
 	return true;
     }
 

@@ -1152,7 +1152,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					|| !player.getInterfaceManager().containsInterface(742))
 				return;
 			player.setDisplayMode(displayMode);
-			player.getInterfaceManager().removeAll();
+			player.getInterfaceManager().getOpenedinterfaces().clear();
 			player.getInterfaceManager().sendInterfaces();
 			player.getInterfaceManager().sendInterface(742);
 		} else if (packetId == CLICK_PACKET) {

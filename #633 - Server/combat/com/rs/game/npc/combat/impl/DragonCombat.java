@@ -16,7 +16,6 @@ public class DragonCombat extends MobCombatInterface {
 
 	@Override
 	public int execute(Player target, NPC npc) throws Exception {
-		System.out.println("?");
 		final NPCCombatDefinitions defs = npc.getCombatDefinitions();
 		int attackStyle = Utils.getRandom(5);
 		int size = npc.getSize();

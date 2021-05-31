@@ -200,7 +200,7 @@ public abstract class Familiar extends NPC implements Serializable {
 	}
 
 	public void sendFollowerDetails() {
-		boolean res = owner.getInterfaceManager().hasRezizableScreen();
+		boolean res = owner.getInterfaceManager().isResizableScreen();
 		owner.getInterfaceManager().setWindowInterface(res ? 128 : 188, 662);
 		owner.getPackets().sendHideIComponent(662, 44, true);
 		owner.getPackets().sendHideIComponent(662, 45, true);
@@ -228,7 +228,7 @@ public abstract class Familiar extends NPC implements Serializable {
 	}
 
 	public static void selectLeftOption(Player player) {
-		boolean res = player.getInterfaceManager().hasRezizableScreen();
+		boolean res = player.getInterfaceManager().isResizableScreen();
 		sendLeftClickOption(player);
 		player.getInterfaceManager().setWindowInterface(res ? 128 : 188, 880);
 		player.getInterfaceManager().openGameTab(95);
@@ -236,7 +236,7 @@ public abstract class Familiar extends NPC implements Serializable {
 
 	public static void confirmLeftOption(Player player) {
 		player.getPackets().sendGlobalConfig(168, 4);// inv tab id
-		boolean res = player.getInterfaceManager().hasRezizableScreen();
+		boolean res = player.getInterfaceManager().isResizableScreen();
 		player.getInterfaceManager().removeWindowInterface(res ? 128 : 188);
 	}
 
@@ -341,7 +341,7 @@ public abstract class Familiar extends NPC implements Serializable {
 			setFinished(true);
 			switchOrb(false);
 			owner.getInterfaceManager()
-					.removeWindowInterface(owner.getInterfaceManager().hasRezizableScreen() ? 128 : 188);
+					.removeWindowInterface(owner.getInterfaceManager().isResizableScreen() ? 128 : 188);
 			owner.getPackets().sendIComponentSettings(747, 18, 0, 0, 0);
 			if (bob != null)
 				bob.dropBob();

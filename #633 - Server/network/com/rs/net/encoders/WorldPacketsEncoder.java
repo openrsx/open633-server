@@ -75,7 +75,7 @@ public class WorldPacketsEncoder extends Encoder {
 	 * sets the pane interface
 	 */
 	public WorldPacketsEncoder sendRootInterface(int id, int type) {
-		player.getInterfaceManager().setWindowsPane(id);
+		player.getInterfaceManager().setRootInterface(id);
 		OutputStream stream = new OutputStream(4);
 		stream.writePacket(player, 113);
 		stream.writeShortLE128(id);
