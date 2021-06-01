@@ -466,40 +466,18 @@ public final class RSInterfaceDispatcher {
 		}
 	}
 
-	private static String equipmentBonusText(Player player, String msg, int bonusId) {
-		int bonus = player.getCombatDefinitions().getBonuses()[bonusId];
-		if (bonus < 0)
-			return msg.replace("+", "") + "" + bonus;
-		return msg + "" + bonus; // only use if it requires it to be negative.
-
-	}
-
 	public static void refreshEquipBonuses(Player player) {
-
-		player.getPackets().sendIComponentText(667, 31, equipmentBonusText(player, "Slash +", 0));
-		player.getPackets().sendIComponentText(667, 32, equipmentBonusText(player, "Slashs: +", 1));
-		player.getPackets().sendIComponentText(667, 33, equipmentBonusText(player, "Crush: +", 2));
-		player.getPackets().sendIComponentText(667, 34, equipmentBonusText(player, "Magic: +", 3));
-		player.getPackets().sendIComponentText(667, 35, equipmentBonusText(player, "Range: +", 4));
-		player.getPackets().sendIComponentText(667, 36, equipmentBonusText(player, "Stab: +", 5));
-		player.getPackets().sendIComponentText(667, 37, equipmentBonusText(player, "Slash: +", 6));
-		player.getPackets().sendIComponentText(667, 38, equipmentBonusText(player, "Crush: +", 7));
-		player.getPackets().sendIComponentText(667, 39, equipmentBonusText(player, "Magic: +", 8));
-		player.getPackets().sendIComponentText(667, 40, equipmentBonusText(player, "Range: +", 9));
-		player.getPackets().sendIComponentText(667, 41, equipmentBonusText(player, "Summoning: +", 10));
-		player.getPackets().sendIComponentText(667, 42,
-				"Absorb Melee: +" + player.getCombatDefinitions().getBonuses()[CombatDefinitions.ABSORB_MELEE] + "%");
-		player.getPackets().sendIComponentText(667, 43,
-				"Absorb Magic: +" + player.getCombatDefinitions().getBonuses()[CombatDefinitions.ABSORB_MAGIC] + "%");
-		player.getPackets().sendIComponentText(667, 44,
-				"Absorb Ranged: +" + player.getCombatDefinitions().getBonuses()[CombatDefinitions.ABSORB_RANGE] + "%");
-		player.getPackets().sendIComponentText(667, 45, "Strength: " + player.getCombatDefinitions().getBonuses()[14]);
-		player.getPackets().sendIComponentText(667, 46,
-				"Ranged Str: " + player.getCombatDefinitions().getBonuses()[15]);
-		player.getPackets().sendIComponentText(667, 47, equipmentBonusText(player, "Prayer: +", 16));
-		player.getPackets().sendIComponentText(667, 48,
-				"Magic Damage: +" + player.getCombatDefinitions().getBonuses()[17] + "%");
+		final int interfaceId = 667;
+		for (Object[] element : info) {
+			int bonus = player.getCombatDefinitions().getBonuses()[(int) element[1]];
+			String sign = bonus > 0 ? "+" : "";
+			player.getPackets().sendIComponentText(interfaceId, (int) element[0] -1, element[2] + ": " + sign + bonus);
+		}
 	}
+
+	private static final Object[][] info = new Object[][] { { 31, 0, "Stab" }, { 32, 1, "Slash" }, { 33, 2, "Crush" }, { 34, 3, "Magic" }, { 35, 4, "Range" }, { 36, 5, "Stab" }, { 37, 6, "Slash" }, { 38, 7, "Crush" }, { 39, 8, "Magic" }, { 40, 9, "Range" }, { 41, 10, "Summoning" }, { 42, CombatDefinitions.ABSORB_MELEE, "Absorb Melee" }, { 43, CombatDefinitions.ABSORB_MAGIC, "Absorb Magic" }, { 44, CombatDefinitions.ABSORB_RANGE, "Absorb Range" }, { 45, 14, "Strength" }, { 46, 15, "Ranged Str" }, { 47, 16, "Prayer" }, { 48, 17, "Magic Damage" } };
+	
+
 
 	public static void openSkillGuide(Player player) {
 		player.getInterfaceManager().setScreenInterface(317, 1218);
