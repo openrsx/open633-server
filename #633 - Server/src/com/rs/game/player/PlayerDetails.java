@@ -178,15 +178,7 @@ public final class PlayerDetails {
 	 * @param details the anti-fire instance to set.
 	 */
 	public void setAntifireDetail(AntifireDetails details) {
-		setAntifireDetail(details == null ? Optional.empty() : Optional.of(details));
-	}
-	
-	/**
-	 * Sets a new anti-fire instance for this class.
-	 * @param details the anti-fire instance to set.
-	 */
-	public void setAntifireDetail(Optional<AntifireDetails> details) {
-		this.antifireDetails = details;
+		setAntifireDetails(details == null ? Optional.empty() : Optional.of(details));
 	}
 	
 	/**
@@ -197,4 +189,6 @@ public final class PlayerDetails {
 		watchMap.put("DRINKS", new Stopwatch());
 		watchMap.put("TOLERANCE", new Stopwatch());
 	}
+
+	private byte skullId;
 }

@@ -59,7 +59,7 @@ public final class ItemDefinitions {
 	public byte[] unknownArray3;
 	public int[] unknownArray2;
 	// extra information, not used for newer items
-	public boolean unnoted;
+	public boolean exchangableItem;
 
 	public int maleEquipModelId3;
 	public int femaleEquipModelId3;
@@ -606,7 +606,7 @@ public final class ItemDefinitions {
 			for (int index = 0; index < length; index++)
 				unknownArray1[index] = (byte) stream.readByte();
 		} else if (opcode == 65)
-			unnoted = true;
+			exchangableItem = true; //was "unnnoted"
 		else if (opcode == 78)
 			maleEquipModelId3 = stream.readUnsignedShort();
 		else if (opcode == 79)

@@ -61,7 +61,7 @@ public final class CombatAntifireEffect extends CombatEffect {
 					player.getPackets().sendGameMessage("Your resistance to dragon fire is about to wear off!");
 				}
 				if (count < 1) {
-					player.getDetails().setAntifireDetail(Optional.empty());
+					player.getDetails().setAntifireDetails(Optional.empty());
 					player.getPackets().sendGameMessage("Your resistance to dragon fire has worn off!");
 				}
 			}

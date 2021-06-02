@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -20,6 +21,7 @@ import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
+import com.rs.game.item.Item;
 import com.rs.game.minigames.duel.DuelRules;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
@@ -650,89 +652,68 @@ public class Player extends Entity {
 		World.get().submit(new PlayerDeath(this));
 	}
 
-	/*
-	 * default items on death, now only used for wilderness
-	 * TODO: Fix today
-	 */
-	public void sendItemsOnDeath(Player killer, boolean dropItems) {
-//		Integer[][] slots = GraveStone.getItemSlotsKeptOnDeath(this, true,
-//				dropItems, getPrayer().isProtectingItem());
-//		sendItemsOnDeath(killer, new WorldTile(this), new WorldTile(this),
-//				true, slots);
-	}
-
-	/*
-	 * default items on death, now only used for wilderness
-	 */
 	public void sendItemsOnDeath(Player killer) {
-//		sendItemsOnDeath(killer, hasSkull());
-	}
-
-	public void sendItemsOnDeath(Player killer, WorldTile deathTile,
-			WorldTile respawnTile, boolean wilderness, Integer[][] slots) {
-		if (getDetails().getRights().isStaff() && Settings.HOSTED)
+		if (getDetails().getRights().isStaff())
 			return;
-		getDetails().getCharges().die(slots[1], slots[3]); // degrades droped and lost items only
-//		Item[][] items = GraveStone.getItemsKeptOnDeath(this, slots);
-		inventory.reset();
-		equipment.reset();
-		appearance.generateAppearenceData();
-//		for (Item item : items[0])
-//			inventory.addItemDrop(item.getId(), item.getAmount(), respawnTile);
-//		if (items[1].length != 0) {
-//			if (wilderness) {
-//				for (Item item : items[1])
-//					World.addGroundItem(item, deathTile, killer == null ? this
-//							: killer, true, 60, 0);
-//			} else
-//				new GraveStone(this, deathTile, items[1]);
-//			if (killer != null)
-//				Logger.globalLog(
-//						username,
-//						session.getIP(),
-//						new String(killer.getUsername()
-//								+ " has killed "
-//								+ username
-//								+ " with the ip: "
-//								+ killer.getSession().getIP()
-//								+ " items are as follows:"
-//								+ Arrays.toString(items[1])
-//										.replace("null,", "") + " ."));
-//			else
-//				Logger.globalLog(username, session.getIP(), new String(
-//						"has died "
-//								+ username
-//								+ " items are as follows:"
-//								+ Arrays.toString(items[1])
-//										.replace("null,", "") + "."));
-//		}
-	}
+		getDetails().getCharges().die();
+		CopyOnWriteArrayList<Item> containedItems = new CopyOnWriteArrayList<Item>();
+		for (int i = 0; i < 14; i++) {
+			if (getEquipment().getItem(i) != null && getEquipment().getItem(i).getId() != -1
+					&& getEquipment().getItem(i).getAmount() != -1)
+				containedItems.add(new Item(getEquipment().getItem(i).getId(), getEquipment().getItem(i).getAmount()));
+		}
+		for (int i = 0; i < getInventory().getItemsContainerSize(); i++) {
+			if (getInventory().getItem(i) != null && getInventory().getItem(i).getId() != -1
+					&& getInventory().getItem(i).getAmount() != -1)
+				containedItems.add(new Item(getInventory().getItem(i).getId(), getInventory().getItem(i).getAmount()));
+		}
+		if (containedItems.isEmpty())
+			return;
+		int keptAmount = 0;
 
+		keptAmount = getAppearance().hasSkull() ? 0 : 3;
+		if (getPrayer().usingPrayer(0, 10) || getPrayer().usingPrayer(1, 0))
+			keptAmount++;
+		
+		CopyOnWriteArrayList<Item> keptItems = new CopyOnWriteArrayList<Item>();
+		Item lastItem = new Item(1, 1);
+		for (int i = 0; i < keptAmount; i++) {
+			for (Item item : containedItems) {
+				int price = item.getDefinitions().getValue();
+				if (price >= lastItem.getDefinitions().getValue()) {
+					lastItem = item;
+				}
+			}
+			keptItems.add(lastItem);
+			containedItems.remove(lastItem);
+			lastItem = new Item(1, 1);
+		}
+		getInventory().reset();
+		getEquipment().reset();
+		for (Item item : keptItems) {
+			getInventory().addItem(item);
+		}
+		/** This Checks which items that is listed in the 'PROTECT_ON_DEATH' **/
+		for (Item item : containedItems) {	// This checks the items you had in your inventory or equipped
+			for (String string : Settings.PROTECT_ON_DEATH) {	//	This checks the matched items from the list 'PROTECT_ON_DEATH'
+				if (item.getDefinitions().getName().toLowerCase().contains(string) || item.getDefinitions().exchangableItem) {
+					getInventory().addItem(item);	//	This adds the items that is matched and listed in 'PROTECT_ON_DEATH'
+					containedItems.remove(item);	//	This remove the whole list of the contained items that is matched
+				}
+			}
+		}
 
-	public void sendRandomJail(Player p) {
-		p.resetWalkSteps();
-		switch (Utils.getRandom(6)) {
-		case 0:
-			p.setNextWorldTile(new WorldTile(2669, 10387, 0));
-			break;
-		case 1:
-			p.setNextWorldTile(new WorldTile(2669, 10383, 0));
-			break;
-		case 2:
-			p.setNextWorldTile(new WorldTile(2669, 10379, 0));
-			break;
-		case 3:
-			p.setNextWorldTile(new WorldTile(2673, 10379, 0));
-			break;
-		case 4:
-			p.setNextWorldTile(new WorldTile(2673, 10385, 0));
-			break;
-		case 5:
-			p.setNextWorldTile(new WorldTile(2677, 10387, 0));
-			break;
-		case 6:
-			p.setNextWorldTile(new WorldTile(2677, 10383, 0));
-			break;
+		/** This to avoid items to be dropped in the list 'PROTECT_ON_DEATH' **/
+		for (Item item : containedItems) {	//	This checks the items you had in your inventory or equipped
+			for (String string : Settings.PROTECT_ON_DEATH) {	//	This checks the matched items from the list 'PROTECT_ON_DEATH'
+				if (item.getDefinitions().getName().toLowerCase().contains(string)) {
+					containedItems.remove(item);	//	This remove the whole list of the contained items that is matched
+				}
+			}
+			FloorItem.createGroundItem(item, getLastWorldTile(), killer == null ? this : killer, false, 180, true, true);	//	This dropps the items to the killer, and is showed for 180 seconds
+		}
+		for (Item item : containedItems) {
+			FloorItem.createGroundItem(item, getLastWorldTile(), killer == null ? this : killer, false, 180, true, true);
 		}
 	}
 

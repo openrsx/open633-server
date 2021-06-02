@@ -83,7 +83,7 @@ public class Appearance {
 
 		stream.writeByte(flag);
 		stream.writeByte(title);
-		stream.writeByte(/* player.hasSkull() ? player.getSkullId() : -1 */ -1); // pk//icon
+		stream.writeByte(hasSkull() ? player.getDetails().getSkullId() : -1);
 		stream.writeByte(player.getPrayer().getPrayerHeadIcon()); // prayer icon
 		stream.writeByte(hidePlayer ? 1 : 0);
 		// npc
@@ -355,5 +355,9 @@ public class Appearance {
 	public void setForcedAmulet(int forcedAmulet) {
 		this.forcedAmulet = forcedAmulet;
 		generateAppearenceData();
+	}
+
+	public boolean hasSkull() {
+		return player.getDetails().getSkullTimer().get() > 0;
 	}
 }

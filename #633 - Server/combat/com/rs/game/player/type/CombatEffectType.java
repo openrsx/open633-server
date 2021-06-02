@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.rs.game.player.type.impl.AntifireDetails.AntifireType;
 import com.rs.game.player.type.impl.CombatAntifireEffect;
 import com.rs.game.player.type.impl.CombatPoisonEffect;
+import com.rs.game.player.type.impl.CombatSkullEffect;
 
 /**
  * The enumerated type whose values represent the collection of different combat
@@ -20,7 +21,7 @@ public enum CombatEffectType {
 	/**
 	 * The combat skull effect, handles the skulling of players.
 	 */
-//	SKULL(new CombatSkullEffect());
+	SKULL(new CombatSkullEffect()),
 //	
 //	/**
 //	 * The combat teleblock effect, handles the teleblocking of players.

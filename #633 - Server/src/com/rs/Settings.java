@@ -27,6 +27,9 @@ public final class Settings {
 	public static final int LAMP_XP_RATE = Config.get().getInteger("lamp_exp_rate");
 	public static final int DEGRADE_GEAR_RATE = Config.get().getInteger("degrade_rate");
 	public static boolean XP_BONUS_ENABLED = Config.get().getBoolean("bonus_exp_enabled");
+	public static String[] PROTECT_ON_DEATH = { "chaotic", "stream", "defender", "swift", "spellcaster", "goliath",
+			"fire cape", "max cape", "max hood", "completionist cape", "completionist hood", "farseer kiteshield",
+			"eagle-eye kiteshield", "gravite" };
 	
 	/**
 	 * The maximum amount of drops that can be rolled from the dynamic drop table.
