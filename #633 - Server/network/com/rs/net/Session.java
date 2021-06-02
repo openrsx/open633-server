@@ -17,6 +17,8 @@ import com.rs.net.encoders.GrabPacketsEncoder;
 import com.rs.net.encoders.LoginPacketsEncoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
 
+import lombok.Synchronized;
+
 public class Session {
 
 	private Channel channel;
@@ -28,21 +30,19 @@ public class Session {
 		setDecoder(0);
 	}
 
+	@Synchronized("channel")
 	public final ChannelFuture write(OutputStream outStream) {
 		if (outStream == null || !channel.isConnected())
 			return null;
 		ChannelBuffer buffer = ChannelBuffers.copiedBuffer(outStream.getBuffer(), 0, outStream.getOffset());
-		synchronized (channel) {
-			return channel.write(buffer);
-		}
+		return channel.write(buffer);
 	}
 
+	@Synchronized("channel")
 	public final ChannelFuture write(ChannelBuffer outStream) {
 		if (outStream == null || !channel.isConnected())
 			return null;
-		synchronized (channel) {
-			return channel.write(outStream);
-		}
+		return channel.write(outStream);
 	}
 
 	public final Channel getChannel() {

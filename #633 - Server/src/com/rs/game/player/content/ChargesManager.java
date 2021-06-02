@@ -1,10 +1,11 @@
-package com.rs.game.player;
+package com.rs.game.player.content;
 
 import java.util.HashMap;
 
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
+import com.rs.game.player.Player;
 import com.rs.utils.Utils;
 
 public class ChargesManager {

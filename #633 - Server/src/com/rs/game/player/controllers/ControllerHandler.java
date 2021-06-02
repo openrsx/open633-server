@@ -5,7 +5,9 @@ import java.util.HashMap;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
 
-public class ControlerHandler {
+import lombok.SneakyThrows;
+
+public class ControllerHandler {
 
 	private static final HashMap<Object, Class<Controller>> handledControlers = new HashMap<Object, Class<Controller>>();
 
@@ -24,17 +26,13 @@ public class ControlerHandler {
 		}
 	}
 
-	public static final Controller getControler(Object key) {
+	@SneakyThrows(Throwable.class)
+	public static final Controller getController(Object key) {
 		if (key instanceof Controller)
 			return (Controller) key;
 		Class<Controller> classC = handledControlers.get(key);
 		if (classC == null)
 			return null;
-		try {
-			return classC.newInstance();
-		} catch (Throwable e) {
-			Logger.handle(e);
-		}
-		return null;
+		return classC.newInstance();
 	}
 }

@@ -1,6 +1,6 @@
-package com.rs.game.player;
+package com.rs.game.player.dialogues;
 
-import com.rs.game.player.dialogues.Dialogue;
+import com.rs.game.player.Player;
 
 public class DialogueManager {
 

@@ -1,4 +1,4 @@
-package com.rs.game.player;
+package com.rs.net.encoders.other;
 
 public class PublicChatMessage extends ChatMessage {
 

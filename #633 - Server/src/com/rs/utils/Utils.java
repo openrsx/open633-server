@@ -22,6 +22,7 @@ import com.rs.game.player.Skills;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+import lombok.Synchronized;
 
 public final class Utils {
 
@@ -64,37 +65,31 @@ public final class Utils {
 		return new String(rebuff);
 	}
 
-	public static byte[] cryptRSA(byte[] data, BigInteger exponent,
-			BigInteger modulus) {
+	public static byte[] cryptRSA(byte[] data, BigInteger exponent, BigInteger modulus) {
 		return new BigInteger(data).modPow(exponent, modulus).toByteArray();
 	}
 
+	@Synchronized("ALGORITHM_LOCK")
 	public static final byte[] encryptUsingMD5(byte[] buffer) {
-		// prevents concurrency problems with the algorithm
-		synchronized (ALGORITHM_LOCK) {
-			try {
-				MessageDigest algorithm = MessageDigest.getInstance("MD5");
-				algorithm.update(buffer);
-				byte[] digest = algorithm.digest();
-				algorithm.reset();
-				return digest;
-			} catch (Throwable e) {
-				Logger.handle(e);
-			}
-			return null;
+		try {
+			MessageDigest algorithm = MessageDigest.getInstance("MD5");
+			algorithm.update(buffer);
+			byte[] digest = algorithm.digest();
+			algorithm.reset();
+			return digest;
+		} catch (Throwable e) {
+			Logger.handle(e);
 		}
+		return null;
 	}
 
-	public static boolean inCircle(WorldTile location, WorldTile center,
-			int radius) {
+	public static boolean inCircle(WorldTile location, WorldTile center, int radius) {
 		return getDistance(center, location) < radius;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes" })
-	public static Class[] getClasses(String packageName)
-			throws ClassNotFoundException, IOException {
-		ClassLoader classLoader = Thread.currentThread()
-				.getContextClassLoader();
+	public static Class[] getClasses(String packageName) throws ClassNotFoundException, IOException {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		assert classLoader != null;
 		String path = packageName.replace('.', '/');
 		Enumeration<URL> resources = classLoader.getResources(path);
@@ -120,14 +115,11 @@ public final class Utils {
 		for (File file : files) {
 			if (file.isDirectory()) {
 				assert !file.getName().contains(".");
-				classes.addAll(findClasses(file,
-						packageName + "." + file.getName()));
+				classes.addAll(findClasses(file, packageName + "." + file.getName()));
 			} else if (file.getName().endsWith(".class")) {
 				try {
-					classes.add(Class.forName(packageName
-							+ '.'
-							+ file.getName().substring(0,
-									file.getName().length() - 6)));
+					classes.add(Class
+							.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
 				} catch (Throwable e) {
 
 				}
@@ -140,8 +132,7 @@ public final class Utils {
 		return getDistance(t1.getX(), t1.getY(), t2.getX(), t2.getY());
 	}
 
-	public static final int getDistance(int coordX1, int coordY1, int coordX2,
-			int coordY2) {
+	public static final int getDistance(int coordX1, int coordY1, int coordX2, int coordY2) {
 		int deltaX = coordX2 - coordX1;
 		int deltaY = coordY2 - coordY1;
 		return ((int) Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)));
@@ -172,10 +163,8 @@ public final class Utils {
 		}
 	}
 
-	public static final byte[] DIRECTION_DELTA_X = new byte[] { -1, 0, 1, -1,
-			1, -1, 0, 1 };
-	public static final byte[] DIRECTION_DELTA_Y = new byte[] { 1, 1, 1, 0, 0,
-			-1, -1, -1 };
+	public static final byte[] DIRECTION_DELTA_X = new byte[] { -1, 0, 1, -1, 1, -1, 0, 1 };
+	public static final byte[] DIRECTION_DELTA_Y = new byte[] { 1, 1, 1, 0, 0, -1, -1, -1 };
 
 	public static int getNpcMoveDirection(int dd) {
 		if (dd < 0)
@@ -233,50 +222,34 @@ public final class Utils {
 
 	public static final int getGraphicDefinitionsSize() {
 		int lastArchiveId = Cache.STORE.getIndexes()[21].getLastArchiveId();
-		return lastArchiveId
-				* 256
-				+ Cache.STORE.getIndexes()[21]
-						.getValidFilesCount(lastArchiveId);
+		return lastArchiveId * 256 + Cache.STORE.getIndexes()[21].getValidFilesCount(lastArchiveId);
 	}
 
 	public static final int getAnimationDefinitionsSize() {
 		int lastArchiveId = Cache.STORE.getIndexes()[20].getLastArchiveId();
-		return lastArchiveId
-				* 128
-				+ Cache.STORE.getIndexes()[20]
-						.getValidFilesCount(lastArchiveId);
+		return lastArchiveId * 128 + Cache.STORE.getIndexes()[20].getValidFilesCount(lastArchiveId);
 	}
 
 	public static final int getConfigDefinitionsSize() {
 		int lastArchiveId = Cache.STORE.getIndexes()[22].getLastArchiveId();
-		return lastArchiveId
-				* 256
-				+ Cache.STORE.getIndexes()[22]
-						.getValidFilesCount(lastArchiveId);
+		return lastArchiveId * 256 + Cache.STORE.getIndexes()[22].getValidFilesCount(lastArchiveId);
 	}
 
 	public static final int getObjectDefinitionsSize() {
 		int lastArchiveId = Cache.STORE.getIndexes()[16].getLastArchiveId();
-		return lastArchiveId
-				* 256
-				+ Cache.STORE.getIndexes()[16]
-						.getValidFilesCount(lastArchiveId);
+		return lastArchiveId * 256 + Cache.STORE.getIndexes()[16].getValidFilesCount(lastArchiveId);
 	}
 
 	public static final int getNPCDefinitionsSize() {
 		int lastArchiveId = Cache.STORE.getIndexes()[18].getLastArchiveId();
-		return lastArchiveId
-				* 128
-				+ Cache.STORE.getIndexes()[18]
-						.getValidFilesCount(lastArchiveId);
+		return lastArchiveId * 128 + Cache.STORE.getIndexes()[18].getValidFilesCount(lastArchiveId);
 	}
 
 	// 22314
 
 	public static final int getItemDefinitionsSize() {
 		int lastArchiveId = Cache.STORE.getIndexes()[19].getLastArchiveId();
-		return (lastArchiveId * 256 + Cache.STORE.getIndexes()[19]
-				.getValidFilesCount(lastArchiveId));
+		return (lastArchiveId * 256 + Cache.STORE.getIndexes()[19].getValidFilesCount(lastArchiveId));
 	}
 
 	public static boolean itemExists(int id) {
@@ -289,8 +262,7 @@ public final class Utils {
 		return Cache.STORE.getIndexes()[3].getLastArchiveId() + 1;
 	}
 
-	public static final int getInterfaceDefinitionsComponentsSize(
-			int interfaceId) {
+	public static final int getInterfaceDefinitionsComponentsSize(int interfaceId) {
 		return Cache.STORE.getIndexes()[3].getLastFileId(interfaceId) + 1;
 	}
 
@@ -375,20 +347,17 @@ public final class Utils {
 		return new String(ac, 12 - i, i);
 	}
 
-	public static final char[] VALID_CHARS = { '_', 'a', 'b', 'c', 'd', 'e',
-			'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
-			's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4',
-			'5', '6', '7', '8', '9' };
+	public static final char[] VALID_CHARS = { '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+			'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
+			'8', '9' };
 
 	public static boolean invalidAccountName(String name) {
-		return name.length() < 2 || name.length() > 12 || name.startsWith("_")
-				|| name.endsWith("_") || name.contains("__")
-				|| containsInvalidCharacter(name);
+		return name.length() < 2 || name.length() > 12 || name.startsWith("_") || name.endsWith("_")
+				|| name.contains("__") || containsInvalidCharacter(name);
 	}
 
 	public static boolean invalidAuthId(String auth) {
-		return auth.length() != 10 || auth.contains("_")
-				|| containsInvalidCharacter(auth);
+		return auth.length() != 10 || auth.contains("_") || containsInvalidCharacter(auth);
 	}
 
 	public static boolean containsInvalidCharacter(char c) {
@@ -425,8 +394,7 @@ public final class Utils {
 		return l;
 	}
 
-	public static final int packGJString2(int position, byte[] buffer,
-			String String) {
+	public static final int packGJString2(int position, byte[] buffer, String String) {
 		int length = String.length();
 		int offset = position;
 		for (int index = 0; length > index; index++) {
@@ -556,15 +524,12 @@ public final class Utils {
 		return charByte;
 	}
 
-	public static char[] aCharArray6385 = { '\u20ac', '\0', '\u201a', '\u0192',
-			'\u201e', '\u2026', '\u2020', '\u2021', '\u02c6', '\u2030',
-			'\u0160', '\u2039', '\u0152', '\0', '\u017d', '\0', '\0', '\u2018',
-			'\u2019', '\u201c', '\u201d', '\u2022', '\u2013', '\u2014',
-			'\u02dc', '\u2122', '\u0161', '\u203a', '\u0153', '\0', '\u017e',
+	public static char[] aCharArray6385 = { '\u20ac', '\0', '\u201a', '\u0192', '\u201e', '\u2026', '\u2020', '\u2021',
+			'\u02c6', '\u2030', '\u0160', '\u2039', '\u0152', '\0', '\u017d', '\0', '\0', '\u2018', '\u2019', '\u201c',
+			'\u201d', '\u2022', '\u2013', '\u2014', '\u02dc', '\u2122', '\u0161', '\u203a', '\u0153', '\0', '\u017e',
 			'\u0178' };
 
-	public static final String getUnformatedMessage(int messageDataLength,
-			int messageDataOffset, byte[] messageData) {
+	public static final String getUnformatedMessage(int messageDataLength, int messageDataOffset, byte[] messageData) {
 		char[] cs = new char[messageDataLength];
 		int i = 0;
 		for (int i_6_ = 0; i_6_ < messageDataLength; i_6_++) {
@@ -587,8 +552,7 @@ public final class Utils {
 		byte[] is = new byte[i_0_];
 		for (int i_1_ = 0; (i_1_ ^ 0xffffffff) > (i_0_ ^ 0xffffffff); i_1_++) {
 			int i_2_ = message.charAt(i_1_);
-			if (((i_2_ ^ 0xffffffff) >= -1 || i_2_ >= 128)
-					&& (i_2_ < 160 || i_2_ > 255)) {
+			if (((i_2_ ^ 0xffffffff) >= -1 || i_2_ >= 128) && (i_2_ < 160 || i_2_ > 255)) {
 				if ((i_2_ ^ 0xffffffff) != -8365) {
 					if ((i_2_ ^ 0xffffffff) == -8219)
 						is[i_1_] = (byte) -126;
@@ -665,8 +629,8 @@ public final class Utils {
 	public static char method2782(byte value) {
 		int byteChar = 0xff & value;
 		if (byteChar == 0)
-			throw new IllegalArgumentException("Non cp1252 character 0x"
-					+ Integer.toString(byteChar, 16) + " provided");
+			throw new IllegalArgumentException(
+					"Non cp1252 character 0x" + Integer.toString(byteChar, 16) + " provided");
 		if ((byteChar ^ 0xffffffff) <= -129 && byteChar < 160) {
 			int i_4_ = aCharArray6385[-128 + byteChar];
 			if ((i_4_ ^ 0xffffffff) == -1)
@@ -754,91 +718,64 @@ public final class Utils {
 		return -1;
 	}
 
-	public static byte[] completeQuickMessage(Player player, int fileId,
-			byte[] data) {
+	public static byte[] completeQuickMessage(Player player, int fileId, byte[] data) {
 		if (fileId == 1)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.AGILITY) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.AGILITY) };
 		else if (fileId == 8)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.ATTACK) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.ATTACK) };
 		else if (fileId == 13)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.CONSTRUCTION) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.CONSTRUCTION) };
 		else if (fileId == 16)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.COOKING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.COOKING) };
 		else if (fileId == 23)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.CRAFTING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.CRAFTING) };
 		else if (fileId == 30)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.DEFENCE) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.DEFENCE) };
 		else if (fileId == 34)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.FARMING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.FARMING) };
 		else if (fileId == 41)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.FIREMAKING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.FIREMAKING) };
 		else if (fileId == 47)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.FISHING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.FISHING) };
 		else if (fileId == 55)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.FLETCHING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.FLETCHING) };
 		else if (fileId == 62)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.HERBLORE) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.HERBLORE) };
 		else if (fileId == 70)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.HITPOINTS) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.HITPOINTS) };
 		else if (fileId == 74)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.HUNTER) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.HUNTER) };
 		else if (fileId == 135)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.MAGIC) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.MAGIC) };
 		else if (fileId == 127)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.MINING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.MINING) };
 		else if (fileId == 120)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.PRAYER) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.PRAYER) };
 		else if (fileId == 116)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.RANGE) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.RANGE) };
 		else if (fileId == 111)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.RUNECRAFTING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.RUNECRAFTING) };
 		else if (fileId == 103)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.SLAYER) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.SLAYER) };
 		else if (fileId == 96)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.SMITHING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.SMITHING) };
 		else if (fileId == 92)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.STRENGTH) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.STRENGTH) };
 		else if (fileId == 85)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.SUMMONING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.SUMMONING) };
 		else if (fileId == 79)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.THIEVING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.THIEVING) };
 		else if (fileId == 142)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.WOODCUTTING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.WOODCUTTING) };
 		else if (fileId == 990)
-			data = new byte[] { (byte) player.getSkills().getLevelForXp(
-					Skills.DUNGEONEERING) };
+			data = new byte[] { (byte) player.getSkills().getLevelForXp(Skills.DUNGEONEERING) };
 //		else if (fileId == 611) {
 //			int value = player.getStealingCreationPoints();
 //			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
 //					(byte) (value >> 8), (byte) value };
-		 else if (fileId == 965) {
+		else if (fileId == 965) {
 			int value = player.getHitpoints();
-			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
-					(byte) (value >> 8), (byte) value };
+			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16), (byte) (value >> 8), (byte) value };
 //		} else if (fileId == 1108) {
 //			int value = player.getDominionTower().getKilledBossesCount();
 //			data = new byte[] { (byte) (value >> 24), (byte) (value >> 16),
@@ -862,8 +799,7 @@ public final class Utils {
 		}
 
 		else if (GameConstants.DEBUG)
-			Logger.log("Utils", "qc: " + fileId + ", "
-					+ (data == null ? 0 : data.length));
+			Logger.log("Utils", "qc: " + fileId + ", " + (data == null ? 0 : data.length));
 		return data;
 	}
 
@@ -885,8 +821,7 @@ public final class Utils {
 			}
 			if (String.valueOf(message.charAt(i)).contains(":"))
 				exception = true;
-			else if (String.valueOf(message.charAt(i)).contains(".")
-					|| String.valueOf(message.charAt(i)).contains("!")
+			else if (String.valueOf(message.charAt(i)).contains(".") || String.valueOf(message.charAt(i)).contains("!")
 					|| String.valueOf(message.charAt(i)).contains("?"))
 				wasSpace = true;
 		}
@@ -895,8 +830,7 @@ public final class Utils {
 
 	public static String getFormatedDate() {
 		Calendar c = Calendar.getInstance();
-		return "[" + ((c.get(Calendar.MONTH)) + 1) + "/" + c.get(Calendar.DATE)
-				+ "/" + c.get(Calendar.YEAR) + "]";
+		return "[" + ((c.get(Calendar.MONTH)) + 1) + "/" + c.get(Calendar.DATE) + "/" + c.get(Calendar.YEAR) + "]";
 	}
 
 	private Utils() {
@@ -909,20 +843,16 @@ public final class Utils {
 		return sdf.format(cal.getTime());
 	}
 
-	public static boolean colides(int x1, int y1, int size1, int x2, int y2,
-			int size2) {
+	public static boolean colides(int x1, int y1, int size1, int x2, int y2, int size2) {
 		int distanceX = x1 - x2;
 		int distanceY = y1 - y2;
-		return distanceX < size2 && distanceX > -size1 && distanceY < size2
-				&& distanceY > -size1;
+		return distanceX < size2 && distanceX > -size1 && distanceY < size2 && distanceY > -size1;
 	}
 
-	public static boolean isOnRange(int x1, int y1, int size1, int x2, int y2,
-			int size2, int maxDistance) {
+	public static boolean isOnRange(int x1, int y1, int size1, int x2, int y2, int size2, int maxDistance) {
 		int distanceX = x1 - x2;
 		int distanceY = y1 - y2;
-		if (distanceX > size2 + maxDistance || distanceX < -size1 - maxDistance
-				|| distanceY > size2 + maxDistance
+		if (distanceX > size2 + maxDistance || distanceX < -size1 - maxDistance || distanceY > size2 + maxDistance
 				|| distanceY < -size1 - maxDistance)
 			return false;
 		return true;
@@ -931,56 +861,70 @@ public final class Utils {
 	/*
 	 * dont use this one
 	 */
-	public static boolean isOnRange(int x1, int y1, int x2, int y2, int sizeX,
-			int sizeY) {
+	public static boolean isOnRange(int x1, int y1, int x2, int y2, int sizeX, int sizeY) {
 		int distanceX = x1 - x2;
 		int distanceY = y1 - y2;
-		if (distanceX > sizeX || distanceX < -1 || distanceY > sizeY
-				|| distanceY < -1)
+		if (distanceX > sizeX || distanceX < -1 || distanceY > sizeY || distanceY < -1)
 			return false;
 		return true;
 	}
 
-		/**
+	/**
 	 * Gets all of the classes in a directory
+	 * 
 	 * @param directory The directory to iterate through
 	 * @return The list of classes
 	 */
 	public static ObjectList<Object> getClassesInDirectory(String directory) {
 		ObjectList<Object> classes = new ObjectArrayList<>();
-		for(File file : new File("./bin/" + directory.replace(".", "/")).listFiles()) {
-			if(file.getName().contains("$")) {
+		for (File file : new File("./bin/" + directory.replace(".", "/")).listFiles()) {
+			if (file.getName().contains("$")) {
 				continue;
 			}
 			try {
-				Object objectEvent = (Class.forName(directory + "." + file.getName().replace(".class", "")).newInstance());
+				Object objectEvent = (Class.forName(directory + "." + file.getName().replace(".class", ""))
+						.newInstance());
 				classes.add(objectEvent);
-			} catch(InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-				//e.printStackTrace();
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+				// e.printStackTrace();
 			}
 		}
 		return classes;
 	}
 
 	/**
-	 * Returns a pseudo-random {@code int} value between inclusive {@code min} and inclusive {@code max}.
+	 * Returns a pseudo-random {@code int} value between inclusive {@code min} and
+	 * inclusive {@code max}.
+	 * 
 	 * @param min The minimum inclusive number.
 	 * @param max The maximum inclusive number.
 	 * @return The pseudo-random {@code int}.
-	 * @throws IllegalArgumentException If {@code max - min + 1} is less than {@code 0}.
+	 * @throws IllegalArgumentException If {@code max - min + 1} is less than
+	 *                                  {@code 0}.
 	 */
 	public static int inclusive(int min, int max) {
-		if(min == max)
+		if (min == max)
 			return min;
 		return ThreadLocalRandom.current().nextInt((max - min) + 1) + min;
 	}
-	
+
 	/**
 	 * Pseudo-randomly retrieves a element from {@code list}.
+	 * 
 	 * @param list The list to retrieve an element from.
 	 * @return The element retrieved from the list.
 	 */
 	public static <T> T random(List<T> list) {
 		return list.get((int) (ThreadLocalRandom.current().nextDouble() * list.size()));
+	}
+
+	/**
+	 * Finds out if a certain event should happen, and if it should, return true;
+	 *
+	 * @param chance The chance of the event happening
+	 * @return If the event should happen
+	 */
+	public static final boolean percentageChance(int chance) {
+		return (Math.random() * 100) < chance;
 	}
 }

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import com.rs.game.player.content.ChargesManager;
 import com.rs.game.player.type.impl.AntifireDetails;
 import com.rs.utils.MutableNumber;
 import com.rs.utils.Stopwatch;

@@ -30,7 +30,7 @@ public final class ControllerManager {
 	public void startControler(Object key, Object... parameters) {
 		if (controller != null)
 			forceStop();
-		controller = (Controller) (key instanceof Controller ? key : ControlerHandler.getControler(key));
+		controller = (Controller) (key instanceof Controller ? key : ControllerHandler.getController(key));
 		if (controller == null)
 			return;
 		controller.setPlayer(player);
@@ -45,7 +45,7 @@ public final class ControllerManager {
 	public void login() {
 		if (lastController == null)
 			return;
-		controller = ControlerHandler.getControler(lastController);
+		controller = ControllerHandler.getController(lastController);
 		if (controller == null) {
 			forceStop();
 			return;

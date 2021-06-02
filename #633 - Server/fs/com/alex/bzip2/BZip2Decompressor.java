@@ -1,14 +1,14 @@
 package com.alex.bzip2;
 
-
+import lombok.Synchronized;
 
 public class BZip2Decompressor {
 
 	private static int anIntArray257[];
 	private static BZip2BlockEntry entryInstance = new BZip2BlockEntry();
 	
+	@Synchronized("entryInstance")
 	public static final void decompress(byte decompressedData[], byte packedData[], int containerSize, int blockSize) {
-		synchronized (entryInstance) {
 			entryInstance.aByteArray2224 = packedData;
 			entryInstance.anInt2209 = blockSize;
 			entryInstance.aByteArray2212 = decompressedData;
@@ -22,7 +22,6 @@ public class BZip2Decompressor {
 			entryInstance.aByteArray2224 = null;
 			entryInstance.aByteArray2212 = null;
 		}
-	}
 
 	private static final void method1785(BZip2BlockEntry entry) {
 		entry.anInt2215 = 0;

@@ -8,12 +8,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.rs.GameConstants;
 import com.rs.game.World;
-import com.rs.game.player.AccountCreation;
-import com.rs.game.player.ChatMessage;
 import com.rs.game.player.FriendsIgnores;
 import com.rs.game.player.Player;
-import com.rs.game.player.QuickChatMessage;
 import com.rs.io.OutputStream;
+import com.rs.net.AccountCreation;
+import com.rs.net.encoders.other.ChatMessage;
+import com.rs.net.encoders.other.QuickChatMessage;
 import com.rs.utils.Utils;
 
 public class FriendChatsManager {

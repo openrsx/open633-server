@@ -12,8 +12,6 @@ import com.rs.game.player.content.Pots.Pot;
 
 public abstract class Controller {
 
-	// private static final long serialVersionUID = 8384350746724116339L;
-
 	protected Player player;
 
 	public final void setPlayer(Player player) {

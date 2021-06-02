@@ -1,7 +1,8 @@
-package com.rs.game.player;
+package com.rs.game.player.content;
 
 import java.util.ArrayList;
 
+import com.rs.game.player.Player;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.utils.Utils;
 

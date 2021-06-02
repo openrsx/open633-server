@@ -15,6 +15,8 @@ import com.rs.net.ServerChannelHandler;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
 
+import lombok.SneakyThrows;
+
 public class Launcher {
 
 	public static void main(String[] args) throws Exception {
@@ -37,15 +39,12 @@ public class Launcher {
 		addCleanMemoryTask();
 	}
 
+	@SneakyThrows(Throwable.class)
 	private static void addCleanMemoryTask() {
 		CoresManager.slowExecutor.scheduleWithFixedDelay(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					cleanMemory(Runtime.getRuntime().freeMemory() < GameConstants.MIN_FREE_MEM_ALLOWED);
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
+				cleanMemory(Runtime.getRuntime().freeMemory() < GameConstants.MIN_FREE_MEM_ALLOWED);
 			}
 		}, 0, 10, TimeUnit.MINUTES);
 	}
@@ -55,10 +54,10 @@ public class Launcher {
 			ItemDefinitions.clearItemsDefinitions();
 			NPCDefinitions.clearNPCDefinitions();
 			ObjectDefinitions.clearObjectDefinitions();
-			skip: for (Region region : World.getRegions().values()) {
+			for (Region region : World.getRegions().values()) {
 				for (int regionId : MapBuilder.FORCE_LOAD_REGIONS)
 					if (regionId == region.getRegionId())
-						continue skip;
+						continue;
 				region.unloadMap();
 			}
 		}

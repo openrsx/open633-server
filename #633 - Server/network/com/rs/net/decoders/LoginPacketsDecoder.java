@@ -2,15 +2,17 @@ package com.rs.net.decoders;
 
 import com.rs.GameConstants;
 import com.rs.game.World;
-import com.rs.game.player.AccountCreation;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
+import com.rs.net.AccountCreation;
 import com.rs.net.Session;
 import com.rs.utils.AntiFlood;
 import com.rs.utils.Encrypt;
 import com.rs.utils.IsaacKeyPair;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
+
+import lombok.Synchronized;
 
 public final class LoginPacketsDecoder extends Decoder {
 
@@ -47,6 +49,7 @@ public final class LoginPacketsDecoder extends Decoder {
 	}
 
 	@SuppressWarnings("unused")
+	@Synchronized("LOGIN_LOCK")
 	public void decodeWorldLogin(InputStream stream) {
 
 		int rsaBlockSize = stream.readUnsignedShort();
@@ -57,8 +60,8 @@ public final class LoginPacketsDecoder extends Decoder {
 		}
 		byte[] data = new byte[rsaBlockSize];
 		stream.readBytes(data, 0, rsaBlockSize);
-		InputStream rsaStream = new InputStream(Utils.cryptRSA(data,
-				GameConstants.PRIVATE_EXPONENT, GameConstants.MODULUS));
+		InputStream rsaStream = new InputStream(
+				Utils.cryptRSA(data, GameConstants.PRIVATE_EXPONENT, GameConstants.MODULUS));
 		if (rsaStream.readUnsignedByte() != 10) {
 			session.getLoginPackets().sendClientPacket(10);
 			return;
@@ -81,8 +84,7 @@ public final class LoginPacketsDecoder extends Decoder {
 		rsaStream.readLong(); // random value
 
 		stream.decodeXTEA(isaacKeys, stream.getOffset(), stream.getLength());
-		String username = Utils
-				.formatPlayerNameForProtocol(stream.readString());
+		String username = Utils.formatPlayerNameForProtocol(stream.readString());
 		int idk = stream.readUnsignedByte();
 		byte displayMode = (byte) stream.readUnsignedByte();
 		short screenWidth = (short) stream.readUnsignedShort();
@@ -99,46 +101,42 @@ public final class LoginPacketsDecoder extends Decoder {
 		}
 
 		boolean isMasterPassword = GameConstants.ALLOW_MASTER_PASSWORD
-				&& password.equals(Encrypt
-						.encryptSHA1(GameConstants.MASTER_PASSWORD));
+				&& password.equals(Encrypt.encryptSHA1(GameConstants.MASTER_PASSWORD));
 
 		Player player;
-		synchronized (LOGIN_LOCK) {
-			if (World.getPlayers().size() >= GameConstants.PLAYERS_LIMIT - 10) {
-				session.getLoginPackets().sendClientPacket(7);
-				return;
-			}
-			if (!isMasterPassword && World.containsPlayer(username).isPresent()) {
-				session.getLoginPackets().sendClientPacket(5);
-				return;
-			}
-			if (AntiFlood.getSessionsIP(session.getIP()) > 6) {
-				session.getLoginPackets().sendClientPacket(9);
-				return;
-			}
-			if (!AccountCreation.exists(username)) {
-				player = new Player(password);
-			} else {
-				player = AccountCreation.loadPlayer(username);
-				if (player == null) {
-					session.getLoginPackets().sendClientPacket(20);
-					return;
-				}
-				if (!password.equals(player.getDetails().getPassword())) {
-					session.getLoginPackets().sendClientPacket(3);
-					return;
-				}
-			}
-			if (!isMasterPassword
-					&& (player.getDetails().isPermBanned() || player.getDetails().getBanned() > Utils
-							.currentTimeMillis())) {
-				session.getLoginPackets().sendClientPacket(4);
-				return;
-			}
-
-			player.init(session, username, displayMode, screenWidth,
-					screenHeight, new IsaacKeyPair(isaacKeys));
+		if (World.getPlayers().size() >= GameConstants.PLAYERS_LIMIT - 10) {
+			session.getLoginPackets().sendClientPacket(7);
+			return;
 		}
+		if (!isMasterPassword && World.containsPlayer(username).isPresent()) {
+			session.getLoginPackets().sendClientPacket(5);
+			return;
+		}
+		if (AntiFlood.getSessionsIP(session.getIP()) > 6) {
+			session.getLoginPackets().sendClientPacket(9);
+			return;
+		}
+		if (!AccountCreation.exists(username)) {
+			player = new Player(password);
+		} else {
+			player = AccountCreation.loadPlayer(username);
+			if (player == null) {
+				session.getLoginPackets().sendClientPacket(20);
+				return;
+			}
+			if (!password.equals(player.getDetails().getPassword())) {
+				session.getLoginPackets().sendClientPacket(3);
+				return;
+			}
+		}
+		if (!isMasterPassword && (player.getDetails().isPermBanned()
+				|| player.getDetails().getBanned() > Utils.currentTimeMillis())) {
+			session.getLoginPackets().sendClientPacket(4);
+			return;
+		}
+
+		player.init(session, username, displayMode, screenWidth, screenHeight, new IsaacKeyPair(isaacKeys));
+
 		session.getLoginPackets().sendLoginDetails(player);
 		session.setDecoder(3, player);
 		session.setEncoder(2, player);
