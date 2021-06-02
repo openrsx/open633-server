@@ -1103,7 +1103,8 @@ public final class WorldPacketsDecoder extends Decoder {
 				}
 			}));
 		}
-		NPCDispatcher.executeMobInteraction(player, stream, packetId == NPC_CLICK1_PACKET ? 1 :packetId ==  NPC_CLICK2_PACKET ? 2 :packetId ==  NPC_CLICK3_PACKET ? 3 : packetId == NPC_CLICK4_PACKET ? 4 : 5);
+			
+		NPCDispatcher.executeMobInteraction(player, stream, packetId == NPC_CLICK1_PACKET ? 1 :packetId ==  NPC_CLICK2_PACKET ? 2 :packetId ==  NPC_CLICK3_PACKET ? 3 : packetId == NPC_CLICK4_PACKET ? 4 : -1);
 	}
 
 	@SuppressWarnings("unused")

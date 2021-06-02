@@ -333,7 +333,7 @@ public class WorldPacketsEncoder extends Encoder {
 		int maskData = 0;
 		if (p != null) {
 			maskData |= 0x1;
-			if (p.hasDisplayName())
+			if (p.getDisplayName() != null)
 				maskData |= 0x2;
 		}
 		OutputStream stream = new OutputStream();
@@ -343,7 +343,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeByte(maskData);
 		if ((maskData & 0x1) != 0) {
 			stream.writeString(Utils.formatPlayerNameForDisplay(p.getUsername()));
-			if (p.hasDisplayName())
+			if (p.getDisplayName() != null)
 				stream.writeString(p.getDisplayName());
 		}
 		stream.writeString(text);

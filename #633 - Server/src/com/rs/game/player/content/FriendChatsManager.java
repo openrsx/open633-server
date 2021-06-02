@@ -346,7 +346,7 @@ public class FriendChatsManager {
 						player.getPackets().sendGameMessage("The channel you tried to join does not exist.");
 						return;
 					}
-					owner.setDisplayName(formatedName);
+//					owner.setDisplayName(formatedName);
 				}
 				FriendsIgnores settings = owner.getFriendsIgnores();
 				if (!settings.hasFriendChat()) {

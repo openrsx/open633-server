@@ -95,9 +95,6 @@ public class Player extends Entity {
 	private transient List<Byte> switchItemCache;
 	private transient boolean disableEquip;
 	private transient boolean invulnerable;
-
-	// saving stuff
-	private String displayName;
 	
 	/**
 	 * Personal details & information stored for a Player
@@ -910,13 +907,9 @@ public class Player extends Entity {
 	}
 	
 	public String getDisplayName() {
-		return hasDisplayName() ? getDisplayName() : Utils.formatPlayerNameForDisplay(username);
+		return Utils.formatPlayerNameForDisplay(username);
 	}
 
-	public boolean hasDisplayName() {
-		return displayName != null;
-	}
-	
 	/**
 	 * Sends a delayed task for this player.
 	 */
