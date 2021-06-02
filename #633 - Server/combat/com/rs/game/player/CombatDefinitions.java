@@ -20,6 +20,9 @@ public final class CombatDefinitions {
 	public static final int ABSORB_MELEE = 11, ABSORB_RANGE = 13, ABSORB_MAGIC = 12;
 
 	public static final int SHARED = -1;
+	public static final String[] BONUS_LABELS = { "Stab", "Slash", "Crush", "Magic", "Range", "Stab", "Slash", "Crush",
+			"Magic", "Range", "Summoning", "Absorb Melee", "Absorb Magic", "Absorb Ranged", "Strength", "Ranged Str",
+			"Prayer", "Magic Damage" };
 	private transient Player player;
 	private transient boolean usingSpecialAttack;
 	private transient int[] bonuses;
