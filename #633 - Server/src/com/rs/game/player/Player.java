@@ -27,7 +27,8 @@ import com.rs.game.minigames.duel.DuelRules;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.actions.ActionManager;
-import com.rs.game.player.content.EmotesManager;
+import com.rs.game.player.content.Emotes;
+import com.rs.game.player.content.Emotes.Emote;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.MusicsManager;
 import com.rs.game.player.content.Notes;
@@ -84,7 +85,7 @@ public class Player extends Entity {
 	private transient IsaacKeyPair isaacKeyPair;
 	private transient Pet pet;
 	private transient VarsManager varsManager;
-	private transient CoordsEvent coordsEvent;
+	private transient CoordsEvent coordsEvent; 
 	
 	// used for packets logic
 	private transient ConcurrentLinkedQueue<LogicPacket> logicPackets;
@@ -124,7 +125,6 @@ public class Player extends Entity {
 	private Bank bank;
 	private ControllerManager controllerManager;
 	private MusicsManager musicsManager;
-	private EmotesManager emotesManager;
 	private Notes notes;
 	private FriendsIgnores friendsIgnores;
 	private Familiar familiar;
@@ -143,7 +143,6 @@ public class Player extends Entity {
 		bank = new Bank();
 		controllerManager = new ControllerManager();
 		musicsManager = new MusicsManager();
-		emotesManager = new EmotesManager();
 		notes = new Notes();
 		friendsIgnores = new FriendsIgnores();
 		petManager = new PetManager();
@@ -185,7 +184,6 @@ public class Player extends Entity {
 		bank.setPlayer(this);
 		controllerManager.setPlayer(this);
 		musicsManager.setPlayer(this);
-		emotesManager.setPlayer(this);
 		notes.setPlayer(this);
 		friendsIgnores.setPlayer(this);
 		getDetails().getCharges().setPlayer(this);
@@ -446,7 +444,6 @@ public class Player extends Entity {
 		getPrayer().refreshPrayerPoints();
 		getPackets().sendGameBarStages();
 		getMusicsManager().init();
-		getEmotesManager().init();
 		getNotes().init();
 		if (getFamiliar() != null)
 			getFamiliar().respawnFamiliar(this);
@@ -514,11 +511,11 @@ public class Player extends Entity {
 							"You can't log out until 10 seconds after the end of combat.");
 			return;
 		}
-		if (getEmotesManager().getNextEmoteEnd() >= currentTime) {
-			getPackets().sendGameMessage(
-					"You can't log out while performing an emote.");
-			return;
-		}
+//		if (getEmotesManager().getNextEmoteEnd() >= currentTime) {
+//			getPackets().sendGameMessage(
+//					"You can't log out while performing an emote.");
+//			return;
+//		}
 		if (isLocked()) {
 			getPackets().sendGameMessage(
 					"You can't log out while performing an action.");
@@ -549,7 +546,7 @@ public class Player extends Entity {
 		stopAll(false, true,
 				!(getActionManager().getAction() instanceof PlayerCombat));
 		if (isDead() || (getCombatDefinitions().isUnderCombat() && tryCount < 6) || isLocked()
-				|| getEmotesManager().isDoingEmote()) {
+		/* || getEmotesManager().isDoingEmote() */) {
 			CoresManager.slowExecutor.schedule(new Runnable() {
 				@Override
 				public void run() {

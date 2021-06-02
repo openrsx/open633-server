@@ -189,6 +189,7 @@ public final class PlayerDetails {
 		watchMap.put("FOOD", new Stopwatch());
 		watchMap.put("DRINKS", new Stopwatch());
 		watchMap.put("TOLERANCE", new Stopwatch());
+		watchMap.put("EMOTE", new Stopwatch());
 	}
 
 	private byte skullId;

@@ -25,10 +25,10 @@ public class WorldMapInterface implements RSInterface {
 					return;
 				}
 				long currentTime = Utils.currentTimeMillis();
-				if (player.getEmotesManager().getNextEmoteEnd() >= currentTime) {
-					player.getPackets().sendGameMessage("You can't rest while perfoming an emote.");
-					return;
-				}
+//				if (player.getEmotesManager().getNextEmoteEnd() >= currentTime) {
+//					player.getPackets().sendGameMessage("You can't rest while perfoming an emote.");
+//					return;
+//				}
 				if (player.getLockDelay() >= currentTime) {
 					player.getPackets().sendGameMessage("You can't rest while perfoming an action.");
 					return;

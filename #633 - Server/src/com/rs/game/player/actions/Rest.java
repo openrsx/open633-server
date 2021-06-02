@@ -57,8 +57,6 @@ public class Rest extends Action {
 		player.setResting((byte) 0);
 		player.sendRunButtonConfig();
 		player.setNextAnimation(new Animation(REST_DEFS[index][2]));
-		player.getEmotesManager().setNextEmoteEnd();
 		player.getAppearance().setRenderEmote((short) -1);
 	}
-
 }

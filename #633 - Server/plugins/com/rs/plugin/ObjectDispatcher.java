@@ -134,7 +134,9 @@ public final class ObjectDispatcher {
 	public static void handleOption(final Player player, InputStream stream, int option) {
 		if (!player.isStarted() || !player.isClientLoadedMapRegion() || player.isDead())
 			return;
-		if (player.isLocked() || player.getEmotesManager().getNextEmoteEnd() >= Utils.currentTimeMillis())
+		if (player.isLocked()/*
+								 * || player.getEmotesManager().getNextEmoteEnd() >= Utils.currentTimeMillis()
+								 */)
 			return;
 
 		/**

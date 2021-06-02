@@ -74,12 +74,7 @@ public final class GameConstants {
 	 * World settings
 	 */
 	public static final int WORLD_CYCLE_TIME = 600; // the speed of world in ms
-
-	/**
-	 * Music & Emote settings
-	 */
-	public static final int AIR_GUITAR_MUSICS_COUNT = 50;
-
+	
 	/**
 	 * Memory settings
 	 */

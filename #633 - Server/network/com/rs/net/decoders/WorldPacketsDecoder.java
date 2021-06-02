@@ -313,7 +313,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
-			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
+			if (player.isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 				return;
 			final int itemId = stream.readUnsignedShort128();
 			int interfaceSlot = stream.readUnsignedShortLE();
@@ -550,7 +550,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
-			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
+			if (player.isLocked() /* || player.getEmotesManager().isDoingEmote() */)
 				return;
 			@SuppressWarnings("unused")
 			int itemId = stream.readUnsignedShortLE128();
@@ -794,7 +794,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
-			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
+			if (player.isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 				return;
 			final WorldTile tile = new WorldTile(x, y, player.getPlane());
 			int regionId = tile.getRegionId();
@@ -837,7 +837,8 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
-			if (player.isLocked() || player.getEmotesManager().isDoingEmote()
+			if (player
+					.isLocked() /* || player.getEmotesManager().isDoingEmote() */
 					|| !player.getControllerManager().canPlayerOption1(p2))
 				return;
 			if (!player.isCanPvp())
@@ -1011,7 +1012,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					|| !player.getMapRegionsIds().contains(npc.getRegionId())
 					|| !npc.getDefinitions().hasAttackOption())
 				return;
-			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
+			if (player.isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 				return;
 			if (!player.getControllerManager().canAttack(npc))
 				return;
