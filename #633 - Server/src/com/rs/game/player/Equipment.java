@@ -218,7 +218,7 @@ public final class Equipment {
 		if (ammount == -1) {
 			items.remove(SLOT_WEAPON, new Item(ammoId, 1));
 			refresh(SLOT_WEAPON);
-			player.getAppearence().generateAppearenceData();
+			player.getAppearance().generateAppearenceData();
 		} else {
 			items.remove(SLOT_ARROWS, new Item(ammoId, ammount));
 			refresh(SLOT_ARROWS);

@@ -114,7 +114,7 @@ public class InterfaceManager {
 		player.getPrayer().unlockPrayerBookButtons();
 		if (player.getFamiliar() != null && player.isRunning())
 			player.getFamiliar().unlock();
-		player.getControlerManager().sendInterfaces();
+		player.getControllerManager().sendInterfaces();
 	}
 
 	public boolean containsReplacedChatBoxInter() {

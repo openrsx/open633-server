@@ -146,7 +146,7 @@ public final class RSInterfaceDispatcher {
 			return;
 		player.getEquipment().getItems().set(slotId, null);
 		player.getEquipment().refresh(slotId);
-		player.getAppearence().generateAppearenceData();
+		player.getAppearance().generateAppearenceData();
 		player.getPackets().sendGlobalConfig(779, player.getEquipment().getWeaponRenderEmote());
 //		if (Runecrafting.isTiara(item.getId()))
 //			player.getVarsManager().sendVar(491, 0);
@@ -160,7 +160,7 @@ public final class RSInterfaceDispatcher {
 		Item item = player.getInventory().getItem(slotId);
 		if (item == null || item.getId() != itemId)
 			return false;
-		if (item.getDefinitions().isNoted() || !item.getDefinitions().isWearItem(player.getAppearence().isMale())) {
+		if (item.getDefinitions().isNoted() || !item.getDefinitions().isWearItem(player.getAppearance().isMale())) {
 			player.getPackets().sendGameMessage("You can't wear that.");
 			return true;
 		}
@@ -199,7 +199,7 @@ public final class RSInterfaceDispatcher {
 		}
 		if (!hasRequiriments)
 			return true;
-		if (!player.getControlerManager().canEquip(targetSlot, itemId))
+		if (!player.getControllerManager().canEquip(targetSlot, itemId))
 			return false;
 		player.stopAll(false, false);
 		player.getInventory().deleteItem(slotId, item);
@@ -245,7 +245,7 @@ public final class RSInterfaceDispatcher {
 		Item item2 = new Item(itemId, oldAmt + item.getAmount());
 		player.getEquipment().getItems().set(targetSlot, item2);
 		player.getEquipment().refresh(targetSlot, targetSlot == 3 ? 5 : targetSlot == 3 ? 0 : 3);
-		player.getAppearence().generateAppearenceData();
+		player.getAppearance().generateAppearenceData();
 		player.getPackets().sendSound(2240, 0, 1);
 		if (targetSlot == 3)
 			player.getCombatDefinitions().decreaseSpecialAttack(0);
@@ -261,7 +261,7 @@ public final class RSInterfaceDispatcher {
 		if (item == null || item.getId() != itemId)
 			return false;
 		if (item.getDefinitions().isNoted()
-				|| !item.getDefinitions().isWearItem(player.getAppearence().isMale()) && itemId != 4084) {
+				|| !item.getDefinitions().isWearItem(player.getAppearance().isMale()) && itemId != 4084) {
 			player.getPackets().sendGameMessage("You can't wear that.");
 			return false;
 		}
@@ -301,7 +301,7 @@ public final class RSInterfaceDispatcher {
 		}
 		if (!hasRequiriments)
 			return false;
-		if (!player.getControlerManager().canEquip(targetSlot, itemId))
+		if (!player.getControllerManager().canEquip(targetSlot, itemId))
 			return false;
 		player.getInventory().getItems().remove(slotId, item);
 		if (targetSlot == 3) {
@@ -361,7 +361,7 @@ public final class RSInterfaceDispatcher {
 		}
 		player.getInventory().refreshItems(copy);
 		if (worn) {
-			player.getAppearence().generateAppearenceData();
+			player.getAppearance().generateAppearenceData();
 			player.getPackets().sendSound(2240, 0, 1);
 		}
 	}
@@ -471,13 +471,17 @@ public final class RSInterfaceDispatcher {
 		for (Object[] element : info) {
 			int bonus = player.getCombatDefinitions().getBonuses()[(int) element[1]];
 			String sign = bonus > 0 ? "+" : "";
-			player.getPackets().sendIComponentText(interfaceId, (int) element[0] -1, element[2] + ": " + sign + bonus);
+			player.getPackets().sendIComponentText(interfaceId, (int) element[0] - 1, element[2] + ": " + sign + bonus);
 		}
 	}
 
-	private static final Object[][] info = new Object[][] { { 31, 0, "Stab" }, { 32, 1, "Slash" }, { 33, 2, "Crush" }, { 34, 3, "Magic" }, { 35, 4, "Range" }, { 36, 5, "Stab" }, { 37, 6, "Slash" }, { 38, 7, "Crush" }, { 39, 8, "Magic" }, { 40, 9, "Range" }, { 41, 10, "Summoning" }, { 42, CombatDefinitions.ABSORB_MELEE, "Absorb Melee" }, { 43, CombatDefinitions.ABSORB_MAGIC, "Absorb Magic" }, { 44, CombatDefinitions.ABSORB_RANGE, "Absorb Range" }, { 45, 14, "Strength" }, { 46, 15, "Ranged Str" }, { 47, 16, "Prayer" }, { 48, 17, "Magic Damage" } };
-	
-
+	private static final Object[][] info = new Object[][] { { 31, 0, "Stab" }, { 32, 1, "Slash" }, { 33, 2, "Crush" },
+			{ 34, 3, "Magic" }, { 35, 4, "Range" }, { 36, 5, "Stab" }, { 37, 6, "Slash" }, { 38, 7, "Crush" },
+			{ 39, 8, "Magic" }, { 40, 9, "Range" }, { 41, 10, "Summoning" },
+			{ 42, CombatDefinitions.ABSORB_MELEE, "Absorb Melee" },
+			{ 43, CombatDefinitions.ABSORB_MAGIC, "Absorb Magic" },
+			{ 44, CombatDefinitions.ABSORB_RANGE, "Absorb Range" }, { 45, 14, "Strength" }, { 46, 15, "Ranged Str" },
+			{ 47, 16, "Prayer" }, { 48, 17, "Magic Damage" } };
 
 	public static void openSkillGuide(Player player) {
 		player.getInterfaceManager().setScreenInterface(317, 1218);
@@ -520,7 +524,7 @@ public final class RSInterfaceDispatcher {
 			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
 				return;
 			player.stopAll();
-			if (!player.getControlerManager().canUseItemOnItem(itemUsed, usedWith))
+			if (!player.getControllerManager().canUseItemOnItem(itemUsed, usedWith))
 				return;
 
 		}

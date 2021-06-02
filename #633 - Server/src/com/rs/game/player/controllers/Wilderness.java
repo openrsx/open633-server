@@ -110,7 +110,7 @@ public class Wilderness extends Controller {
 			player.getPackets().sendGameMessage("A mysterious force prevents you from teleporting.");
 			return false;
 		}
-		if (player.getTeleBlockDelay() > Utils.currentTimeMillis()) {
+		if (player.getDetails().getTeleBlockDelay().get() > Utils.currentTimeMillis()) {
 			player.getPackets().sendGameMessage("A mysterious force prevents you from teleporting.");
 			return false;
 		}
@@ -124,7 +124,7 @@ public class Wilderness extends Controller {
 			player.getPackets().sendGameMessage("A mysterious force prevents you from teleporting.");
 			return false;
 		}
-		if (player.getTeleBlockDelay() > Utils.currentTimeMillis()) {
+		if (player.getDetails().getTeleBlockDelay().get() > Utils.currentTimeMillis()) {
 			player.getPackets().sendGameMessage("A mysterious force prevents you from teleporting.");
 			return false;
 		}
@@ -133,7 +133,7 @@ public class Wilderness extends Controller {
 
 	@Override
 	public boolean processObjectTeleport(WorldTile toTile) {
-		if (player.getTeleBlockDelay() > Utils.currentTimeMillis()) {
+		if (player.getDetails().getTeleBlockDelay().get() > Utils.currentTimeMillis()) {
 			player.getPackets().sendGameMessage("A mysterious force prevents you from teleporting.");
 			return false;
 		}
@@ -248,7 +248,7 @@ public class Wilderness extends Controller {
 			showingSkull = true;
 			player.setCanPvp(true);
 			showSkull();
-			player.getAppearence().generateAppearenceData();
+			player.getAppearance().generateAppearenceData();
 		} else if (showingSkull && (isAtWildSafe || !isAtWild)) {
 			removeIcon();
 		} else if (!isAtWildSafe && !isAtWild) {
@@ -259,7 +259,7 @@ public class Wilderness extends Controller {
 			removeIcon();
 			player.setCanPvp(false);
 			removeControler();
-			player.getControlerManager().startControler("Kalaboss");
+			player.getControllerManager().startControler("Kalaboss");
 		}
 	}
 
@@ -268,7 +268,7 @@ public class Wilderness extends Controller {
 			showingSkull = false;
 			player.setCanPvp(false);
 			player.getInterfaceManager().removeOverlay(false);
-			player.getAppearence().generateAppearenceData();
+			player.getAppearance().generateAppearenceData();
 			player.getEquipment().refresh(null);
 		}
 	}

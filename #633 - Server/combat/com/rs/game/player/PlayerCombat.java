@@ -82,7 +82,7 @@ public class PlayerCombat extends Action {
 		if (!Utils.isOnRange(player.getX(), player.getY(), size, target.getX(), target.getY(), target.getSize(),
 				maxDistance))
 			return 0;
-		if (!player.getControlerManager().keepCombating(target))
+		if (!player.getControllerManager().keepCombating(target))
 			return -1;
 		addAttackedByDelay(player);
 		if (spellId > 0) {
@@ -147,7 +147,7 @@ public class PlayerCombat extends Action {
 						Player p2 = World.getPlayers().get(playerIndex);
 						if (p2 == null || p2 == player || p2 == target || p2.isDead() || !p2.isStarted()
 								|| p2.hasFinished() || !p2.isCanPvp() || !p2.isMultiArea()
-								|| !p2.withinDistance(target, maxDistance) || !player.getControlerManager().canHit(p2))
+								|| !p2.withinDistance(target, maxDistance) || !player.getControllerManager().canHit(p2))
 							continue;
 						possibleTargets.add(p2);
 						if (possibleTargets.size() == maxAmtTargets)
@@ -161,7 +161,7 @@ public class PlayerCombat extends Action {
 						NPC n = World.getNPCs().get(npcIndex);
 						if (n == null || n == target || n == player.getFamiliar() || n.isDead() || n.hasFinished()
 								|| !n.isMultiArea() || !n.withinDistance(target, maxDistance)
-								|| !n.getDefinitions().hasAttackOption() || !player.getControlerManager().canHit(n))
+								|| !n.getDefinitions().hasAttackOption() || !player.getControllerManager().canHit(n))
 							continue;
 						possibleTargets.add(n);
 						if (possibleTargets.size() == maxAmtTargets)
@@ -428,7 +428,7 @@ public class PlayerCombat extends Action {
 				World.sendProjectile(player, target, 2735, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 86: // teleblock
-				if (target instanceof Player && ((Player) target).getTeleBlockDelay() <= Utils.currentTimeMillis()) {
+				if (target instanceof Player && ((Player) target).getDetails().getTeleBlockDelay().get() <= Utils.currentTimeMillis()) {
 					player.setNextGraphics(new Graphics(1841));
 					player.setNextAnimation(new Animation(10503));
 					mage_hit_gfx = 1843;
@@ -1315,7 +1315,7 @@ public class PlayerCombat extends Action {
 						player.setNextGraphics(new Graphics(2140));
 						player.getEquipment().getItems().set(3, null);
 						player.getEquipment().refresh((byte) 3);
-						player.getAppearence().generateAppearenceData();
+						player.getAppearance().generateAppearenceData();
 						player.applyHit(new Hit(player, Utils.getRandom(150) + 10, HitLook.REGULAR_DAMAGE));
 						player.setNextAnimation(new Animation(12175));
 						return combatDelay;
@@ -1794,7 +1794,7 @@ public class PlayerCombat extends Action {
 				if (target instanceof Player) {
 					Player p2 = (Player) target;
 					if (hit1.getDamage() > 0)
-						p2.setPrayerDelay(5000);// 5 seconds
+						p2.getDetails().getPrayerDelay().set(5000);// 5 seconds
 				}
 				delayNormalHit(weaponId, attackStyle, hit1);
 				soundId = 2540;
@@ -2646,7 +2646,7 @@ public class PlayerCombat extends Action {
 								if (block_tele) {
 									if (target instanceof Player) {
 										Player targetPlayer = (Player) target;
-										targetPlayer.setTeleBlockDelay((targetPlayer.getPrayer().usingPrayer(0, 17)
+										targetPlayer.getDetails().getTeleBlockDelay().set((targetPlayer.getPrayer().usingPrayer(0, 17)
 												|| targetPlayer.getPrayer().usingPrayer(1, 7) ? 100000 : 300000));
 										targetPlayer.getPackets().sendGameMessage("You have been teleblocked.", true);
 									}
@@ -3876,13 +3876,13 @@ public class PlayerCombat extends Action {
 
 						if (p2.getPrayer().usingPrayer(1, 15)) {
 							if (Utils.getRandom(10) == 0) {
-								if (player.getRunEnergy() <= 0) {
+								if (player.getDetails().getRunEnergy() <= 0) {
 									p2.getPackets().sendGameMessage(
 											"Your opponent has been weakened so much that your leech curse has no effect.",
 											true);
 								} else {
-									p2.setRunEnergy(p2.getRunEnergy() > 90 ? 100 : p2.getRunEnergy() + 10);
-									player.setRunEnergy(p2.getRunEnergy() > 10 ? player.getRunEnergy() - 10 : 0);
+									p2.setRunEnergy(p2.getDetails().getRunEnergy() > 90 ? 100 : p2.getDetails().getRunEnergy() + 10);
+									player.setRunEnergy(p2.getDetails().getRunEnergy() > 10 ? player.getDetails().getRunEnergy() - 10 : 0);
 								}
 								p2.setNextAnimation(new Animation(12575));
 								p2.getPrayer().setBoostedLeech(true);

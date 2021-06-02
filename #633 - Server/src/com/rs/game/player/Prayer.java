@@ -453,7 +453,7 @@ public class Prayer {
 		else
 			closePrayers(closePrayers[0][7], closePrayers[0][8]);
 		recalculatePrayer();
-		player.getAppearence().generateAppearenceData();
+		player.getAppearance().generateAppearenceData();
 	}
 
 	public void switchPrayer(int prayerId) {
@@ -483,7 +483,7 @@ public class Prayer {
 							+ " to use this prayer.");
 			return false;
 		}
-		if (player.getPrayerDelay() >= Utils.currentTimeMillis()) {
+		if (player.getDetails().getPrayerDelay().get() >= Utils.currentTimeMillis()) {
 			if (ancientcurses && prayerId >= 6 && prayerId <= 9
 					|| prayerId >= 16 && prayerId <= 19) {
 				player.getPackets()
@@ -508,7 +508,7 @@ public class Prayer {
 				onPrayers[getPrayerBook()][prayerId] = false;
 				closePrayers(prayerId);
 				onPrayersCount--;
-				player.getAppearence().generateAppearenceData();
+				player.getAppearance().generateAppearenceData();
 				player.getPackets().sendSound(2663, 0, 1);
 				return true;
 			}
@@ -666,7 +666,7 @@ public class Prayer {
 			resetDrainPrayer(prayerId);
 			onPrayersCount++;
 			if (needAppearenceGenerate)
-				player.getAppearence().generateAppearenceData();
+				player.getAppearance().generateAppearenceData();
 		} else {
 			quickPrayers[getPrayerBook()][prayerId] = true;
 		}
@@ -728,7 +728,7 @@ public class Prayer {
 		onPrayersCount = 0;
 		player.getPackets().sendGlobalConfig(182, 0);
 		player.getVarsManager().sendVar(ancientcurses ? 1582 : 1395, 0);
-		player.getAppearence().generateAppearenceData();
+		player.getAppearance().generateAppearenceData();
 		resetStatAdjustments();
 	}
 

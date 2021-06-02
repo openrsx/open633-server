@@ -15,23 +15,18 @@ import com.rs.cores.CoresManager;
 import com.rs.cores.WorldThread;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.Graphics;
 import com.rs.game.Hit;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
-import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.minigames.duel.DuelRules;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Notes;
 import com.rs.game.player.content.pet.PetManager;
-import com.rs.game.player.controllers.ControlerManager;
-import com.rs.game.player.controllers.GodWars;
-import com.rs.game.player.controllers.JailControler;
-import com.rs.game.player.controllers.Wilderness;
+import com.rs.game.player.controllers.ControllerManager;
 import com.rs.game.player.type.CombatEffect;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
@@ -109,14 +104,14 @@ public class Player extends Entity {
 	 */
 	private PlayerDetails details;
 	
-	private Appearance appearence;
+	private Appearance appearance;
 	private Inventory inventory;
 	private Equipment equipment;
 	private Skills skills;
 	private CombatDefinitions combatDefinitions;
 	private Prayer prayer;
 	private Bank bank;
-	private ControlerManager controlerManager;
+	private ControllerManager controllerManager;
 	private MusicsManager musicsManager;
 	private EmotesManager emotesManager;
 	private Notes notes;
@@ -128,14 +123,14 @@ public class Player extends Entity {
 	public Player(String password) {
 		super(Settings.START_PLAYER_LOCATION);
 		setHitpoints(100);
-		appearence = new Appearance();
+		appearance = new Appearance();
 		inventory = new Inventory();
 		equipment = new Equipment();
 		skills = new Skills();
 		combatDefinitions = new CombatDefinitions();
 		prayer = new Prayer();
 		bank = new Bank();
-		controlerManager = new ControlerManager();
+		controllerManager = new ControllerManager();
 		musicsManager = new MusicsManager();
 		emotesManager = new EmotesManager();
 		notes = new Notes();
@@ -170,14 +165,14 @@ public class Player extends Entity {
 		trade = new Trade(this);
 		varsManager = new VarsManager(this);
 		// loads player on saved instances
-		appearence.setPlayer(this);
+		appearance.setPlayer(this);
 		inventory.setPlayer(this);
 		equipment.setPlayer(this);
 		skills.setPlayer(this);
 		combatDefinitions.setPlayer(this);
 		prayer.setPlayer(this);
 		bank.setPlayer(this);
-		controlerManager.setPlayer(this);
+		controllerManager.setPlayer(this);
 		musicsManager.setPlayer(this);
 		emotesManager.setPlayer(this);
 		notes.setPlayer(this);
@@ -241,7 +236,6 @@ public class Player extends Entity {
 		}
 	}
 
-	// now that we inited we can start showing game
 	public void start() {
 		Logger.globalLog(username, session.getIP(), new String(
 				" has logged in."));
@@ -264,7 +258,6 @@ public class Player extends Entity {
 		stopAll(stopWalk, stopInterface, true);
 	}
 
-	// as walk done clientsided
 	public void stopAll(boolean stopWalk, boolean stopInterfaces,
 			boolean stopActions) {
 		routeEvent = null;
@@ -292,7 +285,7 @@ public class Player extends Entity {
 		getDetails().setPoisonImmune(0);
 		getDetails().setFireImmune(0);
 		getDetails().setRunEnergy((byte) 100);
-		appearence.generateAppearenceData();
+		appearance.generateAppearenceData();
 	}
 
 	@Override
@@ -360,10 +353,11 @@ public class Player extends Entity {
 			routeEvent = null;
 		actionManager.process();
 		prayer.processPrayer();
-		controlerManager.process();
+		controllerManager.process();
 		getDetails().getCharges().process();
 		if (musicsManager.musicEnded())
 			musicsManager.replayMusic();
+		//TODO: Today
 //		if (hasSkull()) {
 //			skullDelay--;
 //			if (!hasSkull())
@@ -397,18 +391,6 @@ public class Player extends Entity {
 		}
 	}
 
-	public void toogleRun(boolean update) {
-		super.setRun(!getRun());
-		updateMovementType = true;
-		if (update)
-			sendRunButtonConfig();
-	}
-
-	public void setRunHidden(boolean run) {
-		super.setRun(run);
-		updateMovementType = true;
-	}
-
 	@Override
 	public void setRun(boolean run) {
 		if (run != getRun()) {
@@ -421,18 +403,6 @@ public class Player extends Entity {
 	public void sendRunButtonConfig() {
 		getVarsManager().sendVar(173,
 				resting == 1 ? 3 : resting == 2 ? 4 : getRun() ? 1 : 0);
-	}
-
-	public void restoreRunEnergy() {
-//		int restore = 0;
-//		if (getNextRunDirection() == -1 && runEnergy < 100) {
-//			restore++;
-//			if (resting != 0)
-//				restore += 1 + resting;
-//		}
-//		runEnergy = (byte) (runEnergy + restore > 100 ? 100 : runEnergy
-//				+ restore);
-//		getPackets().sendRunEnergy();
 	}
 
 	public void run() {
@@ -473,8 +443,8 @@ public class Player extends Entity {
 			getPetManager().init();
 		setRunning(true);
 		setUpdateMovementType(true);
-		getAppearence().generateAppearenceData();
-		getControlerManager().login(); // checks what to do on login after welcome
+		getAppearance().generateAppearenceData();
+		getControllerManager().login(); // checks what to do on login after welcome
 		OwnedObjectManager.linkKeys(this);
 	}
 
@@ -561,7 +531,7 @@ public class Player extends Entity {
 		// if combating doesnt stop when xlog this way ends combat
 		stopAll(false, true,
 				!(getActionManager().getAction() instanceof PlayerCombat));
-		if (isDead() || (isUnderCombat() && tryCount < 6) || isLocked()
+		if (isDead() || (getCombatDefinitions().isUnderCombat() && tryCount < 6) || isLocked()
 				|| getEmotesManager().isDoingEmote()) {
 			CoresManager.slowExecutor.schedule(new Runnable() {
 				@Override
@@ -578,11 +548,6 @@ public class Player extends Entity {
 		}
 		realFinish(false);
 	}
-
-	public boolean isUnderCombat() {
-		return getAttackedByDelay() + 10000 >= Utils.currentTimeMillis();
-
-	}
 	
 	public void realFinish(boolean shutdown) {
 		if (hasFinished())
@@ -590,7 +555,7 @@ public class Player extends Entity {
 		Logger.globalLog(username, session.getIP(), new String(
 				" has logged out."));
 		stopAll();
-		controlerManager.logout();
+		controllerManager.logout();
 		running = false;
 		friendsIgnores.sendFriendsMyStatus(false);
 		if (currentFriendChat != null)
@@ -646,10 +611,6 @@ public class Player extends Entity {
 		return session.getWorldPackets();
 	}
 
-	public byte getRunEnergy() {
-		return getDetails().getRunEnergy();
-	}
-
 	public void drainRunEnergy() {
 		setRunEnergy(getDetails().getRunEnergy() - 1);
 	}
@@ -667,11 +628,6 @@ public class Player extends Entity {
 		return resting != 0;
 	}
 
-	public void setResting(byte resting) {
-		this.resting = resting;
-		sendRunButtonConfig();
-	}
-
 	@Override
 	public double getMagePrayerMultiplier() {
 		return 0.6;
@@ -687,30 +643,11 @@ public class Player extends Entity {
 		return 0.6;
 	}
 
-	public void sendSoulSplit(final Hit hit, final Entity user) {
-		final Player target = this;
-		if (hit.getDamage() > 0)
-			World.sendProjectile(user, this, 2263, 11, 11, 20, 5, 0, 0);
-		user.heal(hit.getDamage() / 5);
-		prayer.drainPrayer(hit.getDamage() / 5);
-		World.get().submit(new Task(1) {
-			@Override
-			protected void execute() {
-				setNextGraphics(new Graphics(2264));
-				if (hit.getDamage() > 0)
-					World.sendProjectile(target, user, 2263, 11, 11, 20, 5, 0,
-							0);
-				this.cancel();
-			}
-		});
-	}
-
 	@Override
 	public void handleIngoingHit(final Hit hit) {
 		PlayerCombat.handleIncomingHit(this, hit);
 	}
-
-	//TODO: Redo Actor Death system
+	
 	@Override
 	public void sendDeath(final Entity source) {
 		World.get().submit(new PlayerDeath(this));
@@ -718,6 +655,7 @@ public class Player extends Entity {
 
 	/*
 	 * default items on death, now only used for wilderness
+	 * TODO: Fix today
 	 */
 	public void sendItemsOnDeath(Player killer, boolean dropItems) {
 //		Integer[][] slots = GraveStone.getItemSlotsKeptOnDeath(this, true,
@@ -741,7 +679,7 @@ public class Player extends Entity {
 //		Item[][] items = GraveStone.getItemsKeptOnDeath(this, slots);
 		inventory.reset();
 		equipment.reset();
-		appearence.generateAppearenceData();
+		appearance.generateAppearenceData();
 //		for (Item item : items[0])
 //			inventory.addItemDrop(item.getId(), item.getAmount(), respawnTile);
 //		if (items[1].length != 0) {
@@ -803,12 +741,12 @@ public class Player extends Entity {
 
 	@Override
 	public int getSize() {
-		return appearence.getSize();
+		return appearance.getSize();
 	}
 
 	public void setCanPvp(boolean canPvp) {
 		this.canPvp = canPvp;
-		appearence.generateAppearenceData();
+		appearance.generateAppearenceData();
 		getPackets().sendPlayerOption(canPvp ? "Attack" : "null", 1, true);
 		getPackets().sendPlayerUnderNPCPriority(canPvp);
 	}
@@ -938,49 +876,6 @@ public class Player extends Entity {
 			}
 		}
 		logicPackets.add(packet);
-	}
-
-	public Trade getTrade() {
-		return trade;
-	}
-
-	public void setTeleBlockDelay(long teleDelay) {
-		getTemporaryAttributes().put("TeleBlocked",
-				teleDelay + Utils.currentTimeMillis());
-	}
-
-	public long getTeleBlockDelay() {
-		Long teleblock = (Long) getTemporaryAttributes().get("TeleBlocked");
-		if (teleblock == null)
-			return 0;
-		return teleblock;
-	}
-
-	public void setPrayerDelay(long teleDelay) {
-		getTemporaryAttributes().put("PrayerBlocked",
-				teleDelay + Utils.currentTimeMillis());
-		prayer.closeProtectionPrayers();
-	}
-
-	public long getPrayerDelay() {
-		Long teleblock = (Long) getTemporaryAttributes().get("PrayerBlocked");
-		if (teleblock == null)
-			return 0;
-		return teleblock;
-	}
-
-	public Familiar getFamiliar() {
-		return familiar;
-	}
-
-	public boolean canSpawn() {
-		if (Wilderness.isAtWild(this)
-				|| getControlerManager().getControler() instanceof GodWars
-				|| getControlerManager().getControler() instanceof DuelArena
-				|| getControlerManager().getControler() instanceof JailControler) {
-			return false;
-		}
-		return true;
 	}
 
 	public int getMovementType() {

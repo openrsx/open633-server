@@ -350,7 +350,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				player.setRouteEvent(new RouteEvent(p2, new Runnable() {
 					@Override
 					public void run() {
-						if (!player.getControlerManager().processItemOnPlayer(
+						if (!player.getControllerManager().processItemOnPlayer(
 								p2, item))
 							return;
 //						if (itemId == 4155)
@@ -415,7 +415,7 @@ public final class WorldPacketsDecoder extends Decoder {
 						player.setNextFaceWorldTile(new WorldTile(p2
 								.getCoordFaceX(p2.getSize()), p2
 								.getCoordFaceY(p2.getSize()), p2.getPlane()));
-						if (!player.getControlerManager().canAttack(p2))
+						if (!player.getControllerManager().canAttack(p2))
 							return;
 						if (!player.isCanPvp() || !p2.isCanPvp()) {
 							player.getPackets()
@@ -494,7 +494,7 @@ public final class WorldPacketsDecoder extends Decoder {
 						player.setNextFaceWorldTile(new WorldTile(p2
 								.getCoordFaceX(p2.getSize()), p2
 								.getCoordFaceY(p2.getSize()), p2.getPlane()));
-						if (!player.getControlerManager().canAttack(p2))
+						if (!player.getControllerManager().canAttack(p2))
 							return;
 						if (!player.isCanPvp() || !p2.isCanPvp()) {
 							player.getPackets()
@@ -588,7 +588,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			case Inventory.INVENTORY_INTERFACE:
 				Item item = player.getInventory().getItem(interfaceSlot);
 				if (item == null
-						|| !player.getControlerManager().processItemOnNPC(npc,
+						|| !player.getControllerManager().processItemOnNPC(npc,
 								item))
 					return;
 				else if (npc instanceof Familiar) {
@@ -667,7 +667,7 @@ public final class WorldPacketsDecoder extends Decoder {
 						player.setNextFaceWorldTile(new WorldTile(npc
 								.getCoordFaceX(npc.getSize()), npc
 								.getCoordFaceY(npc.getSize()), npc.getPlane()));
-						if (!player.getControlerManager().canAttack(npc))
+						if (!player.getControllerManager().canAttack(npc))
 							return;
 						if (npc instanceof Familiar) {
 							Familiar familiar = (Familiar) npc;
@@ -738,7 +738,7 @@ public final class WorldPacketsDecoder extends Decoder {
 						player.setNextFaceWorldTile(new WorldTile(npc
 								.getCoordFaceX(npc.getSize()), npc
 								.getCoordFaceY(npc.getSize()), npc.getPlane()));
-						if (!player.getControlerManager().canAttack(npc))
+						if (!player.getControllerManager().canAttack(npc))
 							return;
 						if (npc instanceof Familiar) {
 							Familiar familiar = (Familiar) npc;
@@ -838,11 +838,11 @@ public final class WorldPacketsDecoder extends Decoder {
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player.isLocked() || player.getEmotesManager().isDoingEmote()
-					|| !player.getControlerManager().canPlayerOption1(p2))
+					|| !player.getControllerManager().canPlayerOption1(p2))
 				return;
 			if (!player.isCanPvp())
 				return;
-			if (!player.getControlerManager().canAttack(p2))
+			if (!player.getControllerManager().canAttack(p2))
 				return;
 			if (!player.isCanPvp() || !p2.isCanPvp()) {
 				player.getPackets()
@@ -885,7 +885,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			if (player.isLocked())
 				return;
-			if (!player.getControlerManager().canPlayerOption2(p2))
+			if (!player.getControllerManager().canPlayerOption2(p2))
 				return;
 			if (forceRun)
 				player.setRun(forceRun);
@@ -906,7 +906,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.setRouteEvent(new RouteEvent(p2, new Runnable() {
 				@Override
 				public void run() {
-					if (!player.getControlerManager().canPlayerOption3(p2))
+					if (!player.getControllerManager().canPlayerOption3(p2))
 						return;
 				}
 			}));
@@ -924,7 +924,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.setRouteEvent(new RouteEvent(p2, new Runnable() {
 				@Override
 				public void run() {
-					if (!player.getControlerManager().canPlayerOption4(p2))
+					if (!player.getControllerManager().canPlayerOption4(p2))
 						return;
 					player.stopAll();
 //					if (player.isStarter()) {
@@ -934,13 +934,13 @@ public final class WorldPacketsDecoder extends Decoder {
 //						return;
 //					}
 					if (player.isCantTrade()
-							|| player.getControlerManager().getControler() != null) {
+							|| player.getControllerManager().getController() != null) {
 						player.getPackets().sendGameMessage("You are busy.");
 						return;
 					}
 					if (p2.getInterfaceManager().containsScreenInter()
 							|| p2.isCantTrade()
-							|| p2.getControlerManager().getControler() != null
+							|| p2.getControllerManager().getController() != null
 
 							|| p2.isLocked()) {
 						player.getPackets().sendGameMessage(
@@ -1013,7 +1013,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
 				return;
-			if (!player.getControlerManager().canAttack(npc))
+			if (!player.getControllerManager().canAttack(npc))
 				return;
 			if (forceRun) // you scrwed up cutscenes
 				player.setRun(forceRun);
@@ -1076,7 +1076,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			final FloorItem item = World.getRegion(regionId).getGroundItem(id,
 					tile, player);
-			if (item == null || !player.getControlerManager().canTakeItem(item))
+			if (item == null || !player.getControllerManager().canTakeItem(item))
 				return;
 			if (forceRun)
 				player.setRun(forceRun);
@@ -1356,7 +1356,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				else
 					player.getTrade().addItem(trade_item_X_Slot, value);
 			} else if (player.getTemporaryAttributes().remove("xformring") == Boolean.TRUE)
-				player.getAppearence().transformIntoNPC(value);
+				player.getAppearance().transformIntoNPC(value);
 			else if (player.getTemporaryAttributes().get("skillId") != null) {
 				if (player.getEquipment().wearingArmour()) {
 					player.getDialogueManager().finishDialogue();
@@ -1374,7 +1374,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					value = 99;
 				player.getSkills().set(skillId, value);
 				player.getSkills().setXp(skillId, Skills.getXPForLevel(value));
-				player.getAppearence().generateAppearenceData();
+				player.getAppearance().generateAppearenceData();
 				player.getDialogueManager().finishDialogue();
 
 			}

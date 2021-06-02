@@ -33,7 +33,7 @@ public class ChargesManager {
 				if (newId != -1) {
 					item.setId(newId);
 					player.getEquipment().refresh(slot);
-					player.getAppearence().generateAppearenceData();
+					player.getAppearance().generateAppearenceData();
 					player.getPackets().sendGameMessage(
 							"Your " + item.getDefinitions().getName()
 									+ " degraded.");
@@ -146,7 +146,7 @@ public class ChargesManager {
 					return;
 				item.setId(newId);
 				player.getEquipment().refresh(wearSlot);
-				player.getAppearence().generateAppearenceData();
+				player.getAppearance().generateAppearenceData();
 			}
 			resetCharges(id);
 		} else
@@ -194,7 +194,7 @@ public class ChargesManager {
 			return;
 		player.getEquipment().getItems().set(slot, new Item(newId, 1));
 		player.getEquipment().refresh(slot);
-		player.getAppearence().generateAppearenceData();
+		player.getAppearance().generateAppearenceData();
 		player.getPackets().sendGameMessage(
 				"Your " + item.getDefinitions().getName() + " degraded.");
 	}
@@ -222,7 +222,7 @@ public class ChargesManager {
 											.getItemDefinitions(itemId)
 											.getName() + " degraded.");
 				player.getEquipment().refresh(slot);
-				player.getAppearence().generateAppearenceData();
+				player.getAppearance().generateAppearenceData();
 				return;
 			}
 		}

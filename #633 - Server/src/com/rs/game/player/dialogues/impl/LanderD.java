@@ -16,7 +16,7 @@ public class LanderD extends Dialogue {
 	    sendOptionsDialogue(DEFAULT_OPTIONS_TITLE, "Yes, get me out of here!", "No, I want to stay.");
 	} else if (stage == 0) {
 	    if (componentId == OPTION_1)
-		player.getControlerManager().forceStop();
+		player.getControllerManager().forceStop();
 	    end();
 	}
     }

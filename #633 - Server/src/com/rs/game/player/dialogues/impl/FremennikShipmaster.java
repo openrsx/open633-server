@@ -68,9 +68,9 @@ public class FremennikShipmaster extends Dialogue {
     public static void sail(Player player, boolean backing) {
 	player.useStairs(-1, backing ? new WorldTile(3254, 3171, 0) : new WorldTile(3511, 3692, 0), 2, 3);
 	if (backing)
-	    player.getControlerManager().forceStop();
+	    player.getControllerManager().forceStop();
 	else
-	    player.getControlerManager().startControler("Kalaboss");
+	    player.getControllerManager().startControler("Kalaboss");
     }
 
     @Override

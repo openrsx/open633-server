@@ -28,7 +28,7 @@ public class WildernessDitch implements ObjectType {
 
 			if (playerY > ditchY) {// You are starting south
 				hopNorth();
-				player.getControlerManager().startControler("Wilderness");// allows player attack
+				player.getControllerManager().startControler("Wilderness");// allows player attack
 			} else {// You are starting north
 				hopSouth();
 				// removeIcon();//pvp icon

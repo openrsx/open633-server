@@ -150,7 +150,7 @@ public abstract class Familiar extends NPC implements Serializable {
 		return !target.isDead()
 				&& ((owner.isMultiArea() && isMultiArea() && target.isMultiArea())
 						|| (owner.isForceMultiArea() && target.isForceMultiArea()))
-				&& owner.getControlerManager().canAttack(target);
+				&& owner.getControllerManager().canAttack(target);
 	}
 
 	public boolean renewFamiliar() {

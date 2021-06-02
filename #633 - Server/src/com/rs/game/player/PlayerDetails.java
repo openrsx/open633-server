@@ -165,7 +165,7 @@ public final class PlayerDetails {
 	private List<String> ownedObjectsManagerKeys;
 	
 	
-	private final MutableNumber poisonImmunity = new MutableNumber(), skullTimer = new MutableNumber();
+	private final MutableNumber poisonImmunity = new MutableNumber(), skullTimer = new MutableNumber(), teleBlockDelay = new MutableNumber(), prayerDelay = new MutableNumber();
 	
 
 	/**

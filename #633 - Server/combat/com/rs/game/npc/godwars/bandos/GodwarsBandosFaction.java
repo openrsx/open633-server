@@ -88,7 +88,7 @@ public class GodwarsBandosFaction extends NPC {
 				} else if (loop >= defs.getDeathDelay()) {
 					if (source instanceof Player) {
 						Player player = (Player) source;
-						Controller controler = player.getControlerManager().getControler();
+						Controller controler = player.getControllerManager().getController();
 						if (controler != null && controler instanceof GodWars) {
 							GodWars godControler = (GodWars) controler;
 							godControler.incrementKillCount(0);

@@ -239,7 +239,7 @@ public final class Skills {
 	}
 
 	public double addXpNormal(int skill, double exp) {
-		player.getControlerManager().trackXP(skill, (int) exp);
+		player.getControllerManager().trackXP(skill, (int) exp);
 		if (player.getDetails().isXpLocked())
 			return 0;
 		if (Settings.XP_BONUS_ENABLED) {
@@ -262,7 +262,7 @@ public final class Skills {
 			level[skill] += levelDiff;
 			player.getDialogueManager().startDialogue("LevelUp", skill);
 			if (skill == SUMMONING || (skill >= ATTACK && skill <= MAGIC)) {
-				player.getAppearence().generateAppearenceData();
+				player.getAppearance().generateAppearenceData();
 				if (skill == HITPOINTS)
 					player.heal(levelDiff * 10);
 				else if (skill == PRAYER)
@@ -274,7 +274,7 @@ public final class Skills {
 	}
 
 	public double addXpLamp(int skill, double exp) {
-		player.getControlerManager().trackXP(skill, (int) exp);
+		player.getControllerManager().trackXP(skill, (int) exp);
 		if (player.getDetails().isXpLocked())
 			return 0;
 		exp *= Settings.LAMP_XP_RATE;
@@ -292,7 +292,7 @@ public final class Skills {
 			level[skill] += levelDiff;
 			player.getDialogueManager().startDialogue("LevelUp", skill);
 			if (skill == SUMMONING || (skill >= ATTACK && skill <= MAGIC)) {
-				player.getAppearence().generateAppearenceData();
+				player.getAppearance().generateAppearenceData();
 				if (skill == HITPOINTS)
 					player.heal(levelDiff * 10);
 				else if (skill == PRAYER)

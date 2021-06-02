@@ -108,7 +108,7 @@ public final class World {
 	}
 
 	public static void checkControlersAtMove(Player player) {
-		if (player.getControlerManager().getControler() == null) {
+		if (player.getControllerManager().getController() == null) {
 			String control = null;
 //			if (!(player.getControlerManager().getControler() instanceof RequestController)
 //					&& RequestController.inWarRequest(player))
@@ -118,7 +118,7 @@ public final class World {
 //			else if (FfaZone.inArea(player))
 //				control = "clan_wars_ffa";
 			if (control != null)
-				player.getControlerManager().startControler(control);
+				player.getControllerManager().startControler(control);
 		}
 	}
 

@@ -25,6 +25,6 @@ public final class MasterCommand implements Command {
         player.getSkills().setXp(24, Skills.getXPForLevel(120));
 //        for (int i = 0; i < 25; i++)
 //            player.getDialogueManager().startDialogue("LevelUp", i);
-        player.getAppearence().generateAppearenceData();
+        player.getAppearance().generateAppearenceData();
 	}
 }

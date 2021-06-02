@@ -15,10 +15,10 @@ public final class RestoreRunEnergyTask extends Task {
 
 	@Override
 	public void execute() {
-		World.players().filter(p -> p.getRunEnergy() < 100 && (p.getWalkSteps().isEmpty())).forEach(p -> {
+		World.players().filter(p -> p.getDetails().getRunEnergy() < 100 && p.getWalkSteps().isEmpty()).forEach(p -> {
 			double restoreRate = 0.45D;
 			double agilityFactor = 0.01 * p.getSkills().getLevel(Skills.AGILITY);
-			p.getDetails().setRunEnergy((byte) (p.getRunEnergy() + (restoreRate + agilityFactor)));
+			p.getDetails().setRunEnergy((byte) (p.getDetails().getRunEnergy() + (restoreRate + agilityFactor)));
 			p.getPackets().sendRunEnergy();
 		});
 	}

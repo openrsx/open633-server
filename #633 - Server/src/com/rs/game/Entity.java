@@ -23,6 +23,7 @@ import com.rs.game.player.type.PoisonType;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.EntityStrategy;
 import com.rs.game.route.strategy.ObjectStrategy;
+import com.rs.game.task.Task;
 import com.rs.utils.MutableNumber;
 import com.rs.utils.Utils;
 
@@ -358,7 +359,7 @@ public abstract class Entity extends WorldTile {
 					.currentTimeMillis())
 				return;
 		}
-		if (this instanceof Player && ((Player) this).getRunEnergy() <= 0)
+		if (this instanceof Player && ((Player) this).getDetails().getRunEnergy() <= 0)
 			setRun(false);
 		for (int stepCount = 0; stepCount < (run ? 2 : 1); stepCount++) {
 			Object[] nextStep = getNextWalkStep();
@@ -371,7 +372,7 @@ public abstract class Entity extends WorldTile {
 			if (((boolean) nextStep[3] && !World.checkWalkStep(getPlane(),
 					getX(), getY(), dir, getSize()))
 					|| (this instanceof Player && !((Player) this)
-							.getControlerManager().canMove(dir))) {
+							.getControllerManager().canMove(dir))) {
 				resetWalkSteps();
 				break;
 			}
@@ -819,7 +820,7 @@ public abstract class Entity extends WorldTile {
 									// only check when we want
 			return false;
 		if (this instanceof Player) {
-			if (!((Player) this).getControlerManager().addWalkStep(lastX,
+			if (!((Player) this).getControllerManager().addWalkStep(lastX,
 					lastY, nextX, nextY))
 				return false;
 		}
@@ -1135,7 +1136,7 @@ public abstract class Entity extends WorldTile {
 				Player p = (Player) this;
 				if (!entangleMessage)
 					p.getPackets().sendGameMessage("You have been frozen.");
-				if (p.getControlerManager().getControler() != null)
+				if (p.getControllerManager().getController() != null)
 					time /= 2;
 			}
 		}
@@ -1362,7 +1363,7 @@ public abstract class Entity extends WorldTile {
 				int musicId = region.getRandomMusicId();
 				if (musicId != -1)
 					player.getMusicsManager().checkMusic(musicId);
-				player.getControlerManager().moved();
+				player.getControllerManager().moved();
 				if (player.isStarted())
 					World.checkControlersAtMove(player);
 			} else {
@@ -1375,7 +1376,7 @@ public abstract class Entity extends WorldTile {
 		} else {
 			if (entity instanceof Player) {
 				Player player = (Player) entity;
-				player.getControlerManager().moved();
+				player.getControllerManager().moved();
 				if (player.isStarted())
 					World.checkControlersAtMove(player);
 			}
@@ -1385,5 +1386,23 @@ public abstract class Entity extends WorldTile {
 	
 	public final boolean isPvpArea(WorldTile tile) {
 		return Wilderness.isAtWild(tile);
+	}
+	
+	public void sendSoulSplit(final Hit hit, final Entity user) {
+		final Player target = (Player) this;
+		if (hit.getDamage() > 0)
+			World.sendProjectile(user, this, 2263, 11, 11, 20, 5, 0, 0);
+		user.heal(hit.getDamage() / 5);
+		target.getPrayer().drainPrayer(hit.getDamage() / 5);
+		World.get().submit(new Task(1) {
+			@Override
+			protected void execute() {
+				setNextGraphics(new Graphics(2264));
+				if (hit.getDamage() > 0)
+					World.sendProjectile(target, user, 2263, 11, 11, 20, 5, 0,
+							0);
+				this.cancel();
+			}
+		});
 	}
 }

@@ -16,7 +16,7 @@ public class KillingQuickD extends Dialogue {
 	    stage = 19;
 	} else if (stage == 19) {
 	    if (componentId == OPTION_1)
-		player.getControlerManager().startControler("SlaughterFieldsControler");
+		player.getControllerManager().startControler("SlaughterFieldsControler");
 	    end();
 	}
     }

@@ -26,19 +26,20 @@ public class Rest extends Action {
 			return false;
 		index = Utils.random(REST_DEFS.length);
 		player.setResting((byte) (musician ? 2 : 1));
+		player.sendRunButtonConfig();
 		player.setNextAnimation(new Animation(REST_DEFS[index][0]));
-		player.getAppearence().setRenderEmote((short) REST_DEFS[index][1]);
+		player.getAppearance().setRenderEmote((short) REST_DEFS[index][1]);
 		return true;
 	}
 
 	@Override
 	public boolean process(Player player) {
-//		if (player.getPoison().isPoisoned()) {
-//			player.getPackets().sendGameMessage(
-//					"You can't rest while you're poisoned.");
-//			return false;
-//		}
-		if (player.isUnderCombat()) {
+		if (player.getPoisonDamage().get() > 0) {
+			player.getPackets().sendGameMessage(
+					"You can't rest while you're poisoned.");
+			return false;
+		}
+		if (player.getCombatDefinitions().isUnderCombat()) {
 			player.getPackets().sendGameMessage(
 					"You can't rest until 10 seconds after the end of combat.");
 			return false;
@@ -54,9 +55,10 @@ public class Rest extends Action {
 	@Override
 	public void stop(Player player) {
 		player.setResting((byte) 0);
+		player.sendRunButtonConfig();
 		player.setNextAnimation(new Animation(REST_DEFS[index][2]));
 		player.getEmotesManager().setNextEmoteEnd();
-		player.getAppearence().setRenderEmote((short) -1);
+		player.getAppearance().setRenderEmote((short) -1);
 	}
 
 }

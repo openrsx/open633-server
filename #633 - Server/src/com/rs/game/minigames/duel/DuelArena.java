@@ -76,11 +76,11 @@ public class DuelArena extends Controller {
 			DuelRules rules = player.getLastDuelRules();
 			if (!rules.canAccept(player.getLastDuelRules().getStake()))
 				return;
-			synchronized (target.getControlerManager().getControler()) {
+			synchronized (target.getControllerManager().getController()) {
 				if (targetAccepted) {
 					if (firstStage) {
 						if (nextStage())
-							((DuelArena) target.getControlerManager().getControler()).nextStage();
+							((DuelArena) target.getControllerManager().getController()).nextStage();
 					} else {
 						player.setCloseInterfacesEvent(null);
 						player.closeInterfaces();
@@ -97,7 +97,7 @@ public class DuelArena extends Controller {
 	public void closeDuelInteraction(DuelStage stage) {
 		synchronized (this) {
 			final Player oldTarget = target;
-			Controller controler = oldTarget == null ? null : oldTarget.getControlerManager().getControler();
+			Controller controler = oldTarget == null ? null : oldTarget.getControllerManager().getController();
 			if (controler == null || !(controler instanceof DuelArena))
 				return;
 			DuelArena targetConfiguration = (DuelArena) controler;
@@ -120,8 +120,8 @@ public class DuelArena extends Controller {
 							World.get().submit(new Task(1) {
 								@Override
 								protected void execute() {
-									player.getControlerManager().startControler("DuelControler");
-									oldTarget.getControlerManager().startControler("DuelControler");
+									player.getControllerManager().startControler("DuelControler");
+									oldTarget.getControllerManager().startControler("DuelControler");
 									this.cancel();
 								}
 							});
@@ -158,10 +158,10 @@ public class DuelArena extends Controller {
 		synchronized (this) {
 			if (!hasTarget())
 				return;
-			Controller controler = target.getControlerManager().getControler();
+			Controller controler = target.getControllerManager().getController();
 			if (controler == null || !(controler instanceof DuelArena))
 				return;
-			synchronized (target.getControlerManager().getControler()) {
+			synchronized (target.getControllerManager().getController()) {
 				Item item = player.getInventory().getItem(slot);
 				if (item == null)
 					return;
@@ -184,10 +184,10 @@ public class DuelArena extends Controller {
 		synchronized (this) {
 			if (!hasTarget())
 				return;
-			Controller controler = target.getControlerManager().getControler();
+			Controller controler = target.getControllerManager().getController();
 			if (controler == null || !(controler instanceof DuelArena))
 				return;
-			synchronized (target.getControlerManager().getControler()) {
+			synchronized (target.getControllerManager().getController()) {
 				Item item = player.getLastDuelRules().getStake().get(slot);
 				if (item == null)
 					return;
@@ -257,7 +257,7 @@ public class DuelArena extends Controller {
 
 	private void refreshScreenMessages(boolean firstStage, boolean ifFriendly) {
 		refreshScreenMessage(firstStage, ifFriendly);
-		((DuelArena) target.getControlerManager().getControler()).refreshScreenMessage(firstStage, ifFriendly);
+		((DuelArena) target.getControllerManager().getController()).refreshScreenMessage(firstStage, ifFriendly);
 	}
 
 	private void refreshScreenMessage(boolean firstStage, boolean ifFriendly) {
@@ -305,7 +305,7 @@ public class DuelArena extends Controller {
 		startEndingTeleport(loser, false);
 		if (!isDueling)
 			return;
-		Controller controler = target == null ? null : target.getControlerManager().getControler();
+		Controller controler = target == null ? null : target.getControllerManager().getController();
 		if (controler == null || !(controler instanceof DuelArena))
 			return;
 		DuelArena targetConfiguration = (DuelArena) controler;
@@ -342,17 +342,17 @@ public class DuelArena extends Controller {
 		loser.getHintIconsManager().removeUnsavedHintIcon();
 		loser.reset();
 		loser.closeInterfaces();
-		loser.getControlerManager().removeControlerWithoutCheck();
+		loser.getControllerManager().removeControlerWithoutCheck();
 		victor.setCanPvp(false);
 		victor.getHintIconsManager().removeUnsavedHintIcon();
 		victor.reset();
 		victor.closeInterfaces();
-		victor.getControlerManager().removeControlerWithoutCheck();
+		victor.getControllerManager().removeControlerWithoutCheck();
 		World.get().submit(new Task(1) {
 			@Override
 			protected void execute() {
-				loser.getControlerManager().startControler("DuelControler");
-				victor.getControlerManager().startControler("DuelControler");
+				loser.getControllerManager().startControler("DuelControler");
+				victor.getControllerManager().startControler("DuelControler");
 				this.cancel();
 			}
 		});
@@ -454,8 +454,8 @@ public class DuelArena extends Controller {
 
 	@Override
 	public void process() {
-		if (!hasTarget() || target.getControlerManager().getControler() != null
-				&& !(target.getControlerManager().getControler() instanceof DuelArena)) {
+		if (!hasTarget() || target.getControllerManager().getController() != null
+				&& !(target.getControllerManager().getController() instanceof DuelArena)) {
 			end(DUEL_END_LOSE);
 			return;
 		}
@@ -628,12 +628,12 @@ public class DuelArena extends Controller {
 	@Override
 	public boolean processButtonClick(int interfaceId, int componentId, int slotId, int slotId2, int packetId) {
 		synchronized (this) {
-			if (target == null || target.getControlerManager().getControler() == null
-					|| !(target.getControlerManager().getControler() instanceof DuelArena)
-					|| player.getControlerManager().getControler() == null
-					|| !(player.getControlerManager().getControler() instanceof DuelArena))
+			if (target == null || target.getControllerManager().getController() == null
+					|| !(target.getControllerManager().getController() instanceof DuelArena)
+					|| player.getControllerManager().getController() == null
+					|| !(player.getControllerManager().getController() instanceof DuelArena))
 				return false;
-			synchronized (target.getControlerManager().getControler()) {
+			synchronized (target.getControllerManager().getController()) {
 				DuelRules rules = player.getLastDuelRules();
 				switch (interfaceId) {
 				case 271:

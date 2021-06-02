@@ -16,7 +16,7 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 
 	@Override
 	public void preDeath() {
-		if (!getActor().getControlerManager().sendDeath())
+		if (!getActor().getControllerManager().sendDeath())
 			return;
 		getActor().lock();
 		getActor().setNextAnimation(new Animation(836));
@@ -58,8 +58,8 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 //				killer.getPackets().sendGameMessage("You don't receive any points because you and " + getActor().getDisplayName() + " are connected from the same network.");
 //				return;
 //			}
-			if (getActor().getControlerManager().getControler() instanceof Wilderness) {
-				if (getActor().getControlerManager().getControler() != null) {
+			if (getActor().getControllerManager().getController() instanceof Wilderness) {
+				if (getActor().getControllerManager().getController() != null) {
 					getActor().sendItemsOnDeath(killer);
 				}
 			}

@@ -17,7 +17,7 @@ public class FightKilnDialogue extends Dialogue {
 
     @Override
     public void finish() {
-	player.getControlerManager().startControler("FightKilnControler", 0);
+	player.getControllerManager().startControler("FightKilnControler", 0);
     }
 
 }

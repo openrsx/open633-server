@@ -14,7 +14,7 @@ public class ForfeitDialouge extends Dialogue {
 	switch (componentId) {
 	    case OPTION_1:
 		if (!player.getLastDuelRules().getRule(7))
-		    player.getControlerManager().forceStop();
+		    player.getControllerManager().forceStop();
 		else
 		    sendDialogue("You can't forfeit during this duel.");
 		break;

@@ -285,14 +285,14 @@ public final class Pots {
 		ENERGY_POTION() {
 			@Override
 			public void extra(Player player) {
-				int restoredEnergy = player.getRunEnergy() + 20;
+				int restoredEnergy = player.getDetails().getRunEnergy() + 20;
 				player.setRunEnergy(restoredEnergy > 100 ? 100 : restoredEnergy);
 			}
 		},
 		SUPER_ENERGY() {
 			@Override
 			public void extra(Player player) {
-				int restoredEnergy = player.getRunEnergy() + 40;
+				int restoredEnergy = player.getDetails().getRunEnergy() + 40;
 				player.setRunEnergy(restoredEnergy > 100 ? 100 : restoredEnergy);
 			}
 		},
@@ -363,7 +363,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -380,7 +380,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -397,7 +397,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -414,7 +414,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -431,7 +431,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -448,7 +448,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -496,7 +496,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -711,7 +711,7 @@ public final class Pots {
 		if (!player.getDetails().getWatchMap().get("DRINKS").elapsed(1800)) {
 			return false;
 		}
-		if (!player.getControlerManager().canPot(pot))
+		if (!player.getControllerManager().canPot(pot))
 			return true;
 		if (!pot.effect.canDrink(player))
 			return true;
@@ -787,7 +787,7 @@ public final class Pots {
 	}
 
 	public static void applyOverLoadEffect(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness) {
+		if (player.getControllerManager().getController() instanceof Wilderness) {
 			int actualLevel = player.getSkills().getLevel(Skills.ATTACK);
 			int realLevel = player.getSkills().getLevelForXp(Skills.ATTACK);
 			int level = actualLevel > realLevel ? realLevel : actualLevel;

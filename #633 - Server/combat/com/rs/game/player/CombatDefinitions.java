@@ -11,6 +11,9 @@ import com.rs.game.item.Item;
 import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
+import lombok.Data;
+
+@Data
 public final class CombatDefinitions {
 
 	public static final int STAB_ATTACK = 0, SLASH_ATTACK = 1, CRUSH_ATTACK = 2, RANGE_ATTACK = 4, MAGIC_ATTACK = 3;
@@ -47,10 +50,6 @@ public final class CombatDefinitions {
 		Integer tempCastSpell = (Integer) player.getTemporaryAttributes().get("tempCastSpell");
 		if (tempCastSpell != null)
 			return tempCastSpell + 256;
-		return autoCastSpell;
-	}
-
-	public int getAutoCastSpell() {
 		return autoCastSpell;
 	}
 
@@ -243,10 +242,6 @@ public final class CombatDefinitions {
 	public void setSortSpellBook(int sortId) {
 		this.sortSpellBook = (byte) sortId;
 		refreshSpellBook();
-	}
-
-	public boolean isDefensiveCasting() {
-		return defensiveCasting;
 	}
 
 	public void refreshSpellBook() {
@@ -447,10 +442,6 @@ public final class CombatDefinitions {
 		bonuses = new int[18];
 	}
 
-	public int[] getBonuses() {
-		return bonuses;
-	}
-
 	public void refreshBonuses() {
 		bonuses = new int[18];
 		int weapon = player.getEquipment().getWeaponId();
@@ -571,10 +562,6 @@ public final class CombatDefinitions {
 		return player.getEquipment().getRingId() == 19669;
 	}
 
-	public int getSpecialAttackPercentage() {
-		return specialAttackPercentage;
-	}
-
 	public void refreshUsingSpecialAttack() {
 		player.getVarsManager().sendVar(301, usingSpecialAttack ? 1 : 0);
 	}
@@ -592,39 +579,11 @@ public final class CombatDefinitions {
 		player.getVarsManager().sendVar(172, autoRelatie ? 0 : 1);
 	}
 
-	public boolean isUsingSpecialAttack() {
-		return usingSpecialAttack;
-	}
-
-	public int getAttackStyle() {
-		return attackStyle;
-	}
-
-	public boolean isAutoRelatie() {
-		return autoRelatie;
-	}
-
-	public void setAutoRelatie(boolean autoRelatie) {
-		this.autoRelatie = autoRelatie;
-	}
-
-	public boolean isDungeonneringSpellBook() {
-		return dungeonneringSpellBook;
-	}
-
 	public void removeDungeonneringBook() {
 		if (dungeonneringSpellBook) {
 			dungeonneringSpellBook = false;
 			player.getInterfaceManager().sendMagicBook();
 		}
-	}
-
-	public boolean isInstantAttack() {
-		return instantAttack;
-	}
-
-	public void setInstantAttack(boolean instantAttack) {
-		this.instantAttack = instantAttack;
 	}
 	
 	public boolean hasInstantSpecial(final int weaponId) {
@@ -745,4 +704,7 @@ public final class CombatDefinitions {
 		}
 	}
 
+	public boolean isUnderCombat() {
+		return player.getAttackedByDelay() + 10000 >= Utils.currentTimeMillis();
+	}
 }

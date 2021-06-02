@@ -451,8 +451,8 @@ public class Magic {
 				player.getPackets().sendGameMessage(((Player) target).getDisplayName() + " is not accepting aid");
 				return;
 			}
-			if (((Player) target).getControlerManager().getControler() != null
-					&& ((Player) target).getControlerManager().getControler() instanceof DuelArena) {
+			if (((Player) target).getControllerManager().getController() != null
+					&& ((Player) target).getControllerManager().getController() instanceof DuelArena) {
 				return;
 			}
 			if (!checkRunes(player, true, ASTRAL_RUNE, 3, DEATH_RUNE, 2, EARTH_RUNE, 10))
@@ -513,13 +513,13 @@ public class Magic {
 				for (int playerIndex : playerIndexes) {
 					Player p2 = World.getPlayers().get(playerIndex);
 					if (p2 == null || p2 == player || p2.isDead() || !p2.isStarted() || p2.hasFinished()
-							|| !p2.withinDistance(player, 4) || !player.getControlerManager().canHit(p2))
+							|| !p2.withinDistance(player, 4) || !player.getControllerManager().canHit(p2))
 						continue;
 					if (!p2.getDetails().isAcceptAid()) {
 						player.getPackets().sendGameMessage(p2.getDisplayName() + " is not accepting aid");
 						continue;
-					} else if (p2.getControlerManager().getControler() != null
-							&& p2.getControlerManager().getControler() instanceof DuelArena) {
+					} else if (p2.getControllerManager().getController() != null
+							&& p2.getControllerManager().getController() instanceof DuelArena) {
 						continue;
 					}
 					p2.setNextGraphics(new Graphics(725, 0, 100));
@@ -795,7 +795,7 @@ public class Magic {
 
 	public static void pushLeverTeleport(final Player player, final WorldTile tile, int emote, String startMessage,
 			final String endMessage) {
-		if (!player.getControlerManager().processObjectTeleport(tile))
+		if (!player.getControllerManager().processObjectTeleport(tile))
 			return;
 		player.setNextAnimation(new Animation(emote));
 		if (startMessage != null)
@@ -834,13 +834,13 @@ public class Magic {
 		if (!checkRunes(player, false, runes))
 			return false;
 		if (teleType == MAGIC_TELEPORT) {
-			if (!player.getControlerManager().processMagicTeleport(tile))
+			if (!player.getControllerManager().processMagicTeleport(tile))
 				return false;
 		} else if (teleType == ITEM_TELEPORT) {
-			if (!player.getControlerManager().processItemTeleport(tile))
+			if (!player.getControllerManager().processItemTeleport(tile))
 				return false;
 		} else if (teleType == OBJECT_TELEPORT) {
-			if (!player.getControlerManager().processObjectTeleport(tile))
+			if (!player.getControllerManager().processObjectTeleport(tile))
 				return false;
 		}
 		checkRunes(player, true, runes);
@@ -870,8 +870,8 @@ public class Magic {
 						}
 					}
 					player.setNextWorldTile(teleTile);
-					player.getControlerManager().magicTeleported(teleType);
-					if (player.getControlerManager().getControler() == null)
+					player.getControllerManager().magicTeleported(teleType);
+					if (player.getControllerManager().getController() == null)
 						teleControlersCheck(player, teleTile);
 					if (xp != 0)
 						player.getSkills().addXp(Skills.MAGIC, xp);
@@ -908,7 +908,7 @@ public class Magic {
 	}
 
 	public static boolean useTeleTab(final Player player, final WorldTile tile) {
-		if (!player.getControlerManager().processItemTeleport(tile))
+		if (!player.getControllerManager().processItemTeleport(tile))
 			return false;
 		player.lock();
 		player.setNextAnimation(new Animation(9597));
@@ -930,8 +930,8 @@ public class Magic {
 						teleTile = tile;
 					}
 					player.setNextWorldTile(teleTile);
-					player.getControlerManager().magicTeleported(ITEM_TELEPORT);
-					if (player.getControlerManager().getControler() == null)
+					player.getControllerManager().magicTeleported(ITEM_TELEPORT);
+					if (player.getControllerManager().getController() == null)
 						teleControlersCheck(player, teleTile);
 					player.setNextFaceWorldTile(
 							new WorldTile(teleTile.getX(), teleTile.getY() - 1, teleTile.getPlane()));
@@ -951,7 +951,7 @@ public class Magic {
 
 	public static void teleControlersCheck(Player player, WorldTile teleTile) {
 		if (Wilderness.isAtWild(teleTile))
-			player.getControlerManager().startControler("Wilderness");
+			player.getControllerManager().startControler("Wilderness");
 	}
 
 	private Magic() {

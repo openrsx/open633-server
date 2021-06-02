@@ -324,7 +324,7 @@ public class WorldPacketsEncoder extends Encoder {
 	public WorldPacketsEncoder sendRunEnergy() {
 		OutputStream stream = new OutputStream(2);
 		stream.writePacket(player, 83);
-		stream.writeByte(player.getRunEnergy());
+		stream.writeByte(player.getDetails().getRunEnergy());
 		session.write(stream);
 		return this;
 	}
@@ -997,7 +997,7 @@ public class WorldPacketsEncoder extends Encoder {
 			// xteas
 			for (int i = 0; i < 4; i++)
 				stream.writeInt(0);
-		byte[] appearence = player.getAppearence().getAppeareanceData();
+		byte[] appearence = player.getAppearance().getAppeareanceData();
 		stream.writeByte(appearence.length);
 		stream.addBytes128(appearence, 0, appearence.length);
 		stream.endPacketVarShort();

@@ -95,7 +95,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				long dropTime = Utils.currentTimeMillis();
 				if (/* player.getLockDelay() >= dropTime || */player.getEmotesManager().getNextEmoteEnd() >= dropTime)
 					return;
-				if (!player.getControlerManager().canDropItem(item))
+				if (!player.getControllerManager().canDropItem(item))
 					return;
 				player.stopAll(false);
 				
@@ -198,7 +198,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 		}
 		player.getInventory().refreshItems(copy);
 		if (worn) {
-			player.getAppearence().generateAppearenceData();
+			player.getAppearance().generateAppearenceData();
 			player.getPackets().sendSound(2240, 0, 1);
 		}
 	}
@@ -212,7 +212,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 			return false;
 		if (item.getDefinitions().isNoted()
 				|| !item.getDefinitions().isWearItem(
-						player.getAppearence().isMale()) && itemId != 4084) {
+						player.getAppearance().isMale()) && itemId != 4084) {
 			player.getPackets().sendGameMessage("You can't wear that.");
 			return false;
 		}
@@ -260,7 +260,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 		}
 		if (!hasRequiriments)
 			return false;
-		if (!player.getControlerManager().canEquip(targetSlot, itemId))
+		if (!player.getControllerManager().canEquip(targetSlot, itemId))
 			return false;
 		player.getInventory().getItems().remove(slotId, item);
 		if (targetSlot == 3) {

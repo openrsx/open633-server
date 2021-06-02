@@ -19,14 +19,14 @@ public class JailControler extends Controller {
 	@Override
 	public void process() {
 		if (player.getDetails().getJailed() <= Utils.currentTimeMillis()) {
-			player.getControlerManager().getControler().removeControler();
+			player.getControllerManager().getController().removeControler();
 			player.getPackets().sendGameMessage("Your account has been unjailed.", true);
 			player.setNextWorldTile(new WorldTile(2677, 10379, 0));
 		}
 	}
 
 	public static void stopControler(Player p) {
-		p.getControlerManager().getControler().removeControler();
+		p.getControllerManager().getController().removeControler();
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class JailControler extends Controller {
 					player.reset();
 					player.setCanPvp(false);
 					player.sendRandomJail(player);
-					player.getControlerManager().startControler("JailControler");
+					player.getControllerManager().startControler("JailControler");
 					player.unlock();
 				}
 				loop++;

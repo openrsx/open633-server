@@ -171,7 +171,7 @@ public class GodWars extends Controller {
 			return false;
 		} else if (object.getId() == 26293) {
 			player.useStairs(828, new WorldTile(2913, 3741, 0), 1, 2);
-			player.getControlerManager().forceStop();
+			player.getControllerManager().forceStop();
 		} else if (object.getId() == 26384) { // bandos
 //			if (!player.getInventory().containsItemToolBelt(Smithing.HAMMER)) {
 //				player.getPackets()
@@ -339,13 +339,13 @@ public class GodWars extends Controller {
 
 	@Override
 	public boolean sendDeath() {
-		player.getControlerManager().forceStop();
+		player.getControllerManager().forceStop();
 		return true;
 	}
 
 	@Override
 	public void magicTeleported(int type) {
-		player.getControlerManager().forceStop();
+		player.getControllerManager().forceStop();
 	}
 
 	@Override

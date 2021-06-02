@@ -48,7 +48,7 @@ public final class Inventory {
 		if (itemId < 0
 				|| amount < 0
 				|| !Utils.itemExists(itemId)
-				|| !player.getControlerManager().canAddInventoryItem(itemId,
+				|| !player.getControllerManager().canAddInventoryItem(itemId,
 						amount))
 			return false;
 		Item[] itemsBefore = items.getItemsCopy();
@@ -68,7 +68,7 @@ public final class Inventory {
 		if (itemId < 0
 				|| amount < 0
 				|| !Utils.itemExists(itemId)
-				|| !player.getControlerManager().canAddInventoryItem(itemId,
+				|| !player.getControllerManager().canAddInventoryItem(itemId,
 						amount))
 			return false;
 		Item[] itemsBefore = items.getItemsCopy();
@@ -87,7 +87,7 @@ public final class Inventory {
 		if (item.getId() < 0
 				|| item.getAmount() < 0
 				|| !Utils.itemExists(item.getId())
-				|| !player.getControlerManager().canAddInventoryItem(
+				|| !player.getControllerManager().canAddInventoryItem(
 						item.getId(), item.getAmount()))
 			return false;
 		Item[] itemsBefore = items.getItemsCopy();
@@ -103,7 +103,7 @@ public final class Inventory {
 	}
 
 	public void deleteItem(int slot, Item item) {
-		if (!player.getControlerManager().canDeleteInventoryItem(item.getId(),
+		if (!player.getControllerManager().canDeleteInventoryItem(item.getId(),
 				item.getAmount()))
 			return;
 		Item[] itemsBefore = items.getItemsCopy();
@@ -130,7 +130,7 @@ public final class Inventory {
 	}
 
 	public void deleteItem(int itemId, int amount) {
-		if (!player.getControlerManager()
+		if (!player.getControllerManager()
 				.canDeleteInventoryItem(itemId, amount))
 			return;
 		Item[] itemsBefore = items.getItemsCopy();
@@ -139,7 +139,7 @@ public final class Inventory {
 	}
 
 	public void deleteItem(Item item) {
-		if (!player.getControlerManager().canDeleteInventoryItem(item.getId(),
+		if (!player.getControllerManager().canDeleteInventoryItem(item.getId(),
 				item.getAmount()))
 			return;
 		Item[] itemsBefore = items.getItemsCopy();
