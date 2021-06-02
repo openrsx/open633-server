@@ -3,11 +3,12 @@ package com.rs.plugin.impl.interfaces;
 import java.util.HashMap;
 import java.util.List;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.io.InputStream;
 import com.rs.cores.WorldThread;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
+import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.npc.NPC;
@@ -94,7 +95,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				long dropTime = Utils.currentTimeMillis();
 				if (/* player.getLockDelay() >= dropTime || */player.getEmotesManager().getNextEmoteEnd() >= dropTime)
 					return;
-				if (!player.getControlerManager().canDropItem(item))
+				if (!player.getControllerManager().canDropItem(item))
 					return;
 				player.stopAll(false);
 				
@@ -115,7 +116,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				player.getInventory().deleteItem(slotId, item);
 				if (player.getDetails().getCharges().degradeCompletly(item))
 					return;
-				World.addGroundItem(item, new WorldTile(player), player, false, 180);
+				FloorItem.createGroundItem(item, new WorldTile(player), player, false, 180, true);
 				player.getPackets().sendSound(2739, 0, 1);
 				break;
 			case 81:
@@ -134,7 +135,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 		int interfaceId = stream.readIntV2() >> 16;
 		int itemUsedId = stream.readShortLE();
 		
-		if (Settings.DEBUG)
+		if (GameConstants.DEBUG)
 			System.out.println(String.format("fromInter: %s, toInter: %s, fromSlot: %s, toSlot %s, item1: %s, item2: %s", interfaceId, interfaceId2, fromSlot, toSlot, itemUsedId, itemUsedWithId));
 		
 		//fromInter: 44498944, toInter: 44498944, fromSlot: 11694, toSlot 0, item1: 14484, item2: 8
@@ -160,7 +161,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				return;
 			player.stopAll();
 			
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log("ItemHandler", "Used:" + itemUsed.getId() + ", With:" + usedWith.getId());
 		}
 	}
@@ -197,7 +198,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 		}
 		player.getInventory().refreshItems(copy);
 		if (worn) {
-			player.getAppearence().generateAppearenceData();
+			player.getAppearance().generateAppearenceData();
 			player.getPackets().sendSound(2240, 0, 1);
 		}
 	}
@@ -211,7 +212,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 			return false;
 		if (item.getDefinitions().isNoted()
 				|| !item.getDefinitions().isWearItem(
-						player.getAppearence().isMale()) && itemId != 4084) {
+						player.getAppearance().isMale()) && itemId != 4084) {
 			player.getPackets().sendGameMessage("You can't wear that.");
 			return false;
 		}
@@ -259,7 +260,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 		}
 		if (!hasRequiriments)
 			return false;
-		if (!player.getControlerManager().canEquip(targetSlot, itemId))
+		if (!player.getControllerManager().canEquip(targetSlot, itemId))
 			return false;
 		player.getInventory().getItems().remove(slotId, item);
 		if (targetSlot == 3) {
@@ -313,7 +314,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				targetSlot == 3 ? 5 : targetSlot == 3 ? 0 : 3);
 		if (targetSlot == 3)
 			player.getCombatDefinitions().decreaseSpecialAttack(0);
-		player.getDetails().getCharges().wear(targetSlot);
+//		player.getDetails().getCharges().wear(targetSlot);
 		return true;
 	}
 }

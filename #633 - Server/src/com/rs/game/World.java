@@ -4,242 +4,74 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimerTask;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import com.rs.Launcher;
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
-import com.rs.game.item.FloorItem;
-import com.rs.game.item.Item;
-import com.rs.game.item.ItemConstants;
-import com.rs.game.minigames.GodWarsBosses;
 import com.rs.game.npc.NPC;
-import com.rs.game.npc.corp.CorporealBeast;
 import com.rs.game.npc.dragons.KingBlackDragon;
-import com.rs.game.npc.godwars.GodWarMinion;
-import com.rs.game.npc.godwars.armadyl.GodwarsArmadylFaction;
-import com.rs.game.npc.godwars.armadyl.KreeArra;
-import com.rs.game.npc.godwars.bandos.GeneralGraardor;
-import com.rs.game.npc.godwars.bandos.GodwarsBandosFaction;
-import com.rs.game.npc.godwars.saradomin.CommanderZilyana;
-import com.rs.game.npc.godwars.saradomin.GodwarsSaradominFaction;
-import com.rs.game.npc.godwars.zammorak.GodwarsZammorakFaction;
-import com.rs.game.npc.godwars.zammorak.KrilTstsaroth;
-import com.rs.game.npc.others.AbyssalDemon;
-import com.rs.game.npc.others.BanditCampBandits;
 import com.rs.game.npc.others.Bork;
-import com.rs.game.npc.others.Jadinko;
-import com.rs.game.npc.others.KalphiteQueen;
-import com.rs.game.npc.others.Kurask;
-import com.rs.game.npc.others.LivingRock;
-import com.rs.game.npc.others.Revenant;
-import com.rs.game.npc.others.RockCrabs;
-import com.rs.game.npc.others.Sheep;
-import com.rs.game.npc.others.Strykewyrm;
 import com.rs.game.npc.others.TormentedDemon;
-import com.rs.game.npc.others.Werewolf;
-import com.rs.game.player.OwnedObjectManager;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
-import com.rs.game.player.content.LivingRockCavern;
 import com.rs.game.player.controllers.DuelControler;
-import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.route.Flags;
 import com.rs.game.task.Task;
 import com.rs.game.task.TaskManager;
+import com.rs.game.task.impl.DrainPrayerTask;
+import com.rs.game.task.impl.PlayerOwnedObjectTask;
+import com.rs.game.task.impl.RestoreHitpoints;
+import com.rs.game.task.impl.RestoreRunEnergyTask;
+import com.rs.game.task.impl.RestoreSkillTask;
+import com.rs.game.task.impl.RestoreSpecialTask;
+import com.rs.game.task.impl.ShopRestockTask;
+import com.rs.game.task.impl.SummoningPassiveTask;
 import com.rs.utils.AntiFlood;
 import com.rs.utils.Logger;
-import com.rs.utils.ShopsHandler;
 import com.rs.utils.Utils;
+
+import lombok.Getter;
 
 public final class World {
 
-	public static int exiting_delay;
+	public static short exiting_delay;
 	public static long exiting_start;
 
-	private static final EntityList<Player> players = new EntityList<Player>(Settings.PLAYERS_LIMIT);
-	private static final EntityList<NPC> npcs = new EntityList<NPC>(Settings.NPCS_LIMIT);
+	private static final Predicate<Player> VALID_PLAYER = (player) -> player != null && player.isStarted() && !player.hasFinished();
+	private static final Predicate<NPC> VALID_NPC = (npc) -> npc != null && !npc.hasFinished();
+
+	public static Stream<Entity> entities() {
+		return Stream.concat(players(), npcs());
+	}
+
+	public static Stream<Player> players() {
+		return players.stream().filter(VALID_PLAYER);
+	}
+
+	public static Stream<NPC> npcs() {
+		return npcs.stream().filter(VALID_NPC);
+	}
+	
+	private static final EntityList<Player> players = new EntityList<Player>(GameConstants.PLAYERS_LIMIT);
+	private static final EntityList<NPC> npcs = new EntityList<NPC>(GameConstants.NPCS_LIMIT);
+	
+	@Getter
 	private static final Map<Integer, Region> regions = Collections.synchronizedMap(new HashMap<Integer, Region>());
 
 	public static final void init() {
-		addRestoreRunEnergyTask();
-		addDrainPrayerTask();
-		addRestoreHitPointsTask();
-		addRestoreSkillsTask();
-		addRestoreSpecialAttackTask();
-		addRestoreShopItemsTask();
-		addOwnedObjectsTask();
-		LivingRockCavern.init();
-	}
-
-	private static void addRestoreShopItemsTask() {
-		CoresManager.slowExecutor.scheduleWithFixedDelay(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					ShopsHandler.restoreShops();
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-		}, 0, 30, TimeUnit.SECONDS);
-	}
-
-	public static final void addIncreaseElapsedBonusMinutesTak() {
-		CoresManager.fastExecutor.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				try {
-					for (Player player : getPlayers()) {
-						if (player == null || !player.isRunning())
-							continue;
-						if (!Settings.XP_BONUS_ENABLED) {
-							this.cancel();
-							return;
-						}
-						player.getSkills().increaseElapsedBonusMinues();
-					}
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-		}, 0, 60000);
-	}
-
-	private static void addOwnedObjectsTask() {
-		CoresManager.slowExecutor.scheduleWithFixedDelay(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					OwnedObjectManager.processAll();
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-		}, 0, 600, TimeUnit.MILLISECONDS);
-	}
-
-	private static final void addRestoreSpecialAttackTask() {
-
-		CoresManager.fastExecutor.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				try {
-					for (Player player : getPlayers()) {
-						if (player == null || player.isDead() || !player.isRunning())
-							continue;
-						player.getCombatDefinitions().restoreSpecialAttack();
-					}
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-		}, 0, 30000);
-	}
-
-	private static boolean checkAgility;
-
-	private static final void addRestoreRunEnergyTask() {
-		CoresManager.fastExecutor.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				try {
-					for (Player player : getPlayers()) {
-						if (player == null || player.isDead() || !player.isRunning()
-								|| (checkAgility && player.getSkills().getLevel(Skills.AGILITY) < 70))
-							continue;
-						player.restoreRunEnergy();
-					}
-					checkAgility = !checkAgility;
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-		}, 0, 1000);
-	}
-
-	private static final void addDrainPrayerTask() {
-		CoresManager.fastExecutor.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				try {
-					for (Player player : getPlayers()) {
-						if (player == null || player.isDead() || !player.isRunning())
-							continue;
-						player.getPrayer().processPrayerDrain();
-					}
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-		}, 0, 600);
-	}
-
-	private static final void addRestoreHitPointsTask() {
-		CoresManager.fastExecutor.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				try {
-					for (Player player : getPlayers()) {
-						if (player == null || player.isDead() || !player.isRunning())
-							continue;
-						player.restoreHitPoints();
-					}
-					for (NPC npc : npcs) {
-						if (npc == null || npc.isDead() || npc.hasFinished())
-							continue;
-						npc.restoreHitPoints();
-					}
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-		}, 0, 6000);
-	}
-
-	private static final void addRestoreSkillsTask() {
-		CoresManager.fastExecutor.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				try {
-					for (Player player : getPlayers()) {
-						if (player == null || !player.isRunning())
-							continue;
-						int ammountTimes = player.getPrayer().usingPrayer(0, 8) ? 2 : 1;
-						if (player.isResting())
-							ammountTimes += 1;
-						boolean berserker = player.getPrayer().usingPrayer(1, 5);
-						b: for (int skill = 0; skill < 25; skill++) {
-							if (skill == Skills.SUMMONING)
-								continue b;
-							c: for (int time = 0; time < ammountTimes; time++) {
-								int currentLevel = player.getSkills().getLevel(skill);
-								int normalLevel = player.getSkills().getLevelForXp(skill);
-								if (currentLevel > normalLevel && time == 0) {
-									if (skill == Skills.ATTACK || skill == Skills.STRENGTH || skill == Skills.DEFENCE
-											|| skill == Skills.RANGE || skill == Skills.MAGIC) {
-										if (berserker && Utils.getRandom(100) <= 15)
-											continue c;
-									}
-									player.getSkills().set(skill, currentLevel - 1);
-								} else if (currentLevel < normalLevel)
-									player.getSkills().set(skill, currentLevel + 1);
-								else
-									break c;
-							}
-						}
-					}
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-		}, 0, 30000);
-
-	}
-
-	public static final Map<Integer, Region> getRegions() {
-		return regions;
+		World.get().submit(new RestoreRunEnergyTask());
+		World.get().submit(new RestoreSpecialTask());
+		World.get().submit(new SummoningPassiveTask());
+		World.get().submit(new DrainPrayerTask());
+		World.get().submit(new ShopRestockTask());
+		World.get().submit(new PlayerOwnedObjectTask());
+		World.get().submit(new RestoreSkillTask());
+		World.get().submit(new RestoreHitpoints());
+		
+//		LivingRockCavern.init(); //should check if player is in region
 	}
 
 	public static final Region getRegion(int id) {
@@ -275,128 +107,8 @@ public final class World {
 		npcs.remove(npc);
 	}
 
-	public static final NPC spawnNPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea,
-			boolean spawned) {
-		NPC n = null;
-
-		if (id == 1926 || id == 1931)
-			n = new BanditCampBandits(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 7134)
-			n = new Bork(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 8832 && id <= 8834)
-			n = new LivingRock(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 13465 && id <= 13481)
-			n = new Revenant(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 1158 || id == 1160)
-			n = new KalphiteQueen(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 6261 || id == 6263 || id == 6265)
-			n = GodWarsBosses.graardorMinions[(id - 6261) / 2] = new GodWarMinion(id, tile, mapAreaNameHash,
-					canBeAttackFromOutOfArea, spawned);
-		else if (id == 6260)
-			n = new GeneralGraardor(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 6222)
-			n = new KreeArra(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 6223 || id == 6225 || id == 6227 || id == 6081)
-			n = GodWarsBosses.armadylMinions[(id - 6223) / 2] = new GodWarMinion(id, tile, mapAreaNameHash,
-					canBeAttackFromOutOfArea, spawned);
-		else if (id == 6203)
-			n = new KrilTstsaroth(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 6204 || id == 6206 || id == 6208)
-			n = GodWarsBosses.zamorakMinions[(id - 6204) / 2] = new GodWarMinion(id, tile, mapAreaNameHash,
-					canBeAttackFromOutOfArea, spawned);
-		else if (id == 6248 || id == 6250 || id == 6252)
-			n = GodWarsBosses.commanderMinions[(id - 6248) / 2] = new GodWarMinion(id, tile, mapAreaNameHash,
-					canBeAttackFromOutOfArea, spawned);
-		else if (id == 6247)
-			n = new CommanderZilyana(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 6210 && id <= 6221)
-			n = new GodwarsZammorakFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 6254 && id <= 6259)
-			n = new GodwarsSaradominFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 6268 && id <= 6283)
-			n = new GodwarsBandosFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 6228 && id <= 6246)
-			n = new GodwarsArmadylFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 1615)
-			n = new AbyssalDemon(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
-		else if (id == 50 || id == 2642)
-			n = new KingBlackDragon(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 9462 && id <= 9467)
-			n = new Strykewyrm(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
-		else if (id >= 6026 && id <= 6045)
-			n = new Werewolf(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 1266 || id == 1268 || id == 2453 || id == 2886)
-			n = new RockCrabs(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 8133)
-			n = new CorporealBeast(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-
-		else if (id == 1282) {
-			n = new NPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-			n.setLocked(true);
-		} else if (id == 43 || (id >= 5156 && id <= 5164) || id == 5156 || id == 1765)
-			n = new Sheep(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
-
-		else if (id == 8349 || id == 8450 || id == 8451)
-			n = new TormentedDemon(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 1609 || id == 1610)
-			n = new Kurask(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
-		else if (id == 13820 || id == 13821 || id == 13822)
-			n = new Jadinko(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
-		else if (id == 1131 || id == 1132 || id == 1133 || id == 1134) {
-			n = new NPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-			n.setForceAgressive(true);
-		} else
-			n = new NPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		return n;
-	}
-
-	public static final NPC spawnNPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
-		return spawnNPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, false);
-	}
-
-	public static final void updateEntityRegion(Entity entity) {
-		if (entity.hasFinished()) {
-			if (entity instanceof Player)
-				getRegion(entity.getLastRegionId()).removePlayerIndex(entity.getIndex());
-			else
-				getRegion(entity.getLastRegionId()).removeNPCIndex(entity.getIndex());
-			return;
-		}
-		short regionId = (short) entity.getRegionId();
-		if (entity.getLastRegionId() != regionId) { // map region entity at
-			// changed
-			if (entity instanceof Player) {
-				if (entity.getLastRegionId() > 0)
-					getRegion(entity.getLastRegionId()).removePlayerIndex(entity.getIndex());
-				Region region = getRegion(regionId);
-				region.addPlayerIndex(entity.getIndex());
-				Player player = (Player) entity;
-				int musicId = region.getRandomMusicId();
-				if (musicId != -1)
-					player.getMusicsManager().checkMusic(musicId);
-				player.getControlerManager().moved();
-				if (player.isStarted())
-					checkControlersAtMove(player);
-			} else {
-				if (entity.getLastRegionId() > 0)
-					getRegion(entity.getLastRegionId()).removeNPCIndex(entity.getIndex());
-				getRegion(regionId).addNPCIndex(entity.getIndex());
-			}
-			entity.checkMultiArea();
-			entity.setLastRegionId(regionId);
-		} else {
-			if (entity instanceof Player) {
-				Player player = (Player) entity;
-				player.getControlerManager().moved();
-				if (player.isStarted())
-					checkControlersAtMove(player);
-			}
-			entity.checkMultiArea();
-		}
-	}
-
-	private static void checkControlersAtMove(Player player) {
-		if (player.getControlerManager().getControler() == null) {
+	public static void checkControlersAtMove(Player player) {
+		if (player.getControllerManager().getController() == null) {
 			String control = null;
 //			if (!(player.getControlerManager().getControler() instanceof RequestController)
 //					&& RequestController.inWarRequest(player))
@@ -406,7 +118,7 @@ public final class World {
 //			else if (FfaZone.inArea(player))
 //				control = "clan_wars_ffa";
 			if (control != null)
-				player.getControlerManager().startControler(control);
+				player.getControllerManager().startControler(control);
 		}
 	}
 
@@ -794,36 +506,27 @@ public final class World {
 		return true;
 	}
 
-	public static final boolean containsPlayer(String username) {
-		for (Player p2 : players) {
-			if (p2 == null)
-				continue;
-			if (p2.getUsername().equals(username))
-				return true;
-		}
-		return false;
+//	public static Player getPlayer(String username) {
+//		for (Player player : getPlayers()) {
+//			if (player == null)
+//				continue;
+//			if (player.getUsername().equals(username))
+//				return player;
+//		}
+//		return null;
+//	}
+	
+	public static final Optional<Player> getPlayer(String username) {
+		return players().filter(p -> p.getUsername().equals(username)).findAny();
 	}
 
-	public static Player getPlayer(String username) {
-		for (Player player : getPlayers()) {
-			if (player == null)
-				continue;
-			if (player.getUsername().equals(username))
-				return player;
-		}
-		return null;
+	public static final Optional<Player> containsPlayer(String username) {
+		return players().filter(p -> p.getUsername().equals(username)).findAny();
 	}
 
 	public static final Player getPlayerByDisplayName(String username) {
 		String formatedUsername = Utils.formatPlayerNameForDisplay(username);
-		for (Player player : getPlayers()) {
-			if (player == null)
-				continue;
-			if (player.getUsername().equalsIgnoreCase(formatedUsername)
-					|| player.getDisplayName().equalsIgnoreCase(formatedUsername))
-				return player;
-		}
-		return null;
+		return players().filter(p -> p.getUsername().equalsIgnoreCase(formatedUsername) || p.getDisplayName().equalsIgnoreCase(formatedUsername)).findFirst().orElse(null);
 	}
 
 	public static final EntityList<Player> getPlayers() {
@@ -834,11 +537,7 @@ public final class World {
 		return npcs;
 	}
 
-	private World() {
-
-	}
-
-	public static final void safeShutdown(final boolean restart, int delay) {
+	public static final void safeShutdown(final boolean restart, short delay) {
 		if (exiting_start != 0)
 			return;
 		exiting_start = Utils.currentTimeMillis();
@@ -863,323 +562,6 @@ public final class World {
 				}
 			}
 		}, delay, TimeUnit.SECONDS);
-	}
-
-	public static final boolean isSpawnedObject(WorldObject object) {
-		return getRegion(object.getRegionId()).getSpawnedObjects().contains(object);
-	}
-
-	public static final void spawnObject(WorldObject object) {
-		getRegion(object.getRegionId()).spawnObject(object, object.getPlane(), object.getXInRegion(),
-				object.getYInRegion(), false);
-	}
-
-	public static final void unclipTile(WorldTile tile) {
-		getRegion(tile.getRegionId()).unclip(tile.getPlane(), tile.getXInRegion(), tile.getYInRegion());
-	}
-
-	public static final void removeObject(WorldObject object) {
-		getRegion(object.getRegionId()).removeObject(object, object.getPlane(), object.getXInRegion(),
-				object.getYInRegion());
-	}
-
-	public static final void spawnObjectTemporary(final WorldObject object, long time) {
-		spawnObject(object);
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (!World.isSpawnedObject(object))
-						return;
-					removeObject(object);
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-
-		}, time, TimeUnit.MILLISECONDS);
-	}
-
-	public static final boolean removeObjectTemporary(final WorldObject object, long time) {
-		removeObject(object);
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					spawnObject(object);
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-
-		}, time, TimeUnit.MILLISECONDS);
-		return true;
-	}
-
-	public static final void spawnTempGroundObject(final WorldObject object, final int replaceId, long time) {
-		spawnObject(object);
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					removeObject(object);
-					addGroundItem(new Item(replaceId), object, null, false, 180);
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-		}, time, TimeUnit.MILLISECONDS);
-	}
-
-	public static final WorldObject getStandartObject(WorldTile tile) {
-		return getRegion(tile.getRegionId()).getStandartObject(tile.getPlane(), tile.getXInRegion(),
-				tile.getYInRegion());
-	}
-
-	public static final WorldObject getObjectWithType(WorldTile tile, int type) {
-		return getRegion(tile.getRegionId()).getObjectWithType(tile.getPlane(), tile.getXInRegion(),
-				tile.getYInRegion(), type);
-	}
-
-	public static final WorldObject getObjectWithSlot(WorldTile tile, int slot) {
-		return getRegion(tile.getRegionId()).getObjectWithSlot(tile.getPlane(), tile.getXInRegion(),
-				tile.getYInRegion(), slot);
-	}
-
-	public static final boolean containsObjectWithId(WorldTile tile, int id) {
-		return getRegion(tile.getRegionId()).containsObjectWithId(tile.getPlane(), tile.getXInRegion(),
-				tile.getYInRegion(), id);
-	}
-
-	public static final WorldObject getObjectWithId(WorldTile tile, int id) {
-		return getRegion(tile.getRegionId()).getObjectWithId(tile.getPlane(), tile.getXInRegion(), tile.getYInRegion(),
-				id);
-	}
-
-	public static final void addGroundItem(final Item item, final WorldTile tile) {
-		// adds item, not invisible, no owner, no time to disapear
-		addGroundItem(item, tile, null, false, -1, 2, -1);
-	}
-
-	public static final void addGroundItem(final Item item, final WorldTile tile, final Player owner/*
-																									 * null for default
-																									 */,
-			boolean invisible, long hiddenTime/*
-												 * default 3 minutes
-												 */) {
-		addGroundItem(item, tile, owner, invisible, hiddenTime, 2, 150);
-	}
-
-	public static final FloorItem addGroundItem(final Item item, final WorldTile tile,
-			final Player owner/*
-								 * null for default
-								 */, boolean invisible, long hiddenTime/*
-																		 * default 3 minutes
-																		 */, int type) {
-		return addGroundItem(item, tile, owner, invisible, hiddenTime, type, 150);
-	}
-
-	public static final void turnPublic(FloorItem floorItem, int publicTime) {
-		if (!floorItem.isInvisible())
-			return;
-		int regionId = floorItem.getTile().getRegionId();
-		final Region region = getRegion(regionId);
-		if (!region.getGroundItemsSafe().contains(floorItem))
-			return;
-		Player realOwner = floorItem.hasOwner() ? World.getPlayer(floorItem.getOwner()) : null;
-		if (!ItemConstants.isTradeable(floorItem)) {
-			region.getGroundItemsSafe().remove(floorItem);
-			if (realOwner != null) {
-				if (realOwner.getMapRegionsIds().contains(regionId)
-						&& realOwner.getPlane() == floorItem.getTile().getPlane())
-					realOwner.getPackets().sendRemoveGroundItem(floorItem);
-			}
-			return;
-		}
-		floorItem.setInvisible(false);
-		for (Player player : players) {
-			if (player == null || player == realOwner || !player.isStarted() || player.hasFinished()
-					|| player.getPlane() != floorItem.getTile().getPlane()
-					|| !player.getMapRegionsIds().contains(regionId))
-				continue;
-			player.getPackets().sendGroundItem(floorItem);
-		}
-		// disapears after this time
-		if (publicTime != -1)
-			removeGroundItem(floorItem, publicTime);
-	}
-
-	@Deprecated
-	public static final void addGroundItemForever(Item item, final WorldTile tile) {
-		int regionId = tile.getRegionId();
-		final FloorItem floorItem = new FloorItem(item, tile, true);
-		final Region region = getRegion(tile.getRegionId());
-		region.getGroundItemsSafe().add(floorItem);
-		for (Player player : players) {
-			if (player == null || !player.isStarted() || player.hasFinished()
-					|| player.getPlane() != floorItem.getTile().getPlane()
-					|| !player.getMapRegionsIds().contains(regionId))
-				continue;
-			player.getPackets().sendGroundItem(floorItem);
-		}
-	}
-
-	/*
-	 * type 0 - gold if not tradeable type 1 - gold if destroyable type 2 - no gold
-	 */
-	public static final FloorItem addGroundItem(final Item item, final WorldTile tile, final Player owner,
-			boolean invisible, long hiddenTime/*
-												 * default 3 minutes
-												 */, int type, final int publicTime) {
-		if (type != 2) {
-			if ((type == 0 && !ItemConstants.isTradeable(item)) || type == 1 && ItemConstants.isDestroy(item)) {
-
-				int price = item.getDefinitions().getValue();
-				if (price <= 0)
-					return null;
-				item.setId(995);
-				item.setAmount(price);
-			}
-		}
-		final FloorItem floorItem = new FloorItem(item, tile, owner, owner != null, invisible);
-		final Region region = getRegion(tile.getRegionId());
-		region.getGroundItemsSafe().add(floorItem);
-		if (invisible) {
-			if (owner != null)
-				owner.getPackets().sendGroundItem(floorItem);
-			// becomes visible after x time
-			if (hiddenTime != -1) {
-				CoresManager.slowExecutor.schedule(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							turnPublic(floorItem, publicTime);
-						} catch (Throwable e) {
-							Logger.handle(e);
-						}
-					}
-				}, hiddenTime, TimeUnit.SECONDS);
-			}
-		} else {
-			// visible
-			int regionId = tile.getRegionId();
-			for (Player player : players) {
-				if (player == null || !player.isStarted() || player.hasFinished()
-						|| player.getPlane() != tile.getPlane() || !player.getMapRegionsIds().contains(regionId))
-					continue;
-				player.getPackets().sendGroundItem(floorItem);
-			}
-			// disapears after this time
-			if (publicTime != -1)
-				removeGroundItem(floorItem, publicTime);
-		}
-		return floorItem;
-	}
-
-	public static final void updateGroundItem(Item item, final WorldTile tile, final Player owner) {
-		final FloorItem floorItem = World.getRegion(tile.getRegionId()).getGroundItem(item.getId(), tile, owner);
-		if (floorItem == null) {
-			addGroundItem(item, tile, owner, true, 360);
-			return;
-		}
-		floorItem.setAmount(floorItem.getAmount() + item.getAmount());
-		owner.getPackets().sendRemoveGroundItem(floorItem);
-		owner.getPackets().sendGroundItem(floorItem);
-
-	}
-
-	private static final void removeGroundItem(final FloorItem floorItem, long publicTime) {
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					int regionId = floorItem.getTile().getRegionId();
-					Region region = getRegion(regionId);
-					if (!region.getGroundItemsSafe().contains(floorItem))
-						return;
-					region.getGroundItemsSafe().remove(floorItem);
-					for (Player player : World.getPlayers()) {
-						if (player == null || !player.isStarted() || player.hasFinished()
-								|| player.getPlane() != floorItem.getTile().getPlane()
-								|| !player.getMapRegionsIds().contains(regionId))
-							continue;
-						player.getPackets().sendRemoveGroundItem(floorItem);
-					}
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
-			}
-		}, publicTime, TimeUnit.SECONDS);
-	}
-
-	public static final boolean removeGroundItem(Player player, FloorItem floorItem) {
-		return removeGroundItem(player, floorItem, true);
-	}
-
-	public static final boolean removeGroundItem(Player player, final FloorItem floorItem, boolean add) {
-		int regionId = floorItem.getTile().getRegionId();
-		Region region = getRegion(regionId);
-		if (!region.getGroundItemsSafe().contains(floorItem))
-			return false;
-		if (player.getInventory().getFreeSlots() == 0 && (!floorItem.getDefinitions().isStackable()
-				|| !player.getInventory().containsItem(floorItem.getId(), 1))) {
-			player.getPackets().sendGameMessage("Not enough space in your inventory.");
-			return false;
-		}
-		region.getGroundItemsSafe().remove(floorItem);
-		if (add)
-			player.getInventory().addItem(new Item(floorItem.getId(), floorItem.getAmount()));
-		if (floorItem.isInvisible()) {
-			player.getPackets().sendRemoveGroundItem(floorItem);
-			return true;
-		} else {
-			for (Player p2 : World.getPlayers()) {
-				if (p2 == null || !p2.isStarted() || p2.hasFinished()
-						|| p2.getPlane() != floorItem.getTile().getPlane() || !p2.getMapRegionsIds().contains(regionId))
-					continue;
-				p2.getPackets().sendRemoveGroundItem(floorItem);
-			}
-			if (floorItem.isForever()) {
-				CoresManager.slowExecutor.schedule(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							addGroundItemForever(floorItem, floorItem.getTile());
-						} catch (Throwable e) {
-							Logger.handle(e);
-						}
-					}
-				}, 60, TimeUnit.SECONDS);
-			}
-			return true;
-		}
-	}
-
-	public static final void sendObjectAnimation(WorldObject object, Animation animation) {
-		sendObjectAnimation(null, object, animation);
-	}
-
-	public static final void sendObjectAnimation(Entity creator, WorldObject object, Animation animation) {
-		if (creator == null) {
-			for (Player player : World.getPlayers()) {
-				if (player == null || !player.isStarted() || player.hasFinished() || !player.withinDistance(object))
-					continue;
-				player.getPackets().sendObjectAnimation(object, animation);
-			}
-		} else {
-			for (int regionId : creator.getMapRegionsIds()) {
-				List<Integer> playersIndexes = getRegion(regionId).getPlayerIndexes();
-				if (playersIndexes == null)
-					continue;
-				for (Integer playerIndex : playersIndexes) {
-					Player player = players.get(playerIndex);
-					if (player == null || !player.isStarted() || player.hasFinished()
-							|| !player.withinDistance(object))
-						continue;
-					player.getPackets().sendObjectAnimation(object, animation);
-				}
-			}
-		}
 	}
 
 	public static final void sendGraphics(Entity creator, Graphics graphics, WorldTile tile) {
@@ -1218,24 +600,6 @@ public final class World {
 					continue;
 				player.getPackets().sendProjectile(null, startTile, receiver, gfxId, startHeight, endHeight, speed,
 						delay, curve, startDistanceOffset, shooter.getSize());
-			}
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	public static final void sendProjectile(WorldTile shooter, Entity receiver, int gfxId, int startHeight,
-			int endHeight, int speed, int delay, int curve, int startDistanceOffset) {
-		for (int regionId : receiver.getMapRegionsIds()) {
-			List<Integer> playersIndexes = getRegion(regionId).getPlayerIndexes();
-			if (playersIndexes == null)
-				continue;
-			for (Integer playerIndex : playersIndexes) {
-				Player player = players.get(playerIndex);
-				if (player == null || !player.isStarted() || player.hasFinished()
-						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
-					continue;
-				player.getPackets().sendProjectile(receiver, shooter, receiver, gfxId, startHeight, endHeight, speed,
-						delay, curve, startDistanceOffset, 1);
 			}
 		}
 	}
@@ -1351,10 +715,6 @@ public final class World {
 		// multi
 	}
 
-	public static final boolean isPvpArea(WorldTile tile) {
-		return Wilderness.isAtWild(tile);
-	}
-
 	public static void sendWorldMessage(String message, boolean forStaff) {
 		for (Player p : World.getPlayers()) {
 			if (p == null || !p.isRunning() || p.getDetails().isYellOff() || (forStaff && !p.getDetails().getRights().isStaff())
@@ -1374,16 +734,6 @@ public final class World {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	public static final void sendProjectile(WorldObject object, WorldTile startTile, WorldTile endTile, int gfxId,
-			int startHeight, int endHeight, int speed, int delay, int curve, int startOffset) {
-		for (Player pl : players) {
-			if (pl == null || !pl.withinDistance(object, 20))
-				continue;
-			pl.getPackets().sendProjectile(null, startTile, endTile, gfxId, startHeight, endHeight, speed, delay, curve,
-					startOffset, 1);
-		}
-	}
 
 		/**
 	 * An implementation of the singleton pattern to prevent indirect
@@ -1402,6 +752,7 @@ public final class World {
 	/**
 	 * The manager for the queue of game tasks.
 	 */
+	@Getter
 	public final TaskManager taskManager = new TaskManager();
 	
 	/**
@@ -1410,13 +761,5 @@ public final class World {
 	 */
 	public void submit(Task t) {
 		taskManager.submit(t);
-	}
-
-	/**
-	 * Gets the manager for the queue of game tasks.
-	 * @return the queue of tasks.
-	 */
-	public TaskManager getTask() {
-		return taskManager;
 	}
 }

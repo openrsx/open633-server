@@ -1,6 +1,6 @@
 package com.rs.game.player;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
@@ -9,9 +9,11 @@ import com.rs.game.Graphics;
 import com.rs.game.World;
 import com.rs.game.item.Item;
 import com.rs.game.task.Task;
-import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utils.Utils;
 
+import lombok.Data;
+
+@Data
 public final class CombatDefinitions {
 
 	public static final int STAB_ATTACK = 0, SLASH_ATTACK = 1, CRUSH_ATTACK = 2, RANGE_ATTACK = 4, MAGIC_ATTACK = 3;
@@ -21,6 +23,9 @@ public final class CombatDefinitions {
 	public static final int ABSORB_MELEE = 11, ABSORB_RANGE = 13, ABSORB_MAGIC = 12;
 
 	public static final int SHARED = -1;
+	public static final String[] BONUS_LABELS = { "Stab", "Slash", "Crush", "Magic", "Range", "Stab", "Slash", "Crush",
+			"Magic", "Range", "Summoning", "Absorb Melee", "Absorb Magic", "Absorb Ranged", "Strength", "Ranged Str",
+			"Prayer", "Magic Damage" };
 	private transient Player player;
 	private transient boolean usingSpecialAttack;
 	private transient int[] bonuses;
@@ -45,10 +50,6 @@ public final class CombatDefinitions {
 		Integer tempCastSpell = (Integer) player.getTemporaryAttributes().get("tempCastSpell");
 		if (tempCastSpell != null)
 			return tempCastSpell + 256;
-		return autoCastSpell;
-	}
-
-	public int getAutoCastSpell() {
 		return autoCastSpell;
 	}
 
@@ -241,10 +242,6 @@ public final class CombatDefinitions {
 	public void setSortSpellBook(int sortId) {
 		this.sortSpellBook = (byte) sortId;
 		refreshSpellBook();
-	}
-
-	public boolean isDefensiveCasting() {
-		return defensiveCasting;
 	}
 
 	public void refreshSpellBook() {
@@ -445,10 +442,6 @@ public final class CombatDefinitions {
 		bonuses = new int[18];
 	}
 
-	public int[] getBonuses() {
-		return bonuses;
-	}
-
 	public void refreshBonuses() {
 		bonuses = new int[18];
 		int weapon = player.getEquipment().getWeaponId();
@@ -569,10 +562,6 @@ public final class CombatDefinitions {
 		return player.getEquipment().getRingId() == 19669;
 	}
 
-	public int getSpecialAttackPercentage() {
-		return specialAttackPercentage;
-	}
-
 	public void refreshUsingSpecialAttack() {
 		player.getVarsManager().sendVar(301, usingSpecialAttack ? 1 : 0);
 	}
@@ -590,39 +579,11 @@ public final class CombatDefinitions {
 		player.getVarsManager().sendVar(172, autoRelatie ? 0 : 1);
 	}
 
-	public boolean isUsingSpecialAttack() {
-		return usingSpecialAttack;
-	}
-
-	public int getAttackStyle() {
-		return attackStyle;
-	}
-
-	public boolean isAutoRelatie() {
-		return autoRelatie;
-	}
-
-	public void setAutoRelatie(boolean autoRelatie) {
-		this.autoRelatie = autoRelatie;
-	}
-
-	public boolean isDungeonneringSpellBook() {
-		return dungeonneringSpellBook;
-	}
-
 	public void removeDungeonneringBook() {
 		if (dungeonneringSpellBook) {
 			dungeonneringSpellBook = false;
 			player.getInterfaceManager().sendMagicBook();
 		}
-	}
-
-	public boolean isInstantAttack() {
-		return instantAttack;
-	}
-
-	public void setInstantAttack(boolean instantAttack) {
-		this.instantAttack = instantAttack;
 	}
 	
 	public boolean hasInstantSpecial(final int weaponId) {
@@ -658,7 +619,9 @@ public final class CombatDefinitions {
 			return;
 		}
 		if (player.getSwitchItemCache().size() > 0) {
-			RSInterfaceDispatcher.submitSpecialRequest(player);
+			if (player.isDead())
+				return;
+			player.task(1, p -> player.getCombatDefinitions().switchUsingSpecialAttack());
 			return;
 		}
 		switch (weaponId) {
@@ -713,7 +676,7 @@ public final class CombatDefinitions {
 		case 14632:
 			player.setNextAnimation(new Animation(1168));
 			player.setNextGraphics(new Graphics(247));
-			player.setNextForceTalk(new ForceTalk("For " + Settings.SERVER_NAME + "!"));
+			player.setNextForceTalk(new ForceTalk("For " + GameConstants.SERVER_NAME + "!"));
 			final boolean enhanced = weaponId == 14632;
 			player.getSkills().set(
 					Skills.DEFENCE,
@@ -741,4 +704,7 @@ public final class CombatDefinitions {
 		}
 	}
 
+	public boolean isUnderCombat() {
+		return player.getAttackedByDelay() + 10000 >= Utils.currentTimeMillis();
+	}
 }

@@ -1,7 +1,6 @@
 package com.rs.plugin.impl.interfaces;
 
 import com.rs.game.player.Player;
-import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
 
@@ -10,13 +9,15 @@ public class CombatInterface implements RSInterface {
 
 	@Override
 	public void execute(Player player, int interfaceId, int componentId, int packetId, byte slotId, int slotId2) throws Exception {
+		if (player.isDead())
+			return;
 		if (componentId == 4) {
 			int weaponId = player.getEquipment().getWeaponId();
 			if (player.getCombatDefinitions().hasInstantSpecial(weaponId)) {
 				player.getCombatDefinitions().performInstantSpecial(player, weaponId);
 				return;
 			}
-			RSInterfaceDispatcher.submitSpecialRequest(player);
+			player.task(1, p -> player.getCombatDefinitions().switchUsingSpecialAttack());
 		} else if (componentId >= 11 && componentId <= 14)
 			player.getCombatDefinitions().setAttackStyle(componentId - 11);
 		else if (componentId == 15)

@@ -13,8 +13,8 @@ import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
-import com.rs.Config;
-import com.rs.Settings;
+import com.rs.GameProperties;
+import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
 import com.rs.io.InputStream;
 import com.rs.net.decoders.WorldPacketsDecoder;
@@ -43,7 +43,7 @@ public final class ServerChannelHandler extends SimpleChannelHandler {
 
 	bootstrap.setOption("reuseAddress", true);
 	bootstrap.setOption("child.tcpNoDelay", true);
-	bootstrap.setOption("child.connectTimeoutMillis", Settings.CONNECTION_TIMEOUT);
+	bootstrap.setOption("child.connectTimeoutMillis", GameConstants.CONNECTION_TIMEOUT);
 	bootstrap.setOption("child.TcpAckFrequency", true);
 	// bootstrap.setOption("receiveBufferSizePredictorFactory", new
 	// AdaptiveReceiveBufferSizePredictorFactory(1, 1,
@@ -56,7 +56,7 @@ public final class ServerChannelHandler extends SimpleChannelHandler {
 	 * bootstrap.setOption("child.keepAlive", true);
 	 */
 
-	bootstrap.bind(new InetSocketAddress(Config.get().getInteger("port")));
+	bootstrap.bind(new InetSocketAddress(GameProperties.get().getInteger("port")));
     }
 
     @Override
@@ -98,7 +98,7 @@ public final class ServerChannelHandler extends SimpleChannelHandler {
 	    ChannelBuffer buf = (ChannelBuffer) e.getMessage();
 	    buf.markReaderIndex();
 	    int avail = buf.readableBytes();
-	    if (avail < 1 || avail > Settings.RECEIVE_DATA_LIMIT) {
+	    if (avail < 1 || avail > GameConstants.RECEIVE_DATA_LIMIT) {
 		System.out.println("avail is: " + avail);
 		return;
 	    }

@@ -1,6 +1,6 @@
 package com.rs.net.decoders;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.net.Session;
@@ -28,7 +28,7 @@ public final class GrabPacketsDecoder extends Decoder {
 		int indexId = stream.readUnsignedByte();
 		int archiveId = stream.readUnsignedShort();
 		if (archiveId < 0) {
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log(this, "Fake request: " + indexId + ", " + archiveId);
 			return;
 		}
@@ -37,7 +37,7 @@ public final class GrabPacketsDecoder extends Decoder {
 					|| Cache.STORE.getIndexes()[indexId] == null
 					|| !Cache.STORE.getIndexes()[indexId]
 							.archiveExists(archiveId)) {
-				if (Settings.DEBUG)
+				if (GameConstants.DEBUG)
 					Logger.log(this, "Fake request: " + indexId + ", "
 							+ archiveId);
 				return;
@@ -45,7 +45,7 @@ public final class GrabPacketsDecoder extends Decoder {
 		} else if (archiveId != 255)
 			if (Cache.STORE.getIndexes().length <= archiveId
 					|| Cache.STORE.getIndexes()[archiveId] == null) {
-				if (Settings.DEBUG)
+				if (GameConstants.DEBUG)
 					Logger.log(this, "Fake request: " + indexId + ", "
 							+ archiveId);
 				return;
@@ -61,7 +61,7 @@ public final class GrabPacketsDecoder extends Decoder {
 		if (packetId == 4) {
 			session.getGrabPackets().setEncryptionValue(
 					stream.readUnsignedByte());
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log(this, "EncryptionValue: "
 						+ session.getGrabPackets().getEncryptionValue());
 		} else

@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.net.ServerChannelHandler;
 
 public final class Logger {
@@ -14,7 +14,7 @@ public final class Logger {
 
 	static {
 		try {
-			if (!Settings.DEBUG) {
+			if (!GameConstants.DEBUG) {
 				Calendar c = Calendar.getInstance();
 				globallogs = new BufferedWriter(new FileWriter("data/logs/global/log." + ((c.get(Calendar.MONTH)) + 1)
 						+ "." + c.get(Calendar.DATE) + "." + c.get(Calendar.YEAR) + ".txt", true));
@@ -26,7 +26,7 @@ public final class Logger {
 
 	public static void globalLog(String ip, String name, Object o) {
 		try {
-			if (!Settings.DEBUG) {
+			if (!GameConstants.DEBUG) {
 				globallogs
 						.write("[" + Utils.currentTime("hh:mm:ss z") + "]" + "" + name + " - " + ip + " [ " + o + " ]");
 				globallogs.newLine();

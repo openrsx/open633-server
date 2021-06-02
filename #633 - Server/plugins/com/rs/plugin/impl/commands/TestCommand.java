@@ -16,5 +16,10 @@ public final class TestCommand implements Command {
 	
 	@Override
 	public void execute(Player player, String[] cmd, String command) throws Exception {
+//		player.getInterfaceManager().sendChatBoxInterface(Integer.valueOf(cmd[1]));
+		player.getInterfaceManager().sendChatBoxInterface(64);
+		player.getPackets().sendIComponentText(64, 3, "hey");
+		player.getPackets().sendIComponentText(64, 4, "I'm a dialogue line");
+		player.getPackets().sendEntityOnIComponent(false, 1, 64, 2);
 	}
 }

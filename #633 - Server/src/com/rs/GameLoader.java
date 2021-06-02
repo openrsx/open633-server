@@ -10,9 +10,11 @@ import com.rs.game.World;
 import com.rs.game.map.MapBuilder;
 import com.rs.game.npc.combat.NPCCombatDispatcher;
 import com.rs.game.player.content.FriendChatsManager;
-import com.rs.game.player.controllers.ControlerHandler;
+import com.rs.game.player.controllers.ControllerHandler;
 import com.rs.game.player.dialogues.DialogueHandler;
 import com.rs.net.ServerChannelHandler;
+import com.rs.net.host.HostListType;
+import com.rs.net.host.HostManager;
 import com.rs.plugin.CommandDispatcher;
 import com.rs.plugin.InventoryDispatcher;
 import com.rs.plugin.NPCDispatcher;
@@ -32,9 +34,12 @@ import com.rs.utils.ShopsHandler;
 import com.rs.utils.json.GsonHandler;
 import com.rs.utils.json.impl.MobDropTableLoader;
 
+import lombok.Getter;
+
 /**
  *
  * @author Tyluur <itstyluur@gmail.com>
+ * @author Dennis
  * @since Feb 27, 2014
  */
 public class GameLoader {
@@ -44,22 +49,17 @@ public class GameLoader {
 	}
 
 	/**
-	 * The getter
-	 *
-	 * @return
+	 * The instance of the loader
 	 */
-	public static GameLoader get() {
-		return LOADER;
-	}
-
-	public BlockingExecutorService getBackgroundLoader() {
-		return backgroundLoader;
-	}
+	@Getter
+	private static final GameLoader LOADER = new GameLoader();
 
 	/**
 	 * An executor service which handles background loading tasks.
 	 */
-	private final BlockingExecutorService backgroundLoader = new BlockingExecutorService(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+	@Getter
+	private final BlockingExecutorService backgroundLoader = new BlockingExecutorService(
+			Executors.newCachedThreadPool());
 
 	/**
 	 * Loads everything here
@@ -100,11 +100,16 @@ public class GameLoader {
 			return null;
 		});
 		getBackgroundLoader().submit(() -> {
-			ControlerHandler.init();
+			ControllerHandler.init();
 			DialogueHandler.init();
 			FriendChatsManager.init();
 			World.init();
 			return null;
+		});
+		getBackgroundLoader().submit(() -> {
+			HostManager.deserialize(HostListType.STARTER_RECEIVED);
+			HostManager.deserialize(HostListType.BANNED_IP);
+			HostManager.deserialize(HostListType.MUTED_IP);
 		});
 		getBackgroundLoader().submit(() -> {
 			GsonHandler.initialize();
@@ -118,10 +123,4 @@ public class GameLoader {
 			return null;
 		});
 	}
-
-	/**
-	 * The instance of the loader
-	 */
-	private static final GameLoader LOADER = new GameLoader();
-
 }

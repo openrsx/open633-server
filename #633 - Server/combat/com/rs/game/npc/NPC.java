@@ -15,7 +15,32 @@ import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.npc.combat.NPCCombat;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
+import com.rs.game.npc.corp.CorporealBeast;
+import com.rs.game.npc.dragons.KingBlackDragon;
 import com.rs.game.npc.familiar.Familiar;
+import com.rs.game.npc.godwars.GodWarMinion;
+import com.rs.game.npc.godwars.GodWarsBosses;
+import com.rs.game.npc.godwars.armadyl.GodwarsArmadylFaction;
+import com.rs.game.npc.godwars.armadyl.KreeArra;
+import com.rs.game.npc.godwars.bandos.GeneralGraardor;
+import com.rs.game.npc.godwars.bandos.GodwarsBandosFaction;
+import com.rs.game.npc.godwars.saradomin.CommanderZilyana;
+import com.rs.game.npc.godwars.saradomin.GodwarsSaradominFaction;
+import com.rs.game.npc.godwars.zammorak.GodwarsZammorakFaction;
+import com.rs.game.npc.godwars.zammorak.KrilTstsaroth;
+import com.rs.game.npc.others.AbyssalDemon;
+import com.rs.game.npc.others.BanditCampBandits;
+import com.rs.game.npc.others.Bork;
+import com.rs.game.npc.others.Jadinko;
+import com.rs.game.npc.others.KalphiteQueen;
+import com.rs.game.npc.others.Kurask;
+import com.rs.game.npc.others.LivingRock;
+import com.rs.game.npc.others.Revenant;
+import com.rs.game.npc.others.RockCrabs;
+import com.rs.game.npc.others.Sheep;
+import com.rs.game.npc.others.Strykewyrm;
+import com.rs.game.npc.others.TormentedDemon;
+import com.rs.game.npc.others.Werewolf;
 import com.rs.game.player.Player;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.route.RouteFinder;
@@ -97,7 +122,7 @@ public class NPC extends Entity {
 		// npc is inited on creating instance
 		initEntity();
 		World.addNPC(this);
-		World.updateEntityRegion(this);
+		updateEntityRegion(this);
 		// npc is started on creating instance
 		loadMapRegions();
 		checkMultiArea();
@@ -495,7 +520,7 @@ public class NPC extends Entity {
 		if (hasFinished())
 			return;
 		setFinished(true);
-		World.updateEntityRegion(this);
+		updateEntityRegion(this);
 		World.removeNPC(this);
 	}
 
@@ -534,48 +559,52 @@ public class NPC extends Entity {
 		setFinished(false);
 		World.addNPC(this);
 		setLastRegionId((short) 0);
-		World.updateEntityRegion(this);
+		updateEntityRegion(this);
 		loadMapRegions();
 		checkMultiArea();
 	}
 	
 	@Override
 	public void sendDeath(final Entity source) {
-		final NPCCombatDefinitions defs = getCombatDefinitions();
-		resetWalkSteps();
-		combat.removeTarget();
-		setNextAnimation(null);
-		World.get().submit(new Task(2) {
-			int loop;
-			@Override
-			protected void execute() {
-				if (loop == 0) {
-					setNextAnimation(new Animation(defs.getDeathEmote()));
-				} else if (loop >= defs.getDeathDelay()) {
-					if (source instanceof Player)
-						((Player) source).getControlerManager().processNPCDeath(getId());
-					drop();
-					reset();
-					setLocation(respawnTile);
-					finish();
-					if (!isSpawned())
-						setRespawnTask();
-					if (source.getAttackedBy() == NPC.this) { // no need to wait
-																// after u kill
-						source.setAttackedByDelay(0);
-						source.setAttackedBy(null);
-						source.setFindTargetDelay(0);
-					}
-					this.cancel();
-				}
-				loop++;
-			}
-		});
+		World.get().submit(new NPCDeath(this));
+//		final NPCCombatDefinitions defs = getCombatDefinitions();
+//		resetWalkSteps();
+//		combat.removeTarget();
+//		setNextAnimation(null);
+//		World.get().submit(new Task(2) {
+//			int loop;
+//			@Override
+//			protected void execute() {
+//				if (loop == 0) {
+//					setNextAnimation(new Animation(defs.getDeathEmote()));
+//				} else if (loop >= defs.getDeathDelay()) {
+//					if (source instanceof Player)
+//						((Player) source).getControlerManager().processNPCDeath(getId());
+//					drop();
+//					reset();
+//					setLocation(respawnTile);
+//					finish();
+//					if (!isSpawned())
+//						setRespawnTask();
+//					if (source.getAttackedBy() == NPC.this) { // no need to wait
+//																// after u kill
+//						source.setAttackedByDelay(0);
+//						source.setAttackedBy(null);
+//						source.setFindTargetDelay(0);
+//					}
+//					this.cancel();
+//				}
+//				loop++;
+//			}
+//		});
 	}
 
 	public void drop() {
 		try {
+			
 			Player killer = getMostDamageReceivedSourcePlayer();
+			if (killer == null)
+				return;
 			DropManager.dropItems(killer, this);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -654,7 +683,7 @@ public class NPC extends Entity {
 					for (int playerIndex : playerIndexes) {
 						Player player = World.getPlayers().get(playerIndex);
 						if (player.isDead() || player.hasFinished() || !player.isRunning()
-								|| player.getAppearence().isHidden()
+								|| player.getAppearance().isHidden()
 								|| !Utils.isOnRange(getX(), getY(), size, player.getX(), player.getY(),
 										player.getSize(), forceTargetDistance > 0 ? forceTargetDistance : agroRatio)
 								|| (!forceMultiAttacked && (!isMultiArea() || !player.isMultiArea())
@@ -756,5 +785,84 @@ public class NPC extends Entity {
 	public void transformIntoNPC(short id) {
 		setNPC(id);
 		nextTransformation = new Transformation(id);
+	}
+	
+	public static final NPC spawnNPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea,
+			boolean spawned) {
+		NPC n = null;
+
+		if (id == 1926 || id == 1931)
+			n = new BanditCampBandits(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id == 7134)
+			n = new Bork(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id >= 8832 && id <= 8834)
+			n = new LivingRock(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id >= 13465 && id <= 13481)
+			n = new Revenant(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id == 1158 || id == 1160)
+			n = new KalphiteQueen(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id == 6261 || id == 6263 || id == 6265)
+			n = GodWarsBosses.graardorMinions[(id - 6261) / 2] = new GodWarMinion(id, tile, mapAreaNameHash,
+					canBeAttackFromOutOfArea, spawned);
+		else if (id == 6260)
+			n = new GeneralGraardor(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id == 6222)
+			n = new KreeArra(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id == 6223 || id == 6225 || id == 6227 || id == 6081)
+			n = GodWarsBosses.armadylMinions[(id - 6223) / 2] = new GodWarMinion(id, tile, mapAreaNameHash,
+					canBeAttackFromOutOfArea, spawned);
+		else if (id == 6203)
+			n = new KrilTstsaroth(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id == 6204 || id == 6206 || id == 6208)
+			n = GodWarsBosses.zamorakMinions[(id - 6204) / 2] = new GodWarMinion(id, tile, mapAreaNameHash,
+					canBeAttackFromOutOfArea, spawned);
+		else if (id == 6248 || id == 6250 || id == 6252)
+			n = GodWarsBosses.commanderMinions[(id - 6248) / 2] = new GodWarMinion(id, tile, mapAreaNameHash,
+					canBeAttackFromOutOfArea, spawned);
+		else if (id == 6247)
+			n = new CommanderZilyana(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id >= 6210 && id <= 6221)
+			n = new GodwarsZammorakFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id >= 6254 && id <= 6259)
+			n = new GodwarsSaradominFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id >= 6268 && id <= 6283)
+			n = new GodwarsBandosFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id >= 6228 && id <= 6246)
+			n = new GodwarsArmadylFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id == 1615)
+			n = new AbyssalDemon(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
+		else if (id == 50 || id == 2642)
+			n = new KingBlackDragon(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id >= 9462 && id <= 9467)
+			n = new Strykewyrm(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
+		else if (id >= 6026 && id <= 6045)
+			n = new Werewolf(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id == 1266 || id == 1268 || id == 2453 || id == 2886)
+			n = new RockCrabs(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id == 8133)
+			n = new CorporealBeast(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+
+		else if (id == 1282) {
+			n = new NPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+			n.setLocked(true);
+		} else if (id == 43 || (id >= 5156 && id <= 5164) || id == 5156 || id == 1765)
+			n = new Sheep(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
+
+		else if (id == 8349 || id == 8450 || id == 8451)
+			n = new TormentedDemon(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		else if (id == 1609 || id == 1610)
+			n = new Kurask(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
+		else if (id == 13820 || id == 13821 || id == 13822)
+			n = new Jadinko(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
+		else if (id == 1131 || id == 1132 || id == 1133 || id == 1134) {
+			n = new NPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+			n.setForceAgressive(true);
+		} else
+			n = new NPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		return n;
+	}
+
+	public static final NPC spawnNPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
+		return spawnNPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, false);
 	}
 }

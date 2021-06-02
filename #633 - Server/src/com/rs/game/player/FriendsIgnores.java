@@ -7,6 +7,8 @@ import java.util.List;
 import com.rs.game.World;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.net.decoders.WorldPacketsDecoder;
+import com.rs.net.encoders.other.ChatMessage;
+import com.rs.net.encoders.other.QuickChatMessage;
 import com.rs.utils.Utils;
 
 public class FriendsIgnores {

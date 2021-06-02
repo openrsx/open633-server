@@ -391,7 +391,7 @@ public class Foods {
 			@Override
 			public void effect(Object object) {
 				Player player = (Player) object;
-				int runEnergy = (int) (player.getRunEnergy() * 1.1);
+				int runEnergy = (int) (player.getDetails().getRunEnergy() * 1.1);
 				if (runEnergy > 100)
 					runEnergy = 100;
 				player.setRunEnergy(runEnergy);
@@ -477,7 +477,7 @@ public class Foods {
 			public void effect(Object object) {
 				Player player = (Player) object;
 				player.getPackets().sendGameMessage(
-						"It hurts to see a grown " + (player.getAppearence().isMale() ? "male" : "female") + " cry.");
+						"It hurts to see a grown " + (player.getAppearance().isMale() ? "male" : "female") + " cry.");
 			}
 		},
 
@@ -518,7 +518,7 @@ public class Foods {
 			@Override
 			public void effect(Object object) {
 				Player player = (Player) object;
-				player.setRunEnergy((int) (.20 * player.getRunEnergy()));
+				player.setRunEnergy((int) (.20 * player.getDetails().getRunEnergy()));
 			}
 		};
 
@@ -535,7 +535,7 @@ public class Foods {
 		if (!player.getDetails().getWatchMap().get("FOOD").elapsed(1800)) {
 			return false;
 		}
-		if (!player.getControlerManager().canEat(food))
+		if (!player.getControllerManager().canEat(food))
 			return true;
 		String name = ItemDefinitions.getItemDefinitions(food.getId()).getName().toLowerCase();
 		player.getPackets().sendGameMessage("You eat the " + name + ".");

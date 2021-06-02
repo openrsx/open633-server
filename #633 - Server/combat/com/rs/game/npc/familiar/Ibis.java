@@ -4,6 +4,7 @@ import com.rs.game.Animation;
 import com.rs.game.Graphics;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
+import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
@@ -80,8 +81,8 @@ public class Ibis extends Familiar {
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {
-				World.addGroundItem(new Item(1, 1), firstTile, player, true, 180);
-				World.addGroundItem(new Item(1, 1), secondTile, player, true, 180);
+				FloorItem.createGroundItem(new Item(1, 1), firstTile, player, true, 180, true);
+				FloorItem.createGroundItem(new Item(1, 1), secondTile, player, true, 180, true);
 				this.cancel();
 			}
 		});

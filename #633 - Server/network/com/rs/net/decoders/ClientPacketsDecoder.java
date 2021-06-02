@@ -1,6 +1,6 @@
 package com.rs.net.decoders;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.io.InputStream;
 import com.rs.net.Session;
 import com.rs.utils.Logger;
@@ -23,7 +23,7 @@ public final class ClientPacketsDecoder extends Decoder {
 			decodeGrab(stream);
 			break;
 		default:
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log(this, "PacketId " + packetId);
 			session.getChannel().close();
 			break;
@@ -47,7 +47,7 @@ public final class ClientPacketsDecoder extends Decoder {
 			return;
 		}
 		session.setEncoder(0);
-		if (stream.readInt() != Settings.CLIENT_REVISION /*
+		if (stream.readInt() != GameConstants.CLIENT_REVISION /*
 													 * || stream.readInt() !=
 													 * Settings
 													 * .CUSTOM_CLIENT_BUILD

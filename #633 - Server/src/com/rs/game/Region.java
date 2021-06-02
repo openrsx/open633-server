@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.Cache;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.cores.CoresManager;
 import com.rs.game.item.FloorItem;
+import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.utils.Logger;
@@ -84,7 +85,7 @@ public class Region {
 			return;
 		}
 		for (NPCSpawning spawn : spawns) {
-			World.spawnNPC(spawn.getId(), spawn.getTile(), (byte) -1, true);
+			NPC.spawnNPC(spawn.getId(), spawn.getTile(), (byte) -1, true);
 		}
 	}
 
@@ -295,7 +296,7 @@ public class Region {
 				if (objects[plane][localX][localY][slot] != null)
 					unclip(objects[plane][localX][localY][slot], localX, localY);
 			} else if (spawned == null) {
-				if (Settings.DEBUG)
+				if (GameConstants.DEBUG)
 					Logger.log(this,
 							"Requested object to spawn is already spawned.(Shouldnt happen)");
 				return;
@@ -342,7 +343,7 @@ public class Region {
 			unclip(object, localX, localY);
 			removedOriginalObjects.add(object);
 		} else {
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log(this,
 						"Requested object to remove wasnt found.(Shouldnt happen)");
 			return;
@@ -578,7 +579,7 @@ public class Region {
 				}
 			}
 		}
-		if (Settings.DEBUG && landContainerData == null && landArchiveId != -1
+		if (GameConstants.DEBUG && landContainerData == null && landArchiveId != -1
 				&& MapArchiveKeys.getMapKeys(regionId) != null)
 			Logger.log(this, "Missing xteas for region " + regionId + ".");
 	}
@@ -607,6 +608,12 @@ public class Region {
 				return item;
 		}
 		return null;
+	}
+	
+	public List<FloorItem> forceGetFloorItems() {
+		if (groundItems == null)
+			groundItems = new CopyOnWriteArrayList<FloorItem>();
+		return groundItems;
 	}
 
 	/**

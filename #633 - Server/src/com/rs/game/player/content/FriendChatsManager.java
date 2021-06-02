@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.World;
-import com.rs.game.player.AccountCreation;
-import com.rs.game.player.ChatMessage;
 import com.rs.game.player.FriendsIgnores;
 import com.rs.game.player.Player;
-import com.rs.game.player.QuickChatMessage;
 import com.rs.io.OutputStream;
+import com.rs.net.AccountCreation;
+import com.rs.net.encoders.other.ChatMessage;
+import com.rs.net.encoders.other.QuickChatMessage;
 import com.rs.utils.Utils;
 
 public class FriendChatsManager {
@@ -242,7 +242,7 @@ public class FriendChatsManager {
 				stream.writeShort(1);
 				int rank = getRank(player.getDetails().getRights().getValue(), player.getUsername());
 				stream.writeByte(rank);
-				stream.writeString(Settings.SERVER_NAME);
+				stream.writeString(GameConstants.SERVER_NAME);
 			}
 			dataBlock = new byte[stream.getOffset()];
 			stream.setOffset(0);
@@ -346,7 +346,7 @@ public class FriendChatsManager {
 						player.getPackets().sendGameMessage("The channel you tried to join does not exist.");
 						return;
 					}
-					owner.setDisplayName(formatedName);
+//					owner.setDisplayName(formatedName);
 				}
 				FriendsIgnores settings = owner.getFriendsIgnores();
 				if (!settings.hasFriendChat()) {

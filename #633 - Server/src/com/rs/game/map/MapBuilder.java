@@ -12,6 +12,8 @@ import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.Player;
 
+import lombok.Synchronized;
+
 public final class MapBuilder {
 
 	// used by construction preview
@@ -53,6 +55,7 @@ public final class MapBuilder {
 		return (mapX << 8) + mapY;
 	}
 
+	@Synchronized("ALGORITHM_LOCK")
 	public static int findEmptyRegionHash(int widthChunks, int heightChunks) {
 		int regionsDistanceX = 1;
 		while (widthChunks > 8) {
@@ -64,27 +67,24 @@ public final class MapBuilder {
 			regionsDistanceY += 1;
 			heightChunks -= 8;
 		}
-		synchronized (ALGORITHM_LOCK) {
-			for (int regionX = 1; regionX <= MAX_REGION_X - regionsDistanceX; regionX++) {
-				skip: for (int regionY = 1; regionY <= MAX_REGION_Y - regionsDistanceY; regionY++) {
-					int regionHash = getRegionId(regionX, regionY); // map
-					// hash
-					// because
-					// skiping
-					// to next
-					// map up
-					for (int checkRegionX = regionX - 1; checkRegionX <= regionX + regionsDistanceX; checkRegionX++) {
-						for (int checkRegionY = regionY - 1; checkRegionY <= regionY
-								+ regionsDistanceY; checkRegionY++) {
-							int hash = getRegionId(checkRegionX, checkRegionY);
-							if (regionExists(hash))
-								continue skip;
+		for (int regionX = 1; regionX <= MAX_REGION_X - regionsDistanceX; regionX++) {
+			skip: for (int regionY = 1; regionY <= MAX_REGION_Y - regionsDistanceY; regionY++) {
+				int regionHash = getRegionId(regionX, regionY); // map
+				// hash
+				// because
+				// skiping
+				// to next
+				// map up
+				for (int checkRegionX = regionX - 1; checkRegionX <= regionX + regionsDistanceX; checkRegionX++) {
+					for (int checkRegionY = regionY - 1; checkRegionY <= regionY + regionsDistanceY; checkRegionY++) {
+						int hash = getRegionId(checkRegionX, checkRegionY);
+						if (regionExists(hash))
+							continue skip;
 
-						}
 					}
-					reserveArea(regionX, regionY, regionsDistanceX, regionsDistanceY, false);
-					return regionHash;
 				}
+				reserveArea(regionX, regionY, regionsDistanceX, regionsDistanceY, false);
+				return regionHash;
 			}
 		}
 		return -1;
@@ -118,27 +118,26 @@ public final class MapBuilder {
 		toRegion.setReloadObjects(plane, offsetX, offsetY);
 	}
 
+	@Synchronized("ALGORITHM_LOCK")
 	public static final void destroyMap(int chunkX, int chunkY, int widthRegions, int heightRegions) {
-		synchronized (ALGORITHM_LOCK) {
-			int fromRegionX = chunkX / 8;
-			int fromRegionY = chunkY / 8;
-			int regionsDistanceX = 1;
-			while (widthRegions > 8) {
-				regionsDistanceX += 1;
-				widthRegions -= 8;
-			}
-			int regionsDistanceY = 1;
-			while (heightRegions > 8) {
-				regionsDistanceY += 1;
-				heightRegions -= 8;
-			}
-			for (int regionX = fromRegionX; regionX < fromRegionX + regionsDistanceX; regionX++) {
-				for (int regionY = fromRegionY; regionY < fromRegionY + regionsDistanceY; regionY++) {
-					destroyRegion(getRegionId(regionX, regionY));
-				}
-			}
-			reserveArea(fromRegionX, fromRegionY, regionsDistanceX, regionsDistanceY, true);
+		int fromRegionX = chunkX / 8;
+		int fromRegionY = chunkY / 8;
+		int regionsDistanceX = 1;
+		while (widthRegions > 8) {
+			regionsDistanceX += 1;
+			widthRegions -= 8;
 		}
+		int regionsDistanceY = 1;
+		while (heightRegions > 8) {
+			regionsDistanceY += 1;
+			heightRegions -= 8;
+		}
+		for (int regionX = fromRegionX; regionX < fromRegionX + regionsDistanceX; regionX++) {
+			for (int regionY = fromRegionY; regionY < fromRegionY + regionsDistanceY; regionY++) {
+				destroyRegion(getRegionId(regionX, regionY));
+			}
+		}
+		reserveArea(fromRegionX, fromRegionY, regionsDistanceX, regionsDistanceY, true);
 	}
 
 	public static final void repeatMap(int toChunkX, int toChunkY, int widthChunks, int heightChunks, int rx, int ry,
@@ -289,21 +288,20 @@ public final class MapBuilder {
 	/*
 	 * not recommended to use unless you want to make a more complex map
 	 */
+	@Synchronized("ALGORITHM_LOCK")
 	public static DynamicRegion createDynamicRegion(int regionId) {
-		synchronized (ALGORITHM_LOCK) {
-			Region region = World.getRegions().get(regionId);
-			if (region != null) {
-				if (region instanceof DynamicRegion) // if its already dynamic
-					// lets
-					// keep building it
-					return (DynamicRegion) region;
-				else
-					destroyRegion(regionId);
-			}
-			DynamicRegion newRegion = new DynamicRegion(regionId);
-			World.getRegions().put(regionId, newRegion);
-			return newRegion;
+		Region region = World.getRegions().get(regionId);
+		if (region != null) {
+			if (region instanceof DynamicRegion) // if its already dynamic
+				// lets
+				// keep building it
+				return (DynamicRegion) region;
+			else
+				destroyRegion(regionId);
 		}
+		DynamicRegion newRegion = new DynamicRegion(regionId);
+		World.getRegions().put(regionId, newRegion);
+		return newRegion;
 	}
 
 	/*

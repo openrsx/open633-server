@@ -86,7 +86,7 @@ public final class Pet extends NPC {
 			owner.getPackets().sendGameMessage("Your pet has ran away to find some food!");
 			switchOrb(false);
 			owner.getInterfaceManager()
-					.removeWindowInterface(owner.getInterfaceManager().hasRezizableScreen() ? 128 : 188);
+					.removeWindowInterface(owner.getInterfaceManager().isResizableScreen() ? 128 : 188);
 			owner.getPackets().sendIComponentSettings(747, 17, 0, 0, 0);
 			finish();
 			return;
@@ -142,7 +142,7 @@ public final class Pet extends NPC {
 		owner.getPetManager().setNpcId(-1);
 		owner.getPetManager().setItemId(-1);
 		switchOrb(false);
-		owner.getInterfaceManager().removeWindowInterface(owner.getInterfaceManager().hasRezizableScreen() ? 128 : 188);
+		owner.getInterfaceManager().removeWindowInterface(owner.getInterfaceManager().isResizableScreen() ? 128 : 188);
 		owner.getPackets().sendIComponentSettings(747, 17, 0, 0, 0);
 		finish();
 	}
@@ -213,7 +213,7 @@ public final class Pet extends NPC {
 	public void sendFollowerDetails() {
 		owner.getVarsManager().sendVarBit(4285, (int) details.getGrowth());
 		owner.getVarsManager().sendVarBit(4286, (int) details.getHunger());
-		boolean res = owner.getInterfaceManager().hasRezizableScreen();
+		boolean res = owner.getInterfaceManager().isResizableScreen();
 		owner.getInterfaceManager().setWindowInterface(res ? 128 : 188, 662);
 		unlock();
 		owner.getInterfaceManager().openGameTab(95);

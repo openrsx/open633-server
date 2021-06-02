@@ -83,7 +83,7 @@ public final class NPCCombatDispatcher {
 	private static boolean isMobNamed(MobCombatInterface mobType, NPC mob) {
 		Annotation annotation = mobType.getClass().getAnnotation(MobCombatSignature.class);
 		MobCombatSignature signature = (MobCombatSignature) annotation;
-		return Arrays.stream(signature.mobName()).anyMatch(mobName -> mob.getName().contains(mobName));
+		return Arrays.stream(signature.mobName()).anyMatch(mobName -> mob.getName().equalsIgnoreCase(mobName));
 	}
 	
 	/**

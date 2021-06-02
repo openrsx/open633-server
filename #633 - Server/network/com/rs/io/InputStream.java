@@ -1,6 +1,6 @@
 package com.rs.io;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.player.Player;
 
 public final class InputStream extends Stream {
@@ -197,7 +197,7 @@ public final class InputStream extends Stream {
 	@SuppressWarnings("unused")
 	public int readBigSmart() {
 
-		if (Settings.CLIENT_REVISION < 670)
+		if (GameConstants.CLIENT_REVISION < 670)
 			return readUnsignedShort();
 
 		if ((buffer[offset] ^ 0xffffffff) <= -1) {

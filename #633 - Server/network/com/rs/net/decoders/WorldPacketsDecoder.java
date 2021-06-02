@@ -1,6 +1,6 @@
 package com.rs.net.decoders;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
@@ -9,12 +9,9 @@ import com.rs.game.item.Item;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.familiar.Familiar.SpecialAttack;
-import com.rs.game.player.ChatMessage;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
-import com.rs.game.player.PublicChatMessage;
-import com.rs.game.player.QuickChatMessage;
 import com.rs.game.player.Skills;
 import com.rs.game.player.actions.PlayerFollow;
 import com.rs.game.player.content.FriendChatsManager;
@@ -27,6 +24,9 @@ import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.io.InputStream;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
+import com.rs.net.encoders.other.ChatMessage;
+import com.rs.net.encoders.other.PublicChatMessage;
+import com.rs.net.encoders.other.QuickChatMessage;
 import com.rs.plugin.CommandDispatcher;
 import com.rs.plugin.NPCDispatcher;
 import com.rs.plugin.ObjectDispatcher;
@@ -227,7 +227,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				&& !player.hasFinished()) {
 			int packetId = stream.readPacket(player);
 			if (packetId >= PACKET_SIZES.length || packetId < 0) {
-				if (Settings.DEBUG)
+				if (GameConstants.DEBUG)
 					System.out.println("PacketId " + packetId
 							+ " has fake packet id.");
 				break;
@@ -241,13 +241,13 @@ public final class WorldPacketsDecoder extends Decoder {
 				length = stream.readInt();
 			else if (length == -4) {
 				length = stream.getRemaining();
-				if (Settings.DEBUG)
+				if (GameConstants.DEBUG)
 					System.out.println("Invalid size for PacketId " + packetId
 							+ ". Size guessed to be " + length);
 			}
 			if (length > stream.getRemaining()) {
 				length = stream.getRemaining();
-				if (Settings.DEBUG)
+				if (GameConstants.DEBUG)
 					System.out.println("PacketId " + packetId
 							+ " has fake size. - expected size " + length);
 				// break;
@@ -350,7 +350,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				player.setRouteEvent(new RouteEvent(p2, new Runnable() {
 					@Override
 					public void run() {
-						if (!player.getControlerManager().processItemOnPlayer(
+						if (!player.getControllerManager().processItemOnPlayer(
 								p2, item))
 							return;
 //						if (itemId == 4155)
@@ -415,7 +415,7 @@ public final class WorldPacketsDecoder extends Decoder {
 						player.setNextFaceWorldTile(new WorldTile(p2
 								.getCoordFaceX(p2.getSize()), p2
 								.getCoordFaceY(p2.getSize()), p2.getPlane()));
-						if (!player.getControlerManager().canAttack(p2))
+						if (!player.getControllerManager().canAttack(p2))
 							return;
 						if (!player.isCanPvp() || !p2.isCanPvp()) {
 							player.getPackets()
@@ -494,7 +494,7 @@ public final class WorldPacketsDecoder extends Decoder {
 						player.setNextFaceWorldTile(new WorldTile(p2
 								.getCoordFaceX(p2.getSize()), p2
 								.getCoordFaceY(p2.getSize()), p2.getPlane()));
-						if (!player.getControlerManager().canAttack(p2))
+						if (!player.getControllerManager().canAttack(p2))
 							return;
 						if (!player.isCanPvp() || !p2.isCanPvp()) {
 							player.getPackets()
@@ -544,7 +544,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				Magic.processLunarSpell(player, componentId, p2);
 				break;
 			}
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				System.out.println("Spell:" + componentId);
 		} else if (packetId == INTERFACE_ON_NPC) {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
@@ -588,7 +588,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			case Inventory.INVENTORY_INTERFACE:
 				Item item = player.getInventory().getItem(interfaceSlot);
 				if (item == null
-						|| !player.getControlerManager().processItemOnNPC(npc,
+						|| !player.getControllerManager().processItemOnNPC(npc,
 								item))
 					return;
 				else if (npc instanceof Familiar) {
@@ -667,7 +667,7 @@ public final class WorldPacketsDecoder extends Decoder {
 						player.setNextFaceWorldTile(new WorldTile(npc
 								.getCoordFaceX(npc.getSize()), npc
 								.getCoordFaceY(npc.getSize()), npc.getPlane()));
-						if (!player.getControlerManager().canAttack(npc))
+						if (!player.getControllerManager().canAttack(npc))
 							return;
 						if (npc instanceof Familiar) {
 							Familiar familiar = (Familiar) npc;
@@ -738,7 +738,7 @@ public final class WorldPacketsDecoder extends Decoder {
 						player.setNextFaceWorldTile(new WorldTile(npc
 								.getCoordFaceX(npc.getSize()), npc
 								.getCoordFaceY(npc.getSize()), npc.getPlane()));
-						if (!player.getControlerManager().canAttack(npc))
+						if (!player.getControllerManager().canAttack(npc))
 							return;
 						if (npc instanceof Familiar) {
 							Familiar familiar = (Familiar) npc;
@@ -780,7 +780,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				Magic.processLunarSpell(player, componentId, npc);
 				break;
 			}
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				System.out.println("Spell:" + componentId);
 		} else if (packetId == INTERFACE_ON_OBJECT) {
 			int slot = stream.readShort();
@@ -800,7 +800,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			int regionId = tile.getRegionId();
 			if (!player.getMapRegionsIds().contains(regionId))
 				return;
-			WorldObject mapObject = World.getObjectWithId(tile, objectId);
+			WorldObject mapObject = WorldObject.getObjectWithId(tile, objectId);
 			if (mapObject == null || mapObject.getId() != objectId)
 				return;
 			final WorldObject object = mapObject;
@@ -838,11 +838,11 @@ public final class WorldPacketsDecoder extends Decoder {
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player.isLocked() || player.getEmotesManager().isDoingEmote()
-					|| !player.getControlerManager().canPlayerOption1(p2))
+					|| !player.getControllerManager().canPlayerOption1(p2))
 				return;
 			if (!player.isCanPvp())
 				return;
-			if (!player.getControlerManager().canAttack(p2))
+			if (!player.getControllerManager().canAttack(p2))
 				return;
 			if (!player.isCanPvp() || !p2.isCanPvp()) {
 				player.getPackets()
@@ -885,7 +885,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			if (player.isLocked())
 				return;
-			if (!player.getControlerManager().canPlayerOption2(p2))
+			if (!player.getControllerManager().canPlayerOption2(p2))
 				return;
 			if (forceRun)
 				player.setRun(forceRun);
@@ -906,7 +906,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.setRouteEvent(new RouteEvent(p2, new Runnable() {
 				@Override
 				public void run() {
-					if (!player.getControlerManager().canPlayerOption3(p2))
+					if (!player.getControllerManager().canPlayerOption3(p2))
 						return;
 				}
 			}));
@@ -924,7 +924,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.setRouteEvent(new RouteEvent(p2, new Runnable() {
 				@Override
 				public void run() {
-					if (!player.getControlerManager().canPlayerOption4(p2))
+					if (!player.getControllerManager().canPlayerOption4(p2))
 						return;
 					player.stopAll();
 //					if (player.isStarter()) {
@@ -934,13 +934,13 @@ public final class WorldPacketsDecoder extends Decoder {
 //						return;
 //					}
 					if (player.isCantTrade()
-							|| player.getControlerManager().getControler() != null) {
+							|| player.getControllerManager().getController() != null) {
 						player.getPackets().sendGameMessage("You are busy.");
 						return;
 					}
 					if (p2.getInterfaceManager().containsScreenInter()
 							|| p2.isCantTrade()
-							|| p2.getControlerManager().getControler() != null
+							|| p2.getControllerManager().getController() != null
 
 							|| p2.isLocked()) {
 						player.getPackets().sendGameMessage(
@@ -1013,7 +1013,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
 				return;
-			if (!player.getControlerManager().canAttack(npc))
+			if (!player.getControllerManager().canAttack(npc))
 				return;
 			if (forceRun) // you scrwed up cutscenes
 				player.setRun(forceRun);
@@ -1076,7 +1076,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			final FloorItem item = World.getRegion(regionId).getGroundItem(id,
 					tile, player);
-			if (item == null || !player.getControlerManager().canTakeItem(item))
+			if (item == null || !player.getControllerManager().canTakeItem(item))
 				return;
 			if (forceRun)
 				player.setRun(forceRun);
@@ -1089,7 +1089,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					if (item == null)
 						return;
 					// player.setNextFaceWorldTile(tile);
-					if (World.removeGroundItem(player, item))
+					if (FloorItem.removeGroundItem(player, item))
 						Logger.globalLog(
 								player.getUsername(),
 								player.getSession().getIP(),
@@ -1103,12 +1103,12 @@ public final class WorldPacketsDecoder extends Decoder {
 				}
 			}));
 		}
-		NPCDispatcher.executeMobInteraction(player, stream, packetId == NPC_CLICK1_PACKET ? 1 :packetId ==  NPC_CLICK2_PACKET ? 2 :packetId ==  NPC_CLICK3_PACKET ? 3 : packetId == NPC_CLICK4_PACKET ? 4 : 5);
+			
+		NPCDispatcher.executeMobInteraction(player, stream, packetId == NPC_CLICK1_PACKET ? 1 :packetId ==  NPC_CLICK2_PACKET ? 2 :packetId ==  NPC_CLICK3_PACKET ? 3 : packetId == NPC_CLICK4_PACKET ? 4 : -1);
 	}
 
 	@SuppressWarnings("unused")
-	public void processPackets(final int packetId, InputStream stream,
-			int length) {
+	public void processPackets(final int packetId, InputStream stream, int length) {
 		if (packetId == PING_PACKET) {
 			// kk we ping :)
 		} else if (packetId == MOUVE_MOUSE_PACKET) {
@@ -1153,7 +1153,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					|| !player.getInterfaceManager().containsInterface(742))
 				return;
 			player.setDisplayMode(displayMode);
-			player.getInterfaceManager().removeAll();
+			player.getInterfaceManager().getOpenedinterfaces().clear();
 			player.getInterfaceManager().sendInterfaces();
 			player.getInterfaceManager().sendInterface(742);
 		} else if (packetId == CLICK_PACKET) {
@@ -1187,7 +1187,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					|| !player.getInterfaceManager().containsInterface(
 							interfaceId))
 				return;
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log(this, "Dialogue: " + interfaceId + ", " + buttonId
 						+ ", " + junk);
 			int componentId = interfaceHash - (interfaceId << 16);
@@ -1357,7 +1357,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				else
 					player.getTrade().addItem(trade_item_X_Slot, value);
 			} else if (player.getTemporaryAttributes().remove("xformring") == Boolean.TRUE)
-				player.getAppearence().transformIntoNPC(value);
+				player.getAppearance().transformIntoNPC(value);
 			else if (player.getTemporaryAttributes().get("skillId") != null) {
 				if (player.getEquipment().wearingArmour()) {
 					player.getDialogueManager().finishDialogue();
@@ -1375,7 +1375,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					value = 99;
 				player.getSkills().set(skillId, value);
 				player.getSkills().setXp(skillId, Skills.getXPForLevel(value));
-				player.getAppearence().generateAppearenceData();
+				player.getAppearance().generateAppearenceData();
 				player.getDialogueManager().finishDialogue();
 
 			}
@@ -1448,7 +1448,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				}
 			} else if (fromInterfaceId == 34 && toInterfaceId == 34)
 				player.getNotes().switchNotes(fromSlot, toSlot);
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				System.out.println("Switch item " + fromInterfaceId + ", "
 						+ fromSlot + ", " + toSlot);
 		} else if (packetId == DONE_LOADING_REGION_PACKET) {
@@ -1588,7 +1588,7 @@ public final class WorldPacketsDecoder extends Decoder {
 //			else if (chatType == 1)
 //				player.sendFriendsChannelQuickMessage(new QuickChatMessage(
 //						fileId, data));
-			 if (Settings.DEBUG)
+			 if (GameConstants.DEBUG)
 				Logger.log(this, "Unknown chat type: " + chatType);
 		} else if (packetId == CHAT_TYPE_PACKET) {
 //			chatType = stream.readUnsignedByte();
@@ -1624,7 +1624,7 @@ public final class WorldPacketsDecoder extends Decoder {
 //				player.sendGuestClanChannelMessage(new ChatMessage(message));
 //			else
 				player.sendPublicChatMessage(new PublicChatMessage(message, effects));
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log(this, "Chat type: " + chatType);
 		} else if (packetId == COMMANDS_PACKET) {
 			if (!player.isRunning())
@@ -1634,7 +1634,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			boolean unknown = stream.readUnsignedByte() == 1;
 			String command = stream.readString();
 			if (!CommandDispatcher.processCommand(player, command, true, clientCommand)
-					&& Settings.DEBUG)
+					&& GameConstants.DEBUG)
 				Logger.log(this, "Command: " + command);
 		} else if (packetId == REPORT_ABUSE_PACKET) {
 			if (!player.isStarted())
@@ -1664,7 +1664,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			int itemId = stream.readUnsignedShort();
 //			player.getGeManager().chooseItem(itemId);
 		} else {
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log(this, "Missing packet " + packetId
 						+ ", expected size: " + length + ", actual size: "
 						+ PACKET_SIZES[packetId]);

@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.Hit;
 import com.rs.game.World;
 import com.rs.game.npc.NPC;
@@ -86,7 +86,7 @@ public final class LocalNPCUpdate {
 			if (indexes == null)
 				continue;
 			for (int npcIndex : indexes) {
-				if (localNPCs.size() == Settings.LOCAL_NPCS_LIMIT)
+				if (localNPCs.size() == GameConstants.LOCAL_NPCS_LIMIT)
 					break;
 				NPC n = World.getNPCs().get(npcIndex);
 				if (n == null || n.hasFinished() || localNPCs.contains(n)

@@ -7,9 +7,9 @@ import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
-import com.rs.game.minigames.GodWarsBosses;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
+import com.rs.game.npc.godwars.GodWarsBosses;
 import com.rs.game.task.Task;
 
 public class KrilTstsaroth extends NPC {
@@ -63,7 +63,7 @@ public class KrilTstsaroth extends NPC {
 				setFinished(false);
 				World.addNPC(npc);
 				npc.setLastRegionId((short) 0);
-				World.updateEntityRegion(npc);
+				updateEntityRegion(npc);
 				loadMapRegions();
 				checkMultiArea();
 				GodWarsBosses.respawnZammyMinions();

@@ -1,5 +1,8 @@
 package com.rs.game;
 
+import lombok.Data;
+
+@Data
 public final class Animation {
 
 	private int[] ids;
@@ -16,13 +19,5 @@ public final class Animation {
 	public Animation(int id1, int id2, int id3, int id4, int speed) {
 		this.ids = new int[] { id1, id2, id3, id4 };
 		this.speed = speed;
-	}
-
-	public int[] getIds() {
-		return ids;
-	}
-
-	public int getSpeed() {
-		return speed;
 	}
 }

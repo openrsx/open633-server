@@ -23,7 +23,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 /**
  * @author Dennis
  */
-public final class NPCDispatcher {
+public class NPCDispatcher {
 	
 	/**
 	 * The NPCS map which contains all the NPCS on the world.
@@ -114,13 +114,31 @@ public final class NPCDispatcher {
 		load();
 	}
 	
+	private static boolean forceRun;
+	private static int npcIndex;
+	
 	public static void executeMobInteraction(final Player player, InputStream stream, int optionId) {
-		int npcIndex = stream.readUnsignedShort() << 32;
+		if (optionId == -1)
+			npcIndex = stream.readUnsignedShort();
+		else if (optionId == 1) {
+			npcIndex = stream.readUnsignedShort();
+			forceRun = stream.readByte() == 1;
+		} else if (optionId == 2) {
+			npcIndex = stream.readUnsignedShortLE128();
+			forceRun = stream.readByte() == 1;
+		} else if (optionId == 3) {
+			forceRun = stream.readByte() == 1;
+		    npcIndex = stream.readUnsignedShortLE();
+		} else if (optionId == 4) {
+			forceRun = stream.readByteC() == 1;
+			npcIndex = stream.readUnsignedShort();
+		}
 		final NPC npc = World.getNPCs().get(npcIndex);
 		if (npc == null || npc.isCantInteract() || npc.isDead() || npc.hasFinished()
 				|| !player.getMapRegionsIds().contains(npc.getRegionId()) || player.isLocked())
 			return;
 		player.stopAll(true);
+		player.setRun(forceRun);
 		player.setRouteEvent(new RouteEvent(npc, new Runnable() {
 			@Override
 			public void run() {

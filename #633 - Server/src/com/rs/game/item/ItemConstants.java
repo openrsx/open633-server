@@ -1,6 +1,6 @@
 package com.rs.game.item;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
@@ -24,31 +24,31 @@ public class ItemConstants {
 				|| id == 13922 || id == 13925 || id == 13928 || id == 13931
 				|| id == 13934 || id == 13937 || id == 13940 || id == 13943
 				|| id == 13946 || id == 13949 || id == 13952)
-			return 1500 * Settings.DEGRADE_GEAR_RATE; // 15minutes
+			return 1500 * GameConstants.DEGRADE_GEAR_RATE; // 15minutes
 		if (id == 13960 || id == 13963 || id == 13966 || id == 13969
 				|| id == 13972 || id == 13975)
-			return 2000 * Settings.DEGRADE_GEAR_RATE;// 20 min.
+			return 2000 * GameConstants.DEGRADE_GEAR_RATE;// 20 min.
 		if (id == 13860 || id == 13863 || id == 13866 || id == 13869
 				|| id == 13872 || id == 13875 || id == 13878 || id == 13886
 				|| id == 13889 || id == 13892 || id == 13895 || id == 13898
 				|| id == 13901 || id == 13904 || id == 13907 || id == 13960)
-			return 6000 * Settings.DEGRADE_GEAR_RATE; // 1hour
+			return 6000 * GameConstants.DEGRADE_GEAR_RATE; // 1hour
 		// Nex Armor
 		if (id == 20137 || id == 20141 || id == 20145 || id == 20149
 				|| id == 20153 || id == 20157 || id == 20161 || id == 20165
 				|| id == 20169)
-			return 60000 * Settings.DEGRADE_GEAR_RATE; // 10 hour
+			return 60000 * GameConstants.DEGRADE_GEAR_RATE; // 10 hour
 		if (id >= 24450 && id <= 24454) // rouge gloves
 			return 6000;
 		if (id >= 22358 && id <= 22369) // dominion gloves
-			return 24000 * Settings.DEGRADE_GEAR_RATE;
+			return 24000 * GameConstants.DEGRADE_GEAR_RATE;
 		if (id == 22444) // neem oil
 			return 2000;
 		// polipore armors
 		if (id == 22460 || id == 22464 || id == 22468 || id == 22472
 				|| id == 22476 || id == 22480 || id == 22484 || id == 22488
 				|| id == 22492)
-			return 60000 * Settings.DEGRADE_GEAR_RATE; // 10 hour
+			return 60000 * GameConstants.DEGRADE_GEAR_RATE; // 10 hour
 		if (id == 22496)
 			return 3000;
 		if (id == 20171 || id == 20173)

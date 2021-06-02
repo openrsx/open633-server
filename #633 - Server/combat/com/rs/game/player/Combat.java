@@ -3,6 +3,8 @@ package com.rs.game.player;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Entity;
 import com.rs.game.npc.NPC;
+import com.rs.game.player.type.CombatEffect;
+import com.rs.game.player.type.CombatEffectType;
 import com.rs.utils.Utils;
 
 public final class Combat {
@@ -117,4 +119,14 @@ public final class Combat {
     
     private Combat() {
     }
+    
+	/**
+	 * Applies the {@code effect} in any context.
+	 * @param effect the effect that must be applied.
+	 * @return {@code true} if it was successfully applied, {@code false}
+	 * otherwise.
+	 */
+	public static boolean effect(Entity character, CombatEffectType effect) {
+		return CombatEffect.EFFECTS.get(effect).start(character);
+	}
 }

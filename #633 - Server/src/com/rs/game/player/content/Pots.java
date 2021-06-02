@@ -7,9 +7,11 @@ import com.rs.game.Hit.HitLook;
 import com.rs.game.World;
 import com.rs.game.item.Item;
 import com.rs.game.npc.familiar.Familiar;
+import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.player.controllers.Wilderness;
+import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.task.Task;
 import com.rs.utils.Utils;
 
@@ -271,57 +273,33 @@ public final class Pots {
 		ANTIPOISON() {
 			@Override
 			public void extra(Player player) {
-//				player.addPoisonImmune(86000);
-				player.getPackets().sendGameMessage("You are now immune to poison.");
+				onAntiPoisonEffect(player, false, 250);
 			}
 		},
 		SUPER_ANTIPOISON() {
 			@Override
 			public void extra(Player player) {
-//				player.addPoisonImmune(346000);
-				player.getPackets().sendGameMessage("You are now immune to poison.");
+				onAntiPoisonEffect(player, true, 500);
 			}
 		},
 		ENERGY_POTION() {
 			@Override
 			public void extra(Player player) {
-				int restoredEnergy = player.getRunEnergy() + 20;
+				int restoredEnergy = player.getDetails().getRunEnergy() + 20;
 				player.setRunEnergy(restoredEnergy > 100 ? 100 : restoredEnergy);
 			}
 		},
 		SUPER_ENERGY() {
 			@Override
 			public void extra(Player player) {
-				int restoredEnergy = player.getRunEnergy() + 40;
+				int restoredEnergy = player.getDetails().getRunEnergy() + 40;
 				player.setRunEnergy(restoredEnergy > 100 ? 100 : restoredEnergy);
 			}
 		},
 		ANTI_FIRE() {
 			@Override
 			public void extra(final Player player) {
-//				player.addFireImmune(360000);
-//				final long current = player.getFireImmune();
-//				player.getPackets().sendGameMessage("You are now immune to dragonfire.");
-//				WorldTasksManager.schedule(new WorldTask() {
-//					boolean stop = false;
-//
-//					@Override
-//					public void run() {
-//						if (current != player.getFireImmune()) {
-//							stop();
-//							return;
-//						}
-//						if (!stop) {
-//							player.getPackets()
-//									.sendGameMessage("<col=480000>Your antifire potion is about to run out...</col>");
-//							stop = true;
-//						} else {
-//							stop();
-//							player.getPackets()
-//									.sendGameMessage("<col=480000>Your antifire potion has ran out...</col>");
-//						}
-//					}
-//				}, 500, 100);
+				onAntiFireEffect(player, false);
 			}
 		},
 		STRENGTH_POTION(Skills.STRENGTH) {
@@ -385,7 +363,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -402,7 +380,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -419,7 +397,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -436,7 +414,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -453,7 +431,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -470,7 +448,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -518,7 +496,7 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControlerManager().getControler() instanceof Wilderness) {
+				if (player.getControllerManager().getController() instanceof Wilderness) {
 					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 					return false;
 				}
@@ -733,7 +711,7 @@ public final class Pots {
 		if (!player.getDetails().getWatchMap().get("DRINKS").elapsed(1800)) {
 			return false;
 		}
-		if (!player.getControlerManager().canPot(pot))
+		if (!player.getControllerManager().canPot(pot))
 			return true;
 		if (!pot.effect.canDrink(player))
 			return true;
@@ -809,7 +787,7 @@ public final class Pots {
 	}
 
 	public static void applyOverLoadEffect(Player player) {
-		if (player.getControlerManager().getControler() instanceof Wilderness) {
+		if (player.getControllerManager().getController() instanceof Wilderness) {
 			int actualLevel = player.getSkills().getLevel(Skills.ATTACK);
 			int realLevel = player.getSkills().getLevelForXp(Skills.ATTACK);
 			int level = actualLevel > realLevel ? realLevel : actualLevel;
@@ -861,8 +839,55 @@ public final class Pots {
 			player.getSkills().set(Skills.RANGE, (int) (level + 4 + (Math.floor(realLevel / 5.2))));
 		}
 	}
-
-	private Pots() {
-
+	
+	/**
+	 * The method that executes the anti-poison potion action.
+	 * @param player the player to do this action for.
+	 * @param superPotion {@code true} if this potion is a super potion, {@code false}
+	 * otherwise.
+	 * @param length the length that the effect lingers for.
+	 */
+	public static void onAntiPoisonEffect(Player player, boolean superPotion, int length) {
+		if(player.isPoisoned()) {
+			player.getPoisonDamage().set(0);
+			player.getPackets().sendGlobalConfig(102, 0); //isn't right method to call orb change
+			player.getPackets().sendGameMessage("You have been cured of your poison!");
+		}
+		if(superPotion) {
+			if(player.getDetails().getPoisonImmunity().get() <= 0) {
+				player.getPackets().sendGameMessage("You have been granted immunity against poison.");
+				player.getDetails().getPoisonImmunity().incrementAndGet(length);
+				World.get().submit(new Task(50, false) {
+					@Override
+					public void execute() {
+						if(player.getDetails().getPoisonImmunity().get() <= 0)
+							this.cancel();
+						if(player.getDetails().getPoisonImmunity().decrementAndGet(50) <= 50)
+							player.getPackets().sendGameMessage("Your resistance to poison is about to wear off!");
+						if(player.getDetails().getPoisonImmunity().get() <= 0)
+							this.cancel();
+					}
+					
+					@Override
+					public void onCancel() {
+						player.getPackets().sendGameMessage("Your resistance to poison has worn off!");
+						player.getDetails().getPoisonImmunity().set(0);
+					}
+				}.attach(player));
+			} else if(player.getDetails().getPoisonImmunity().get() > 0) {
+				player.getPackets().sendGameMessage("Your immunity against poison has been restored!");
+				player.getDetails().getPoisonImmunity().set(length);
+			}
+		}
+	}
+	
+	/**
+	 * The method that executes the anti-fire potion action.
+	 * @param player the player to do this action for.
+	 * @param superVariant determines if this potion is the super variant.
+	 */
+	private static void onAntiFireEffect(Player player, boolean superVariant) {
+		player.getPackets().sendGameMessage("You take a sip of the" + (superVariant ? " super" : "") + " antifire potion.");
+		Combat.effect(player, superVariant ? CombatEffectType.SUPER_ANTIFIRE_POTION : CombatEffectType.ANTIFIRE_POTION);
 	}
 }

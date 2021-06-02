@@ -7,39 +7,49 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
 import com.rs.cores.WorldThread;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.Graphics;
+import com.rs.game.HintIconsManager;
 import com.rs.game.Hit;
-import com.rs.game.Hit.HitLook;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
-import com.rs.game.minigames.duel.DuelArena;
+import com.rs.game.item.Item;
 import com.rs.game.minigames.duel.DuelRules;
-import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
+import com.rs.game.player.actions.ActionManager;
+import com.rs.game.player.content.EmotesManager;
 import com.rs.game.player.content.FriendChatsManager;
+import com.rs.game.player.content.MusicsManager;
 import com.rs.game.player.content.Notes;
+import com.rs.game.player.content.PriceCheckManager;
 import com.rs.game.player.content.pet.PetManager;
-import com.rs.game.player.controllers.ControlerManager;
-import com.rs.game.player.controllers.GodWars;
-import com.rs.game.player.controllers.JailControler;
-import com.rs.game.player.controllers.Wilderness;
+import com.rs.game.player.controllers.ControllerManager;
+import com.rs.game.player.dialogues.DialogueManager;
+import com.rs.game.player.type.CombatEffect;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
 import com.rs.game.task.Task;
+import com.rs.game.task.impl.CombatEffectTask;
+import com.rs.net.AccountCreation;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
+import com.rs.net.encoders.other.ChatMessage;
+import com.rs.net.encoders.other.PublicChatMessage;
+import com.rs.net.encoders.other.QuickChatMessage;
+import com.rs.net.host.HostListType;
+import com.rs.net.host.HostManager;
 import com.rs.utils.IsaacKeyPair;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
@@ -99,23 +109,20 @@ public class Player extends Entity {
 	private transient List<Byte> switchItemCache;
 	private transient boolean disableEquip;
 	private transient boolean invulnerable;
-
-	// saving stuff
-	private String displayName;
 	
 	/**
 	 * Personal details & information stored for a Player
 	 */
 	private PlayerDetails details;
 	
-	private Appearance appearence;
+	private Appearance appearance;
 	private Inventory inventory;
 	private Equipment equipment;
 	private Skills skills;
 	private CombatDefinitions combatDefinitions;
 	private Prayer prayer;
 	private Bank bank;
-	private ControlerManager controlerManager;
+	private ControllerManager controllerManager;
 	private MusicsManager musicsManager;
 	private EmotesManager emotesManager;
 	private Notes notes;
@@ -125,24 +132,23 @@ public class Player extends Entity {
 
 	// creates Player and saved classes
 	public Player(String password) {
-		super(Settings.START_PLAYER_LOCATION);
+		super(GameConstants.START_PLAYER_LOCATION);
 		setHitpoints(100);
-		appearence = new Appearance();
+		appearance = new Appearance();
 		inventory = new Inventory();
 		equipment = new Equipment();
-		getDetails().getCharges().setPlayer(this);
-		details = new PlayerDetails();
-		getDetails().setPassword(password);
 		skills = new Skills();
 		combatDefinitions = new CombatDefinitions();
 		prayer = new Prayer();
 		bank = new Bank();
-		controlerManager = new ControlerManager();
+		controllerManager = new ControllerManager();
 		musicsManager = new MusicsManager();
 		emotesManager = new EmotesManager();
 		notes = new Notes();
 		friendsIgnores = new FriendsIgnores();
 		petManager = new PetManager();
+		details = new PlayerDetails();
+		getDetails().setPassword(password);
 	}
 
 	public void init(Session session, String username, byte displayMode,
@@ -170,18 +176,19 @@ public class Player extends Entity {
 		trade = new Trade(this);
 		varsManager = new VarsManager(this);
 		// loads player on saved instances
-		appearence.setPlayer(this);
+		appearance.setPlayer(this);
 		inventory.setPlayer(this);
 		equipment.setPlayer(this);
 		skills.setPlayer(this);
 		combatDefinitions.setPlayer(this);
 		prayer.setPlayer(this);
 		bank.setPlayer(this);
-		controlerManager.setPlayer(this);
+		controllerManager.setPlayer(this);
 		musicsManager.setPlayer(this);
 		emotesManager.setPlayer(this);
 		notes.setPlayer(this);
 		friendsIgnores.setPlayer(this);
+		getDetails().getCharges().setPlayer(this);
 		petManager.setPlayer(this);
 		setDirection((byte) Utils.getFaceDirection(0, -1));
 		temporaryMovementType = -1;
@@ -189,8 +196,8 @@ public class Player extends Entity {
 		switchItemCache = Collections.synchronizedList(new ArrayList<Byte>());
 		initEntity();
 		World.addPlayer(this);
-		World.updateEntityRegion(this);
-		if (Settings.DEBUG)
+		updateEntityRegion(this);
+		if (GameConstants.DEBUG)
 			Logger.log(this, "Initiated player: " + username + ", pass: "
 					+ getDetails().getPassword());
 		updateIPnPass();
@@ -240,7 +247,6 @@ public class Player extends Entity {
 		}
 	}
 
-	// now that we inited we can start showing game
 	public void start() {
 		Logger.globalLog(username, session.getIP(), new String(
 				" has logged in."));
@@ -263,7 +269,6 @@ public class Player extends Entity {
 		stopAll(stopWalk, stopInterface, true);
 	}
 
-	// as walk done clientsided
 	public void stopAll(boolean stopWalk, boolean stopInterfaces,
 			boolean stopActions) {
 		routeEvent = null;
@@ -291,7 +296,7 @@ public class Player extends Entity {
 		getDetails().setPoisonImmune(0);
 		getDetails().setFireImmune(0);
 		getDetails().setRunEnergy((byte) 100);
-		appearence.generateAppearenceData();
+		appearance.generateAppearenceData();
 	}
 
 	@Override
@@ -359,10 +364,11 @@ public class Player extends Entity {
 			routeEvent = null;
 		actionManager.process();
 		prayer.processPrayer();
-		controlerManager.process();
-//		getDetails().getCharges().process();
+		controllerManager.process();
+		getDetails().getCharges().process();
 		if (musicsManager.musicEnded())
 			musicsManager.replayMusic();
+		//TODO: Today
 //		if (hasSkull()) {
 //			skullDelay--;
 //			if (!hasSkull())
@@ -396,18 +402,6 @@ public class Player extends Entity {
 		}
 	}
 
-	public void toogleRun(boolean update) {
-		super.setRun(!getRun());
-		updateMovementType = true;
-		if (update)
-			sendRunButtonConfig();
-	}
-
-	public void setRunHidden(boolean run) {
-		super.setRun(run);
-		updateMovementType = true;
-	}
-
 	@Override
 	public void setRun(boolean run) {
 		if (run != getRun()) {
@@ -422,30 +416,22 @@ public class Player extends Entity {
 				resting == 1 ? 3 : resting == 2 ? 4 : getRun() ? 1 : 0);
 	}
 
-	public void restoreRunEnergy() {
-//		int restore = 0;
-//		if (getNextRunDirection() == -1 && runEnergy < 100) {
-//			restore++;
-//			if (resting != 0)
-//				restore += 1 + resting;
-//		}
-//		runEnergy = (byte) (runEnergy + restore > 100 ? 100 : runEnergy
-//				+ restore);
-//		getPackets().sendRunEnergy();
-	}
-
 	public void run() {
 		if (World.exiting_start != 0) {
-			int delayPassed = (int) ((Utils.currentTimeMillis() - World.exiting_start) / 1000);
+			short delayPassed = (short) ((Utils.currentTimeMillis() - World.exiting_start) / 1000);
 			getPackets().sendSystemUpdate(World.exiting_delay - delayPassed);
 		}
 		getDetails().setLastIP(getSession().getIP());
 		getInterfaceManager().sendInterfaces();
 		getPackets().sendRunEnergy();
 		sendRunButtonConfig();
-		getPackets().sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
+		CombatEffect.values().forEach($it -> {
+			if($it.onLogin(this))
+				World.get().submit(new CombatEffectTask(this, $it));
+		});
+		getPackets().sendGameMessage("Welcome to " + GameConstants.SERVER_NAME + ".");
 		
-		Settings.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> getDetails().setRights(staff.getValue()));
+		GameConstants.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> getDetails().setRights(staff.getValue()));
 		
 		sendDefaultPlayersOptions();
 		checkMultiArea();
@@ -458,7 +444,6 @@ public class Player extends Entity {
 		getFriendsIgnores().init();
 		refreshHitPoints();
 		getPrayer().refreshPrayerPoints();
-		getPoison().refresh();
 		getPackets().sendGameBarStages();
 		getMusicsManager().init();
 		getEmotesManager().init();
@@ -469,9 +454,15 @@ public class Player extends Entity {
 			getPetManager().init();
 		setRunning(true);
 		setUpdateMovementType(true);
-		getAppearence().generateAppearenceData();
-		getControlerManager().login(); // checks what to do on login after welcome
+		getAppearance().generateAppearenceData();
+		getControllerManager().login(); // checks what to do on login after welcome
 		OwnedObjectManager.linkKeys(this);
+		
+		if (!HostManager.contains(getUsername(), HostListType.STARTER_RECEIVED)) {
+			GameConstants.STATER_KIT.forEach(getInventory()::addItem);
+			HostManager.add(this, HostListType.STARTER_RECEIVED, true);
+			World.sendWorldMessage("[New Player] " + getDisplayName() + " has just joined " + GameConstants.SERVER_NAME, canPvp);
+		}
 	}
 
 	public void updateIPnPass() {
@@ -557,7 +548,7 @@ public class Player extends Entity {
 		// if combating doesnt stop when xlog this way ends combat
 		stopAll(false, true,
 				!(getActionManager().getAction() instanceof PlayerCombat));
-		if (isDead() || (isUnderCombat() && tryCount < 6) || isLocked()
+		if (isDead() || (getCombatDefinitions().isUnderCombat() && tryCount < 6) || isLocked()
 				|| getEmotesManager().isDoingEmote()) {
 			CoresManager.slowExecutor.schedule(new Runnable() {
 				@Override
@@ -574,11 +565,6 @@ public class Player extends Entity {
 		}
 		realFinish(false);
 	}
-
-	public boolean isUnderCombat() {
-		return getAttackedByDelay() + 10000 >= Utils.currentTimeMillis();
-
-	}
 	
 	public void realFinish(boolean shutdown) {
 		if (hasFinished())
@@ -586,7 +572,7 @@ public class Player extends Entity {
 		Logger.globalLog(username, session.getIP(), new String(
 				" has logged out."));
 		stopAll();
-		controlerManager.logout();
+		controllerManager.logout();
 		running = false;
 		friendsIgnores.sendFriendsMyStatus(false);
 		if (currentFriendChat != null)
@@ -598,9 +584,9 @@ public class Player extends Entity {
 		setFinished(true);
 		session.setDecoder(-1);
 		AccountCreation.savePlayer(this);
-		World.updateEntityRegion(this);
+		updateEntityRegion(this);
 		World.removePlayer(this);
-		if (Settings.DEBUG)
+		if (GameConstants.DEBUG)
 			Logger.log(this, "Finished Player: " + username + ", pass: "
 					+ getDetails().getPassword());
 	}
@@ -642,10 +628,6 @@ public class Player extends Entity {
 		return session.getWorldPackets();
 	}
 
-	public byte getRunEnergy() {
-		return getDetails().getRunEnergy();
-	}
-
 	public void drainRunEnergy() {
 		setRunEnergy(getDetails().getRunEnergy() - 1);
 	}
@@ -663,11 +645,6 @@ public class Player extends Entity {
 		return resting != 0;
 	}
 
-	public void setResting(byte resting) {
-		this.resting = resting;
-		sendRunButtonConfig();
-	}
-
 	@Override
 	public double getMagePrayerMultiplier() {
 		return 0.6;
@@ -683,368 +660,89 @@ public class Player extends Entity {
 		return 0.6;
 	}
 
-	public void sendSoulSplit(final Hit hit, final Entity user) {
-		final Player target = this;
-		if (hit.getDamage() > 0)
-			World.sendProjectile(user, this, 2263, 11, 11, 20, 5, 0, 0);
-		user.heal(hit.getDamage() / 5);
-		prayer.drainPrayer(hit.getDamage() / 5);
-		World.get().submit(new Task(1) {
-			@Override
-			protected void execute() {
-				setNextGraphics(new Graphics(2264));
-				if (hit.getDamage() > 0)
-					World.sendProjectile(target, user, 2263, 11, 11, 20, 5, 0,
-							0);
-				this.cancel();
-			}
-		});
-	}
-
 	@Override
 	public void handleIngoingHit(final Hit hit) {
 		PlayerCombat.handleIncomingHit(this, hit);
 	}
-
-	//TODO: Redo Actor Death system
-	@SuppressWarnings("unused")
+	
 	@Override
 	public void sendDeath(final Entity source) {
-		if (prayer.hasPrayersOn()
-				&& getTemporaryAttributes().get("startedDuel") != Boolean.TRUE) {
-			if (prayer.usingPrayer(0, 22)) {
-				setNextGraphics(new Graphics(437));
-				final Player target = this;
-				if (isMultiArea()) {
-					for (int regionId : getMapRegionsIds()) {
-						List<Integer> playersIndexes = World
-								.getRegion(regionId).getPlayerIndexes();
-						if (playersIndexes != null) {
-							for (int playerIndex : playersIndexes) {
-								Player player = World.getPlayers().get(
-										playerIndex);
-								if (player == null
-										|| !player.isStarted()
-										|| player.isDead()
-										|| player.hasFinished()
-										|| !player.withinDistance(this, 1)
-										|| !player.isCanPvp()
-										|| !target.getControlerManager()
-												.canHit(player))
-									continue;
-								player.applyHit(new Hit(
-										target,
-										Utils.getRandom((int) (skills
-												.getLevelForXp(Skills.PRAYER) * 2.5)),
-										HitLook.REGULAR_DAMAGE));
-							}
-						}
-						List<Integer> npcsIndexes = World.getRegion(regionId)
-								.getNPCsIndexes();
-						if (npcsIndexes != null) {
-							for (int npcIndex : npcsIndexes) {
-								NPC npc = World.getNPCs().get(npcIndex);
-								if (npc == null
-										|| npc.isDead()
-										|| npc.hasFinished()
-										|| !npc.withinDistance(this, 1)
-										|| !npc.getDefinitions()
-												.hasAttackOption()
-										|| !target.getControlerManager()
-												.canHit(npc))
-									continue;
-								npc.applyHit(new Hit(
-										target,
-										Utils.getRandom((int) (skills
-												.getLevelForXp(Skills.PRAYER) * 2.5)),
-										HitLook.REGULAR_DAMAGE));
-							}
-						}
-					}
-				} else {
-					if (source != null && source != this && !source.isDead()
-							&& !source.hasFinished()
-							&& source.withinDistance(this, 1))
-						source.applyHit(new Hit(target, Utils
-								.getRandom((int) (skills
-										.getLevelForXp(Skills.PRAYER) * 2.5)),
-								HitLook.REGULAR_DAMAGE));
+		World.get().submit(new PlayerDeath(this));
+	}
+
+	public void sendItemsOnDeath(Player killer) {
+		if (getDetails().getRights().isStaff())
+			return;
+		getDetails().getCharges().die();
+		CopyOnWriteArrayList<Item> containedItems = new CopyOnWriteArrayList<Item>();
+		for (int i = 0; i < 14; i++) {
+			if (getEquipment().getItem(i) != null && getEquipment().getItem(i).getId() != -1
+					&& getEquipment().getItem(i).getAmount() != -1)
+				containedItems.add(new Item(getEquipment().getItem(i).getId(), getEquipment().getItem(i).getAmount()));
+		}
+		for (int i = 0; i < getInventory().getItemsContainerSize(); i++) {
+			if (getInventory().getItem(i) != null && getInventory().getItem(i).getId() != -1
+					&& getInventory().getItem(i).getAmount() != -1)
+				containedItems.add(new Item(getInventory().getItem(i).getId(), getInventory().getItem(i).getAmount()));
+		}
+		if (containedItems.isEmpty())
+			return;
+		int keptAmount = 0;
+
+		keptAmount = getAppearance().hasSkull() ? 0 : 3;
+		if (getPrayer().usingPrayer(0, 10) || getPrayer().usingPrayer(1, 0))
+			keptAmount++;
+		
+		CopyOnWriteArrayList<Item> keptItems = new CopyOnWriteArrayList<Item>();
+		Item lastItem = new Item(1, 1);
+		for (int i = 0; i < keptAmount; i++) {
+			for (Item item : containedItems) {
+				int price = item.getDefinitions().getValue();
+				if (price >= lastItem.getDefinitions().getValue()) {
+					lastItem = item;
 				}
-//				WorldTasksManager.schedule(new WorldTask() {
-//					@Override
-//					public void run() {
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX() - 1, target.getY(),
-//										target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX() + 1, target.getY(),
-//										target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX(), target.getY() - 1,
-//										target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX(), target.getY() + 1,
-//										target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX() - 1,
-//										target.getY() - 1, target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX() - 1,
-//										target.getY() + 1, target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX() + 1,
-//										target.getY() - 1, target.getPlane()));
-//						World.sendGraphics(target, new Graphics(438),
-//								new WorldTile(target.getX() + 1,
-//										target.getY() + 1, target.getPlane()));
-//					}
-//				});
-			} else if (prayer.usingPrayer(1, 17)) {
-				World.sendProjectile(this, new WorldTile(getX() + 2,
-						getY() + 2, getPlane()), 2260, 24, 0, 41, 35, 30, 0);
-				World.sendProjectile(this, new WorldTile(getX() + 2, getY(),
-						getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-				World.sendProjectile(this, new WorldTile(getX() + 2,
-						getY() - 2, getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-
-				World.sendProjectile(this, new WorldTile(getX() - 2,
-						getY() + 2, getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-				World.sendProjectile(this, new WorldTile(getX() - 2, getY(),
-						getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-				World.sendProjectile(this, new WorldTile(getX() - 2,
-						getY() - 2, getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-
-				World.sendProjectile(this, new WorldTile(getX(), getY() + 2,
-						getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-				World.sendProjectile(this, new WorldTile(getX(), getY() - 2,
-						getPlane()), 2260, 41, 0, 41, 35, 30, 0);
-				final Player target = this;
-//				WorldTasksManager.schedule(new WorldTask() {
-//					@Override
-//					public void run() {
-//						setNextGraphics(new Graphics(2259));
-//
-//						if (isAtMultiArea()) {
-//							for (int regionId : getMapRegionsIds()) {
-//								List<Integer> playersIndexes = World.getRegion(
-//										regionId).getPlayerIndexes();
-//								if (playersIndexes != null) {
-//									for (int playerIndex : playersIndexes) {
-//										Player player = World.getPlayers().get(
-//												playerIndex);
-//										if (player == null
-//												|| !player.isStarted()
-//												|| player.isDead()
-//												|| player.hasFinished()
-//												|| !player.isCanPvp()
-//												|| !player.withinDistance(
-//														target, 2)
-//												|| !target
-//														.getControlerManager()
-//														.canHit(player))
-//											continue;
-//										player.applyHit(new Hit(
-//												target,
-//												Utils.getRandom((skills
-//														.getLevelForXp(Skills.PRAYER) * 3)),
-//												HitLook.REGULAR_DAMAGE));
-//									}
-//								}
-//								List<Integer> npcsIndexes = World.getRegion(
-//										regionId).getNPCsIndexes();
-//								if (npcsIndexes != null) {
-//									for (int npcIndex : npcsIndexes) {
-//										NPC npc = World.getNPCs().get(npcIndex);
-//										if (npc == null
-//												|| npc.isDead()
-//												|| npc.hasFinished()
-//												|| !npc.withinDistance(target,
-//														2)
-//												|| !npc.getDefinitions()
-//														.hasAttackOption()
-//												|| !target
-//														.getControlerManager()
-//														.canHit(npc))
-//											continue;
-//										npc.applyHit(new Hit(
-//												target,
-//												Utils.getRandom((skills
-//														.getLevelForXp(Skills.PRAYER) * 3)),
-//												HitLook.REGULAR_DAMAGE));
-//									}
-//								}
-//							}
-//						} else {
-//							if (source != null && source != target
-//									&& !source.isDead()
-//									&& !source.hasFinished()
-//									&& source.withinDistance(target, 2))
-//								source.applyHit(new Hit(
-//										target,
-//										Utils.getRandom((skills
-//												.getLevelForXp(Skills.PRAYER) * 3)),
-//										HitLook.REGULAR_DAMAGE));
-//						}
-//
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() + 2, getY() + 2,
-//										getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() + 2, getY(), getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() + 2, getY() - 2,
-//										getPlane()));
-//
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() - 2, getY() + 2,
-//										getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() - 2, getY(), getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() - 2, getY() - 2,
-//										getPlane()));
-//
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX(), getY() + 2, getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX(), getY() - 2, getPlane()));
-//
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() + 1, getY() + 1,
-//										getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() + 1, getY() - 1,
-//										getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() - 1, getY() + 1,
-//										getPlane()));
-//						World.sendGraphics(target, new Graphics(2260),
-//								new WorldTile(getX() - 1, getY() - 1,
-//										getPlane()));
-//					}
-//				});
+			}
+			keptItems.add(lastItem);
+			containedItems.remove(lastItem);
+			lastItem = new Item(1, 1);
+		}
+		getInventory().reset();
+		getEquipment().reset();
+		for (Item item : keptItems) {
+			getInventory().addItem(item);
+		}
+		/** This Checks which items that is listed in the 'PROTECT_ON_DEATH' **/
+		for (Item item : containedItems) {	// This checks the items you had in your inventory or equipped
+			for (String string : GameConstants.PROTECT_ON_DEATH) {	//	This checks the matched items from the list 'PROTECT_ON_DEATH'
+				if (item.getDefinitions().getName().toLowerCase().contains(string) || item.getDefinitions().exchangableItem) {
+					getInventory().addItem(item);	//	This adds the items that is matched and listed in 'PROTECT_ON_DEATH'
+					containedItems.remove(item);	//	This remove the whole list of the contained items that is matched
+				}
 			}
 		}
-		setNextAnimation(new Animation(-1));
-		if (!controlerManager.sendDeath())
-			return;
-		lock(7);
-		stopAll();
-		if (familiar != null)
-			familiar.sendDeath(this);
-//		WorldTasksManager.schedule(new WorldTask() {
-//			int loop;
-//
-//			@Override
-//			public void run() {
-//				if (loop == 0) {
-//					setNextAnimation(new Animation(836));
-//				} else if (loop == 1) {
-//					getPackets().sendGameMessage("Oh dear, you have died.");
-//				} else if (loop == 3) {
-//					setNextWorldTile(Settings.START_PLAYER_LOCATION);
-//				} else if (loop == 4) {
-//					getPackets().sendMusicEffect(90);
-//					stop();
-//				}
-//				loop++;
-//			}
-//		}, 0, 1);
-	}
 
-	/*
-	 * default items on death, now only used for wilderness
-	 */
-	public void sendItemsOnDeath(Player killer, boolean dropItems) {
-//		Integer[][] slots = GraveStone.getItemSlotsKeptOnDeath(this, true,
-//				dropItems, getPrayer().isProtectingItem());
-//		sendItemsOnDeath(killer, new WorldTile(this), new WorldTile(this),
-//				true, slots);
-	}
-
-	/*
-	 * default items on death, now only used for wilderness
-	 */
-	public void sendItemsOnDeath(Player killer) {
-//		sendItemsOnDeath(killer, hasSkull());
-	}
-
-	public void sendItemsOnDeath(Player killer, WorldTile deathTile,
-			WorldTile respawnTile, boolean wilderness, Integer[][] slots) {
-		if (getDetails().getRights().isStaff() && Settings.HOSTED)
-			return;
-		getDetails().getCharges().die(slots[1], slots[3]); // degrades droped and lost items only
-//		Item[][] items = GraveStone.getItemsKeptOnDeath(this, slots);
-		inventory.reset();
-		equipment.reset();
-		appearence.generateAppearenceData();
-//		for (Item item : items[0])
-//			inventory.addItemDrop(item.getId(), item.getAmount(), respawnTile);
-//		if (items[1].length != 0) {
-//			if (wilderness) {
-//				for (Item item : items[1])
-//					World.addGroundItem(item, deathTile, killer == null ? this
-//							: killer, true, 60, 0);
-//			} else
-//				new GraveStone(this, deathTile, items[1]);
-//			if (killer != null)
-//				Logger.globalLog(
-//						username,
-//						session.getIP(),
-//						new String(killer.getUsername()
-//								+ " has killed "
-//								+ username
-//								+ " with the ip: "
-//								+ killer.getSession().getIP()
-//								+ " items are as follows:"
-//								+ Arrays.toString(items[1])
-//										.replace("null,", "") + " ."));
-//			else
-//				Logger.globalLog(username, session.getIP(), new String(
-//						"has died "
-//								+ username
-//								+ " items are as follows:"
-//								+ Arrays.toString(items[1])
-//										.replace("null,", "") + "."));
-//		}
-	}
-
-
-	public void sendRandomJail(Player p) {
-		p.resetWalkSteps();
-		switch (Utils.getRandom(6)) {
-		case 0:
-			p.setNextWorldTile(new WorldTile(2669, 10387, 0));
-			break;
-		case 1:
-			p.setNextWorldTile(new WorldTile(2669, 10383, 0));
-			break;
-		case 2:
-			p.setNextWorldTile(new WorldTile(2669, 10379, 0));
-			break;
-		case 3:
-			p.setNextWorldTile(new WorldTile(2673, 10379, 0));
-			break;
-		case 4:
-			p.setNextWorldTile(new WorldTile(2673, 10385, 0));
-			break;
-		case 5:
-			p.setNextWorldTile(new WorldTile(2677, 10387, 0));
-			break;
-		case 6:
-			p.setNextWorldTile(new WorldTile(2677, 10383, 0));
-			break;
+		/** This to avoid items to be dropped in the list 'PROTECT_ON_DEATH' **/
+		for (Item item : containedItems) {	//	This checks the items you had in your inventory or equipped
+			for (String string : GameConstants.PROTECT_ON_DEATH) {	//	This checks the matched items from the list 'PROTECT_ON_DEATH'
+				if (item.getDefinitions().getName().toLowerCase().contains(string)) {
+					containedItems.remove(item);	//	This remove the whole list of the contained items that is matched
+				}
+			}
+			FloorItem.createGroundItem(item, getLastWorldTile(), killer == null ? this : killer, false, 180, true, true);	//	This dropps the items to the killer, and is showed for 180 seconds
+		}
+		for (Item item : containedItems) {
+			FloorItem.createGroundItem(item, getLastWorldTile(), killer == null ? this : killer, false, 180, true, true);
 		}
 	}
 
 	@Override
 	public int getSize() {
-		return appearence.getSize();
+		return appearance.getSize();
 	}
 
 	public void setCanPvp(boolean canPvp) {
 		this.canPvp = canPvp;
-		appearence.generateAppearenceData();
+		appearance.generateAppearenceData();
 		getPackets().sendPlayerOption(canPvp ? "Attack" : "null", 1, true);
 		getPackets().sendPlayerUnderNPCPriority(canPvp);
 	}
@@ -1176,49 +874,6 @@ public class Player extends Entity {
 		logicPackets.add(packet);
 	}
 
-	public Trade getTrade() {
-		return trade;
-	}
-
-	public void setTeleBlockDelay(long teleDelay) {
-		getTemporaryAttributes().put("TeleBlocked",
-				teleDelay + Utils.currentTimeMillis());
-	}
-
-	public long getTeleBlockDelay() {
-		Long teleblock = (Long) getTemporaryAttributes().get("TeleBlocked");
-		if (teleblock == null)
-			return 0;
-		return teleblock;
-	}
-
-	public void setPrayerDelay(long teleDelay) {
-		getTemporaryAttributes().put("PrayerBlocked",
-				teleDelay + Utils.currentTimeMillis());
-		prayer.closeProtectionPrayers();
-	}
-
-	public long getPrayerDelay() {
-		Long teleblock = (Long) getTemporaryAttributes().get("PrayerBlocked");
-		if (teleblock == null)
-			return 0;
-		return teleblock;
-	}
-
-	public Familiar getFamiliar() {
-		return familiar;
-	}
-
-	public boolean canSpawn() {
-		if (Wilderness.isAtWild(this)
-				|| getControlerManager().getControler() instanceof GodWars
-				|| getControlerManager().getControler() instanceof DuelArena
-				|| getControlerManager().getControler() instanceof JailControler) {
-			return false;
-		}
-		return true;
-	}
-
 	public int getMovementType() {
 		if (getTemporaryMovementType() != -1)
 			return getTemporaryMovementType();
@@ -1251,10 +906,20 @@ public class Player extends Entity {
 	}
 	
 	public String getDisplayName() {
-		return hasDisplayName() ? getDisplayName() : Utils.formatPlayerNameForDisplay(username);
+		return Utils.formatPlayerNameForDisplay(username);
 	}
 
-	public boolean hasDisplayName() {
-		return displayName != null;
+	/**
+	 * Sends a delayed task for this player.
+	 */
+	public void task(int delay, Consumer<Player> action) {
+		Player player = this;
+		new Task(delay, false) {
+			@Override
+			protected void execute() {
+				action.accept(player);
+				cancel();
+			}
+		}.submit();
 	}
 }

@@ -2,7 +2,7 @@ package com.rs.game.npc.combat;
 
 import java.util.concurrent.TimeUnit;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.npc.NPC;
@@ -12,6 +12,9 @@ import com.rs.game.player.Player;
 import com.rs.utils.MapAreas;
 import com.rs.utils.Utils;
 
+import lombok.Data;
+
+@Data
 public final class NPCCombat {
 
 	private NPC npc;
@@ -21,11 +24,7 @@ public final class NPCCombat {
 	public NPCCombat(NPC npc) {
 		this.npc = npc;
 	}
-
-	public int getCombatDelay() {
-		return combatDelay;
-	}
-
+	
 	/*
 	 * returns if under combat
 	 */
@@ -86,19 +85,11 @@ public final class NPCCombat {
 	}
 
 	protected void doDefenceEmote(Entity target) {
-		/*
-		 * if (target.getNextAnimation() != null) // if has att emote already return;
-		 */
 		target.setNextAnimationNoPriority(new Animation(Combat.getDefenceEmote(target)));
 	}
 
-	public Entity getTarget() {
-		return target;
-	}
 
-	public void addAttackedByDelay(Entity target) { // prevents multithread
-		// issues
-
+	public void addAttackedByDelay(Entity target) {
 		target.setAttackedBy(npc);
 		target.setAttackedByDelay(Utils.currentTimeMillis() + npc.getCombatDefinitions().getAttackDelay() * 600 + 600); // 8seconds
 	}
@@ -126,7 +117,7 @@ public final class NPCCombat {
 		int size = npc.getSize();
 		int maxDistance;
 		Player player = (Player) target;
-		boolean agressive = player.getDetails().getWatchMap().get("TOLERANCE").elapsed(Settings.TOLERANCE_SECONDS, TimeUnit.SECONDS);
+		boolean agressive = player.getDetails().getWatchMap().get("TOLERANCE").elapsed(GameConstants.TOLERANCE_SECONDS, TimeUnit.SECONDS);
 		if (agressive) {
 			npc.resetCombat();
 			npc.resetWalkSteps();
@@ -225,19 +216,11 @@ public final class NPCCombat {
 
 			
 		}
-		return true && !agressive;
+		return true && agressive;
 	}
 
 	private boolean forceCheckClipAsRange(Entity target) {
 		return target != null;
-	}
-
-	public void addCombatDelay(int delay) {
-		combatDelay += delay;
-	}
-
-	public void setCombatDelay(int delay) {
-		combatDelay = delay;
 	}
 
 	public boolean underCombat() {
@@ -253,5 +236,4 @@ public final class NPCCombat {
 		combatDelay = 0;
 		target = null;
 	}
-
 }

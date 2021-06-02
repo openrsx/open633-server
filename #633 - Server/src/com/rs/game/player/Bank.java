@@ -1,6 +1,6 @@
 package com.rs.game.player;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.npc.familiar.Familiar;
@@ -79,7 +79,7 @@ public class Bank {
 									+ " days and " + hours + " hours.");
 		} else
 			player.getPackets().sendIComponentText(13, 27,
-					"Bank of " + Settings.SERVER_NAME);
+					"Bank of " + GameConstants.SERVER_NAME);
 	}
 
 	public void checkPinInput(boolean isConfirmation, int componentId) {
@@ -232,7 +232,7 @@ public class Bank {
 			for (int i = 0; i < space; i++)
 				player.getEquipment().getItems().set(i, null);
 			player.getEquipment().init();
-			player.getAppearence().generateAppearenceData();
+			player.getAppearance().generateAppearenceData();
 		}
 		if (space < player.getEquipment().getItems().getSize()) {
 			player.getPackets().sendGameMessage(
@@ -328,7 +328,7 @@ public class Bank {
 		// tab
 		sendBoxInterItems();
 		player.getPackets().sendIComponentText(11, 13,
-				"Bank Of " + Settings.SERVER_NAME + " - Deposit Box");
+				"Bank Of " + GameConstants.SERVER_NAME + " - Deposit Box");
 		player.setCloseInterfacesEvent(new Runnable() {
 			@Override
 			public void run() {

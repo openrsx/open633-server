@@ -1,7 +1,6 @@
 package com.rs.game.player;
 
 import com.rs.cache.loaders.NPCDefinitions;
-import com.rs.game.World;
 import com.rs.game.item.Item;
 import com.rs.io.OutputStream;
 import com.rs.utils.Utils;
@@ -84,7 +83,7 @@ public class Appearance {
 
 		stream.writeByte(flag);
 		stream.writeByte(title);
-		stream.writeByte(/* player.hasSkull() ? player.getSkullId() : -1 */ -1); // pk//icon
+		stream.writeByte(hasSkull() ? player.getDetails().getSkullId() : -1);
 		stream.writeByte(player.getPrayer().getPrayerHeadIcon()); // prayer icon
 		stream.writeByte(hidePlayer ? 1 : 0);
 		// npc
@@ -146,7 +145,7 @@ public class Appearance {
 
 		stream.writeShort(getRenderEmote());
 		stream.writeString(player.getDisplayName());
-		boolean pvpArea = World.isPvpArea(player);
+		boolean pvpArea = player.isPvpArea(player);
 		stream.writeByte(
 				pvpArea ? player.getSkills().getCombatLevel() : player.getSkills().getCombatLevelWithSummoning());
 		stream.writeByte(pvpArea ? player.getSkills().getCombatLevelWithSummoning() : 0);
@@ -356,5 +355,9 @@ public class Appearance {
 	public void setForcedAmulet(int forcedAmulet) {
 		this.forcedAmulet = forcedAmulet;
 		generateAppearenceData();
+	}
+
+	public boolean hasSkull() {
+		return player.getDetails().getSkullTimer().get() > 0;
 	}
 }

@@ -3,7 +3,7 @@ package com.rs.game.npc;
 import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
@@ -73,7 +73,7 @@ public final class DropTable {
 				if(drop.getChance() == Chance.ALWAYS) {
 					items.add(drop.toItem());
 				} else if(!drop.isRare()) {
-					if(amount++ <= Settings.DROP_THRESHOLD && drop.roll(random)) {
+					if(amount++ <= GameConstants.DROP_THRESHOLD && drop.roll(random)) {
 						items.add(drop.toItem());
 					}
 				}
@@ -84,8 +84,8 @@ public final class DropTable {
 			int count = rare.size() / 4;
 			if(count <= 0)
 				count = 1;
-			if(count > Settings.DROP_RARE_ATTEMPTS)
-				count = Settings.DROP_RARE_ATTEMPTS;
+			if(count > GameConstants.DROP_RARE_ATTEMPTS)
+				count = GameConstants.DROP_RARE_ATTEMPTS;
 			if(row)
 				count += 1;
 			for(int i = 0; i < count; i++) {

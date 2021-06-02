@@ -17,7 +17,7 @@ public class RuneSpanLeaving extends Dialogue {
 	    stage = 2;
 	} else if (stage == 2) {
 	    if (componentId == 11) {
-		player.getControlerManager().forceStop();
+		player.getControllerManager().forceStop();
 	    }
 	    end();
 	}

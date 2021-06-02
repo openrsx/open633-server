@@ -1,6 +1,6 @@
 package com.rs.game.player;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 
 public final class Skills {
 
@@ -183,7 +183,7 @@ public final class Skills {
 			refresh(skill);
 		
 		refreshXpCounter();
-		if (!Settings.XP_BONUS_ENABLED)
+		if (!GameConstants.XP_BONUS_ENABLED)
 			elapsedBonusMinutes = 0;
 		else
 			refreshXpBonus();
@@ -232,17 +232,17 @@ public final class Skills {
 	public double addXp(int skill, double exp) {
 		int rate = skill == ATTACK || skill == STRENGTH || skill == DEFENCE
 				|| skill == HITPOINTS || skill == MAGIC || skill == RANGE
-				|| skill == SUMMONING ? Settings.COMBAT_XP_RATE
-				: Settings.XP_RATE;
+				|| skill == SUMMONING ? GameConstants.COMBAT_XP_RATE
+				: GameConstants.XP_RATE;
 		exp *= rate;
 		return addXpNormal(skill, exp);
 	}
 
 	public double addXpNormal(int skill, double exp) {
-		player.getControlerManager().trackXP(skill, (int) exp);
+		player.getControllerManager().trackXP(skill, (int) exp);
 		if (player.getDetails().isXpLocked())
 			return 0;
-		if (Settings.XP_BONUS_ENABLED) {
+		if (GameConstants.XP_BONUS_ENABLED) {
 			double newexp = exp * getXpBonusMultiplier();
 			xpBonusTrack += newexp - exp;
 			exp = newexp;
@@ -262,7 +262,7 @@ public final class Skills {
 			level[skill] += levelDiff;
 			player.getDialogueManager().startDialogue("LevelUp", skill);
 			if (skill == SUMMONING || (skill >= ATTACK && skill <= MAGIC)) {
-				player.getAppearence().generateAppearenceData();
+				player.getAppearance().generateAppearenceData();
 				if (skill == HITPOINTS)
 					player.heal(levelDiff * 10);
 				else if (skill == PRAYER)
@@ -274,10 +274,10 @@ public final class Skills {
 	}
 
 	public double addXpLamp(int skill, double exp) {
-		player.getControlerManager().trackXP(skill, (int) exp);
+		player.getControllerManager().trackXP(skill, (int) exp);
 		if (player.getDetails().isXpLocked())
 			return 0;
-		exp *= Settings.LAMP_XP_RATE;
+		exp *= GameConstants.LAMP_XP_RATE;
 		int oldLevel = getLevelForXp(skill);
 		xp[skill] += exp;
 		xpCounter += exp;
@@ -292,7 +292,7 @@ public final class Skills {
 			level[skill] += levelDiff;
 			player.getDialogueManager().startDialogue("LevelUp", skill);
 			if (skill == SUMMONING || (skill >= ATTACK && skill <= MAGIC)) {
-				player.getAppearence().generateAppearenceData();
+				player.getAppearance().generateAppearenceData();
 				if (skill == HITPOINTS)
 					player.heal(levelDiff * 10);
 				else if (skill == PRAYER)

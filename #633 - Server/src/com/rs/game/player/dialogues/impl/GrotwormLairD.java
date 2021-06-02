@@ -34,11 +34,11 @@ public class GrotwormLairD extends Dialogue {
 	    if (componentId == OPTION_1) {
 		if (player.getSkills().getLevelForXp(Skills.SUMMONING) < 60) {
 		    player.getPackets().sendGameMessage("You need a summoning level of 60 to go through this portal.");
-		    player.getControlerManager().removeControlerWithoutCheck();
+		    player.getControllerManager().removeControlerWithoutCheck();
 		    return;
 		}
 		player.lock();
-		player.getControlerManager().startControler("QueenBlackDragonControler");
+		player.getControllerManager().startControler("QueenBlackDragonControler");
 		player.setNextAnimation(new Animation(16752));
 	    }
 	    end();

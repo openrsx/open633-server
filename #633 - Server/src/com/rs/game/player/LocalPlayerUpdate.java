@@ -2,9 +2,8 @@ package com.rs.game.player;
 
 import java.security.MessageDigest;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.Hit;
-import com.rs.game.SecondaryBar;
 import com.rs.game.World;
 import com.rs.io.OutputStream;
 import com.rs.utils.Utils;
@@ -43,7 +42,7 @@ public final class LocalPlayerUpdate {
 	}
 
 	public boolean needAppearenceUpdate(int index, byte[] hash) {
-		if (totalRenderDataSentLength > ((Settings.PACKET_SIZE_LIMIT - 500) / 2)
+		if (totalRenderDataSentLength > ((GameConstants.PACKET_SIZE_LIMIT - 500) / 2)
 				|| hash == null)
 			return false;
 		return cachedAppearencesHashes[index] == null
@@ -54,10 +53,10 @@ public final class LocalPlayerUpdate {
 		this.player = player;
 		slotFlags = new byte[2048];
 		localPlayers = new Player[2048];
-		localPlayersIndexes = new int[Settings.PLAYERS_LIMIT];
+		localPlayersIndexes = new int[GameConstants.PLAYERS_LIMIT];
 		outPlayersIndexes = new int[2048];
 		regionHashes = new int[2048];
-		cachedAppearencesHashes = new byte[Settings.PLAYERS_LIMIT][];
+		cachedAppearencesHashes = new byte[GameConstants.PLAYERS_LIMIT][];
 	}
 
 	public void init(OutputStream stream) {
@@ -160,7 +159,7 @@ public final class LocalPlayerUpdate {
 				stream.writeBits(6, p.getXInRegion());
 				stream.writeBits(6, p.getYInRegion());
 				boolean needAppearenceUpdate = needAppearenceUpdate(
-						p.getIndex(), p.getAppearence()
+						p.getIndex(), p.getAppearance()
 								.getMD5AppeareanceDataHash());
 				appendUpdateBlock(p, updateBlockData, needAppearenceUpdate,
 						true);
@@ -228,7 +227,7 @@ public final class LocalPlayerUpdate {
 				localPlayers[playerIndex] = null;
 			} else {
 				boolean needAppearenceUpdate = needAppearenceUpdate(
-						p.getIndex(), p.getAppearence()
+						p.getIndex(), p.getAppearance()
 								.getMD5AppeareanceDataHash());
 				boolean needUpdate = p.needMasksUpdate()
 						|| needAppearenceUpdate;
@@ -308,7 +307,7 @@ public final class LocalPlayerUpdate {
 								|| p2.hasTeleported()
 								|| p2.getNextWalkDirection() != -1
 								|| (p2.needMasksUpdate() || needAppearenceUpdate(
-										p2.getIndex(), p2.getAppearence()
+										p2.getIndex(), p2.getAppearance()
 												.getMD5AppeareanceDataHash())))
 							break;
 						skip++;
@@ -465,13 +464,12 @@ public final class LocalPlayerUpdate {
 	 */
 	@SuppressWarnings("unused")
 	private void applySecondaryBarMask(Player p, OutputStream data) {
-		SecondaryBar bar = p.getNextSecondaryBar();
-		boolean permanant = bar.isPermenant();
-		int unknownV = bar.getTotalUnits();
-		data.writeShortLE((permanant ? 8000 : 0) | (unknownV & 0x7fff));
-		data.write128Byte(bar.getBeginningOffset());
-		data.write128Byte(bar.getIncrementalUnits());
-
+//		SecondaryBar bar = p.getNextSecondaryBar();
+//		boolean permanant = bar.isPermenant();
+//		int unknownV = bar.getTotalUnits();
+//		data.writeShortLE((permanant ? 8000 : 0) | (unknownV & 0x7fff));
+//		data.write128Byte(bar.getBeginningOffset());
+//		data.write128Byte(bar.getIncrementalUnits());
 	}
 
 	private void applyTemporaryMoveTypeMask(Player p, OutputStream data) {
@@ -556,9 +554,9 @@ public final class LocalPlayerUpdate {
 	}
 
 	private void applyAppearanceMask(Player p, OutputStream data) {
-		byte[] renderData = p.getAppearence().getAppeareanceData();
+		byte[] renderData = p.getAppearance().getAppeareanceData();
 		totalRenderDataSentLength += renderData.length;
-		cachedAppearencesHashes[p.getIndex()] = p.getAppearence()
+		cachedAppearencesHashes[p.getIndex()] = p.getAppearance()
 				.getMD5AppeareanceDataHash();
 		data.write128Byte(renderData.length);
 		data.writeBytes(renderData, 0, renderData.length);

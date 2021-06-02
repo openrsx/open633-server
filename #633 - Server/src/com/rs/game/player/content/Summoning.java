@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.cache.loaders.NPCDefinitions;
@@ -23,7 +23,7 @@ public class Summoning {
 			player.getPackets().sendGameMessage("You already have a follower.");
 			return;
 		}
-		if (!player.getControlerManager().canSummonFamiliar()
+		if (!player.getControllerManager().canSummonFamiliar()
 				|| player.getSkills().getLevel(Skills.SUMMONING) < pouch.getSummoningCost())
 			return;
 		int levelReq = getRequiredLevel(pouch.getRealPouchId());
@@ -60,7 +60,7 @@ public class Summoning {
 					.getConstructor(Player.class, Pouch.class, WorldTile.class, int.class, boolean.class)
 					.newInstance(player, pouch, player, -1, true);
 		} catch (Throwable e) {
-			if (!Settings.HOSTED)
+			if (!GameConstants.HOSTED)
 				e.printStackTrace();
 			return null;
 		}

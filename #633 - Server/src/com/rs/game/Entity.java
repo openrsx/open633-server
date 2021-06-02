@@ -8,17 +8,23 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.loaders.AnimationDefinitions;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.game.Hit.HitLook;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
+import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
+import com.rs.game.player.controllers.Wilderness;
+import com.rs.game.player.type.CombatEffectType;
+import com.rs.game.player.type.PoisonType;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.EntityStrategy;
 import com.rs.game.route.strategy.ObjectStrategy;
+import com.rs.game.task.Task;
+import com.rs.utils.MutableNumber;
 import com.rs.utils.Utils;
 
 import lombok.Getter;
@@ -55,7 +61,6 @@ public abstract class Entity extends WorldTile {
 	private transient boolean finished; // if removed
 	private transient long freezeDelay;
 	// entity masks
-	private transient SecondaryBar nextSecondaryBar;
 	private transient Animation nextAnimation;
 	private transient Graphics nextGraphics1;
 	private transient Graphics nextGraphics2;
@@ -83,12 +88,10 @@ public abstract class Entity extends WorldTile {
 	private int mapSize; // default 0, can be setted other value usefull on
 	// static maps
 	private boolean run;
-	private Poison poison;
 
 	// creates Entity and saved classes
 	public Entity(WorldTile tile) {
 		super(tile);
-		poison = new Poison();
 	}
 
 	@Override
@@ -107,7 +110,6 @@ public abstract class Entity extends WorldTile {
 		nextWalkDirection = (byte) (nextRunDirection - 1);
 		lastFaceEntity = -1;
 		nextFaceEntity = -2;
-		poison.setEntity(this);
 	}
 
 	public int getReceivedDamage(Entity source) {
@@ -141,7 +143,6 @@ public abstract class Entity extends WorldTile {
 		receivedHits.clear();
 		resetCombat();
 		walkSteps.clear();
-		poison.reset();
 		resetReceivedDamage();
 		setAttackedBy(null);
 		setAttackedByDelay(0);
@@ -276,8 +277,6 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void processReceivedDamage() {
-		if (isDead())
-			return;
 		for (Entity source : receivedDamage.keySet()) {
 			Integer damage = receivedDamage.get(source);
 			if (damage == null || source.hasFinished()) {
@@ -343,7 +342,7 @@ public abstract class Entity extends WorldTile {
 			if (this instanceof Player
 					&& ((Player) this).getTemporaryMovementType() == -1)
 				((Player) this).setTemporaryMovementType(Player.TELE_MOVE_TYPE);
-			World.updateEntityRegion(this);
+			updateEntityRegion(this);
 			if (needMapUpdate())
 				loadMapRegions();
 			else if (this instanceof Player && lastPlane != getPlane())
@@ -360,7 +359,7 @@ public abstract class Entity extends WorldTile {
 					.currentTimeMillis())
 				return;
 		}
-		if (this instanceof Player && ((Player) this).getRunEnergy() <= 0)
+		if (this instanceof Player && ((Player) this).getDetails().getRunEnergy() <= 0)
 			setRun(false);
 		for (int stepCount = 0; stepCount < (run ? 2 : 1); stepCount++) {
 			Object[] nextStep = getNextWalkStep();
@@ -373,7 +372,7 @@ public abstract class Entity extends WorldTile {
 			if (((boolean) nextStep[3] && !World.checkWalkStep(getPlane(),
 					getX(), getY(), dir, getSize()))
 					|| (this instanceof Player && !((Player) this)
-							.getControlerManager().canMove(dir))) {
+							.getControllerManager().canMove(dir))) {
 				resetWalkSteps();
 				break;
 			}
@@ -387,7 +386,7 @@ public abstract class Entity extends WorldTile {
 			moveLocation(Utils.DIRECTION_DELTA_X[dir],
 					Utils.DIRECTION_DELTA_Y[dir], 0);
 		}
-		World.updateEntityRegion(this);
+		updateEntityRegion(this);
 		if (needMapUpdate())
 			loadMapRegions();
 	}
@@ -407,7 +406,7 @@ public abstract class Entity extends WorldTile {
 		int lastMapRegionY = tile.getChunkY();
 		int regionX = getChunkX();
 		int regionY = getChunkY();
-		int size = ((Settings.MAP_SIZES[mapSize] >> 3) / 2) - 1;
+		int size = ((GameConstants.MAP_SIZES[mapSize] >> 3) / 2) - 1;
 		return Math.abs(lastMapRegionX - regionX) >= size
 				|| Math.abs(lastMapRegionY - regionY) >= size;
 	}
@@ -821,7 +820,7 @@ public abstract class Entity extends WorldTile {
 									// only check when we want
 			return false;
 		if (this instanceof Player) {
-			if (!((Player) this).getControlerManager().addWalkStep(lastX,
+			if (!((Player) this).getControllerManager().addWalkStep(lastX,
 					lastY, nextX, nextY))
 				return false;
 		}
@@ -878,12 +877,13 @@ public abstract class Entity extends WorldTile {
 				|| nextGraphics3 != null || nextGraphics4 != null
 				|| (nextWalkDirection == -1 && nextFaceWorldTile != null)
 				|| !nextHits.isEmpty() || nextForceMovement != null
-				|| nextForceTalk != null || nextSecondaryBar != null;
+				|| nextForceTalk != null;
 	}
 
-	public boolean isDead() {
-		return hitpoints == 0;
-	}
+	/**
+	 * The flag determining if this entity is dead.
+	 */
+	private transient boolean dead;
 
 	public void resetMasks() {
 		nextAnimation = null;
@@ -897,7 +897,6 @@ public abstract class Entity extends WorldTile {
 		nextForceTalk = null;
 		nextFaceEntity = -2;
 		nextHits.clear();
-		nextSecondaryBar = null;
 	}
 
 	public abstract void finish();
@@ -911,7 +910,7 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void processEntity() {
-		poison.processPoison();
+//		poison.processPoison();
 	}
 
 	public void loadMapRegions() {
@@ -919,7 +918,7 @@ public abstract class Entity extends WorldTile {
 		isAtDynamicRegion = false;
 		int chunkX = getChunkX();
 		int chunkY = getChunkY();
-		int mapHash = Settings.MAP_SIZES[mapSize] >> 4;
+		int mapHash = GameConstants.MAP_SIZES[mapSize] >> 4;
 		int minRegionX = (chunkX - mapHash) / 8;
 		int minRegionY = (chunkY - mapHash) / 8;
 		for (int xCalc = minRegionX < 0 ? 0 : minRegionX; xCalc <= ((chunkX + mapHash) / 8); xCalc++)
@@ -1137,7 +1136,7 @@ public abstract class Entity extends WorldTile {
 				Player p = (Player) this;
 				if (!entangleMessage)
 					p.getPackets().sendGameMessage("You have been frozen.");
-				if (p.getControlerManager().getControler() != null)
+				if (p.getControllerManager().getController() != null)
 					time /= 2;
 			}
 		}
@@ -1256,16 +1255,9 @@ public abstract class Entity extends WorldTile {
 
 	public void playSound(int soundId, int type) {
 		for (int regionId : getMapRegionsIds()) {
-			List<Integer> playerIndexes = World.getRegion(regionId)
-					.getPlayerIndexes();
+			List<Integer> playerIndexes = World.getRegion(regionId).getPlayerIndexes();
 			if (playerIndexes != null) {
-				for (int playerIndex : playerIndexes) {
-					Player player = World.getPlayers().get(playerIndex);
-					if (player == null || !player.isRunning()
-							|| !withinDistance(player))
-						continue;
-					player.getPackets().sendSound(soundId, 0, type);
-				}
+				World.players().filter(p -> !withinDistance(p)).forEach(p -> p.getPackets().sendSound(soundId, 0, type));
 			}
 		}
 	}
@@ -1317,5 +1309,100 @@ public abstract class Entity extends WorldTile {
 			if (lastTile[0] == destX && lastTile[1] == destY)
 				return true;
 		}
+	}
+	
+	/**
+	 * The amount of poison damage this entity has.
+	 */
+	private final MutableNumber poisonDamage = new MutableNumber();
+	
+	/**
+	 * Determines if this entity is poisoned.
+	 * @return {@code true} if this entity is poisoned, {@code false}
+	 * otherwise.
+	 */
+	public final boolean isPoisoned() {
+		return poisonDamage.get() > 0;
+	}
+	
+	/**
+	 * The type of poison that was previously applied.
+	 */
+	private PoisonType poisonType;
+	
+	/**
+	 * Applies poison with an intensity of {@code type} to the entity.
+	 * @param type the poison type to apply.
+	 */
+	public void poison(PoisonType type) {
+		poisonType = type;
+		if (this instanceof Player) {
+			Player player = (Player) this;
+			player.getPackets().sendGameMessage("You have been poisoned!");
+		}
+		Combat.effect(this, CombatEffectType.POISON);
+	}
+	
+	public final void updateEntityRegion(Entity entity) {
+		if (entity.hasFinished()) {
+			if (entity instanceof Player)
+				World.getRegion(entity.getLastRegionId()).removePlayerIndex(entity.getIndex());
+			else
+				World.getRegion(entity.getLastRegionId()).removeNPCIndex(entity.getIndex());
+			return;
+		}
+		short regionId = (short) entity.getRegionId();
+		if (entity.getLastRegionId() != regionId) { // map region entity at
+			// changed
+			if (entity instanceof Player) {
+				if (entity.getLastRegionId() > 0)
+					World.getRegion(entity.getLastRegionId()).removePlayerIndex(entity.getIndex());
+				Region region = World.getRegion(regionId);
+				region.addPlayerIndex(entity.getIndex());
+				Player player = (Player) entity;
+				int musicId = region.getRandomMusicId();
+				if (musicId != -1)
+					player.getMusicsManager().checkMusic(musicId);
+				player.getControllerManager().moved();
+				if (player.isStarted())
+					World.checkControlersAtMove(player);
+			} else {
+				if (entity.getLastRegionId() > 0)
+					World.getRegion(entity.getLastRegionId()).removeNPCIndex(entity.getIndex());
+				World.getRegion(regionId).addNPCIndex(entity.getIndex());
+			}
+			entity.checkMultiArea();
+			entity.setLastRegionId(regionId);
+		} else {
+			if (entity instanceof Player) {
+				Player player = (Player) entity;
+				player.getControllerManager().moved();
+				if (player.isStarted())
+					World.checkControlersAtMove(player);
+			}
+			entity.checkMultiArea();
+		}
+	}
+	
+	public final boolean isPvpArea(WorldTile tile) {
+		return Wilderness.isAtWild(tile);
+	}
+	
+	public void sendSoulSplit(final Hit hit, final Entity user) {
+		final Player target = (Player) this;
+		if (hit.getDamage() > 0)
+			World.sendProjectile(user, this, 2263, 11, 11, 20, 5, 0, 0);
+		user.heal(hit.getDamage() / 5);
+		target.getPrayer().drainPrayer(hit.getDamage() / 5);
+		World.get().submit(new Task(1) {
+			@Override
+			protected void execute() {
+				setNextGraphics(new Graphics(2264));
+				if (hit.getDamage() > 0)
+					World.sendProjectile(target, user, 2263, 11, 11, 20, 5, 0,
+							0);
+				this.cancel();
+			}
+		});
 	}
 }
