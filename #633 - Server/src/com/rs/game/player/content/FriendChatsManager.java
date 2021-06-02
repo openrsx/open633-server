@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.World;
 import com.rs.game.player.AccountCreation;
 import com.rs.game.player.ChatMessage;
@@ -242,7 +242,7 @@ public class FriendChatsManager {
 				stream.writeShort(1);
 				int rank = getRank(player.getDetails().getRights().getValue(), player.getUsername());
 				stream.writeByte(rank);
-				stream.writeString(Settings.SERVER_NAME);
+				stream.writeString(GameConstants.SERVER_NAME);
 			}
 			dataBlock = new byte[stream.getOffset()];
 			stream.setOffset(0);

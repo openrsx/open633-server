@@ -5,7 +5,7 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.Cache;
 import com.rs.io.OutputStream;
 import com.rs.net.Session;
@@ -43,9 +43,9 @@ public final class GrabPacketsEncoder extends Encoder {
 
 	public final void sendStartUpPacket() {
 		OutputStream stream = new OutputStream(
-				1 + Settings.GRAB_SERVER_KEYS.length * 4);
+				1 + GameConstants.GRAB_SERVER_KEYS.length * 4);
 		stream.writeByte(0);
-		for (int key : Settings.GRAB_SERVER_KEYS)
+		for (int key : GameConstants.GRAB_SERVER_KEYS)
 			stream.writeInt(key);
 		session.write(stream);
 	}

@@ -2,7 +2,7 @@ package com.rs.game.npc.combat;
 
 import java.util.concurrent.TimeUnit;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.npc.NPC;
@@ -117,7 +117,7 @@ public final class NPCCombat {
 		int size = npc.getSize();
 		int maxDistance;
 		Player player = (Player) target;
-		boolean agressive = player.getDetails().getWatchMap().get("TOLERANCE").elapsed(Settings.TOLERANCE_SECONDS, TimeUnit.SECONDS);
+		boolean agressive = player.getDetails().getWatchMap().get("TOLERANCE").elapsed(GameConstants.TOLERANCE_SECONDS, TimeUnit.SECONDS);
 		if (agressive) {
 			npc.resetCombat();
 			npc.resetWalkSteps();

@@ -2,7 +2,7 @@ package com.rs.game.player;
 
 import java.util.ArrayList;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.game.Region;
 import com.rs.game.World;
@@ -183,7 +183,7 @@ public final class MusicsManager {
 	public void addMusic(int musicId) {
 		unlockedMusics.add(musicId);
 		refreshListConfigs();
-		if (unlockedMusics.size() >= Settings.AIR_GUITAR_MUSICS_COUNT)
+		if (unlockedMusics.size() >= GameConstants.AIR_GUITAR_MUSICS_COUNT)
 			player.getEmotesManager().unlockEmote(41);
 	}
 

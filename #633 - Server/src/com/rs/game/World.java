@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.rs.Launcher;
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.dragons.KingBlackDragon;
@@ -55,8 +55,8 @@ public final class World {
 		return npcs.stream().filter(VALID_NPC);
 	}
 	
-	private static final EntityList<Player> players = new EntityList<Player>(Settings.PLAYERS_LIMIT);
-	private static final EntityList<NPC> npcs = new EntityList<NPC>(Settings.NPCS_LIMIT);
+	private static final EntityList<Player> players = new EntityList<Player>(GameConstants.PLAYERS_LIMIT);
+	private static final EntityList<NPC> npcs = new EntityList<NPC>(GameConstants.NPCS_LIMIT);
 	
 	@Getter
 	private static final Map<Integer, Region> regions = Collections.synchronizedMap(new HashMap<Integer, Region>());

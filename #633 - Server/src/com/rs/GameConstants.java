@@ -3,49 +3,64 @@ package com.rs;
 import java.math.BigInteger;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.rs.game.WorldTile;
+import com.rs.game.item.Item;
+import com.rs.game.item.ItemNames;
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
 
-public final class Settings {
+public final class GameConstants {
 
 	/**
 	 * General client and server settings.
 	 */
-	public static final String SERVER_NAME =  Config.get().getString("server_name");
+	public static final String SERVER_NAME =  GameProperties.get().getString("server_name");
 	public static final int RECEIVE_DATA_LIMIT = 7500;
 	public static final int PACKET_SIZE_LIMIT = 7500;
 	public static final int CLIENT_REVISION = 633;
-	public static final long CONNECTION_TIMEOUT = Config.get().getInteger("connection_timeout");
+	public static final long CONNECTION_TIMEOUT = GameProperties.get().getInteger("connection_timeout");
 
 	/**
 	 * Player settings
 	 */
 	public static final WorldTile START_PLAYER_LOCATION = new WorldTile(3222, 3222, 0);
-	public static final int COMBAT_XP_RATE = Config.get().getInteger("combat_exp_rate");
-	public static final int XP_RATE = Config.get().getInteger("exp_rate");
-	public static final int LAMP_XP_RATE = Config.get().getInteger("lamp_exp_rate");
-	public static final int DEGRADE_GEAR_RATE = Config.get().getInteger("degrade_rate");
-	public static boolean XP_BONUS_ENABLED = Config.get().getBoolean("bonus_exp_enabled");
-	public static String[] PROTECT_ON_DEATH = { "chaotic", "stream", "defender", "swift", "spellcaster", "goliath",
+	public static final int COMBAT_XP_RATE = GameProperties.get().getInteger("combat_exp_rate");
+	public static final int XP_RATE = GameProperties.get().getInteger("exp_rate");
+	public static final int LAMP_XP_RATE = GameProperties.get().getInteger("lamp_exp_rate");
+	public static final int DEGRADE_GEAR_RATE = GameProperties.get().getInteger("degrade_rate");
+	public static final boolean XP_BONUS_ENABLED = GameProperties.get().getBoolean("bonus_exp_enabled");
+	
+	/**
+	 * Items that are protected upon a Players death by default in the Wilderness
+	 */
+	public static final String[] PROTECT_ON_DEATH = { "chaotic", "stream", "defender", "swift", "spellcaster", "goliath",
 			"fire cape", "max cape", "max hood", "completionist cape", "completionist hood", "farseer kiteshield",
 			"eagle-eye kiteshield", "gravite" };
 	
 	/**
+	 * A Players starter kit when joining the game for the first time.
+	 */
+	public final static ImmutableSet<Item> STATER_KIT = ImmutableSet.of(
+			new Item(ItemNames.COINS, 10_000), new Item(ItemNames.BRONZE_SCIMITAR), new Item(ItemNames.STAFF_OF_AIR),
+			new Item(ItemNames.SHORTBOW), new Item(ItemNames.BRONZE_ARROW, 250)
+	);
+	
+	/**
 	 * The maximum amount of drops that can be rolled from the dynamic drop table.
 	 */
-	public static final byte DROP_THRESHOLD = Config.get().getByte("drop_threshold");
+	public static final byte DROP_THRESHOLD = GameProperties.get().getByte("drop_threshold");
 
 	/**
 	 * The attempted looped of randomized rare mob drops.
 	 */
-	public static final byte DROP_RARE_ATTEMPTS = Config.get().getByte("drop_rare_attempts");
+	public static final byte DROP_RARE_ATTEMPTS = GameProperties.get().getByte("drop_rare_attempts");
 	
 	/**
 	 * The time in seconds that has to be spent in a region before {@link Mob}s stop
 	 * acting aggressive towards a specific {@link Player}.
 	 */
-	public static final short TOLERANCE_SECONDS = Config.get().getShort("tolerance");
+	public static final short TOLERANCE_SECONDS = GameProperties.get().getShort("tolerance");
 	
 	/**
 	 * An immutable map of Staff members

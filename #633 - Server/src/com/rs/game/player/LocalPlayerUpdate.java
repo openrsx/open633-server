@@ -2,7 +2,7 @@ package com.rs.game.player;
 
 import java.security.MessageDigest;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.Hit;
 import com.rs.game.World;
 import com.rs.io.OutputStream;
@@ -42,7 +42,7 @@ public final class LocalPlayerUpdate {
 	}
 
 	public boolean needAppearenceUpdate(int index, byte[] hash) {
-		if (totalRenderDataSentLength > ((Settings.PACKET_SIZE_LIMIT - 500) / 2)
+		if (totalRenderDataSentLength > ((GameConstants.PACKET_SIZE_LIMIT - 500) / 2)
 				|| hash == null)
 			return false;
 		return cachedAppearencesHashes[index] == null
@@ -53,10 +53,10 @@ public final class LocalPlayerUpdate {
 		this.player = player;
 		slotFlags = new byte[2048];
 		localPlayers = new Player[2048];
-		localPlayersIndexes = new int[Settings.PLAYERS_LIMIT];
+		localPlayersIndexes = new int[GameConstants.PLAYERS_LIMIT];
 		outPlayersIndexes = new int[2048];
 		regionHashes = new int[2048];
-		cachedAppearencesHashes = new byte[Settings.PLAYERS_LIMIT][];
+		cachedAppearencesHashes = new byte[GameConstants.PLAYERS_LIMIT][];
 	}
 
 	public void init(OutputStream stream) {

@@ -11,7 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
 import com.rs.cores.WorldThread;
 import com.rs.game.Animation;
@@ -38,6 +38,8 @@ import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
+import com.rs.net.host.HostListType;
+import com.rs.net.host.HostManager;
 import com.rs.utils.IsaacKeyPair;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
@@ -120,7 +122,7 @@ public class Player extends Entity {
 
 	// creates Player and saved classes
 	public Player(String password) {
-		super(Settings.START_PLAYER_LOCATION);
+		super(GameConstants.START_PLAYER_LOCATION);
 		setHitpoints(100);
 		appearance = new Appearance();
 		inventory = new Inventory();
@@ -185,7 +187,7 @@ public class Player extends Entity {
 		initEntity();
 		World.addPlayer(this);
 		updateEntityRegion(this);
-		if (Settings.DEBUG)
+		if (GameConstants.DEBUG)
 			Logger.log(this, "Initiated player: " + username + ", pass: "
 					+ getDetails().getPassword());
 		updateIPnPass();
@@ -417,9 +419,9 @@ public class Player extends Entity {
 			if($it.onLogin(this))
 				World.get().submit(new CombatEffectTask(this, $it));
 		});
-		getPackets().sendGameMessage("Welcome to " + Settings.SERVER_NAME + ".");
+		getPackets().sendGameMessage("Welcome to " + GameConstants.SERVER_NAME + ".");
 		
-		Settings.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> getDetails().setRights(staff.getValue()));
+		GameConstants.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> getDetails().setRights(staff.getValue()));
 		
 		sendDefaultPlayersOptions();
 		checkMultiArea();
@@ -445,6 +447,12 @@ public class Player extends Entity {
 		getAppearance().generateAppearenceData();
 		getControllerManager().login(); // checks what to do on login after welcome
 		OwnedObjectManager.linkKeys(this);
+		
+		if (!HostManager.contains(getUsername(), HostListType.STARTER_RECEIVED)) {
+			GameConstants.STATER_KIT.forEach(getInventory()::addItem);
+			HostManager.add(this, HostListType.STARTER_RECEIVED, true);
+			World.sendWorldMessage("[New Player] " + getDisplayName() + " has just joined " + GameConstants.SERVER_NAME, canPvp);
+		}
 	}
 
 	public void updateIPnPass() {
@@ -568,7 +576,7 @@ public class Player extends Entity {
 		AccountCreation.savePlayer(this);
 		updateEntityRegion(this);
 		World.removePlayer(this);
-		if (Settings.DEBUG)
+		if (GameConstants.DEBUG)
 			Logger.log(this, "Finished Player: " + username + ", pass: "
 					+ getDetails().getPassword());
 	}
@@ -695,7 +703,7 @@ public class Player extends Entity {
 		}
 		/** This Checks which items that is listed in the 'PROTECT_ON_DEATH' **/
 		for (Item item : containedItems) {	// This checks the items you had in your inventory or equipped
-			for (String string : Settings.PROTECT_ON_DEATH) {	//	This checks the matched items from the list 'PROTECT_ON_DEATH'
+			for (String string : GameConstants.PROTECT_ON_DEATH) {	//	This checks the matched items from the list 'PROTECT_ON_DEATH'
 				if (item.getDefinitions().getName().toLowerCase().contains(string) || item.getDefinitions().exchangableItem) {
 					getInventory().addItem(item);	//	This adds the items that is matched and listed in 'PROTECT_ON_DEATH'
 					containedItems.remove(item);	//	This remove the whole list of the contained items that is matched
@@ -705,7 +713,7 @@ public class Player extends Entity {
 
 		/** This to avoid items to be dropped in the list 'PROTECT_ON_DEATH' **/
 		for (Item item : containedItems) {	//	This checks the items you had in your inventory or equipped
-			for (String string : Settings.PROTECT_ON_DEATH) {	//	This checks the matched items from the list 'PROTECT_ON_DEATH'
+			for (String string : GameConstants.PROTECT_ON_DEATH) {	//	This checks the matched items from the list 'PROTECT_ON_DEATH'
 				if (item.getDefinitions().getName().toLowerCase().contains(string)) {
 					containedItems.remove(item);	//	This remove the whole list of the contained items that is matched
 				}

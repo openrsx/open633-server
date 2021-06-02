@@ -3,7 +3,7 @@ package com.rs.plugin.impl.interfaces;
 import java.util.HashMap;
 import java.util.List;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.io.InputStream;
 import com.rs.cores.WorldThread;
 import com.rs.game.World;
@@ -135,7 +135,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 		int interfaceId = stream.readIntV2() >> 16;
 		int itemUsedId = stream.readShortLE();
 		
-		if (Settings.DEBUG)
+		if (GameConstants.DEBUG)
 			System.out.println(String.format("fromInter: %s, toInter: %s, fromSlot: %s, toSlot %s, item1: %s, item2: %s", interfaceId, interfaceId2, fromSlot, toSlot, itemUsedId, itemUsedWithId));
 		
 		//fromInter: 44498944, toInter: 44498944, fromSlot: 11694, toSlot 0, item1: 14484, item2: 8
@@ -161,7 +161,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				return;
 			player.stopAll();
 			
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log("ItemHandler", "Used:" + itemUsed.getId() + ", With:" + usedWith.getId());
 		}
 	}

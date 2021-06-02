@@ -1,6 +1,6 @@
 package com.rs.net.decoders;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
@@ -227,7 +227,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				&& !player.hasFinished()) {
 			int packetId = stream.readPacket(player);
 			if (packetId >= PACKET_SIZES.length || packetId < 0) {
-				if (Settings.DEBUG)
+				if (GameConstants.DEBUG)
 					System.out.println("PacketId " + packetId
 							+ " has fake packet id.");
 				break;
@@ -241,13 +241,13 @@ public final class WorldPacketsDecoder extends Decoder {
 				length = stream.readInt();
 			else if (length == -4) {
 				length = stream.getRemaining();
-				if (Settings.DEBUG)
+				if (GameConstants.DEBUG)
 					System.out.println("Invalid size for PacketId " + packetId
 							+ ". Size guessed to be " + length);
 			}
 			if (length > stream.getRemaining()) {
 				length = stream.getRemaining();
-				if (Settings.DEBUG)
+				if (GameConstants.DEBUG)
 					System.out.println("PacketId " + packetId
 							+ " has fake size. - expected size " + length);
 				// break;
@@ -544,7 +544,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				Magic.processLunarSpell(player, componentId, p2);
 				break;
 			}
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				System.out.println("Spell:" + componentId);
 		} else if (packetId == INTERFACE_ON_NPC) {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
@@ -780,7 +780,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				Magic.processLunarSpell(player, componentId, npc);
 				break;
 			}
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				System.out.println("Spell:" + componentId);
 		} else if (packetId == INTERFACE_ON_OBJECT) {
 			int slot = stream.readShort();
@@ -1187,7 +1187,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					|| !player.getInterfaceManager().containsInterface(
 							interfaceId))
 				return;
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log(this, "Dialogue: " + interfaceId + ", " + buttonId
 						+ ", " + junk);
 			int componentId = interfaceHash - (interfaceId << 16);
@@ -1448,7 +1448,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				}
 			} else if (fromInterfaceId == 34 && toInterfaceId == 34)
 				player.getNotes().switchNotes(fromSlot, toSlot);
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				System.out.println("Switch item " + fromInterfaceId + ", "
 						+ fromSlot + ", " + toSlot);
 		} else if (packetId == DONE_LOADING_REGION_PACKET) {
@@ -1588,7 +1588,7 @@ public final class WorldPacketsDecoder extends Decoder {
 //			else if (chatType == 1)
 //				player.sendFriendsChannelQuickMessage(new QuickChatMessage(
 //						fileId, data));
-			 if (Settings.DEBUG)
+			 if (GameConstants.DEBUG)
 				Logger.log(this, "Unknown chat type: " + chatType);
 		} else if (packetId == CHAT_TYPE_PACKET) {
 //			chatType = stream.readUnsignedByte();
@@ -1624,7 +1624,7 @@ public final class WorldPacketsDecoder extends Decoder {
 //				player.sendGuestClanChannelMessage(new ChatMessage(message));
 //			else
 				player.sendPublicChatMessage(new PublicChatMessage(message, effects));
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log(this, "Chat type: " + chatType);
 		} else if (packetId == COMMANDS_PACKET) {
 			if (!player.isRunning())
@@ -1634,7 +1634,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			boolean unknown = stream.readUnsignedByte() == 1;
 			String command = stream.readString();
 			if (!CommandDispatcher.processCommand(player, command, true, clientCommand)
-					&& Settings.DEBUG)
+					&& GameConstants.DEBUG)
 				Logger.log(this, "Command: " + command);
 		} else if (packetId == REPORT_ABUSE_PACKET) {
 			if (!player.isStarted())
@@ -1664,7 +1664,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			int itemId = stream.readUnsignedShort();
 //			player.getGeManager().chooseItem(itemId);
 		} else {
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log(this, "Missing packet " + packetId
 						+ ", expected size: " + length + ", actual size: "
 						+ PACKET_SIZES[packetId]);

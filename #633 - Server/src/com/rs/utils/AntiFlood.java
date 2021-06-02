@@ -2,7 +2,7 @@ package com.rs.utils;
 
 import java.util.ArrayList;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 
 /**
  * Anti Flood
@@ -11,7 +11,7 @@ import com.rs.Settings;
  */
 public final class AntiFlood {
 
-    private static ArrayList<String> connections = new ArrayList<String>(Settings.PLAYERS_LIMIT * 100);
+    private static ArrayList<String> connections = new ArrayList<String>(GameConstants.PLAYERS_LIMIT * 100);
 
     public static void add(String ip) {
 	connections.add(ip);

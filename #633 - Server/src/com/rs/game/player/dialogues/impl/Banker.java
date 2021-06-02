@@ -1,6 +1,6 @@
 package com.rs.game.player.dialogues.impl;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.player.dialogues.Dialogue;
 
 public class Banker extends Dialogue {
@@ -35,7 +35,7 @@ public class Banker extends Dialogue {
 		end();
 	} else if (stage == 1) {
 	    stage = 2;
-	    sendNPCDialogue(npcId, 9827, "This is a branch of the Bank of " + Settings.SERVER_NAME + ". We have", "branches in many towns.");
+	    sendNPCDialogue(npcId, 9827, "This is a branch of the Bank of " + GameConstants.SERVER_NAME + ". We have", "branches in many towns.");
 	} else if (stage == 2) {
 	    stage = 3;
 	    sendOptionsDialogue("What would you like to say?", "And what do you do?", "Didnt you used to be called the Bank of Varrock?");

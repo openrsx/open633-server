@@ -13,6 +13,8 @@ import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.controllers.ControlerHandler;
 import com.rs.game.player.dialogues.DialogueHandler;
 import com.rs.net.ServerChannelHandler;
+import com.rs.net.host.HostListType;
+import com.rs.net.host.HostManager;
 import com.rs.plugin.CommandDispatcher;
 import com.rs.plugin.InventoryDispatcher;
 import com.rs.plugin.NPCDispatcher;
@@ -45,18 +47,19 @@ public class GameLoader {
 	public GameLoader() {
 		load();
 	}
-	
+
 	/**
 	 * The instance of the loader
 	 */
 	@Getter
 	private static final GameLoader LOADER = new GameLoader();
-	
+
 	/**
 	 * An executor service which handles background loading tasks.
 	 */
 	@Getter
-	private final BlockingExecutorService backgroundLoader = new BlockingExecutorService(Executors.newCachedThreadPool());
+	private final BlockingExecutorService backgroundLoader = new BlockingExecutorService(
+			Executors.newCachedThreadPool());
 
 	/**
 	 * Loads everything here
@@ -102,6 +105,11 @@ public class GameLoader {
 			FriendChatsManager.init();
 			World.init();
 			return null;
+		});
+		getBackgroundLoader().submit(() -> {
+			HostManager.deserialize(HostListType.STARTER_RECEIVED);
+			HostManager.deserialize(HostListType.BANNED_IP);
+			HostManager.deserialize(HostListType.MUTED_IP);
 		});
 		getBackgroundLoader().submit(() -> {
 			GsonHandler.initialize();

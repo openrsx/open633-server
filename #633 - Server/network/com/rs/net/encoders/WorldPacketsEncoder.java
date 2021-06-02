@@ -3,7 +3,7 @@ package com.rs.net.encoders;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.Animation;
 import com.rs.game.DynamicRegion;
 import com.rs.game.Entity;
@@ -929,7 +929,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeByte(player.getFriendsIgnores().getRank(Utils.formatPlayerNameForProtocol(username)));
 		stream.writeByte(0);
 		if (putOnline) {
-			stream.writeString(Settings.SERVER_NAME);
+			stream.writeString(GameConstants.SERVER_NAME);
 			stream.writeByte(0);
 		}
 		return this;
@@ -1358,7 +1358,7 @@ public class WorldPacketsEncoder extends Encoder {
 		 * cene length in chunks. scene tiles length / 16, 8 is a chunk size, 16 because
 		 * the code behind its signed and goes from middle-length to middle+length
 		 */
-		int sceneLength = Settings.MAP_SIZES[player.getMapSize()] >> 4;
+		int sceneLength = GameConstants.MAP_SIZES[player.getMapSize()] >> 4;
 		// the regionids(maps files) that will be used to load this scene
 		int[] regionIds = new int[4 * sceneLength * sceneLength];
 		int newRegionIdsCount = 0;

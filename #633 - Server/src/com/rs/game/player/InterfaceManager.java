@@ -2,7 +2,7 @@ package com.rs.game.player;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 
 import lombok.Builder;
 import lombok.Data;
@@ -292,7 +292,7 @@ public class InterfaceManager {
 
 	public void setInterface(boolean clickThrought, int parentInterfaceId, int parentInterfaceComponentId,
 			int interfaceId) {
-		if (Settings.DEBUG) {
+		if (GameConstants.DEBUG) {
 			if (parentInterfaceId != rootInterface && !containsInterface(parentInterfaceId))
 				System.out.println("The parent interface isnt setted so where are u trying to set it? "
 						+ parentInterfaceId + ", " + parentInterfaceComponentId + ", " + interfaceId);

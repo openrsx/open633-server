@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.Cache;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
@@ -861,7 +861,7 @@ public final class Utils {
 //					(byte) (value >> 8), (byte) value };
 		}
 
-		else if (Settings.DEBUG)
+		else if (GameConstants.DEBUG)
 			Logger.log("Utils", "qc: " + fileId + ", "
 					+ (data == null ? 0 : data.length));
 		return data;

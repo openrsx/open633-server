@@ -13,7 +13,7 @@ import java.util.Properties;
  * @author Dennis
  * @since Sep 8, 2013
  */
-public class Config {
+public class GameProperties {
 
 	/**
 	 * Loading the properties
@@ -81,7 +81,7 @@ public class Config {
 	 *
 	 * @return
 	 */
-	public static Config get() {
+	public static GameProperties get() {
 		return INSTANCE;
 	}
 
@@ -93,6 +93,6 @@ public class Config {
 	/**
 	 * The instance of this class.
 	 */
-	private static final Config INSTANCE = new Config();
+	private static final GameProperties INSTANCE = new GameProperties();
 
 }

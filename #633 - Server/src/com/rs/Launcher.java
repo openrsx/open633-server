@@ -18,15 +18,15 @@ import com.rs.utils.Utils;
 public class Launcher {
 
 	public static void main(String[] args) throws Exception {
-		Config.get().load();
+		GameProperties.get().load();
 		
 		if (args.length < 3) {
 			System.out
 					.println("USE: guimode(boolean) debug(boolean) hosted(boolean)");
 			return;
 		}
-		Settings.HOSTED = Boolean.parseBoolean(args[2]);
-		Settings.DEBUG = Boolean.parseBoolean(args[1]);
+		GameConstants.HOSTED = Boolean.parseBoolean(args[2]);
+		GameConstants.DEBUG = Boolean.parseBoolean(args[1]);
 		long currentTime = Utils.currentTimeMillis();
 		
 		GameLoader.getLOADER().getBackgroundLoader().waitForPendingTasks().shutdown();
@@ -42,7 +42,7 @@ public class Launcher {
 			@Override
 			public void run() {
 				try {
-					cleanMemory(Runtime.getRuntime().freeMemory() < Settings.MIN_FREE_MEM_ALLOWED);
+					cleanMemory(Runtime.getRuntime().freeMemory() < GameConstants.MIN_FREE_MEM_ALLOWED);
 				} catch (Throwable e) {
 					Logger.handle(e);
 				}

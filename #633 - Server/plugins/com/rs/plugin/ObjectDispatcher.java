@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
@@ -152,7 +152,7 @@ public final class ObjectDispatcher {
 			id = stream.readUnsignedShortLE();
 		}
 
-		if (Settings.DEBUG)
+		if (GameConstants.DEBUG)
 			System.out.println("id " + id + " x " + x + " y " + y + " run? " + forceRun);
 		final WorldTile tile = new WorldTile(x, y, player.getPlane());
 
@@ -182,14 +182,14 @@ public final class ObjectDispatcher {
 	}
 
 	public static void handleOptionExamine(final Player player, final WorldObject object) {
-		if (Settings.DEBUG) {
+		if (GameConstants.DEBUG) {
 			int offsetX = object.getX() - player.getX();
 			int offsetY = object.getY() - player.getY();
 			System.out.println("Offsets" + offsetX + " , " + offsetY);
 		}
 		player.getPackets().sendGameMessage("It's an " + object.getDefinitions().name + ".");
-		if (Settings.DEBUG)
-			if (Settings.DEBUG)
+		if (GameConstants.DEBUG)
+			if (GameConstants.DEBUG)
 
 				Logger.log("ObjectHandler",
 						"examined object id : " + object.getId() + ", " + object.getX() + ", " + object.getY() + ", "
@@ -207,7 +207,7 @@ public final class ObjectDispatcher {
 			public void run() {
 				player.faceObject(object);
 
-				if (Settings.DEBUG)
+				if (GameConstants.DEBUG)
 					System.out.println("Item on object: " + object.getId());
 			}
 

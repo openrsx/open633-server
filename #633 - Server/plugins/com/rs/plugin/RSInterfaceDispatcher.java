@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.npc.familiar.Familiar.SpecialAttack;
@@ -129,7 +129,7 @@ public final class RSInterfaceDispatcher {
 		final int slotId = stream.readUnsignedShortLE128();
 		RSInterfaceDispatcher.execute(player, interfaceId, componentId, packetId, (byte) slotId, slotId2);
 
-		if (Settings.DEBUG)
+		if (GameConstants.DEBUG)
 			Logger.log("ButtonHandler",
 					"Interface ID: " + interfaceId + " - Comonent: " + componentId + " - PacketId: " + packetId);
 	}
@@ -528,7 +528,7 @@ public final class RSInterfaceDispatcher {
 				return;
 
 		}
-		if (Settings.DEBUG)
+		if (GameConstants.DEBUG)
 			Logger.log("ItemHandler", "ItemOnItem " + usedWithId + ", " + toSlot + ", " + interfaceId + ", "
 					+ interfaceComponent + ", " + fromSlot + ", " + itemUsedId);
 	}

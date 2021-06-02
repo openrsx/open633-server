@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.loaders.AnimationDefinitions;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.game.Hit.HitLook;
@@ -406,7 +406,7 @@ public abstract class Entity extends WorldTile {
 		int lastMapRegionY = tile.getChunkY();
 		int regionX = getChunkX();
 		int regionY = getChunkY();
-		int size = ((Settings.MAP_SIZES[mapSize] >> 3) / 2) - 1;
+		int size = ((GameConstants.MAP_SIZES[mapSize] >> 3) / 2) - 1;
 		return Math.abs(lastMapRegionX - regionX) >= size
 				|| Math.abs(lastMapRegionY - regionY) >= size;
 	}
@@ -918,7 +918,7 @@ public abstract class Entity extends WorldTile {
 		isAtDynamicRegion = false;
 		int chunkX = getChunkX();
 		int chunkY = getChunkY();
-		int mapHash = Settings.MAP_SIZES[mapSize] >> 4;
+		int mapHash = GameConstants.MAP_SIZES[mapSize] >> 4;
 		int minRegionX = (chunkX - mapHash) / 8;
 		int minRegionY = (chunkY - mapHash) / 8;
 		for (int xCalc = minRegionX < 0 ? 0 : minRegionX; xCalc <= ((chunkX + mapHash) / 8); xCalc++)

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.Cache;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.ObjectDefinitions;
@@ -296,7 +296,7 @@ public class Region {
 				if (objects[plane][localX][localY][slot] != null)
 					unclip(objects[plane][localX][localY][slot], localX, localY);
 			} else if (spawned == null) {
-				if (Settings.DEBUG)
+				if (GameConstants.DEBUG)
 					Logger.log(this,
 							"Requested object to spawn is already spawned.(Shouldnt happen)");
 				return;
@@ -343,7 +343,7 @@ public class Region {
 			unclip(object, localX, localY);
 			removedOriginalObjects.add(object);
 		} else {
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log(this,
 						"Requested object to remove wasnt found.(Shouldnt happen)");
 			return;
@@ -579,7 +579,7 @@ public class Region {
 				}
 			}
 		}
-		if (Settings.DEBUG && landContainerData == null && landArchiveId != -1
+		if (GameConstants.DEBUG && landContainerData == null && landArchiveId != -1
 				&& MapArchiveKeys.getMapKeys(regionId) != null)
 			Logger.log(this, "Missing xteas for region " + regionId + ".");
 	}

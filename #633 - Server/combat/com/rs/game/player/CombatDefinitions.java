@@ -1,6 +1,6 @@
 package com.rs.game.player;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
@@ -676,7 +676,7 @@ public final class CombatDefinitions {
 		case 14632:
 			player.setNextAnimation(new Animation(1168));
 			player.setNextGraphics(new Graphics(247));
-			player.setNextForceTalk(new ForceTalk("For " + Settings.SERVER_NAME + "!"));
+			player.setNextForceTalk(new ForceTalk("For " + GameConstants.SERVER_NAME + "!"));
 			final boolean enhanced = weaponId == 14632;
 			player.getSkills().set(
 					Skills.DEFENCE,

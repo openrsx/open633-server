@@ -2,7 +2,7 @@ package com.rs.game.player;
 
 import java.util.Optional;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.Animation;
 import com.rs.game.WorldTile;
 import com.rs.game.player.controllers.Wilderness;
@@ -40,7 +40,7 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 	public void postDeath() {
 		getActor().getPackets().sendMusicEffect(90);
 		getActor().getPackets().sendGameMessage("Oh dear, you have died.");
-		getActor().setNextWorldTile(new WorldTile(Settings.START_PLAYER_LOCATION));
+		getActor().setNextWorldTile(new WorldTile(GameConstants.START_PLAYER_LOCATION));
 		getActor().setNextAnimation(new Animation(-1));
 		getActor().heal(getActor().getMaxHitpoints());
 		final int maxPrayer = getActor().getSkills().getLevelForXp(Skills.PRAYER) * 10;

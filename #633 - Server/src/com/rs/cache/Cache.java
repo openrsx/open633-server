@@ -3,20 +3,20 @@ package com.rs.cache;
 import java.io.IOException;
 
 import com.alex.store.Store;
-import com.rs.Config;
-import com.rs.Settings;
+import com.rs.GameProperties;
+import com.rs.GameConstants;
 
 public final class Cache {
 
 	public static Store STORE;
 
 	public static void init() throws IOException {
-		STORE = new Store(Config.get().getString("cache"));
+		STORE = new Store(GameProperties.get().getString("cache"));
 	}
 
 	public static final byte[] generateUkeysFile() {
 		return STORE.generateIndex255Archive255Current(
-				Settings.GRAB_SERVER_PRIVATE_EXPONENT,
-				Settings.GRAB_SERVER_MODULUS);
+				GameConstants.GRAB_SERVER_PRIVATE_EXPONENT,
+				GameConstants.GRAB_SERVER_MODULUS);
 	}
 }

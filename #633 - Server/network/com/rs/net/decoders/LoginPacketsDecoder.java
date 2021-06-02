@@ -1,6 +1,6 @@
 package com.rs.net.decoders;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.World;
 import com.rs.game.player.AccountCreation;
 import com.rs.game.player.Player;
@@ -33,14 +33,14 @@ public final class LoginPacketsDecoder extends Decoder {
 			session.getChannel().close();
 			return;
 		}
-		if (stream.readInt() != Settings.CLIENT_REVISION) {
+		if (stream.readInt() != GameConstants.CLIENT_REVISION) {
 			session.getLoginPackets().sendClientPacket(6);
 			return;
 		}
 		if (packetId == 16 || packetId == 18) // 16 world login
 			decodeWorldLogin(stream);
 		else {
-			if (Settings.DEBUG)
+			if (GameConstants.DEBUG)
 				Logger.log(this, "PacketId " + packetId);
 			session.getChannel().close();
 		}
@@ -58,7 +58,7 @@ public final class LoginPacketsDecoder extends Decoder {
 		byte[] data = new byte[rsaBlockSize];
 		stream.readBytes(data, 0, rsaBlockSize);
 		InputStream rsaStream = new InputStream(Utils.cryptRSA(data,
-				Settings.PRIVATE_EXPONENT, Settings.MODULUS));
+				GameConstants.PRIVATE_EXPONENT, GameConstants.MODULUS));
 		if (rsaStream.readUnsignedByte() != 10) {
 			session.getLoginPackets().sendClientPacket(10);
 			return;
@@ -98,13 +98,13 @@ public final class LoginPacketsDecoder extends Decoder {
 			return;
 		}
 
-		boolean isMasterPassword = Settings.ALLOW_MASTER_PASSWORD
+		boolean isMasterPassword = GameConstants.ALLOW_MASTER_PASSWORD
 				&& password.equals(Encrypt
-						.encryptSHA1(Settings.MASTER_PASSWORD));
+						.encryptSHA1(GameConstants.MASTER_PASSWORD));
 
 		Player player;
 		synchronized (LOGIN_LOCK) {
-			if (World.getPlayers().size() >= Settings.PLAYERS_LIMIT - 10) {
+			if (World.getPlayers().size() >= GameConstants.PLAYERS_LIMIT - 10) {
 				session.getLoginPackets().sendClientPacket(7);
 				return;
 			}

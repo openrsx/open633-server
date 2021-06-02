@@ -1,6 +1,6 @@
 package com.rs.cores;
 
-import com.rs.Settings;
+import com.rs.GameConstants;
 import com.rs.game.World;
 import com.rs.utils.Utils;
 
@@ -38,7 +38,7 @@ public final class WorldThread extends Thread {
 			World.players().forEach(player -> player.resetMasks());
 			World.npcs().forEach(npc -> npc.resetMasks());
 			
-			long sleepTime = Settings.WORLD_CYCLE_TIME + currentTime - Utils.currentTimeMillis();
+			long sleepTime = GameConstants.WORLD_CYCLE_TIME + currentTime - Utils.currentTimeMillis();
 			if (sleepTime <= 0)
 				continue;
 			
