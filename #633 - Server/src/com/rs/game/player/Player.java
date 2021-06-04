@@ -16,6 +16,7 @@ import com.rs.game.Entity;
 import com.rs.game.HintIconsManager;
 import com.rs.game.Hit;
 import com.rs.game.World;
+import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.map.Region;
@@ -27,12 +28,14 @@ import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.MusicsManager;
 import com.rs.game.player.content.Notes;
 import com.rs.game.player.content.PriceCheckManager;
+import com.rs.game.player.content.TeleportType;
 import com.rs.game.player.content.pet.PetManager;
 import com.rs.game.player.controllers.ControllerManager;
 import com.rs.game.player.dialogues.DialogueManager;
 import com.rs.game.player.type.CombatEffect;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
+import com.rs.game.task.LinkedTaskSequence;
 import com.rs.game.task.Task;
 import com.rs.game.task.impl.CombatEffectTask;
 import com.rs.net.AccountCreation;
@@ -673,7 +676,7 @@ public class Player extends Entity {
 	}
 	
 	public String getDisplayName() {
-		return Utils.formatPlayerNameForDisplay(username);
+		return Utils.formatPlayerNameForDisplay(getUsername());
 	}
 
 	/**
@@ -688,5 +691,46 @@ public class Player extends Entity {
 				cancel();
 			}
 		}.submit();
+	}
+	
+	/**
+	 * Queue Teleport type handling with Consumer support
+	 * @param tile
+	 * @param type
+	 * @param player
+	 */
+	public void move(WorldTile tile, TeleportType type, Consumer<Player> player) {
+		lock();
+		LinkedTaskSequence seq = new LinkedTaskSequence();
+		seq.connect(1, () -> {
+			type.getStartAnimation().ifPresent(this::setNextAnimation);
+			type.getStartGraphic().ifPresent(this::setNextGraphics);
+		}).connect(type.getEndDelay(), () -> {
+			type.getEndAnimation().ifPresent(this::setNextAnimation);
+			type.getEndGraphic().ifPresent(this::setNextGraphics);
+			setNextWorldTile(tile);
+			player.accept(this);
+			unlock();
+		}).start();
+	}
+	
+	/**
+	 * Queue Teleport type handling
+	 * @param tile
+	 * @param type
+	 * @param player
+	 */
+	public void move(WorldTile tile, TeleportType type) {
+		lock();
+		LinkedTaskSequence seq = new LinkedTaskSequence();
+		seq.connect(1, () -> {
+			type.getStartAnimation().ifPresent(this::setNextAnimation);
+			type.getStartGraphic().ifPresent(this::setNextGraphics);
+		}).connect(type.getEndDelay(), () -> {
+			type.getEndAnimation().ifPresent(this::setNextAnimation);
+			type.getEndGraphic().ifPresent(this::setNextGraphics);
+			setNextWorldTile(tile);
+			unlock();
+		}).start();
 	}
 }
