@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.task.Task;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class OwnedObjectManager {
 
@@ -27,8 +27,7 @@ public class OwnedObjectManager {
 	private ProcessEvent event;
 
 	public static void processAll() {
-		for (OwnedObjectManager object : ownedObjects.values())
-			object.process();
+		ownedObjects.values().forEach(object -> object.process());
 	}
 
 	public static boolean isPlayerObject(Player player, WorldObject object) {
@@ -49,7 +48,7 @@ public class OwnedObjectManager {
 		return false;
 	}
 
-	public static interface ConvertEvent {
+	public interface ConvertEvent {
 
 		public boolean canConvert(Player player);
 

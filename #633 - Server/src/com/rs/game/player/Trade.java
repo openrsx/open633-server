@@ -5,7 +5,7 @@ import java.util.Arrays;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.item.ItemsContainer;
-import com.rs.utils.Logger;
+import com.rs.utilities.Logger;
 
 public class Trade {
 

@@ -9,8 +9,8 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
-import com.rs.utils.MapAreas;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
+import com.rs.utilities.loaders.MapAreas;
 
 import lombok.Data;
 

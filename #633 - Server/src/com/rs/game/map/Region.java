@@ -16,13 +16,13 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
-import com.rs.utils.Logger;
-import com.rs.utils.MapArchiveKeys;
-import com.rs.utils.NPCSpawning;
-import com.rs.utils.Utils;
-import com.rs.utils.json.GsonHandler;
-import com.rs.utils.json.impl.NPCAutoSpawn;
-import com.rs.utils.json.impl.ObjectSpawnLoader;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
+import com.rs.utilities.json.GsonHandler;
+import com.rs.utilities.json.impl.NPCAutoSpawn;
+import com.rs.utilities.json.impl.ObjectSpawnLoader;
+import com.rs.utilities.loaders.MapArchiveKeys;
+import com.rs.utilities.loaders.NPCSpawning;
 
 public class Region {
 	public static final int[] OBJECT_SLOTS = new int[] { 0, 0, 0, 0, 1, 1, 1,

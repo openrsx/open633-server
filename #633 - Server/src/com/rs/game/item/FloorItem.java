@@ -7,7 +7,7 @@ import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.map.Region;
 import com.rs.game.player.Player;
-import com.rs.utils.Logger;
+import com.rs.utilities.Logger;
 
 public class FloorItem extends Item {
 

@@ -30,9 +30,9 @@ import com.rs.game.task.impl.RestoreSkillTask;
 import com.rs.game.task.impl.RestoreSpecialTask;
 import com.rs.game.task.impl.ShopRestockTask;
 import com.rs.game.task.impl.SummoningPassiveTask;
-import com.rs.utils.AntiFlood;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.AntiFlood;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 import lombok.Getter;
 import lombok.Setter;

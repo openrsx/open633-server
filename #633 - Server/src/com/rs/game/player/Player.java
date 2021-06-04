@@ -36,15 +36,15 @@ import com.rs.game.route.RouteEvent;
 import com.rs.game.task.Task;
 import com.rs.game.task.impl.CombatEffectTask;
 import com.rs.net.AccountCreation;
+import com.rs.net.IsaacKeyPair;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
 import com.rs.net.host.HostListType;
 import com.rs.net.host.HostManager;
-import com.rs.utils.IsaacKeyPair;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -341,14 +341,9 @@ public class Player extends Entity {
 		getInterfaceManager().sendInterfaces();
 		getPackets().sendRunEnergy();
 		getInterfaceManager().sendRunButtonConfig();
-		CombatEffect.values().forEach($it -> {
-			if($it.onLogin(this))
-				World.get().submit(new CombatEffectTask(this, $it));
-		});
 		getPackets().sendGameMessage("Welcome to " + GameConstants.SERVER_NAME + ".");
-		
+		CombatEffect.values().parallelStream().filter(effects -> effects.onLogin(this)).forEach(effect -> World.get().submit(new CombatEffectTask(this, effect)));
 		GameConstants.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> getDetails().setRights(staff.getValue()));
-		
 		sendDefaultPlayersOptions();
 		checkMultiArea();
 		getInventory().init();

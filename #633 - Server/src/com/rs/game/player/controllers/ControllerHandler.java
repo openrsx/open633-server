@@ -2,8 +2,8 @@ package com.rs.game.player.controllers;
 
 import java.util.HashMap;
 
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 import lombok.SneakyThrows;
 

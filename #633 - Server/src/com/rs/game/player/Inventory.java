@@ -6,7 +6,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public final class Inventory {
 

@@ -3,12 +3,12 @@ package com.rs.game.npc.others;
 import java.util.ArrayList;
 
 import com.rs.game.Entity;
-import com.rs.game.ForceTalk;
 import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.godwars.saradomin.GodwarsSaradominFaction;
 import com.rs.game.npc.godwars.zammorak.GodwarsZammorakFaction;
 import com.rs.game.player.Player;
+import com.rs.net.encoders.other.ForceTalk;
 
 public class BanditCampBandits extends NPC {
 

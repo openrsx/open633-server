@@ -9,7 +9,7 @@ import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
 import com.rs.game.player.type.PoisonType;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 @MobCombatSignature(mobId = {}, mobName = {"dragon"})
 public class DragonCombat extends MobCombatInterface {

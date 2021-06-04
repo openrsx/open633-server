@@ -7,7 +7,7 @@ import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.pet.PetDetails;
 import com.rs.game.player.content.pet.Pets;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 /**
  * Represents a pet.

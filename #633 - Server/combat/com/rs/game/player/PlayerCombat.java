@@ -21,8 +21,8 @@ import com.rs.game.npc.familiar.Steeltitan;
 import com.rs.game.player.actions.Action;
 import com.rs.game.player.content.Magic;
 import com.rs.game.task.Task;
-import com.rs.utils.MapAreas;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
+import com.rs.utilities.loaders.MapAreas;
 
 public class PlayerCombat extends Action {
 

@@ -4,8 +4,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
-import com.rs.utils.Chance;
-import com.rs.utils.Utils;
+import com.rs.utilities.Chance;
+import com.rs.utilities.Utils;
 
 /**
  * A model representing an item within a rational item table that can be dropped.

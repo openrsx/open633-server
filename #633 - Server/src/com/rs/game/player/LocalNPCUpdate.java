@@ -9,7 +9,7 @@ import com.rs.game.Hit;
 import com.rs.game.World;
 import com.rs.game.npc.NPC;
 import com.rs.io.OutputStream;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public final class LocalNPCUpdate {
 

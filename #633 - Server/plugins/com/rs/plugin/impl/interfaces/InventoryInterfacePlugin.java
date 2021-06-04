@@ -27,8 +27,8 @@ import com.rs.plugin.InventoryDispatcher;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 @RSInterfaceSignature(interfaceId = {149})
 public class InventoryInterfacePlugin implements RSInterface {

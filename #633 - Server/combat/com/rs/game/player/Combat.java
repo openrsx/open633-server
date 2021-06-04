@@ -5,7 +5,7 @@ import com.rs.game.Entity;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.type.CombatEffect;
 import com.rs.game.player.type.CombatEffectType;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public final class Combat {
 

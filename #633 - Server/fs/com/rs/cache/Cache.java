@@ -11,7 +11,7 @@ public final class Cache {
 	public static Store STORE;
 
 	public static void init() throws IOException {
-		STORE = new Store(GameProperties.get().getString("cache"));
+		STORE = new Store(GameProperties.getGameProperties().getString("cache"));
 	}
 
 	public static final byte[] generateUkeysFile() {

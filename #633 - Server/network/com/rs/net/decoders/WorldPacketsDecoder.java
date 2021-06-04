@@ -22,6 +22,8 @@ import com.rs.game.route.RouteEvent;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.io.InputStream;
+import com.rs.net.Encrypt;
+import com.rs.net.Huffman;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.encoders.other.ChatMessage;
@@ -31,10 +33,8 @@ import com.rs.plugin.CommandDispatcher;
 import com.rs.plugin.NPCDispatcher;
 import com.rs.plugin.ObjectDispatcher;
 import com.rs.plugin.RSInterfaceDispatcher;
-import com.rs.utils.Encrypt;
-import com.rs.utils.Huffman;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 public final class WorldPacketsDecoder extends Decoder {
 

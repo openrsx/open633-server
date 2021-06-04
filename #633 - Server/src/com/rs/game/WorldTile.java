@@ -1,7 +1,7 @@
 package com.rs.game;
 
 import com.rs.GameConstants;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 import lombok.Data;
 

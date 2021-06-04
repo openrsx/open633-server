@@ -1,6 +1,6 @@
 package com.rs.game.player.type.impl;
 
-import com.rs.utils.MutableNumber;
+import com.rs.utilities.MutableNumber;
 
 public final class AntifireDetails {
 	

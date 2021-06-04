@@ -9,7 +9,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Foods.Food;
 import com.rs.game.player.content.Pots.Pot;
-import com.rs.utils.Logger;
+import com.rs.utilities.Logger;
 
 import lombok.Data;
 

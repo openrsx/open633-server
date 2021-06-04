@@ -8,7 +8,7 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class Fruitbat extends Familiar {
 

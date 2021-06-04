@@ -6,8 +6,8 @@ import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.game.World;
 import com.rs.game.map.Region;
 import com.rs.game.player.Player;
-import com.rs.utils.MusicHints;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
+import com.rs.utilities.loaders.MusicHints;
 
 public final class MusicsManager {
 

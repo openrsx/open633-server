@@ -2,7 +2,7 @@ package com.rs.cores;
 
 import com.rs.GameConstants;
 import com.rs.game.World;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 import lombok.SneakyThrows;
 

@@ -12,8 +12,8 @@ import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Skills;
 import com.rs.io.InputStream;
-import com.rs.utils.EquipData;
-import com.rs.utils.ItemBonuses;
+import com.rs.utilities.loaders.EquipData;
+import com.rs.utilities.loaders.ItemBonuses;
 
 import lombok.Data;
 

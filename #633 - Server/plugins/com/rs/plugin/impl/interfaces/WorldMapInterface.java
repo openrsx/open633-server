@@ -4,7 +4,7 @@ import com.rs.game.player.Player;
 import com.rs.game.player.actions.Rest;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 @RSInterfaceSignature(interfaceId = { 750, 548, 755, 746})
 public class WorldMapInterface implements RSInterface {

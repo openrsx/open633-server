@@ -8,7 +8,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.player.dialogues.Dialogue;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public final class MiningGuildDwarf extends Dialogue {
 

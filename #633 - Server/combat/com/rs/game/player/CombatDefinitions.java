@@ -4,12 +4,12 @@ import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.ForceTalk;
 import com.rs.game.Graphics;
 import com.rs.game.World;
 import com.rs.game.item.Item;
 import com.rs.game.task.Task;
-import com.rs.utils.Utils;
+import com.rs.net.encoders.other.ForceTalk;
+import com.rs.utilities.Utils;
 
 import lombok.Data;
 

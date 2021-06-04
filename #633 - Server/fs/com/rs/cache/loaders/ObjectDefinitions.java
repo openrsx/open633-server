@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 import lombok.Data;
 

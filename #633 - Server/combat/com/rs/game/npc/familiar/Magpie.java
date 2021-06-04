@@ -1,7 +1,6 @@
 package com.rs.game.npc.familiar;
 
 import com.rs.game.Animation;
-import com.rs.game.ForceTalk;
 import com.rs.game.Graphics;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
@@ -10,7 +9,8 @@ import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utils.Utils;
+import com.rs.net.encoders.other.ForceTalk;
+import com.rs.utilities.Utils;
 
 public class Magpie extends Familiar {
 

@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
-import com.rs.utils.MusicHints;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
+import com.rs.utilities.loaders.MusicHints;
 
 public final class ClientScriptMap {
 

@@ -12,7 +12,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 

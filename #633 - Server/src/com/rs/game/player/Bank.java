@@ -4,7 +4,7 @@ import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.npc.familiar.Familiar;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 @SuppressWarnings("all")
 public class Bank {

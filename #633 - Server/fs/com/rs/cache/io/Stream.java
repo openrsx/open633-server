@@ -1,7 +1,7 @@
 package com.rs.cache.io;
 
 import com.rs.GameConstants;
-import com.rs.utils.Logger;
+import com.rs.utilities.Logger;
 
 public abstract class Stream {
 

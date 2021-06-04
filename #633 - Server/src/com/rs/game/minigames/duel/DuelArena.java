@@ -5,7 +5,6 @@ import java.util.Arrays;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.ForceTalk;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
@@ -18,9 +17,10 @@ import com.rs.game.player.content.Pots.Pot;
 import com.rs.game.player.controllers.Controller;
 import com.rs.game.task.Task;
 import com.rs.net.decoders.WorldPacketsDecoder;
+import com.rs.net.encoders.other.ForceTalk;
 import com.rs.plugin.RSInterfaceDispatcher;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 public class DuelArena extends Controller {
 

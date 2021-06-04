@@ -14,7 +14,7 @@ import com.rs.io.OutputStream;
 import com.rs.net.AccountCreation;
 import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class FriendChatsManager {
 

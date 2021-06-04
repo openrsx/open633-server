@@ -1,6 +1,6 @@
 package com.rs.game.map;
 
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 /*
  * @author Dragonkk/Alex

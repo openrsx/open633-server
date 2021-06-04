@@ -16,7 +16,7 @@ import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
 import com.rs.plugin.listener.NPCType;
 import com.rs.plugin.wrapper.NPCSignature;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 

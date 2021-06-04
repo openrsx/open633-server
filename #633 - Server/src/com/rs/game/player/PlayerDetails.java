@@ -8,9 +8,9 @@ import java.util.Optional;
 
 import com.rs.game.player.content.ChargesManager;
 import com.rs.game.player.type.impl.AntifireDetails;
-import com.rs.utils.MutableNumber;
-import com.rs.utils.Stopwatch;
-import com.rs.utils.Utils;
+import com.rs.utilities.MutableNumber;
+import com.rs.utilities.Stopwatch;
+import com.rs.utilities.Utils;
 
 import lombok.Data;
 
@@ -149,10 +149,8 @@ public final class PlayerDetails {
 
 	private byte summoningLeftClickOption;
 	private List<String> ownedObjectsManagerKeys;
-	
-	
-	private final MutableNumber lock = new MutableNumber(), poisonImmunity = new MutableNumber(), skullTimer = new MutableNumber(), teleBlockDelay = new MutableNumber(), prayerDelay = new MutableNumber();
-	
+
+	private final MutableNumber poisonImmunity = new MutableNumber(), skullTimer = new MutableNumber(), teleBlockDelay = new MutableNumber(), prayerDelay = new MutableNumber();
 
 	/**
 	 * Holds an optional wrapped inside the Antifire details.

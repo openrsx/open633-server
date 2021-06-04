@@ -6,7 +6,7 @@ import com.rs.game.Hit.HitLook;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class Bloatedleech extends Familiar {
 

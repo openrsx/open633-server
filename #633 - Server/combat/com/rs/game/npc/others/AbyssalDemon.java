@@ -5,7 +5,7 @@ import com.rs.game.Graphics;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class AbyssalDemon extends NPC {
 

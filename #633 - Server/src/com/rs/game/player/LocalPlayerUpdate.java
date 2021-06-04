@@ -6,7 +6,7 @@ import com.rs.GameConstants;
 import com.rs.game.Hit;
 import com.rs.game.World;
 import com.rs.io.OutputStream;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public final class LocalPlayerUpdate {
 

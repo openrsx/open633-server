@@ -3,7 +3,7 @@ package com.rs.game.player.actions;
 import com.rs.game.player.Player;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.EntityStrategy;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class PlayerFollow extends Action {
 

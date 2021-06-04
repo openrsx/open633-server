@@ -13,7 +13,7 @@ import com.rs.game.player.Skills;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.player.type.PoisonType;
 import com.rs.game.task.Task;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class Strangerplant extends Familiar {
 

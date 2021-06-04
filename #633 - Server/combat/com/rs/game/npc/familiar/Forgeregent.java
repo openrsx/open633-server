@@ -12,7 +12,7 @@ import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
 import com.rs.plugin.RSInterfaceDispatcher;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class Forgeregent extends Familiar {
 

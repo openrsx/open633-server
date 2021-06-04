@@ -1,7 +1,7 @@
 package com.rs.net.encoders.other;
 
-import com.rs.utils.Censor;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
+import com.rs.utilities.loaders.Censor;
 
 public class ChatMessage {
 

@@ -46,11 +46,11 @@ import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.game.task.Task;
-import com.rs.utils.Logger;
-import com.rs.utils.MapAreas;
-import com.rs.utils.NPCBonuses;
-import com.rs.utils.NPCCombatDefinitionsL;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
+import com.rs.utilities.loaders.MapAreas;
+import com.rs.utilities.loaders.NPCBonuses;
+import com.rs.utilities.loaders.NPCCombatDefinitionsL;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
