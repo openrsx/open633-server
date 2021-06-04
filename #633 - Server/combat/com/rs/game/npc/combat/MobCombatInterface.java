@@ -85,7 +85,7 @@ public abstract class MobCombatInterface {
 					npc.getCombat().doDefenceEmote(target);
 					if (target instanceof Player) {
 						Player targetPlayer = (Player) target;
-						targetPlayer.closeInterfaces();
+						targetPlayer.getInterfaceManager().closeInterfaces();
 						if (targetPlayer.getCombatDefinitions().isAutoRelatie() && !targetPlayer.getActionManager().hasSkillWorking()
 								&& !targetPlayer.hasWalkSteps())
 							targetPlayer.getActionManager().setAction(new PlayerCombat(npc));

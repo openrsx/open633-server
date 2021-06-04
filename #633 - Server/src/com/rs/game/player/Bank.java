@@ -102,7 +102,7 @@ public class Bank {
 					player.getPackets().sendGameMessage(
 							"The PIN you have put is incorrect.");
 				}
-				player.closeInterfaces();
+				player.getInterfaceManager().closeInterfaces();
 			} else if (requestedPin == actualPin) { // pin is correct.
 				player.getPackets().sendGameMessage(
 						"Successfully entered your PIN number.");

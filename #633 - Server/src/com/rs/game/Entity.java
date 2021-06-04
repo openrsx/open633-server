@@ -12,6 +12,7 @@ import com.rs.GameConstants;
 import com.rs.cache.loaders.AnimationDefinitions;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.game.Hit.HitLook;
+import com.rs.game.map.Region;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
@@ -346,7 +347,7 @@ public abstract class Entity extends WorldTile {
 			if (needMapUpdate())
 				loadMapRegions();
 			else if (this instanceof Player && lastPlane != getPlane())
-				((Player) this).setClientHasntLoadedMapRegion();
+				((Player) this).setClientLoadedMapRegion(false);
 			resetWalkSteps();
 			return;
 		}

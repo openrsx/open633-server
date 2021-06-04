@@ -25,7 +25,7 @@ public final class LoginPacketsDecoder extends Decoder {
 	@Override
 	public void decode(InputStream stream) {
 		session.setDecoder(-1);
-		if (World.exiting_start != 0) {
+		if (World.get().getExiting_start() != 0) {
 			session.getLoginPackets().sendClientPacket(14);
 			return;
 		}

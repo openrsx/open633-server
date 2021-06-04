@@ -1494,10 +1494,9 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == KICK_FRIEND_CHAT_PACKET) {
 			if (!player.isStarted())
 				return;
-			player.setLastPublicMessage(Utils.currentTimeMillis() + 1000); // avoids
-			// message
-			// appearing
-			player.kickPlayerFromFriendsChannel(stream.readString());
+			player.setLastPublicMessage(Utils.currentTimeMillis() + 1000);
+			FriendChatsManager fcManager = new FriendChatsManager(player);
+			fcManager.kickPlayerFromFriendsChannel(player, stream.readString());
 		} else if (packetId == KICK_CLAN_CHAT_PACKET) {
 			if (!player.isStarted())
 				return;
@@ -1624,7 +1623,8 @@ public final class WorldPacketsDecoder extends Decoder {
 //			else if (chatType == 3)
 //				player.sendGuestClanChannelMessage(new ChatMessage(message));
 //			else
-				player.sendPublicChatMessage(new PublicChatMessage(message, effects));
+			PublicChatMessage chatMessage = new PublicChatMessage(message, effects);
+			chatMessage.sendPublicChatMessage(player, chatMessage);
 			if (GameConstants.DEBUG)
 				Logger.log(this, "Chat type: " + chatType);
 		} else if (packetId == COMMANDS_PACKET) {

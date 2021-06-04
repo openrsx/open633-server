@@ -1,5 +1,7 @@
-package com.rs.game;
+package com.rs.game.map;
 
+import com.rs.game.World;
+import com.rs.game.WorldTile;
 
 /*
  * Author Alex(Also known as dragonkk)

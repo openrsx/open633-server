@@ -1,7 +1,7 @@
 package com.rs.plugin.impl.interfaces;
 
 import com.rs.game.player.Player;
-import com.rs.game.player.content.Emotes;
+import com.rs.game.player.content.Emotes.Emote;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
 
@@ -11,6 +11,6 @@ public class EmotesInterface implements RSInterface {
 	@Override
 	public void execute(Player player, int interfaceId, int componentId, int packetId, byte slotId, int slotId2)
 			throws Exception {
-		Emotes.Emote.executeEmote(player, componentId);
+		Emote.executeEmote(player, componentId);
 	}
 }

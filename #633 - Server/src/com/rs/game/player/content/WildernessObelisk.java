@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.rs.game.Animation;
 import com.rs.game.Graphics;
-import com.rs.game.Region;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
+import com.rs.game.map.Region;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
 import com.rs.utils.Utils;

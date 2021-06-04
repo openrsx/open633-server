@@ -33,6 +33,7 @@ import com.rs.utils.Utils;
 @RSInterfaceSignature(interfaceId = {149})
 public class InventoryInterfacePlugin implements RSInterface {
 
+	@SuppressWarnings("unused")
 	@Override
 	public void execute(Player player, int interfaceId, int componentId, int packetId, byte slotId, int slotId2) throws Exception {
 		if (componentId == 0) {
@@ -91,7 +92,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 			case WorldPacketsDecoder.ACTION_BUTTON6_PACKET:
 				InventoryDispatcher.execute(player, item, 6);
 				break;
-			case WorldPacketsDecoder.ACTION_BUTTON8_PACKET:
+			case WorldPacketsDecoder.ACTION_BUTTON7_PACKET:
 				long dropTime = Utils.currentTimeMillis();
 //				if (player.getLockDelay() >= dropTime || player.getEmotesManager().getNextEmoteEnd() >= dropTime)
 //					return;

@@ -1,6 +1,8 @@
 package com.rs.game.player;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -30,7 +32,7 @@ public class OwnedObjectManager {
 	}
 
 	public static boolean isPlayerObject(Player player, WorldObject object) {
-		for (Iterator<String> it = player.getOwnedObjectManagerKeys()
+		for (Iterator<String> it = getOwnedObjectManagerKeys(player)
 				.iterator(); it.hasNext();) {
 			OwnedObjectManager manager = ownedObjects.get(it.next());
 			if (manager == null) {
@@ -71,7 +73,7 @@ public class OwnedObjectManager {
 	}
 
 	public static boolean removeObject(Player player, WorldObject object) {
-		for (Iterator<String> it = player.getOwnedObjectManagerKeys()
+		for (Iterator<String> it = getOwnedObjectManagerKeys(player)
 				.iterator(); it.hasNext();) {
 			final OwnedObjectManager manager = ownedObjects.get(it.next());
 			if (manager == null) {
@@ -97,7 +99,7 @@ public class OwnedObjectManager {
 	}
 
 	public static void linkKeys(Player player) {
-		for (Iterator<String> it = player.getOwnedObjectManagerKeys()
+		for (Iterator<String> it = getOwnedObjectManagerKeys(player)
 				.iterator(); it.hasNext();) {
 			OwnedObjectManager manager = ownedObjects.get(it.next());
 			if (manager == null) {
@@ -132,13 +134,13 @@ public class OwnedObjectManager {
 		this.player = player;
 		this.event = event;
 		spawnObject();
-		player.getOwnedObjectManagerKeys().add(managerKey);
+		getOwnedObjectManagerKeys(player).add(managerKey);
 		ownedObjects.put(managerKey, this);
 	}
 
 	public static int getObjectsforValue(Player player, int objectId) {
 		int count = 0;
-		for (Iterator<String> it = player.getOwnedObjectManagerKeys()
+		for (Iterator<String> it = getOwnedObjectManagerKeys(player)
 				.iterator(); it.hasNext();) {
 			OwnedObjectManager manager = ownedObjects.get(it.next());
 			if (manager == null) {
@@ -152,7 +154,7 @@ public class OwnedObjectManager {
 	}
 
 	public static boolean containsObjectValue(Player player, int... objectIds) {
-		for (Iterator<String> it = player.getOwnedObjectManagerKeys()
+		for (Iterator<String> it = getOwnedObjectManagerKeys(player)
 				.iterator(); it.hasNext();) {
 			OwnedObjectManager manager = ownedObjects.get(it.next());
 			if (manager == null) {
@@ -180,7 +182,7 @@ public class OwnedObjectManager {
 			destroyObject(objects[count]);
 		count++;
 		if (count == objects.length) {
-			remove();
+			remove(player);
 			return false;
 		}
 		spawnObject();
@@ -200,15 +202,15 @@ public class OwnedObjectManager {
 		spawnObject();
 	}
 
-	private void remove() {
+	private void remove(Player player) {
 		ownedObjects.remove(managerKey);
 		if (player != null)
-			player.getOwnedObjectManagerKeys().remove(managerKey);
+			getOwnedObjectManagerKeys(player).remove(managerKey);
 	}
 
 	public void delete() {
 		destroyObject(objects[count]);
-		remove();
+		remove(player);
 	}
 
 	public void process() {
@@ -234,4 +236,9 @@ public class OwnedObjectManager {
 
 	}
 
+	public static List<String> getOwnedObjectManagerKeys(Player player) {
+		if (player.getDetails().getOwnedObjectsManagerKeys() == null) // temporary
+			player.getDetails().setOwnedObjectsManagerKeys(new LinkedList<String>());
+		return player.getDetails().getOwnedObjectsManagerKeys();
+	}
 }

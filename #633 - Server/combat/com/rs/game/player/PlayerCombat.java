@@ -10,11 +10,11 @@ import com.rs.game.Entity;
 import com.rs.game.Graphics;
 import com.rs.game.Hit;
 import com.rs.game.Hit.HitLook;
-import com.rs.game.Region;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
+import com.rs.game.map.Region;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.familiar.Steeltitan;
@@ -2662,7 +2662,7 @@ public class PlayerCombat extends Action {
 //					}
 					if (target instanceof Player) {
 						Player p2 = (Player) target;
-						p2.closeInterfaces();
+						p2.getInterfaceManager().closeInterfaces();
 						if (p2.getCombatDefinitions().isAutoRelatie() && !p2.getActionManager().hasSkillWorking()
 								&& !p2.hasWalkSteps())
 							p2.getActionManager().setAction(new PlayerCombat(player));

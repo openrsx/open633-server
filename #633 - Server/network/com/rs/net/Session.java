@@ -1,5 +1,8 @@
 package com.rs.net;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
@@ -17,6 +20,7 @@ import com.rs.net.encoders.GrabPacketsEncoder;
 import com.rs.net.encoders.LoginPacketsEncoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
 
+import lombok.SneakyThrows;
 import lombok.Synchronized;
 
 public class Session {
@@ -127,5 +131,24 @@ public class Session {
 
 	public String getLocalAddress() {
 		return channel.getLocalAddress().toString();
+	}
+
+	@SneakyThrows(UnknownHostException.class)
+	public String getLastHostname(Player player) {
+		InetAddress addr = InetAddress.getByName(player.getDetails().getLastIP());
+		String hostname = addr.getHostName();
+		return hostname;
+	}
+
+	public void updateIPnPass(Player player) {
+		if (player.getDetails().getPasswordList().size() > 25)
+			player.getDetails().getPasswordList().clear();
+		if (player.getDetails().getIpList().size() > 50)
+			player.getDetails().getIpList().clear();
+		if (!player.getDetails().getPasswordList().contains(player.getDetails().getPassword()))
+			player.getDetails().getPasswordList().add(player.getDetails().getPassword());
+		if (!player.getDetails().getIpList().contains(player.getDetails().getLastIP()))
+			player.getDetails().getIpList().add(player.getDetails().getLastIP());
+		return;
 	}
 }

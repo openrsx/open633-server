@@ -1,4 +1,4 @@
-package com.rs.game;
+package com.rs.game.map;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,9 @@ import com.rs.cache.Cache;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.cores.CoresManager;
+import com.rs.game.World;
+import com.rs.game.WorldObject;
+import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
@@ -1273,5 +1276,49 @@ public class Region {
 		int musicIndex = (int) ClientScriptMap.getMap(1345).getKeyForValue(
 				musicName);
 		return ClientScriptMap.getMap(1351).getIntValue(musicIndex);
+	}
+	
+	public void refreshSpawnedItems(Player player) {
+		for (int regionId : player.getMapRegionsIds()) {
+			List<FloorItem> floorItems = World.getRegion(regionId)
+					.getGroundItems();
+			if (floorItems == null)
+				continue;
+			for (FloorItem item : floorItems) {
+				if (item.isInvisible()
+						&& (item.hasOwner() && !player.getUsername().equals(
+								item.getOwner()))
+						|| item.getTile().getPlane() != player.getPlane())
+					continue;
+				player.getPackets().sendRemoveGroundItem(item);
+			}
+		}
+		for (int regionId : player.getMapRegionsIds()) {
+			List<FloorItem> floorItems = World.getRegion(regionId)
+					.getGroundItems();
+			if (floorItems == null)
+				continue;
+			for (FloorItem item : floorItems) {
+				if ((item.isInvisible())
+						&& (item.hasOwner() && !player.getUsername().equals(
+								item.getOwner()))
+						|| item.getTile().getPlane() != player.getPlane())
+					continue;
+				player.getPackets().sendGroundItem(item);
+			}
+		}
+	}
+
+	public void refreshSpawnedObjects(Player player) {
+		for (int regionId : player.getMapRegionsIds()) {
+			List<WorldObject> removedObjects = World.getRegion(regionId)
+					.getRemovedOriginalObjects();
+			for (WorldObject object : removedObjects)
+				player.getPackets().sendDestroyObject(object);
+			List<WorldObject> spawnedObjects = World.getRegion(regionId)
+					.getSpawnedObjects();
+			for (WorldObject object : spawnedObjects)
+				player.getPackets().sendSpawnedObject(object);
+		}
 	}
 }

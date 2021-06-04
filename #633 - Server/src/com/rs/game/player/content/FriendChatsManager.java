@@ -99,8 +99,8 @@ public class FriendChatsManager {
 				refreshChannel();
 			if (!logout) {
 				player.getDetails().setCurrentFriendChatOwner(null);
-				player.disableLootShare();
-				player.closeInterfaces();
+//				player.disableLootShare();
+				player.getInterfaceManager().closeInterfaces();
 				player.getPackets().sendGameMessage("You have left the channel.");
 				player.getPackets().sendFriendsChatChannel();
 			}
@@ -164,7 +164,7 @@ public class FriendChatsManager {
 			for (Player player : players) {
 				player.setCurrentFriendChat(null);
 				player.getDetails().setCurrentFriendChatOwner(null);
-				player.disableLootShare();
+//				player.disableLootShare();
 				player.getPackets().sendFriendsChatChannel();
 				player.getPackets().sendGameMessage("You have been removed from this channel!");
 			}
@@ -258,7 +258,7 @@ public class FriendChatsManager {
 		return dataBlock;
 	}
 
-	private FriendChatsManager(Player player) {
+	public FriendChatsManager(Player player) {
 		owner = player.getUsername();
 		ownerDisplayName = player.getDisplayName();
 		settings = player.getFriendsIgnores();
@@ -312,17 +312,17 @@ public class FriendChatsManager {
 	public static void toogleLootShare(Player player) {
 		if (player.getCurrentFriendChat() == null) {
 			player.getPackets().sendGameMessage("You need to be in a Friends Chat channel to activate LootShare.");
-			player.refreshToogleLootShare();
+//			player.refreshToogleLootShare();
 			return;
 		}
 		if (!player.getUsername().equals(player.getCurrentFriendChat().getOwnerName())
 				&& !player.getCurrentFriendChat().settings.hasRankToLootShare(player.getUsername())) {
 			player.getPackets()
 					.sendGameMessage("You must be on channel owner's Friend List ot use LootShare on this channel.");
-			player.refreshToogleLootShare();
+//			player.refreshToogleLootShare();
 			return;
 		}
-		player.toogleLootShare();
+//		player.toogleLootShare();
 		if (player.isToogleLootShare())
 			player.getPackets().sendGameMessage("LootShare is now active.");
 	}
@@ -366,6 +366,24 @@ public class FriendChatsManager {
 				chat.joinChat(player);
 		}
 
+	}
+	
+	public void kickPlayerFromFriendsChannel(Player player, String name) {
+		if (player.getCurrentFriendChat() == null)
+			return;
+		player.getCurrentFriendChat().kickPlayerFromChat(player, name);
+	}
+
+	public void sendFriendsChannelMessage(Player player,ChatMessage message) {
+		if (player.getCurrentFriendChat() == null)
+			return;
+		player.getCurrentFriendChat().sendMessage(player, message);
+	}
+
+	public void sendFriendsChannelQuickMessage(Player player,QuickChatMessage message) {
+		if (player.getCurrentFriendChat() == null)
+			return;
+		player.getCurrentFriendChat().sendQuickMessage(player, message);
 	}
 
 //    /**

@@ -40,7 +40,6 @@ public final class PlayerDetails {
 		ipList = new ArrayList<String>();
 		if (watchMap == null)
 			watchMap = new HashMap<>();
-		
 	}
 
 	/**
@@ -58,8 +57,6 @@ public final class PlayerDetails {
 	 */
 	private byte[] pouches;
 
-	private long displayTime;
-
 	/**
 	 * The length of a Player being Muted (Unable to chat)
 	 */
@@ -69,15 +66,6 @@ public final class PlayerDetails {
 	 * Length of the Player being Jailed (stuck in a remote area)
 	 */
 	private long jailed;
-
-	/**
-	 * Adds Players display time
-	 * 
-	 * @param i
-	 */
-	public void addDisplayTime(long i) {
-		this.displayTime = i + Utils.currentTimeMillis();
-	}
 	
 	/**
 	 * Represents the last known IP from the Player
@@ -140,9 +128,6 @@ public final class PlayerDetails {
 	private byte clanChatSetup;
 	private byte guestChatSetup;
 	private boolean forceNextMapLoadRefresh;
-	private long poisonImmune; // to redo
-	private long fireImmune; // to redo
-
 	private long banned;
 	private boolean permBanned;
 	private boolean yellOff;
@@ -166,21 +151,13 @@ public final class PlayerDetails {
 	private List<String> ownedObjectsManagerKeys;
 	
 	
-	private final MutableNumber poisonImmunity = new MutableNumber(), skullTimer = new MutableNumber(), teleBlockDelay = new MutableNumber(), prayerDelay = new MutableNumber();
+	private final MutableNumber lock = new MutableNumber(), poisonImmunity = new MutableNumber(), skullTimer = new MutableNumber(), teleBlockDelay = new MutableNumber(), prayerDelay = new MutableNumber();
 	
 
 	/**
 	 * Holds an optional wrapped inside the Antifire details.
 	 */
 	private Optional<AntifireDetails> antifireDetails = Optional.empty();
-	
-	/**
-	 * Sets the new anti-fire instance for this class directly.
-	 * @param details the anti-fire instance to set.
-	 */
-	public void setAntifireDetail(AntifireDetails details) {
-		setAntifireDetails(details == null ? Optional.empty() : Optional.of(details));
-	}
 	
 	/**
 	 * Populates the {@link #watchMap}

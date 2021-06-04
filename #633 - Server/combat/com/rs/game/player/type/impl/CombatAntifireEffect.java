@@ -34,10 +34,10 @@ public final class CombatAntifireEffect extends CombatEffect {
 		}
 		Player player = (Player) entity;
 		if(player.getDetails().getAntifireDetails().isPresent()) {
-			player.getDetails().setAntifireDetail(new AntifireDetails(type));
+			player.getDetails().setAntifireDetails(Optional.of(new AntifireDetails(type)));
 			return false;
 		}
-		player.getDetails().setAntifireDetail(new AntifireDetails(type));
+		player.getDetails().setAntifireDetails(Optional.of(new AntifireDetails(type)));
 		return true;
 	}
 
