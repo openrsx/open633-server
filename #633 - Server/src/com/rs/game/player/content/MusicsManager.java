@@ -2,13 +2,12 @@ package com.rs.game.player.content;
 
 import java.util.ArrayList;
 
-import com.rs.GameConstants;
 import com.rs.cache.loaders.ClientScriptMap;
-import com.rs.game.Region;
 import com.rs.game.World;
+import com.rs.game.map.Region;
 import com.rs.game.player.Player;
-import com.rs.utils.MusicHints;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
+import com.rs.utilities.loaders.MusicHints;
 
 public final class MusicsManager {
 
@@ -184,8 +183,6 @@ public final class MusicsManager {
 	public void addMusic(int musicId) {
 		unlockedMusics.add(musicId);
 		refreshListConfigs();
-		if (unlockedMusics.size() >= GameConstants.AIR_GUITAR_MUSICS_COUNT)
-			player.getEmotesManager().unlockEmote(41);
 	}
 
 	public int getConfigIndex(int musicId) {

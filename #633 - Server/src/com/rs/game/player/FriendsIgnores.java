@@ -9,7 +9,7 @@ import com.rs.game.player.content.FriendChatsManager;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class FriendsIgnores {
 

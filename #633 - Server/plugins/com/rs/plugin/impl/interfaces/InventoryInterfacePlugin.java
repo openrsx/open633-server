@@ -27,12 +27,13 @@ import com.rs.plugin.InventoryDispatcher;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 @RSInterfaceSignature(interfaceId = {149})
 public class InventoryInterfacePlugin implements RSInterface {
 
+	@SuppressWarnings("unused")
 	@Override
 	public void execute(Player player, int interfaceId, int componentId, int packetId, byte slotId, int slotId2) throws Exception {
 		if (componentId == 0) {
@@ -45,8 +46,8 @@ public class InventoryInterfacePlugin implements RSInterface {
 			switch(packetId) {
 			case WorldPacketsDecoder.ACTION_BUTTON1_PACKET:
 				long time = Utils.currentTimeMillis();
-				if (/* player.getLockDelay() >= time || */player.getEmotesManager().getNextEmoteEnd() >= time)
-					return;
+//				if ( player.getLockDelay() >= time || player.getEmotesManager().getNextEmoteEnd() >= time)
+//					return;
 				player.stopAll(false);
 				if (Foods.eat(player, item, slotId))
 					return;
@@ -91,10 +92,10 @@ public class InventoryInterfacePlugin implements RSInterface {
 			case WorldPacketsDecoder.ACTION_BUTTON6_PACKET:
 				InventoryDispatcher.execute(player, item, 6);
 				break;
-			case WorldPacketsDecoder.ACTION_BUTTON8_PACKET:
+			case WorldPacketsDecoder.ACTION_BUTTON7_PACKET:
 				long dropTime = Utils.currentTimeMillis();
-				if (/* player.getLockDelay() >= dropTime || */player.getEmotesManager().getNextEmoteEnd() >= dropTime)
-					return;
+//				if (player.getLockDelay() >= dropTime || player.getEmotesManager().getNextEmoteEnd() >= dropTime)
+//					return;
 				if (!player.getControllerManager().canDropItem(item))
 					return;
 				player.stopAll(false);

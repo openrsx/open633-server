@@ -4,7 +4,7 @@ import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.npc.familiar.Familiar;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 @SuppressWarnings("all")
 public class Bank {
@@ -102,7 +102,7 @@ public class Bank {
 					player.getPackets().sendGameMessage(
 							"The PIN you have put is incorrect.");
 				}
-				player.closeInterfaces();
+				player.getInterfaceManager().closeInterfaces();
 			} else if (requestedPin == actualPin) { // pin is correct.
 				player.getPackets().sendGameMessage(
 						"Successfully entered your PIN number.");

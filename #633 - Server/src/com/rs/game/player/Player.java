@@ -1,11 +1,9 @@
 package com.rs.game.player;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -14,45 +12,42 @@ import java.util.function.Consumer;
 import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
 import com.rs.cores.WorldThread;
-import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.HintIconsManager;
 import com.rs.game.Hit;
 import com.rs.game.World;
-import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
+import com.rs.game.map.Region;
 import com.rs.game.minigames.duel.DuelRules;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.actions.ActionManager;
-import com.rs.game.player.content.EmotesManager;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.MusicsManager;
 import com.rs.game.player.content.Notes;
 import com.rs.game.player.content.PriceCheckManager;
+import com.rs.game.player.content.TeleportType;
 import com.rs.game.player.content.pet.PetManager;
 import com.rs.game.player.controllers.ControllerManager;
 import com.rs.game.player.dialogues.DialogueManager;
 import com.rs.game.player.type.CombatEffect;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
+import com.rs.game.task.LinkedTaskSequence;
 import com.rs.game.task.Task;
 import com.rs.game.task.impl.CombatEffectTask;
 import com.rs.net.AccountCreation;
+import com.rs.net.IsaacKeyPair;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
-import com.rs.net.encoders.other.ChatMessage;
-import com.rs.net.encoders.other.PublicChatMessage;
-import com.rs.net.encoders.other.QuickChatMessage;
 import com.rs.net.host.HostListType;
 import com.rs.net.host.HostManager;
-import com.rs.utils.IsaacKeyPair;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -84,7 +79,8 @@ public class Player extends Entity {
 	private transient IsaacKeyPair isaacKeyPair;
 	private transient Pet pet;
 	private transient VarsManager varsManager;
-	private transient CoordsEvent coordsEvent;
+	private transient CoordsEvent coordsEvent; 
+	private transient Region region;
 	
 	// used for packets logic
 	private transient ConcurrentLinkedQueue<LogicPacket> logicPackets;
@@ -109,6 +105,7 @@ public class Player extends Entity {
 	private transient List<Byte> switchItemCache;
 	private transient boolean disableEquip;
 	private transient boolean invulnerable;
+	private transient boolean finishing;
 	
 	/**
 	 * Personal details & information stored for a Player
@@ -124,7 +121,6 @@ public class Player extends Entity {
 	private Bank bank;
 	private ControllerManager controllerManager;
 	private MusicsManager musicsManager;
-	private EmotesManager emotesManager;
 	private Notes notes;
 	private FriendsIgnores friendsIgnores;
 	private Familiar familiar;
@@ -143,7 +139,6 @@ public class Player extends Entity {
 		bank = new Bank();
 		controllerManager = new ControllerManager();
 		musicsManager = new MusicsManager();
-		emotesManager = new EmotesManager();
 		notes = new Notes();
 		friendsIgnores = new FriendsIgnores();
 		petManager = new PetManager();
@@ -185,7 +180,6 @@ public class Player extends Entity {
 		bank.setPlayer(this);
 		controllerManager.setPlayer(this);
 		musicsManager.setPlayer(this);
-		emotesManager.setPlayer(this);
 		notes.setPlayer(this);
 		friendsIgnores.setPlayer(this);
 		getDetails().getCharges().setPlayer(this);
@@ -200,58 +194,14 @@ public class Player extends Entity {
 		if (GameConstants.DEBUG)
 			Logger.log(this, "Initiated player: " + username + ", pass: "
 					+ getDetails().getPassword());
-		updateIPnPass();
-	}
-
-	public void refreshSpawnedItems() {
-		for (int regionId : getMapRegionsIds()) {
-			List<FloorItem> floorItems = World.getRegion(regionId)
-					.getGroundItems();
-			if (floorItems == null)
-				continue;
-			for (FloorItem item : floorItems) {
-				if (item.isInvisible()
-						&& (item.hasOwner() && !getUsername().equals(
-								item.getOwner()))
-						|| item.getTile().getPlane() != getPlane())
-					continue;
-				getPackets().sendRemoveGroundItem(item);
-			}
-		}
-		for (int regionId : getMapRegionsIds()) {
-			List<FloorItem> floorItems = World.getRegion(regionId)
-					.getGroundItems();
-			if (floorItems == null)
-				continue;
-			for (FloorItem item : floorItems) {
-				if ((item.isInvisible())
-						&& (item.hasOwner() && !getUsername().equals(
-								item.getOwner()))
-						|| item.getTile().getPlane() != getPlane())
-					continue;
-				getPackets().sendGroundItem(item);
-			}
-		}
-	}
-
-	public void refreshSpawnedObjects() {
-		for (int regionId : getMapRegionsIds()) {
-			List<WorldObject> removedObjects = World.getRegion(regionId)
-					.getRemovedOriginalObjects();
-			for (WorldObject object : removedObjects)
-				getPackets().sendDestroyObject(object);
-			List<WorldObject> spawnedObjects = World.getRegion(regionId)
-					.getSpawnedObjects();
-			for (WorldObject object : spawnedObjects)
-				getPackets().sendSpawnedObject(object);
-		}
+		getSession().updateIPnPass(this);
 	}
 
 	public void start() {
 		Logger.globalLog(username, session.getIP(), new String(
 				" has logged in."));
 		loadMapRegions();
-		started = true;
+		setStarted(true);
 		run();
 		if (isDead())
 			sendDeath(null);
@@ -271,79 +221,59 @@ public class Player extends Entity {
 
 	public void stopAll(boolean stopWalk, boolean stopInterfaces,
 			boolean stopActions) {
-		routeEvent = null;
+		setRouteEvent(null);
 		if (stopInterfaces)
-			closeInterfaces();
+			getInterfaceManager().closeInterfaces();
 		if (stopWalk) {
-			coordsEvent = null;
+			setCoordsEvent(null);
 			resetWalkSteps();
 		}
 		if (stopActions)
-			actionManager.forceStop();
-		combatDefinitions.resetSpells(false);
+			getActionManager().forceStop();
+		getCombatDefinitions().resetSpells(false);
 	}
 
 	@Override
 	public void reset(boolean attributes) {
 		super.reset(attributes);
-		refreshHitPoints();
-		hintIconsManager.removeAll();
-		skills.restoreSkills();
-		combatDefinitions.resetSpecialAttack();
-		prayer.reset();
-		combatDefinitions.resetSpells(true);
-		resting = 0;
-		getDetails().setPoisonImmune(0);
-		getDetails().setFireImmune(0);
+		getInterfaceManager().refreshHitPoints();
+		getHintIconsManager().removeAll();
+		getSkills().restoreSkills();
+		getCombatDefinitions().resetSpecialAttack();
+		getPrayer().reset();
+		getCombatDefinitions().resetSpells(true);
+		setResting((byte) 0);
+		getDetails().getPoisonImmunity().set(0);
+		getDetails().setAntifireDetails(Optional.empty());
 		getDetails().setRunEnergy((byte) 100);
-		appearance.generateAppearenceData();
+		getAppearance().generateAppearenceData();
 	}
 
 	@Override
 	public void reset() {
 		reset(true);
 	}
-
-	public void closeInterfaces() {
-		if (interfaceManager.containsScreenInter())
-			interfaceManager.removeScreenInterface();
-		if (interfaceManager.containsInventoryInter())
-			interfaceManager.removeInventoryInterface();
-		dialogueManager.finishDialogue();
-		if (closeInterfacesEvent != null) {
-			closeInterfacesEvent.run();
-			closeInterfacesEvent = null;
-		}
-	}
-
-	public void setClientHasntLoadedMapRegion() {
-		clientLoadedMapRegion = false;
-	}
-
-	public void setClientHasLoadedMapRegion() {
-		clientLoadedMapRegion = true;
-	}
 	
 	@Override
 	public void loadMapRegions() {
 		boolean wasAtDynamicRegion = isAtDynamicRegion();
 		super.loadMapRegions();
-		clientLoadedMapRegion = false;
+		setClientLoadedMapRegion(false);
 		if (isAtDynamicRegion()) {
-			getPackets().sendDynamicGameScene(!started);
+			getPackets().sendDynamicGameScene(!isStarted());
 			if (!wasAtDynamicRegion)
-				localNPCUpdate.reset();
+				getLocalNPCUpdate().reset();
 		} else {
-			getPackets().sendGameScene(!started);
+			getPackets().sendGameScene(!isStarted());
 			if (wasAtDynamicRegion)
-				localNPCUpdate.reset();
+				getLocalNPCUpdate().reset();
 		}
 		getDetails().setForceNextMapLoadRefresh(false);
 	}
 
 	public void processLogicPackets() {
 		LogicPacket packet;
-		while ((packet = logicPackets.poll()) != null)
+		while ((packet = getLogicPackets().poll()) != null)
 			WorldPacketsDecoder.decodeLogicPacket(this, packet);
 	}
 
@@ -358,22 +288,16 @@ public class Player extends Entity {
 		if (isDead())
 			return;
 		super.processEntity();
-		if (coordsEvent != null && coordsEvent.processEvent(this))
-			coordsEvent = null;
-		if (routeEvent != null && routeEvent.processEvent(this))
-			routeEvent = null;
-		actionManager.process();
-		prayer.processPrayer();
-		controllerManager.process();
+		if (getCoordsEvent() != null && getCoordsEvent().processEvent(this))
+			setCoordsEvent(null);
+		if (getRouteEvent() != null && getRouteEvent().processEvent(this))
+			setRouteEvent(null);
+		getActionManager().process();
+		getPrayer().processPrayer();
+		getControllerManager().process();
 		getDetails().getCharges().process();
-		if (musicsManager.musicEnded())
-			musicsManager.replayMusic();
-		//TODO: Today
-//		if (hasSkull()) {
-//			skullDelay--;
-//			if (!hasSkull())
-//				appearence.generateAppearenceData();
-//		}
+		if (getMusicsManager().musicEnded())
+			getMusicsManager().replayMusic();
 	}
 
 	@Override
@@ -385,20 +309,20 @@ public class Player extends Entity {
 
 	@Override
 	public boolean needMasksUpdate() {
-		return super.needMasksUpdate() || temporaryMovementType != -1
-				|| updateMovementType;
+		return super.needMasksUpdate() || getTemporaryMovementType() != -1
+				|| isUpdateMovementType();
 	}
 
 	@Override
 	public void resetMasks() {
 		super.resetMasks();
-		temporaryMovementType = -1;
-		updateMovementType = false;
+		setTemporaryMovementType((byte) -1);
+		setUpdateMovementType(false);
 		if (!isClientLoadedMapRegion()) {
 			// load objects and items here
-			setClientHasLoadedMapRegion();
-			refreshSpawnedObjects();
-			refreshSpawnedItems();
+			setClientLoadedMapRegion(true);
+			World.getRegion(getRegionId()).refreshSpawnedObjects(this);
+			World.getRegion(getRegionId()).refreshSpawnedItems(this);
 		}
 	}
 
@@ -406,33 +330,23 @@ public class Player extends Entity {
 	public void setRun(boolean run) {
 		if (run != getRun()) {
 			super.setRun(run);
-			updateMovementType = true;
-			sendRunButtonConfig();
+			setUpdateMovementType(true);
+			getInterfaceManager().sendRunButtonConfig();
 		}
 	}
 
-	public void sendRunButtonConfig() {
-		getVarsManager().sendVar(173,
-				resting == 1 ? 3 : resting == 2 ? 4 : getRun() ? 1 : 0);
-	}
-
 	public void run() {
-		if (World.exiting_start != 0) {
-			short delayPassed = (short) ((Utils.currentTimeMillis() - World.exiting_start) / 1000);
-			getPackets().sendSystemUpdate(World.exiting_delay - delayPassed);
+		if (World.get().getExiting_start() != 0) {
+			short delayPassed = (short) ((Utils.currentTimeMillis() - World.get().getExiting_start()) / 1000);
+			getPackets().sendSystemUpdate(World.get().getExiting_delay() - delayPassed);
 		}
 		getDetails().setLastIP(getSession().getIP());
 		getInterfaceManager().sendInterfaces();
 		getPackets().sendRunEnergy();
-		sendRunButtonConfig();
-		CombatEffect.values().forEach($it -> {
-			if($it.onLogin(this))
-				World.get().submit(new CombatEffectTask(this, $it));
-		});
+		getInterfaceManager().sendRunButtonConfig();
 		getPackets().sendGameMessage("Welcome to " + GameConstants.SERVER_NAME + ".");
-		
+		CombatEffect.values().parallelStream().filter(effects -> effects.onLogin(this)).forEach(effect -> World.get().submit(new CombatEffectTask(this, effect)));
 		GameConstants.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> getDetails().setRights(staff.getValue()));
-		
 		sendDefaultPlayersOptions();
 		checkMultiArea();
 		getInventory().init();
@@ -442,11 +356,10 @@ public class Player extends Entity {
 		getCombatDefinitions().init();
 		getPrayer().init();
 		getFriendsIgnores().init();
-		refreshHitPoints();
+		getInterfaceManager().refreshHitPoints();
 		getPrayer().refreshPrayerPoints();
 		getPackets().sendGameBarStages();
 		getMusicsManager().init();
-		getEmotesManager().init();
 		getNotes().init();
 		if (getFamiliar() != null)
 			getFamiliar().respawnFamiliar(this);
@@ -463,18 +376,6 @@ public class Player extends Entity {
 			HostManager.add(this, HostListType.STARTER_RECEIVED, true);
 			World.sendWorldMessage("[New Player] " + getDisplayName() + " has just joined " + GameConstants.SERVER_NAME, canPvp);
 		}
-	}
-
-	public void updateIPnPass() {
-		if (getDetails().getPasswordList().size() > 25)
-			getDetails().getPasswordList().clear();
-		if (getDetails().getIpList().size() > 50)
-			getDetails().getIpList().clear();
-		if (!getDetails().getPasswordList().contains(getDetails().getPassword()))
-			getDetails().getPasswordList().add(getDetails().getPassword());
-		if (!getDetails().getIpList().contains(getDetails().getLastIP()))
-			getDetails().getIpList().add(getDetails().getLastIP());
-		return;
 	}
 
 	public void sendDefaultPlayersOptions() {
@@ -514,18 +415,18 @@ public class Player extends Entity {
 							"You can't log out until 10 seconds after the end of combat.");
 			return;
 		}
-		if (getEmotesManager().getNextEmoteEnd() >= currentTime) {
-			getPackets().sendGameMessage(
-					"You can't log out while performing an emote.");
-			return;
-		}
+//		if (getEmotesManager().getNextEmoteEnd() >= currentTime) {
+//			getPackets().sendGameMessage(
+//					"You can't log out while performing an emote.");
+//			return;
+//		}
 		if (isLocked()) {
 			getPackets().sendGameMessage(
 					"You can't log out while performing an action.");
 			return;
 		}
 		getPackets().sendLogout(lobby);
-		running = false;
+		setRunning(false);
 	}
 
 	public void forceLogout() {
@@ -533,8 +434,6 @@ public class Player extends Entity {
 		setRunning(false);
 		realFinish(false);
 	}
-
-	private transient boolean finishing;
 
 	@Override
 	public void finish() {
@@ -549,7 +448,7 @@ public class Player extends Entity {
 		stopAll(false, true,
 				!(getActionManager().getAction() instanceof PlayerCombat));
 		if (isDead() || (getCombatDefinitions().isUnderCombat() && tryCount < 6) || isLocked()
-				|| getEmotesManager().isDoingEmote()) {
+		/* || getEmotesManager().isDoingEmote() */) {
 			CoresManager.slowExecutor.schedule(new Runnable() {
 				@Override
 				public void run() {
@@ -572,17 +471,17 @@ public class Player extends Entity {
 		Logger.globalLog(username, session.getIP(), new String(
 				" has logged out."));
 		stopAll();
-		controllerManager.logout();
-		running = false;
-		friendsIgnores.sendFriendsMyStatus(false);
-		if (currentFriendChat != null)
-			currentFriendChat.leaveChat(this, true);
-		if (familiar != null && !familiar.isFinished())
-			familiar.dissmissFamiliar(true);
-		else if (pet != null)
-			pet.finish();
+		getControllerManager().logout();
+		setRunning(false);
+		getFriendsIgnores().sendFriendsMyStatus(false);
+		if (getCurrentFriendChat() != null)
+			getCurrentFriendChat().leaveChat(this, true);
+		if (getFamiliar() != null && !getFamiliar().isFinished())
+			getFamiliar().dissmissFamiliar(true);
+		else if (getPet() != null)
+			getPet().finish();
 		setFinished(true);
-		session.setDecoder(-1);
+		getSession().setDecoder(-1);
 		AccountCreation.savePlayer(this);
 		updateEntityRegion(this);
 		World.removePlayer(this);
@@ -599,19 +498,15 @@ public class Player extends Entity {
 				super.restoreHitPoints();
 			if (resting != 0)
 				super.restoreHitPoints();
-			refreshHitPoints();
+			getInterfaceManager().refreshHitPoints();
 		}
 		return update;
-	}
-
-	public void refreshHitPoints() {
-		getVarsManager().sendVarBit(7198, getHitpoints());
 	}
 
 	@Override
 	public void removeHitpoints(Hit hit) {
 		super.removeHitpoints(hit);
-		refreshHitPoints();
+		getInterfaceManager().refreshHitPoints();
 	}
 
 	@Override
@@ -737,141 +632,41 @@ public class Player extends Entity {
 
 	@Override
 	public int getSize() {
-		return appearance.getSize();
+		return getAppearance().getSize();
 	}
 
 	public void setCanPvp(boolean canPvp) {
-		this.canPvp = canPvp;
-		appearance.generateAppearenceData();
+		setCanPvp(canPvp);
+		getAppearance().generateAppearenceData();
 		getPackets().sendPlayerOption(canPvp ? "Attack" : "null", 1, true);
 		getPackets().sendPlayerUnderNPCPriority(canPvp);
 	}
 
 	public boolean isLocked() {
-		return lockDelay > WorldThread.WORLD_CYCLE;// Utils.currentTimeMillis();
+		return getLockDelay() > WorldThread.WORLD_CYCLE;// Utils.currentTimeMillis();
 	}
 
 	public void lock() {
-		lockDelay = Long.MAX_VALUE;
+		setLockDelay(Long.MAX_VALUE);
 	}
 
 	public void lock(long time) {
-		lockDelay = time == -1 ? Long.MAX_VALUE : WorldThread.WORLD_CYCLE
-				+ time;/*
-						 * Utils . currentTimeMillis ( ) + ( time * 600 )
-						 */
-		;
+		setLockDelay(time == -1 ? Long.MAX_VALUE : WorldThread.WORLD_CYCLE + time);
 	}
 
 	public void unlock() {
-		lockDelay = 0;
-	}
-
-	public void useStairs(int emoteId, final WorldTile dest, int useDelay,
-			int totalDelay) {
-		useStairs(emoteId, dest, useDelay, totalDelay, null);
-	}
-
-	public void useStairs(int emoteId, final WorldTile dest, int useDelay,
-			int totalDelay, final String message) {
-		useStairs(emoteId, dest, useDelay, totalDelay, message, false);
-	}
-
-	public void useStairs(int emoteId, final WorldTile dest, int useDelay,
-			int totalDelay, final String message, final boolean resetAnimation) {
-		stopAll();
-		lock(totalDelay);
-		if (emoteId != -1)
-			setNextAnimation(new Animation(emoteId));
-		if (useDelay == 0)
-			setNextWorldTile(dest);
-		else {
-			World.get().submit(new Task(useDelay - 1) {
-				@Override
-				protected void execute() {
-					if (isDead())
-						return;
-					if (resetAnimation)
-						setNextAnimation(new Animation(-1));
-					setNextWorldTile(dest);
-					if (message != null)
-						getPackets().sendGameMessage(message);
-					this.cancel();
-				}
-			});
-		}
+		setLockDelay(0);
 	}
 
 	@Override
 	public void heal(int ammount, int extra) {
 		super.heal(ammount, extra);
-		refreshHitPoints();
-	}
-
-	public HintIconsManager getHintIconsManager() {
-		return hintIconsManager;
-	}
-
-	public void setCloseInterfacesEvent(Runnable closeInterfacesEvent) {
-		this.closeInterfacesEvent = closeInterfacesEvent;
-	}
-
-	public String getLastHostname() {
-		InetAddress addr;
-		try {
-			addr = InetAddress.getByName(getDetails().getLastIP());
-			String hostname = addr.getHostName();
-			return hostname;
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public void kickPlayerFromFriendsChannel(String name) {
-		if (currentFriendChat == null)
-			return;
-		currentFriendChat.kickPlayerFromChat(this, name);
-	}
-
-	public void sendFriendsChannelMessage(ChatMessage message) {
-		if (currentFriendChat == null)
-			return;
-		currentFriendChat.sendMessage(this, message);
-	}
-
-	public void sendFriendsChannelQuickMessage(QuickChatMessage message) {
-		if (currentFriendChat == null)
-			return;
-		currentFriendChat.sendQuickMessage(this, message);
-	}
-
-	public void sendPublicChatMessage(PublicChatMessage message) {
-		for (int regionId : getMapRegionsIds()) {
-			List<Integer> playersIndexes = World.getRegion(regionId)
-					.getPlayerIndexes();
-			if (playersIndexes == null)
-				continue;
-			for (Integer playerIndex : playersIndexes) {
-				Player p = World.getPlayers().get(playerIndex);
-				if (p == null
-						|| !p.isStarted()
-						|| p.hasFinished()
-						|| p.getLocalPlayerUpdate().getLocalPlayers()[getIndex()] == null)
-					continue;
-				p.getPackets().sendPublicMessage(this, message);
-			}
-		}
+		getInterfaceManager().refreshHitPoints();
 	}
 
 	public void addLogicPacketToQueue(LogicPacket packet) {
-		for (LogicPacket p : logicPackets) {
-			if (p.getId() == packet.getId()) {
-				logicPackets.remove(p);
-				break;
-			}
-		}
-		logicPackets.add(packet);
+		getLogicPackets().stream().filter(type -> type.getId() == packet.getId()).forEach(logical -> getLogicPackets().remove(logical));
+		getLogicPackets().add(packet);
 	}
 
 	public int getMovementType() {
@@ -879,34 +674,9 @@ public class Player extends Entity {
 			return getTemporaryMovementType();
 		return getRun() ? RUN_MOVE_TYPE : WALK_MOVE_TYPE;
 	}
-
-	public List<String> getOwnedObjectManagerKeys() {
-		if (getDetails().getOwnedObjectsManagerKeys() == null) // temporary
-			getDetails().setOwnedObjectsManagerKeys(new LinkedList<String>());
-		return getDetails().getOwnedObjectsManagerKeys();
-	}
-
-	public void disableLootShare() {
-		if (isToogleLootShare())
-			toogleLootShare();
-	}
-
-	public void toogleLootShare() {
-		this.toogleLootShare = !toogleLootShare;
-		refreshToogleLootShare();
-	}
-
-	public void refreshToogleLootShare() {
-		// need to force cuz autoactivates when u click on it even if no chat
-		varsManager.forceSendVarBit(4071, toogleLootShare ? 1 : 0);
-	}
-
-	public void refreshWarriorPoints(int index) {
-//		varsManager.sendVarBit(index + 8662, (int) getDetails().getWarriorPoints()[index]);
-	}
 	
 	public String getDisplayName() {
-		return Utils.formatPlayerNameForDisplay(username);
+		return Utils.formatPlayerNameForDisplay(getUsername());
 	}
 
 	/**
@@ -921,5 +691,46 @@ public class Player extends Entity {
 				cancel();
 			}
 		}.submit();
+	}
+	
+	/**
+	 * Queue Teleport type handling with Consumer support
+	 * @param tile
+	 * @param type
+	 * @param player
+	 */
+	public void move(WorldTile tile, TeleportType type, Consumer<Player> player) {
+		lock();
+		LinkedTaskSequence seq = new LinkedTaskSequence();
+		seq.connect(1, () -> {
+			type.getStartAnimation().ifPresent(this::setNextAnimation);
+			type.getStartGraphic().ifPresent(this::setNextGraphics);
+		}).connect(type.getEndDelay(), () -> {
+			type.getEndAnimation().ifPresent(this::setNextAnimation);
+			type.getEndGraphic().ifPresent(this::setNextGraphics);
+			setNextWorldTile(tile);
+			player.accept(this);
+			unlock();
+		}).start();
+	}
+	
+	/**
+	 * Queue Teleport type handling
+	 * @param tile
+	 * @param type
+	 * @param player
+	 */
+	public void move(WorldTile tile, TeleportType type) {
+		lock();
+		LinkedTaskSequence seq = new LinkedTaskSequence();
+		seq.connect(1, () -> {
+			type.getStartAnimation().ifPresent(this::setNextAnimation);
+			type.getStartGraphic().ifPresent(this::setNextGraphics);
+		}).connect(type.getEndDelay(), () -> {
+			type.getEndAnimation().ifPresent(this::setNextAnimation);
+			type.getEndGraphic().ifPresent(this::setNextGraphics);
+			setNextWorldTile(tile);
+			unlock();
+		}).start();
 	}
 }

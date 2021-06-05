@@ -43,7 +43,7 @@ public class GodWarMinion extends NPC {
 			@Override
 			protected void execute() {
 				if (loop == 0) {
-					setNextAnimation(new Animation(defs.getDeathEmote()));
+					setNextAnimation(new Animation(defs.getDeathAnim()));
 				} else if (loop >= defs.getDeathDelay()) {
 					drop();
 					reset();

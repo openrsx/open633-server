@@ -21,8 +21,8 @@ import com.rs.game.player.Skills;
 import com.rs.io.InputStream;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
@@ -521,7 +521,7 @@ public final class RSInterfaceDispatcher {
 			if (itemUsed == null || usedWith == null || itemUsed.getId() != itemUsedId
 					|| usedWith.getId() != usedWithId)
 				return;
-			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
+			if (player.isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 				return;
 			player.stopAll();
 			if (!player.getControllerManager().canUseItemOnItem(itemUsed, usedWith))

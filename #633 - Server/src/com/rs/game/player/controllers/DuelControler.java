@@ -81,7 +81,7 @@ public class DuelControler extends Controller {
 	}
 
 	public static void challenge(Player player) {
-		player.closeInterfaces();
+		player.getInterfaceManager().closeInterfaces();
 		Boolean friendly = (Boolean) player.getTemporaryAttributes().remove("WillDuelFriendly");
 		if (friendly == null)
 			return;

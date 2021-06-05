@@ -1,6 +1,6 @@
 package com.rs.game;
 
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class ForceMovement {
 

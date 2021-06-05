@@ -12,6 +12,8 @@ import com.rs.GameConstants;
 import com.rs.cache.loaders.AnimationDefinitions;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.game.Hit.HitLook;
+import com.rs.game.map.DynamicRegion;
+import com.rs.game.map.Region;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
@@ -24,8 +26,9 @@ import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.EntityStrategy;
 import com.rs.game.route.strategy.ObjectStrategy;
 import com.rs.game.task.Task;
-import com.rs.utils.MutableNumber;
-import com.rs.utils.Utils;
+import com.rs.net.encoders.other.ForceTalk;
+import com.rs.utilities.MutableNumber;
+import com.rs.utilities.Utils;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -161,11 +164,11 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void processReceivedHits() {
-		if (this instanceof Player) {
-			if (((Player) this).getEmotesManager().getNextEmoteEnd() >= Utils
-					.currentTimeMillis())
-				return;
-		}
+//		if (this instanceof Player) {
+//			if (((Player) this).getEmotesManager().getNextEmoteEnd() >= Utils
+//					.currentTimeMillis())
+//				return;
+//		}
 		Hit hit;
 		int count = 0;
 		while ((hit = receivedHits.poll()) != null && count++ < 10)
@@ -346,19 +349,19 @@ public abstract class Entity extends WorldTile {
 			if (needMapUpdate())
 				loadMapRegions();
 			else if (this instanceof Player && lastPlane != getPlane())
-				((Player) this).setClientHasntLoadedMapRegion();
+				((Player) this).setClientLoadedMapRegion(false);
 			resetWalkSteps();
 			return;
 		}
 		teleported = false;
 		if (walkSteps.isEmpty())
 			return;
-		if (this instanceof Player) { // emotes are special on rs, when using
-										// one u will walk once emote done
-			if (((Player) this).getEmotesManager().getNextEmoteEnd() >= Utils
-					.currentTimeMillis())
-				return;
-		}
+//		if (this instanceof Player) { // emotes are special on rs, when using
+//										// one u will walk once emote done
+//			if (((Player) this).getEmotesManager().getNextEmoteEnd() >= Utils
+//					.currentTimeMillis())
+//				return;
+//		}
 		if (this instanceof Player && ((Player) this).getDetails().getRunEnergy() <= 0)
 			setRun(false);
 		for (int stepCount = 0; stepCount < (run ? 2 : 1); stepCount++) {
@@ -940,8 +943,7 @@ public abstract class Entity extends WorldTile {
 	public void setNextAnimation(Animation nextAnimation) {
 		if (nextAnimation != null && nextAnimation.getIds()[0] >= 0)
 			lastAnimationEnd = Utils.currentTimeMillis()
-					+ AnimationDefinitions.getAnimationDefinitions(
-							nextAnimation.getIds()[0]).getEmoteTime();
+					+ AnimationDefinitions.getAnimationDefinitions(nextAnimation.getIds()[0]).getEmoteTime();
 		this.nextAnimation = nextAnimation;
 	}
 

@@ -2,7 +2,7 @@ package com.rs.game.player.actions;
 
 import com.rs.game.Animation;
 import com.rs.game.player.Player;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class Rest extends Action {
 
@@ -26,7 +26,7 @@ public class Rest extends Action {
 			return false;
 		index = Utils.random(REST_DEFS.length);
 		player.setResting((byte) (musician ? 2 : 1));
-		player.sendRunButtonConfig();
+		player.getInterfaceManager().sendRunButtonConfig();
 		player.setNextAnimation(new Animation(REST_DEFS[index][0]));
 		player.getAppearance().setRenderEmote((short) REST_DEFS[index][1]);
 		return true;
@@ -55,10 +55,8 @@ public class Rest extends Action {
 	@Override
 	public void stop(Player player) {
 		player.setResting((byte) 0);
-		player.sendRunButtonConfig();
+		player.getInterfaceManager().sendRunButtonConfig();
 		player.setNextAnimation(new Animation(REST_DEFS[index][2]));
-		player.getEmotesManager().setNextEmoteEnd();
 		player.getAppearance().setRenderEmote((short) -1);
 	}
-
 }

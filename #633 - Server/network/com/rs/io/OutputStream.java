@@ -1,7 +1,7 @@
 package com.rs.io;
 
 import com.rs.game.player.Player;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public final class OutputStream extends Stream {
 

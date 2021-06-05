@@ -8,7 +8,7 @@ import com.rs.cores.CoresManager;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
-import com.rs.utils.Logger;
+import com.rs.utilities.Logger;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

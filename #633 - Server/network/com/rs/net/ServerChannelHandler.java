@@ -18,7 +18,7 @@ import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
 import com.rs.io.InputStream;
 import com.rs.net.decoders.WorldPacketsDecoder;
-import com.rs.utils.Logger;
+import com.rs.utilities.Logger;
 
 public final class ServerChannelHandler extends SimpleChannelHandler {
 
@@ -56,7 +56,7 @@ public final class ServerChannelHandler extends SimpleChannelHandler {
 	 * bootstrap.setOption("child.keepAlive", true);
 	 */
 
-	bootstrap.bind(new InetSocketAddress(GameProperties.get().getInteger("port")));
+	bootstrap.bind(new InetSocketAddress(GameProperties.getGameProperties().getInteger("port")));
     }
 
     @Override

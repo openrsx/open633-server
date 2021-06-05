@@ -30,7 +30,7 @@ public class NPCDeath extends ActorDeathTask<NPC> {
 			@Override
 			protected void execute() {
 				if (loop == 0) {
-					getActor().setNextAnimation(new Animation(definition.getDeathEmote()));
+					getActor().setNextAnimation(new Animation(definition.getDeathAnim()));
 				} else if (loop >= definition.getDeathDelay()) {
 					getActor().drop();
 					getActor().reset();

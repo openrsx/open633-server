@@ -9,9 +9,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.rs.Launcher;
 import com.rs.GameConstants;
+import com.rs.Launcher;
 import com.rs.cores.CoresManager;
+import com.rs.game.map.Region;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.dragons.KingBlackDragon;
 import com.rs.game.npc.others.Bork;
@@ -29,16 +30,22 @@ import com.rs.game.task.impl.RestoreSkillTask;
 import com.rs.game.task.impl.RestoreSpecialTask;
 import com.rs.game.task.impl.ShopRestockTask;
 import com.rs.game.task.impl.SummoningPassiveTask;
-import com.rs.utils.AntiFlood;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.AntiFlood;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public final class World {
 
-	public static short exiting_delay;
-	public static long exiting_start;
+	@Getter
+	@Setter
+	private short exiting_delay;
+	
+	@Getter
+	@Setter
+	private long exiting_start;
 
 	private static final Predicate<Player> VALID_PLAYER = (player) -> player != null && player.isStarted() && !player.hasFinished();
 	private static final Predicate<NPC> VALID_NPC = (npc) -> npc != null && !npc.hasFinished();
@@ -538,10 +545,10 @@ public final class World {
 	}
 
 	public static final void safeShutdown(final boolean restart, short delay) {
-		if (exiting_start != 0)
+		if (get().getExiting_start() != 0)
 			return;
-		exiting_start = Utils.currentTimeMillis();
-		exiting_delay = delay;
+		get().setExiting_start(Utils.currentTimeMillis());
+		get().setExiting_delay(delay);
 		for (Player player : World.getPlayers()) {
 			if (player == null || !player.isStarted() || player.hasFinished())
 				continue;

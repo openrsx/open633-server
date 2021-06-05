@@ -5,11 +5,11 @@ import java.util.Map;
 
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
-import com.rs.game.ForceTalk;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.Player;
+import com.rs.net.encoders.other.ForceTalk;
 
 /**
  * The pet manager.

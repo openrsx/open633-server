@@ -5,7 +5,7 @@ import java.util.Arrays;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.item.ItemsContainer;
-import com.rs.utils.Logger;
+import com.rs.utilities.Logger;
 
 public class Trade {
 
@@ -179,7 +179,7 @@ public class Trade {
 							target.getTrade().nextStage();
 					} else {
 						player.setCloseInterfacesEvent(null);
-						player.closeInterfaces();
+						player.getInterfaceManager().closeInterfaces();
 						closeTrade(CloseTradeStage.DONE);
 					}
 					return;
@@ -230,7 +230,7 @@ public class Trade {
 			return false;
 		if (player.getInventory().getItems().getUsedSlots() + target.getTrade().items.getUsedSlots() > 28) {
 			player.setCloseInterfacesEvent(null);
-			player.closeInterfaces();
+			player.getInterfaceManager().closeInterfaces();
 			closeTrade(CloseTradeStage.NO_SPACE);
 			return false;
 		}
@@ -305,7 +305,7 @@ public class Trade {
 					reset();
 					oldTarget.getTrade().reset();
 					oldTarget.setCloseInterfacesEvent(null);
-					oldTarget.closeInterfaces();
+					oldTarget.getInterfaceManager().closeInterfaces();
 					if (CloseTradeStage.DONE != stage) {
 						player.getInventory().getItems().addAll(items);
 						oldTarget.getInventory().getItems().addAll(oldTarget.getTrade().items);

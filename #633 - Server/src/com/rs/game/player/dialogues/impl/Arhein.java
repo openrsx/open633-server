@@ -1,7 +1,7 @@
 package com.rs.game.player.dialogues.impl;
 
 import com.rs.game.player.dialogues.Dialogue;
-import com.rs.utils.ShopsHandler;
+import com.rs.utilities.loaders.ShopsHandler;
 
 public class Arhein extends Dialogue {
 

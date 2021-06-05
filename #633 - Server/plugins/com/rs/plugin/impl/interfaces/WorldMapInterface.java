@@ -4,7 +4,7 @@ import com.rs.game.player.Player;
 import com.rs.game.player.actions.Rest;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 @RSInterfaceSignature(interfaceId = { 750, 548, 755, 746})
 public class WorldMapInterface implements RSInterface {
@@ -25,10 +25,10 @@ public class WorldMapInterface implements RSInterface {
 					return;
 				}
 				long currentTime = Utils.currentTimeMillis();
-				if (player.getEmotesManager().getNextEmoteEnd() >= currentTime) {
-					player.getPackets().sendGameMessage("You can't rest while perfoming an emote.");
-					return;
-				}
+//				if (player.getEmotesManager().getNextEmoteEnd() >= currentTime) {
+//					player.getPackets().sendGameMessage("You can't rest while perfoming an emote.");
+//					return;
+//				}
 				if (player.getLockDelay() >= currentTime) {
 					player.getPackets().sendGameMessage("You can't rest while perfoming an action.");
 					return;

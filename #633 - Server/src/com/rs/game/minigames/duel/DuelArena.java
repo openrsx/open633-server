@@ -5,7 +5,6 @@ import java.util.Arrays;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.ForceTalk;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
@@ -18,9 +17,10 @@ import com.rs.game.player.content.Pots.Pot;
 import com.rs.game.player.controllers.Controller;
 import com.rs.game.task.Task;
 import com.rs.net.decoders.WorldPacketsDecoder;
+import com.rs.net.encoders.other.ForceTalk;
 import com.rs.plugin.RSInterfaceDispatcher;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 public class DuelArena extends Controller {
 
@@ -83,7 +83,7 @@ public class DuelArena extends Controller {
 							((DuelArena) target.getControllerManager().getController()).nextStage();
 					} else {
 						player.setCloseInterfacesEvent(null);
-						player.closeInterfaces();
+						player.getInterfaceManager().closeInterfaces();
 						closeDuelInteraction(DuelStage.DONE);
 					}
 					return;
@@ -105,9 +105,9 @@ public class DuelArena extends Controller {
 				if (hasTarget() && targetConfiguration.hasTarget()) {
 					if (controler instanceof DuelArena) {
 						player.setCloseInterfacesEvent(null);
-						player.closeInterfaces();
+						player.getInterfaceManager().closeInterfaces();
 						oldTarget.setCloseInterfacesEvent(null);
-						oldTarget.closeInterfaces();
+						oldTarget.getInterfaceManager().closeInterfaces();
 						if (stage != DuelStage.DONE) {
 							reset();
 							targetConfiguration.reset();
@@ -280,7 +280,7 @@ public class DuelArena extends Controller {
 		if (player.getInventory().getItems().getUsedSlots()
 				+ target.getLastDuelRules().getStake().getUsedSlots() > 28) {
 			player.setCloseInterfacesEvent(null);
-			player.closeInterfaces();
+			player.getInterfaceManager().closeInterfaces();
 			closeDuelInteraction(DuelStage.NO_SPACE);
 			return false;
 		}
@@ -341,12 +341,12 @@ public class DuelArena extends Controller {
 		loser.setCanPvp(false);
 		loser.getHintIconsManager().removeUnsavedHintIcon();
 		loser.reset();
-		loser.closeInterfaces();
+		loser.getInterfaceManager().closeInterfaces();
 		loser.getControllerManager().removeControlerWithoutCheck();
 		victor.setCanPvp(false);
 		victor.getHintIconsManager().removeUnsavedHintIcon();
 		victor.reset();
-		victor.closeInterfaces();
+		victor.getInterfaceManager().closeInterfaces();
 		victor.getControllerManager().removeControlerWithoutCheck();
 		World.get().submit(new Task(1) {
 			@Override
@@ -618,7 +618,7 @@ public class DuelArena extends Controller {
 	private void end(int type) {
 		if (isDueling) {
 			if (type == LOGOUT || type == DUEL_END_LOSE || type == TELEPORT)
-				endDuel(target, player, World.exiting_start != 0);
+				endDuel(target, player, World.get().getExiting_start() != 0);
 			else if (type == DUEL_END_WIN)
 				endDuel(player, target, false);
 		} else

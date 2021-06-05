@@ -3,7 +3,7 @@ package com.rs.game.player;
 import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.game.item.Item;
 import com.rs.io.OutputStream;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class Appearance {
 

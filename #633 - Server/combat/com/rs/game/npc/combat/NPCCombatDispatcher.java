@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.impl.DefaultCombat;
 import com.rs.game.player.Player;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 

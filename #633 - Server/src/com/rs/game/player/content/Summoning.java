@@ -372,7 +372,7 @@ public class Summoning {
 			player.getTemporaryAttributes().put("infusing_scroll", infusingScroll);
 			return;
 		}
-		player.closeInterfaces();
+		player.getInterfaceManager().closeInterfaces();
 		player.setNextAnimation(POUCH_INFUSION_ANIMATION);
 		player.setNextGraphics(POUCH_INFUSION_GRAPHICS);
 	}

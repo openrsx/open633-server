@@ -9,7 +9,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.task.Task;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class GodWars extends Controller {
 
@@ -152,8 +152,8 @@ public class GodWars extends Controller {
 			if (player.getInventory().containsItem(20120, 1)) {
 				player.getPackets().sendGameMessage(
 						"You flash the key in front of the door");
-				player.useStairs(1133, new WorldTile(2887, 5278, 0), 1, 2,
-						"...and a strange force flings you in.");
+//				player.useStairs(1133, new WorldTile(2887, 5278, 0), 1, 2,
+//						"...and a strange force flings you in.");
 			} else
 				player.getDialogueManager()
 						.startDialogue(
@@ -162,15 +162,15 @@ public class GodWars extends Controller {
 			return false;
 		} else if (object.getId() == 57256) {
 			sendZarosScript();
-			player.useStairs(-1, new WorldTile(2855, 5222, 0), 1, 2,
-					"You climb down the stairs.");
+//			player.useStairs(-1, new WorldTile(2855, 5222, 0), 1, 2,
+//					"You climb down the stairs.");
 			return false;
 		} else if (object.getId() == 57260) {
-			player.useStairs(-1, new WorldTile(2887, 5276, 0), 1, 2,
-					"You climb up the stairs.");
+//			player.useStairs(-1, new WorldTile(2887, 5276, 0), 1, 2,
+//					"You climb up the stairs.");
 			return false;
 		} else if (object.getId() == 26293) {
-			player.useStairs(828, new WorldTile(2913, 3741, 0), 1, 2);
+//			player.useStairs(828, new WorldTile(2913, 3741, 0), 1, 2);
 			player.getControllerManager().forceStop();
 		} else if (object.getId() == 26384) { // bandos
 //			if (!player.getInventory().containsItemToolBelt(Smithing.HAMMER)) {
@@ -275,6 +275,7 @@ public class GodWars extends Controller {
 		return true;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public boolean processObjectClick2(WorldObject object) {
 		if (object.getId() == 26287 || object.getId() == 26286
@@ -285,7 +286,7 @@ public class GodWars extends Controller {
 			player.getPackets()
 					.sendGameMessage(
 							"The god's pitty you and allow you to leave the encampment.");
-			player.useStairs(-1, GODS[(index * 2) + 1], 1, 2);
+//			player.useStairs(-1, GODS[(index * 2) + 1], 1, 2);
 			return false;
 		}
 		return true;
@@ -319,7 +320,7 @@ public class GodWars extends Controller {
 		World.get().submit(new Task(1) {
 			@Override
 			protected void execute() {
-				player.useStairs(emote, tile, delay, delay + 1);
+//				player.useStairs(emote, tile, delay, delay + 1);
 				this.cancel();
 			}
 		});
@@ -365,6 +366,7 @@ public class GodWars extends Controller {
 		return player.withinArea(2884, 5343, 2890, 5352);
 	}
 
+	@SuppressWarnings("unused")
 	public static void passGiantBoulder(Player player, WorldObject object,
 			boolean liftBoulder) {
 		if (player.getSkills().getLevel(
@@ -380,9 +382,9 @@ public class GodWars extends Controller {
 			WorldObject.sendObjectAnimation(object, new Animation(318));
 		boolean isReturning = player.getY() >= 3709;
 		int baseAnimation = liftBoulder ? 3725 : 3466;
-		player.useStairs(isReturning ? baseAnimation-- : baseAnimation,
-				new WorldTile(player.getX(), player.getY()
-						+ (isReturning ? -4 : 4), 0), liftBoulder ? 10 : 5,
-				liftBoulder ? 11 : 6, null, true);
+//		player.useStairs(isReturning ? baseAnimation-- : baseAnimation,
+//				new WorldTile(player.getX(), player.getY()
+//						+ (isReturning ? -4 : 4), 0), liftBoulder ? 10 : 5,
+//				liftBoulder ? 11 : 6, null, true);
 	}
 }

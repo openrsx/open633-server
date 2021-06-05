@@ -3,7 +3,7 @@ package com.rs.net.decoders;
 import com.rs.GameConstants;
 import com.rs.io.InputStream;
 import com.rs.net.Session;
-import com.rs.utils.Logger;
+import com.rs.utilities.Logger;
 
 public final class ClientPacketsDecoder extends Decoder {
 

@@ -5,11 +5,9 @@ import org.jboss.netty.channel.ChannelFutureListener;
 
 import com.rs.GameConstants;
 import com.rs.game.Animation;
-import com.rs.game.DynamicRegion;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
 import com.rs.game.HintIcon;
-import com.rs.game.Region;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
@@ -17,18 +15,20 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
 import com.rs.game.item.ItemsContainerNew;
+import com.rs.game.map.DynamicRegion;
+import com.rs.game.map.Region;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.io.OutputStream;
+import com.rs.net.Huffman;
 import com.rs.net.Session;
 import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.PublicChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
-import com.rs.utils.Huffman;
-import com.rs.utils.MapArchiveKeys;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
+import com.rs.utilities.loaders.MapArchiveKeys;
 
 public class WorldPacketsEncoder extends Encoder {
 

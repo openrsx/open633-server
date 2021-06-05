@@ -1,10 +1,10 @@
 package com.rs.game.player.dialogues.impl;
 
 import com.rs.game.Animation;
-import com.rs.game.ForceTalk;
 import com.rs.game.Graphics;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.dialogues.Dialogue;
+import com.rs.net.encoders.other.ForceTalk;
 
 public class PiratePete extends Dialogue {
 

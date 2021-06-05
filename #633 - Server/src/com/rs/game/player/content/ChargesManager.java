@@ -6,7 +6,7 @@ import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Player;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class ChargesManager {
 

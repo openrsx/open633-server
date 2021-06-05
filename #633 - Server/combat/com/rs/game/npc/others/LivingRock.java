@@ -11,8 +11,8 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 public class LivingRock extends NPC {
 
@@ -34,7 +34,7 @@ public class LivingRock extends NPC {
 			@Override
 			protected void execute() {
 				if (loop == 0) {
-					setNextAnimation(new Animation(defs.getDeathEmote()));
+					setNextAnimation(new Animation(defs.getDeathAnim()));
 				} else if (loop >= defs.getDeathDelay()) {
 					drop();
 					reset();

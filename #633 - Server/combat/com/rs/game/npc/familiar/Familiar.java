@@ -15,7 +15,7 @@ import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public abstract class Familiar extends NPC implements Serializable {
 
@@ -371,7 +371,7 @@ public abstract class Familiar extends NPC implements Serializable {
 			@Override
 			protected void execute() {
 				if (loop == 0) {
-					setNextAnimation(new Animation(defs.getDeathEmote()));
+					setNextAnimation(new Animation(defs.getDeathAnim()));
 					owner.getPackets().sendGameMessage("Your familiar slowly begins to fade away..");
 				} else if (loop >= defs.getDeathDelay()) {
 					dissmissFamiliar(false);
@@ -386,7 +386,7 @@ public abstract class Familiar extends NPC implements Serializable {
 	public void respawnFamiliar(Player owner) {
 		this.owner = owner;
 		initEntity();
-		deserialize();
+		spawn();
 		call(true);
 	}
 

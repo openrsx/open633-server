@@ -109,7 +109,6 @@ public class InterfaceManager {
 		sendGameInterfaces();
 		player.getCombatDefinitions().sendUnlockAttackStylesButtons();
 		player.getMusicsManager().unlockMusicPlayer();
-		player.getEmotesManager().unlockEmotesBook();
 		player.getInventory().unlockInventoryOptions();
 		player.getPrayer().unlockPrayerBookButtons();
 		if (player.getFamiliar() != null && player.isRunning())
@@ -142,7 +141,7 @@ public class InterfaceManager {
 		sendCombatStyles();
 		sendAchievement();
 		sendSkills();
-		sendQuest();
+//		sendQuest();
 		sendInventory();
 		sendEquipment();
 		sendPrayerBook();
@@ -150,7 +149,7 @@ public class InterfaceManager {
 		sendSettings();
 		sendEmotes();
 		sendMusic();
-		sendNotes();
+//		sendNotes();
 		sendIgnores();
 		sendFriends();
 		sendClanChat();
@@ -432,5 +431,26 @@ public class InterfaceManager {
 
 	public void closeInterface(int one, int two) {
 		player.getPackets().closeInterface(isResizableScreen() ? two : one);
+	}
+	
+	public void closeInterfaces() {
+		if (player.getInterfaceManager().containsScreenInter())
+			player.getInterfaceManager().removeScreenInterface();
+		if (player.getInterfaceManager().containsInventoryInter())
+			player.getInterfaceManager().removeInventoryInterface();
+		player.getDialogueManager().finishDialogue();
+		if (player.getCloseInterfacesEvent() != null) {
+			player.getCloseInterfacesEvent().run();
+			player.setCloseInterfacesEvent(null);
+		}
+	}
+	
+	public void sendRunButtonConfig() {
+		player.getVarsManager().sendVar(173,
+				player.getResting() == 1 ? 3 : player.getResting() == 2 ? 4 : player.getRun() ? 1 : 0);
+	}
+	
+	public void refreshHitPoints() {
+		player.getVarsManager().sendVarBit(7198, player.getHitpoints());
 	}
 }

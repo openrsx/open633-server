@@ -2,6 +2,7 @@ package com.rs.game.player.content;
 
 import java.util.List;
 
+import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
@@ -16,7 +17,7 @@ import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.task.Task;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 /*
  * content package used for static stuff
@@ -490,8 +491,8 @@ public class Magic {
 			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			break;
-		case 39:
-			useHomeTele(player);
+		case 38:
+			player.move(GameConstants.START_PLAYER_LOCATION, TeleportType.LUNAR);
 			break;
 		case 74: // vegeance group
 			if (player.getSkills().getLevel(Skills.MAGIC) < 95) {
@@ -621,7 +622,7 @@ public class Magic {
 			sendAncientTeleportSpell(player, 96, 106, new WorldTile(2977, 3873, 0), LAW_RUNE, 2, WATER_RUNE, 8);
 			break;
 		case 48:
-			useHomeTele(player);
+			player.move(GameConstants.START_PLAYER_LOCATION, TeleportType.ANCIENT);
 			break;
 		}
 	}
@@ -666,7 +667,7 @@ public class Magic {
 			player.getInterfaceManager().sendInterface(432);
 			break;
 		case 24:
-			useHomeTele(player);
+			player.move(GameConstants.START_PLAYER_LOCATION, TeleportType.NORMAL);
 			break;
 		case 37: // mobi
 			sendNormalTeleportSpell(player, 10, 19, new WorldTile(2413, 2848, 0), LAW_RUNE, 1, WATER_RUNE, 1, AIR_RUNE,
@@ -701,11 +702,6 @@ public class Magic {
 					2, 1963, 1);
 			break;
 		}
-	}
-
-	private static void useHomeTele(Player player) {
-		player.stopAll();
-		player.getInterfaceManager().sendInterface(1092);
 	}
 
 	public static final boolean checkSpellRequirements(Player player, int level, boolean delete, int... runes) {

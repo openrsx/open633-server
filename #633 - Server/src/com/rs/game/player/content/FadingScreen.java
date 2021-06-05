@@ -7,23 +7,17 @@ import com.rs.cores.CoresManager;
 import com.rs.game.World;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 public final class FadingScreen {
-
-	@Deprecated
-	public static void fade(final Player player, long fadeTime, final Runnable event) {
-		unfade(player, fade(player, fadeTime), event);
-	}
-
+	
 	public static void fade(final Player player, final Runnable event) {
 		player.lock();
 		unfade(player, fade(player), event);
 	}
 
 	public static void unfade(final Player player, long startTime, final Runnable event) {
-		player.lock();
 		unfade(player, 2500, startTime, event);
 	}
 

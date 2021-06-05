@@ -22,6 +22,8 @@ import com.rs.game.route.RouteEvent;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.io.InputStream;
+import com.rs.net.Encrypt;
+import com.rs.net.Huffman;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.encoders.other.ChatMessage;
@@ -31,10 +33,8 @@ import com.rs.plugin.CommandDispatcher;
 import com.rs.plugin.NPCDispatcher;
 import com.rs.plugin.ObjectDispatcher;
 import com.rs.plugin.RSInterfaceDispatcher;
-import com.rs.utils.Encrypt;
-import com.rs.utils.Huffman;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 public final class WorldPacketsDecoder extends Decoder {
 
@@ -313,7 +313,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
-			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
+			if (player.isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 				return;
 			final int itemId = stream.readUnsignedShort128();
 			int interfaceSlot = stream.readUnsignedShortLE();
@@ -550,7 +550,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
-			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
+			if (player.isLocked() /* || player.getEmotesManager().isDoingEmote() */)
 				return;
 			@SuppressWarnings("unused")
 			int itemId = stream.readUnsignedShortLE128();
@@ -794,7 +794,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
 				return;
-			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
+			if (player.isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 				return;
 			final WorldTile tile = new WorldTile(x, y, player.getPlane());
 			int regionId = tile.getRegionId();
@@ -837,7 +837,8 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
-			if (player.isLocked() || player.getEmotesManager().isDoingEmote()
+			if (player
+					.isLocked() /* || player.getEmotesManager().isDoingEmote() */
 					|| !player.getControllerManager().canPlayerOption1(p2))
 				return;
 			if (!player.isCanPvp())
@@ -1011,7 +1012,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					|| !player.getMapRegionsIds().contains(npc.getRegionId())
 					|| !npc.getDefinitions().hasAttackOption())
 				return;
-			if (player.isLocked() || player.getEmotesManager().isDoingEmote())
+			if (player.isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 				return;
 			if (!player.getControllerManager().canAttack(npc))
 				return;
@@ -1493,10 +1494,9 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == KICK_FRIEND_CHAT_PACKET) {
 			if (!player.isStarted())
 				return;
-			player.setLastPublicMessage(Utils.currentTimeMillis() + 1000); // avoids
-			// message
-			// appearing
-			player.kickPlayerFromFriendsChannel(stream.readString());
+			player.setLastPublicMessage(Utils.currentTimeMillis() + 1000);
+			FriendChatsManager fcManager = new FriendChatsManager(player);
+			fcManager.kickPlayerFromFriendsChannel(player, stream.readString());
 		} else if (packetId == KICK_CLAN_CHAT_PACKET) {
 			if (!player.isStarted())
 				return;
@@ -1623,7 +1623,8 @@ public final class WorldPacketsDecoder extends Decoder {
 //			else if (chatType == 3)
 //				player.sendGuestClanChannelMessage(new ChatMessage(message));
 //			else
-				player.sendPublicChatMessage(new PublicChatMessage(message, effects));
+			PublicChatMessage chatMessage = new PublicChatMessage(message, effects);
+			chatMessage.sendPublicChatMessage(player, chatMessage);
 			if (GameConstants.DEBUG)
 				Logger.log(this, "Chat type: " + chatType);
 		} else if (packetId == COMMANDS_PACKET) {

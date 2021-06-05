@@ -1,8 +1,8 @@
 package com.rs.game.route;
 
-import com.rs.game.Region;
-import com.rs.game.RegionMap;
 import com.rs.game.World;
+import com.rs.game.map.Region;
+import com.rs.game.map.RegionMap;
 
 /**
  * Walking route finder working on third flag range, designed for walking routes.

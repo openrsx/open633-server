@@ -7,8 +7,8 @@ import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
-import com.rs.utils.Chance;
-import com.rs.utils.Utils;
+import com.rs.utilities.Chance;
+import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;

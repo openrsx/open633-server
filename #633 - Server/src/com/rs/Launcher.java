@@ -8,19 +8,19 @@ import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.cores.CoresManager;
-import com.rs.game.Region;
 import com.rs.game.World;
 import com.rs.game.map.MapBuilder;
+import com.rs.game.map.Region;
 import com.rs.net.ServerChannelHandler;
-import com.rs.utils.Logger;
-import com.rs.utils.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utils;
 
 import lombok.SneakyThrows;
 
 public class Launcher {
 
 	public static void main(String[] args) throws Exception {
-		GameProperties.get().load();
+		GameProperties.getGameProperties().load();
 		
 		if (args.length < 3) {
 			System.out

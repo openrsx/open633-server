@@ -7,12 +7,8 @@ import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Player;
-import com.rs.utils.ItemSetsKeyGenerator;
 
 public class Shop {
-
-	private static final int MAIN_STOCK_ITEMS_KEY = ItemSetsKeyGenerator
-			.generateKey();
 
 	private static final int MAX_SHOP_ITEMS = 40;
 	public static final int COINS = 995, TOKKUL = 6529;
@@ -55,8 +51,8 @@ public class Shop {
 						.remove("ShopSelectedInventory");
 			}
 		});
-		player.getVarsManager().sendVar(118,
-				generalStock != null ? 139 : MAIN_STOCK_ITEMS_KEY);
+//		player.getVarsManager().sendVar(118,
+//				generalStock != null ? 139 : MAIN_STOCK_ITEMS_KEY);
 		player.getVarsManager().sendVar(1496, -1); // sample items container id
 													// (TODO: add support for
 													// it)
@@ -377,10 +373,10 @@ public class Shop {
 		player.getTemporaryAttributes().put("ShopSelectedSlot", slotId);
 		player.getTemporaryAttributes()
 				.put("ShopSelectedInventory", inventory);
-		player.getVarsManager().sendVar(
-				2561,
-				inventory ? 93 : generalStock != null ? 139
-						: MAIN_STOCK_ITEMS_KEY); // inv key
+//		player.getVarsManager().sendVar(
+//				2561,
+//				inventory ? 93 : generalStock != null ? 139
+//						: MAIN_STOCK_ITEMS_KEY); // inv key
 		player.getVarsManager().sendVar(2562, item.getId());
 		player.getVarsManager().sendVar(2563, slotId);
 //		player.getPackets().sendGlobalString(362, ItemExamines.getExamine(item));
@@ -492,8 +488,8 @@ public class Shop {
 		if (generalStock != null)
 			System.arraycopy(generalStock, 0, stock, mainStock.length,
 					generalStock.length);
-		player.getPackets().sendItems(
-				generalStock != null ? 139 : MAIN_STOCK_ITEMS_KEY, stock);
+//		player.getPackets().sendItems(
+//				generalStock != null ? 139 : MAIN_STOCK_ITEMS_KEY, stock);
 	}
 
 }

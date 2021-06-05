@@ -4,11 +4,11 @@ import java.util.concurrent.TimeUnit;
 
 import com.rs.cores.CoresManager;
 import com.rs.game.WorldObject;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public final class LivingRockCavern {
 
-	private static enum Rocks {
+	public static enum Rocks {
 		COAL_ROCK_1(new WorldObject(5999, 10, 1, 3690, 5146, 0)),
 		COAL_ROCK_2(new WorldObject(5999, 10, 2, 3690, 5125, 0)),
 		COAL_ROCK_3(new WorldObject(5999, 10, 0, 3687, 5107, 0)),
@@ -26,7 +26,7 @@ public final class LivingRockCavern {
 			this.rock = rock;
 		}
 
-		private WorldObject rock;
+		public WorldObject rock;
 
 	}
 
@@ -41,12 +41,12 @@ public final class LivingRockCavern {
 		}, Utils.random(8) + 3, TimeUnit.MINUTES);
 	}
 
-	private static void removeRock(final Rocks rock) {
+	private static void removeRock(final Rocks rock) { 
 		WorldObject.removeObject(rock.rock);
 		CoresManager.slowExecutor.schedule(new Runnable() {
 			@Override
 			public void run() {
-				respawnRock(rock);
+					respawnRock(rock);
 			}
 
 		}, 3, TimeUnit.MINUTES);

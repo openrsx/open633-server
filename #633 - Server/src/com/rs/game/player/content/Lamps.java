@@ -5,7 +5,7 @@ import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
 import com.rs.game.player.dialogues.Dialogue;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class Lamps {
     

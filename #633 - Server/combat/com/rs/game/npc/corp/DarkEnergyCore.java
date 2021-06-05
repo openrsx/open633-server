@@ -9,7 +9,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public class DarkEnergyCore extends NPC {
 

@@ -10,7 +10,7 @@ import com.rs.game.Hit.HitLook;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.Skills;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 /**
  * 

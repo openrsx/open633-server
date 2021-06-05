@@ -49,7 +49,6 @@ public final class Equipment {
 			player.getCombatDefinitions().checkAttackStyle();
 		}
 		player.getCombatDefinitions().refreshBonuses();
-		refreshConfigs(slots == null);
 	}
 
 	public void reset() {
@@ -66,63 +65,6 @@ public final class Equipment {
 		if (item == null)
 			return;
 //		player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
-	}
-
-	public void refreshConfigs(boolean init) {
-		double hpIncrease = 0;
-		for (int index = 0; index < items.getSize(); index++) {
-			Item item = items.get(index);
-			if (item == null)
-				continue;
-			int id = item.getId();
-			if (index == Equipment.SLOT_HAT) {
-				if (id == 20135 || id == 20137 // torva
-						|| id == 20147 || id == 20149 // pernix
-						|| id == 20159 || id == 20161 // virtus
-				)
-					hpIncrease += 66;
-
-			} else if (index == Equipment.SLOT_CHEST) {
-				if (id == 20139 || id == 20141 // torva
-						|| id == 20151 || id == 20153 // pernix
-						|| id == 20163 || id == 20165 // virtus
-				)
-					hpIncrease += 200;
-			} else if (index == Equipment.SLOT_LEGS) {
-				if (id == 20143 || id == 20145 // torva
-						|| id == 20155 || id == 20157 // pernix
-						|| id == 20167 || id == 20169 // virtus
-				)
-					hpIncrease += 134;
-			} else if (index == Equipment.SLOT_HANDS) {
-				if (id == 24450)
-					hpIncrease += 40;
-				else if (id == 24451)
-					hpIncrease += 75;
-				else if (id == 24452)
-					hpIncrease += 120;
-				else if (id == 24453)
-					hpIncrease += 140;
-				else if (id == 24454)
-					hpIncrease += 155;
-				else if (id == 24977 // torva
-						|| id == 24980 // virtus
-						|| id == 24794 // pernix
-				)
-					hpIncrease += 24;
-			} else if (index == Equipment.SLOT_FEET) {
-				if (id == 24983 // torva
-						|| id == 24989 // pernix
-						|| id == 24986 // virtus
-				)
-					hpIncrease += 33;
-			}
-		}
-		if (hpIncrease != equipmentHpIncrease) {
-			equipmentHpIncrease = (int) hpIncrease;
-			if (!init)
-				player.refreshHitPoints();
-		}
 	}
 
 	public boolean containsOneItem(int... itemIds) {

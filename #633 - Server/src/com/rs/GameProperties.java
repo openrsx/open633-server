@@ -7,13 +7,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
+import lombok.Getter;
+
 /**
  *
  * @author Tyluur <itstyluur@gmail.com>
  * @author Dennis
  * @since Sep 8, 2013
  */
-public class GameProperties {
+public final class GameProperties {
 
 	/**
 	 * Loading the properties
@@ -75,16 +77,7 @@ public class GameProperties {
 	public Short getShort(String key) {
 		return Short.parseShort(properties.getProperty(key));
 	}
-
-	/**
-	 * The getter
-	 *
-	 * @return
-	 */
-	public static GameProperties get() {
-		return INSTANCE;
-	}
-
+	
 	/**
 	 * The instance of the properties
 	 */
@@ -93,6 +86,6 @@ public class GameProperties {
 	/**
 	 * The instance of this class.
 	 */
-	private static final GameProperties INSTANCE = new GameProperties();
-
+	@Getter
+	private static final GameProperties gameProperties = new GameProperties();
 }

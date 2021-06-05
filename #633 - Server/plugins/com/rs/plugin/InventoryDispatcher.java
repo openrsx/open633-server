@@ -12,7 +12,7 @@ import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.plugin.listener.InventoryType;
 import com.rs.plugin.wrapper.InventoryWrapper;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 

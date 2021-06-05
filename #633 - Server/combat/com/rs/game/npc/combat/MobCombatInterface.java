@@ -11,7 +11,7 @@ import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.Skills;
 import com.rs.game.task.Task;
-import com.rs.utils.Utils;
+import com.rs.utilities.Utils;
 
 public abstract class MobCombatInterface {
 	
@@ -85,7 +85,7 @@ public abstract class MobCombatInterface {
 					npc.getCombat().doDefenceEmote(target);
 					if (target instanceof Player) {
 						Player targetPlayer = (Player) target;
-						targetPlayer.closeInterfaces();
+						targetPlayer.getInterfaceManager().closeInterfaces();
 						if (targetPlayer.getCombatDefinitions().isAutoRelatie() && !targetPlayer.getActionManager().hasSkillWorking()
 								&& !targetPlayer.hasWalkSteps())
 							targetPlayer.getActionManager().setAction(new PlayerCombat(npc));

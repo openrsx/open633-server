@@ -3,11 +3,11 @@ package com.rs.game.item;
 import java.util.concurrent.TimeUnit;
 
 import com.rs.cores.CoresManager;
-import com.rs.game.Region;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
+import com.rs.game.map.Region;
 import com.rs.game.player.Player;
-import com.rs.utils.Logger;
+import com.rs.utilities.Logger;
 
 public class FloorItem extends Item {
 
