@@ -141,7 +141,7 @@ public class InterfaceManager {
 		sendCombatStyles();
 		sendAchievement();
 		sendSkills();
-		sendQuest();
+//		sendQuest();
 		sendInventory();
 		sendEquipment();
 		sendPrayerBook();
@@ -149,7 +149,7 @@ public class InterfaceManager {
 		sendSettings();
 		sendEmotes();
 		sendMusic();
-		sendNotes();
+//		sendNotes();
 		sendIgnores();
 		sendFriends();
 		sendClanChat();
