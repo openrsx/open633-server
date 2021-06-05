@@ -3,8 +3,9 @@ package com.rs.game.player.dialogues.impl;
 import com.rs.game.Graphics;
 import com.rs.game.World;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.dialogues.Dialogue;
+
+import skills.Skills;
 
 public final class LevelUp extends Dialogue {
 

@@ -9,11 +9,12 @@ import com.rs.game.item.Item;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utils;
+
+import skills.Skills;
 
 public final class Pots {
 

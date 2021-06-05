@@ -3,9 +3,10 @@ package com.rs.game.player.content;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.dialogues.Dialogue;
 import com.rs.utilities.Utils;
+
+import skills.Skills;
 
 public class Lamps {
     

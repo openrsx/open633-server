@@ -3,11 +3,12 @@ package com.rs.game.player.dialogues.impl;
 import com.rs.game.Animation;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.actions.Action;
 import com.rs.game.player.content.SkillsDialogue;
 import com.rs.game.player.content.SkillsDialogue.ItemNameFilter;
 import com.rs.game.player.dialogues.Dialogue;
+
+import skills.Skills;
 
 public class LeatherCraftingD extends Dialogue {
 

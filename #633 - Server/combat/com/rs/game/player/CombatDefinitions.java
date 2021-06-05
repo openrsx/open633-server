@@ -12,6 +12,7 @@ import com.rs.net.encoders.other.ForceTalk;
 import com.rs.utilities.Utils;
 
 import lombok.Data;
+import skills.Skills;
 
 @Data
 public final class CombatDefinitions {

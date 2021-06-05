@@ -10,12 +10,12 @@ import com.rs.cache.Cache;
 import com.rs.game.item.Item;
 import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Equipment;
-import com.rs.game.player.Skills;
 import com.rs.io.InputStream;
 import com.rs.utilities.loaders.EquipData;
 import com.rs.utilities.loaders.ItemBonuses;
 
 import lombok.Data;
+import skills.Skills;
 
 @Data
 public final class ItemDefinitions {

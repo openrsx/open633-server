@@ -1,9 +1,10 @@
 package com.rs.game.task.impl;
 
 import com.rs.game.World;
-import com.rs.game.player.Skills;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utils;
+
+import skills.Skills;
 
 public final class RestoreSkillTask extends Task {
 

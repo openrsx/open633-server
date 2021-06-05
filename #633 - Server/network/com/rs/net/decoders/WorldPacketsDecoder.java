@@ -12,7 +12,6 @@ import com.rs.game.npc.familiar.Familiar.SpecialAttack;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
-import com.rs.game.player.Skills;
 import com.rs.game.player.actions.PlayerFollow;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Magic;
@@ -35,6 +34,8 @@ import com.rs.plugin.ObjectDispatcher;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
+
+import skills.Skills;
 
 public final class WorldPacketsDecoder extends Decoder {
 
@@ -285,6 +286,9 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.stopAll();
 			if (forceRun)
 				player.setRun(forceRun);
+			
+			player.getSkillAction().ifPresent(skill -> skill.cancel());
+			
 			int steps = RouteFinder
 					.findRoute(RouteFinder.WALK_ROUTEFINDER, player.getX(),
 							player.getY(), player.getPlane(), player.getSize(),

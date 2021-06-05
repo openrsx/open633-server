@@ -18,7 +18,6 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.player.type.PoisonType;
@@ -32,6 +31,7 @@ import com.rs.utilities.Utils;
 
 import lombok.Getter;
 import lombok.Setter;
+import skills.Skills;
 
 @Getter
 @Setter

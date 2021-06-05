@@ -9,11 +9,12 @@ import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.player.type.PoisonType;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utils;
+
+import skills.Skills;
 
 public class Strangerplant extends Familiar {
 

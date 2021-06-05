@@ -38,6 +38,7 @@ import com.rs.game.route.RouteEvent;
 import com.rs.game.task.LinkedTaskSequence;
 import com.rs.game.task.Task;
 import com.rs.game.task.impl.CombatEffectTask;
+import com.rs.game.task.impl.SkillActionTask;
 import com.rs.net.AccountCreation;
 import com.rs.net.IsaacKeyPair;
 import com.rs.net.LogicPacket;
@@ -51,6 +52,7 @@ import com.rs.utilities.Utils;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import skills.Skills;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -81,6 +83,12 @@ public class Player extends Entity {
 	private transient VarsManager varsManager;
 	private transient CoordsEvent coordsEvent; 
 	private transient Region region;
+	
+	/**
+	 * The current skill action that is going on for this player.
+	 */
+	private Optional<SkillActionTask> skillAction = Optional.empty();
+	
 	
 	// used for packets logic
 	private transient ConcurrentLinkedQueue<LogicPacket> logicPackets;

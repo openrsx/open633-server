@@ -9,9 +9,10 @@ import com.rs.game.npc.familiar.Steeltitan;
 import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
-import com.rs.game.player.Skills;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utils;
+
+import skills.Skills;
 
 public abstract class MobCombatInterface {
 	

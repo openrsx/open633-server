@@ -24,6 +24,8 @@ import com.rs.game.task.Task;
 import com.rs.utilities.Utils;
 import com.rs.utilities.loaders.MapAreas;
 
+import skills.Skills;
+
 public class PlayerCombat extends Action {
 
 	private Entity target;

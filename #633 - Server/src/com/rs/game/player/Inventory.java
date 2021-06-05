@@ -260,4 +260,13 @@ public final class Inventory {
 		item.setAmount(amount);
 		refresh(slot);
 	}
+	
+	public boolean addItems(Item... list) {
+		for (Item item : list) {
+			if (item == null)
+				continue;
+			addItem(item);
+		}
+		return true;
+	}
 }

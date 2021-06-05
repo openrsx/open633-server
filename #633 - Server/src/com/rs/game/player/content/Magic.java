@@ -14,10 +14,11 @@ import com.rs.game.item.ItemConstants;
 import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utils;
+
+import skills.Skills;
 
 /*
  * content package used for static stuff

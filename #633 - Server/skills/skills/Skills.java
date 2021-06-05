@@ -1,10 +1,14 @@
-package com.rs.game.player;
+package skills;
 
 import com.rs.GameConstants;
+import com.rs.game.player.Player;
 
+import lombok.Data;
+
+@Data
 public final class Skills {
 
-	public static final double MAXIMUM_EXP = 200000000;
+	public static final int MAXIMUM_EXP = 200000000;
 	public static final int ATTACK = 0, DEFENCE = 1, STRENGTH = 2,
 			HITPOINTS = 3, RANGE = 4, PRAYER = 5, MAGIC = 6, COOKING = 7,
 			WOODCUTTING = 8, FLETCHING = 9, FISHING = 10, FIREMAKING = 11,
@@ -20,57 +24,34 @@ public final class Skills {
 			"Thieving", "Slayer", "Farming", "Runecrafting", "Hunter",
 			"Construction", "Summoning", "Dungeoneering" };
 
-	private short level[];
+	private byte level[];
 	private double xp[];
-	private int elapsedBonusMinutes;
 	private int xpCounter;
-	private transient double xpBonusTrack;
-
 	private transient Player player;
 
-	public void passLevels(Player p) {
-		this.level = p.getSkills().level;
-		this.xp = p.getSkills().xp;
-	}
-
 	public Skills() {
-		level = new short[25];
+		level = new byte[25];
 		xp = new double[25];
 		for (int i = 0; i < level.length; i++) {
 			level[i] = 1;
 			xp[i] = 0;
 		}
-		level[3] = 10;
-		xp[3] = 1184;
+		level[HITPOINTS] = 10;
+		xp[HITPOINTS] = 1184;
 		level[HERBLORE] = 3;
 		xp[HERBLORE] = 250;
 
 	}
 
-	public void refreshCounterXp(int counter) {
-		// player.getVarsManager().sendVar(counter == 0 ? 1801 : 2474 + counter,
-		// (int) (xpTracks[counter] * 10));
-	}
-
 	public void restoreSkills() {
 		for (int skill = 0; skill < level.length; skill++) {
-			level[skill] = (short) getLevelForXp(skill);
+			level[skill] = (byte) getLevelForXp(skill);
 			refresh(skill);
 		}
 	}
 
 	public void setPlayer(Player player) {
 		this.player = player;
-		// temporary
-
-	}
-
-	public short[] getLevels() {
-		return level;
-	}
-
-	public double[] getXp() {
-		return xp;
 	}
 
 	public int getLevel(int skill) {
@@ -119,7 +100,7 @@ public final class Skills {
 	}
 
 	public void set(int skill, int newLevel) {
-		level[skill] = (short) newLevel;
+		level[skill] = (byte) newLevel;
 		refresh(skill);
 	}
 
@@ -181,53 +162,11 @@ public final class Skills {
 	public void init() {
 		for (int skill = 0; skill < level.length; skill++)
 			refresh(skill);
-		
 		refreshXpCounter();
-		if (!GameConstants.XP_BONUS_ENABLED)
-			elapsedBonusMinutes = 0;
-		else
-			refreshXpBonus();
-		
 	}
-
-	private double getXpBonusMultiplier() {
-		if (elapsedBonusMinutes >= 600)
-			return 1.1;
-		double hours = elapsedBonusMinutes / 60;
-		return Math.pow((hours - 10) / 7.5, 2) + 1.1;
-	}
-
-	public void refreshBonusXp() {
-		player.getVarsManager().sendVar(1878, (int) (xpBonusTrack * 10)); // TODO
-																			// find
-																			// bonus
-	}
-
-	public void refreshXpBonus() {
-		player.getVarsManager().sendVarBit(7232, 1); // TODO find bonus
-		refreshElapsedBonusMinutes();
-		refreshBonusXp();
-	}
-
-	public void increaseElapsedBonusMinues() {
-		elapsedBonusMinutes++;
-		refreshElapsedBonusMinutes();
-	}
-
-	public void refreshElapsedBonusMinutes() {
-		player.getVarsManager().sendVarBit(7233, elapsedBonusMinutes);
-	}
-
 	public void refresh(int skill) {
 		player.getPackets().sendSkillLevel(skill);
 	}
-
-	/*
-	 * if(componentId == 33) setCounterSkill(4); else if(componentId == 34)
-	 * setCounterSkill(2); else if(componentId == 35) setCounterSkill(3); else
-	 * if(componentId == 42) setCounterSkill(18); else if(componentId == 49)
-	 * setCounterSkill(11);
-	 */
 
 	public double addXp(int skill, double exp) {
 		int rate = skill == ATTACK || skill == STRENGTH || skill == DEFENCE
@@ -242,12 +181,6 @@ public final class Skills {
 		player.getControllerManager().trackXP(skill, (int) exp);
 		if (player.getDetails().isXpLocked())
 			return 0;
-		if (GameConstants.XP_BONUS_ENABLED) {
-			double newexp = exp * getXpBonusMultiplier();
-			xpBonusTrack += newexp - exp;
-			exp = newexp;
-			refreshBonusXp();
-		}
 		int oldLevel = getLevelForXp(skill);
 		xp[skill] += exp;
 		xpCounter += exp;
@@ -305,7 +238,7 @@ public final class Skills {
 
 	public void addSkillXpRefresh(int skill, double xp) {
 		this.xp[skill] += xp;
-		level[skill] = (short) getLevelForXp(skill);
+		level[skill] = (byte) getLevelForXp(skill);
 	}
 
 	public void resetSkillNoRefresh(int skill) {
@@ -326,10 +259,4 @@ public final class Skills {
 		xpCounter = 0;
 		refreshXpCounter();
 	}
-	
-	public int getXpCounter() {
-		return xpCounter;
-	}
-
-
 }

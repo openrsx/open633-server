@@ -6,6 +6,8 @@ import com.rs.game.Graphics;
 import com.rs.game.npc.NPC;
 import com.rs.utilities.Utils;
 
+import skills.Skills;
+
 public class Prayer {
 	
 	private final static int[][] prayerLvls = {

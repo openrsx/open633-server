@@ -18,11 +18,11 @@ import com.rs.GameConstants;
 import com.rs.cache.Cache;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import lombok.Synchronized;
+import skills.Skills;
 
 public final class Utils {
 

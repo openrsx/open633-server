@@ -4,7 +4,8 @@ import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
-import com.rs.game.player.Skills;
+
+import skills.Skills;
 
 public class ItemConstants {
 
