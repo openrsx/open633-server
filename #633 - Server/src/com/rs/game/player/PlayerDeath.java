@@ -7,6 +7,7 @@ import com.rs.game.Animation;
 import com.rs.game.WorldTile;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.task.impl.ActorDeathTask;
+import com.rs.net.host.HostManager;
 
 public class PlayerDeath extends ActorDeathTask<Player> {
 
@@ -54,10 +55,10 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 		if (getActor() instanceof Player) {
 			Player killer = (Player) getActor();
 			killer.setAttackedByDelay(4);
-//			if(HostManager.same(getActor(), killer)) {
-//				killer.getPackets().sendGameMessage("You don't receive any points because you and " + getActor().getDisplayName() + " are connected from the same network.");
-//				return;
-//			}
+			if(HostManager.same(getActor(), killer)) {
+				killer.getPackets().sendGameMessage("You don't receive any points because you and " + getActor().getDisplayName() + " are connected from the same network.");
+				return;
+			}
 			if (getActor().getControllerManager().getController() instanceof Wilderness) {
 				if (getActor().getControllerManager().getController() != null) {
 					getActor().sendItemsOnDeath(killer);

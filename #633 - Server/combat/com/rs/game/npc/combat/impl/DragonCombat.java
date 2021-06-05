@@ -28,7 +28,7 @@ public class DragonCombat extends MobCombatInterface {
 			else {
 				delayHit(npc, 0, target,
 						getMeleeHit(npc, getRandomMaxHit(npc, defs.getMaxHit(), NPCCombatDefinitions.MELEE, target)));
-				npc.setNextAnimation(new Animation(defs.getAttackEmote()));
+				npc.setNextAnimation(new Animation(defs.getAttackAnim()));
 				return defs.getAttackDelay();
 			}
 		} else if (attackStyle == 1 || attackStyle == 2) {

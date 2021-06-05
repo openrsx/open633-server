@@ -84,7 +84,7 @@ public class GodwarsBandosFaction extends NPC {
 			@Override
 			protected void execute() {
 				if (loop == 0) {
-					setNextAnimation(new Animation(defs.getDeathEmote()));
+					setNextAnimation(new Animation(defs.getDeathAnim()));
 				} else if (loop >= defs.getDeathDelay()) {
 					if (source instanceof Player) {
 						Player player = (Player) source;
