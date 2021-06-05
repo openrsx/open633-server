@@ -21,7 +21,8 @@ public enum TeleportType {
 	FREEZE(8, Optional.of(new Animation(11044)), Optional.empty(), Optional.of(new Graphics(1973)), Optional.empty()),
 	TRAINING_PORTAL(24, Optional.of(new Animation(10100)), Optional.of(new Animation(9013)), Optional.of(new Graphics(606)), Optional.empty()),
 	BOSS_PORTAL(3, Optional.of(new Animation(10100)), Optional.of(new Animation(9013)), Optional.of(new Graphics(2128)), Optional.empty()),
-	PVP_PORTAL(5, Optional.of(new Animation(9602)), Optional.of(new Animation(9013)), Optional.empty(), Optional.empty());
+	PVP_PORTAL(5, Optional.of(new Animation(9602)), Optional.of(new Animation(9013)), Optional.empty(), Optional.empty()),
+	BLANK(1, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 	
 	/**
 	 * The ending delay for this teleport.
