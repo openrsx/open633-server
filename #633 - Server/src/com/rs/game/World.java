@@ -769,4 +769,9 @@ public final class World {
 	public void submit(Task t) {
 		taskManager.submit(t);
 	}
+
+	public static final WorldObject getObjectWithId(WorldTile tile, int id) {
+		return getRegion(tile.getRegionId()).getObjectWithId(tile.getPlane(), tile.getXInRegion(), tile.getYInRegion(),
+				id);
+	}
 }

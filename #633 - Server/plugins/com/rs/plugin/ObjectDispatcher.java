@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.rs.GameConstants;
 import com.rs.cache.loaders.ObjectDefinitions;
+import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
@@ -22,6 +23,7 @@ import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import lombok.SneakyThrows;
 
 /**
  * @author Dennis
@@ -39,6 +41,7 @@ public final class ObjectDispatcher {
 	 * @param player the player executing the Objects.
 	 * @param parts  the string which represents a Objects.
 	 */
+	@SneakyThrows(Exception.class)
 	public static void execute(Player player, WorldObject object, int optionId) {
 		Optional<ObjectType> objects = getObject(object, object.getId());
 
@@ -46,11 +49,7 @@ public final class ObjectDispatcher {
 			player.getPackets().sendGameMessage("Object: " + object.getId() + " is not handled yet.");
 			return;
 		}
-		try {
-			objects.get().execute(player, object, optionId);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		objects.get().execute(player, object, optionId);
 	}
 
 	/**
@@ -158,10 +157,23 @@ public final class ObjectDispatcher {
 			System.out.println("id " + id + " x " + x + " y " + y + " run? " + forceRun);
 		final WorldTile tile = new WorldTile(x, y, player.getPlane());
 
-		WorldObject mapObject = WorldObject.getObjectWithId(tile, id);
-		if (mapObject == null || mapObject.getId() != id)
+		final int regionId = tile.getRegionId();
+		
+		//Theving stalls has an issue reading X/Y coordinates, rest objects are fine so far.
+		if (!player.getMapRegionsIds().contains(regionId)) {
+			player.getPackets().sendGameMessage("map doesnt contains region");
 			return;
-
+		}
+		WorldObject mapObject = World.getObjectWithId(tile, id);
+		if (mapObject == null) {
+			return;
+		}
+		if (player.isDead() || player.isLocked()) {
+			return;
+		}
+		if (mapObject.getId() != id) {
+			return;
+		}
 		final WorldObject object = mapObject;
 
 		player.stopAll();

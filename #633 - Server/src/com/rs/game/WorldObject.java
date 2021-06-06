@@ -21,6 +21,7 @@ public class WorldObject extends WorldTile {
 	private int type;
 	private int rotation;
 	private int life;
+	private boolean disabled;
 
 	public WorldObject(int id, int type, int rotation, WorldTile tile) {
 		super(tile.getX(), tile.getY(), tile.getPlane());
