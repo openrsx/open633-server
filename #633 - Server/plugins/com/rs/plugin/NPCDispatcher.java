@@ -19,6 +19,7 @@ import com.rs.plugin.wrapper.NPCSignature;
 import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import lombok.SneakyThrows;
 
 /**
  * @author Dennis
@@ -35,6 +36,7 @@ public class NPCDispatcher {
 	 * @param player the player executing the NPCS.
 	 * @param parts the string which represents a NPCS.
 	 */
+	@SneakyThrows(Exception.class)
 	public static void execute(Player player, NPC mob, int option) {
 		Optional<NPCType> mobTypes = getMob(mob, mob.getId());
 		
@@ -42,11 +44,9 @@ public class NPCDispatcher {
 			player.getPackets().sendGameMessage("NPC: " + mob.getId() + " is not handled yet.");
 			return;
 		}
-		try {
-			mobTypes.get().execute(player, mob, option);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+		mobTypes.get().execute(player, mob, option);
+		
 	}
 
 	/**
@@ -114,6 +114,7 @@ public class NPCDispatcher {
 		load();
 	}
 	
+	@SuppressWarnings("unused")
 	private static boolean forceRun;
 	private static int npcIndex;
 	
@@ -138,11 +139,11 @@ public class NPCDispatcher {
 				|| !player.getMapRegionsIds().contains(npc.getRegionId()) || player.isLocked())
 			return;
 		player.stopAll(true);
-		player.setRun(forceRun);
 		player.setRouteEvent(new RouteEvent(npc, new Runnable() {
 			@Override
 			public void run() {
 				npc.resetWalkSteps();
+	            npc.faceEntity(player);
 				player.faceEntity(npc);
 				NPCDispatcher.execute(player, npc, optionId);
 			}

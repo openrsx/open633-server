@@ -165,6 +165,7 @@ public final class PlayerDetails {
 		watchMap.put("DRINKS", new Stopwatch());
 		watchMap.put("TOLERANCE", new Stopwatch());
 		watchMap.put("EMOTE", new Stopwatch());
+		watchMap.put("STUN", new Stopwatch());
 	}
 
 	private byte skullId;
