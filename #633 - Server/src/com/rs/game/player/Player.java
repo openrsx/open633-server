@@ -17,6 +17,7 @@ import com.rs.game.HintIconsManager;
 import com.rs.game.Hit;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
+import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.map.Region;
@@ -740,5 +741,14 @@ public class Player extends Entity {
 			setNextWorldTile(tile);
 			unlock();
 		}).start();
+	}
+	
+	public void dialog(DialogueEventListener listener){ //temp
+		getTemporaryAttributes().put("dialogue_event", listener.begin());
+	}
+	
+	public DialogueEventListener dialog(){
+		DialogueEventListener listener = (DialogueEventListener) getTemporaryAttributes().get("dialogue_event");
+		return listener;
 	}
 }

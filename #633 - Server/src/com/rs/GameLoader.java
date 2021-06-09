@@ -7,6 +7,7 @@ import com.rs.cache.Cache;
 import com.rs.cores.BlockingExecutorService;
 import com.rs.cores.CoresManager;
 import com.rs.game.World;
+import com.rs.game.dialogue.DialogueEventRepository;
 import com.rs.game.map.MapBuilder;
 import com.rs.game.npc.combat.NPCCombatDispatcher;
 import com.rs.game.player.content.FriendChatsManager;
@@ -101,6 +102,7 @@ public class GameLoader {
 		});
 		getBackgroundLoader().submit(() -> {
 			ControllerHandler.init();
+			DialogueEventRepository.init();
 			DialogueHandler.init();
 			FriendChatsManager.init();
 			World.init();

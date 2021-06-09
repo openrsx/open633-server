@@ -9,20 +9,20 @@ public final class DialogueHandler {
 
     private static final HashMap<Object, Class<? extends Dialogue>> handledDialogues = new HashMap<Object, Class<? extends Dialogue>>();
 
-    @SuppressWarnings({ "unchecked" })
-    public static final void init() {
-	try {
-	    Class<Dialogue>[] classes = Utils.getClasses("com.rs.game.player.dialogues.impl");
-	    for (Class<Dialogue> c : classes) {
-		if (c.isAnonymousClass()) // next
-		    continue;
-		handledDialogues.put(c.getSimpleName(), c);
-	    }
+	public static final void init() {
+		try {
+			@SuppressWarnings("unchecked")
+			Class<Dialogue>[] regular = Utils.getClasses("com.rs.game.player.dialogues.impl");
+			for (Class<Dialogue> c : regular) {
+				if (c.isAnonymousClass()) // next
+					continue;
+				handledDialogues.put(c.getSimpleName(), c);
+			}
+			
+		} catch (Throwable e) {
+			Logger.handle(e);
+		}
 	}
-	catch (Throwable e) {
-	    Logger.handle(e);
-	}
-    }
 
     public static final void reload() {
 	handledDialogues.clear();

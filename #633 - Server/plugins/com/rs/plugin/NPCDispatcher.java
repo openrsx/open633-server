@@ -138,12 +138,11 @@ public class NPCDispatcher {
 		if (npc == null || npc.isCantInteract() || npc.isDead() || npc.hasFinished()
 				|| !player.getMapRegionsIds().contains(npc.getRegionId()) || player.isLocked())
 			return;
-		player.stopAll(true);
 		player.setRouteEvent(new RouteEvent(npc, new Runnable() {
 			@Override
 			public void run() {
-				npc.resetWalkSteps();
-	            npc.faceEntity(player);
+	            npc.resetWalkSteps();
+	            player.stopAll(true);
 				player.faceEntity(npc);
 				NPCDispatcher.execute(player, npc, optionId);
 			}
