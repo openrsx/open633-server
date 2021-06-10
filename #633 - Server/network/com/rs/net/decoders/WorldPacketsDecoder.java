@@ -1146,13 +1146,11 @@ public final class WorldPacketsDecoder extends Decoder {
 			stream.readUnsignedShort();
 		} else if (packetId == IN_OUT_SCREEN_PACKET) {
 			// not using this check because not 100% efficient
-			@SuppressWarnings("unused")
 			boolean inScreen = stream.readByte() == 1;
 		} else if (packetId == SCREEN_PACKET) {
 			byte displayMode = (byte) stream.readUnsignedByte();
 			player.setScreenWidth((short) stream.readUnsignedShort());
 			player.setScreenHeight((short) stream.readUnsignedShort());
-			@SuppressWarnings("unused")
 			boolean switchScreenMode = stream.readUnsignedByte() == 1;
 			if (!player.isStarted() || player.hasFinished()
 					|| displayMode == player.getDisplayMode()
@@ -1169,7 +1167,6 @@ public final class WorldPacketsDecoder extends Decoder {
 			int positionHash = stream.readIntV1();
 			int y = positionHash >> 16; // y;
 			int x = positionHash - (y << 16); // x
-			@SuppressWarnings("unused")
 			boolean clicked;
 			// mass click or stupid autoclicker, lets stop lagg
 			if (time <= 1 || x < 0 || x > player.getScreenWidth() || y < 0
@@ -1576,7 +1573,6 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			player.setLastPublicMessage(Utils.currentTimeMillis() + 300);
 			// just tells you which client script created packet
-			@SuppressWarnings("unused")
 			boolean secondClientScript = stream.readByte() == 1;// script 5059
 			// or 5061
 			int fileId = stream.readUnsignedShort();
@@ -1636,7 +1632,6 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (!player.isRunning())
 				return;
 			boolean clientCommand = stream.readUnsignedByte() == 1;
-			@SuppressWarnings("unused")
 			boolean unknown = stream.readUnsignedByte() == 1;
 			String command = stream.readString();
 			if (!CommandDispatcher.processCommand(player, command, true, clientCommand)
@@ -1648,7 +1643,6 @@ public final class WorldPacketsDecoder extends Decoder {
 			String displayName = stream.readString();
 			int type = stream.readUnsignedByte();
 			boolean mute = stream.readUnsignedByte() == 1;
-			@SuppressWarnings("unused")
 			String unknown2 = stream.readString();
 //			ReportAbuse.report(player, displayName, type, mute);
 		
@@ -1661,9 +1655,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == OPEN_URL_PACKET) {
 			String type = stream.readString();
 			String path = stream.readString();
-			@SuppressWarnings("unused")
 			String unknown = stream.readString();
-			@SuppressWarnings("unused")
 			int flag = stream.readUnsignedByte();
 			
 		} else if (packetId == GRAND_EXCHANGE_ITEM_SELECT_PACKET) {

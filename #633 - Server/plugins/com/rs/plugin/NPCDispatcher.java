@@ -141,9 +141,10 @@ public class NPCDispatcher {
 		player.setRouteEvent(new RouteEvent(npc, new Runnable() {
 			@Override
 			public void run() {
-	            npc.resetWalkSteps();
-	            player.stopAll(true);
-				player.faceEntity(npc);
+				if (npc != null && Utils.getDistance(player, npc) < 3) {
+					player.faceEntity(npc);
+					npc.faceEntity(player);
+				}
 				NPCDispatcher.execute(player, npc, optionId);
 			}
 		}, npc.getDefinitions().name.contains("Banker") || npc.getDefinitions().name.contains("banker")));
