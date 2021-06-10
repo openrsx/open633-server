@@ -1,7 +1,11 @@
 package com.rs.game.dialogue;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(callSuper=false)
 public class DialogueEntityEvent extends DialogueEvent {
-	
 	
 	public DialogueEntityEvent(boolean player, int face, String text){
 		super((byte) 1, text);
@@ -12,13 +16,4 @@ public class DialogueEntityEvent extends DialogueEvent {
 	private boolean player;
 	
 	private int face;
-
-	public boolean entityPlayer() {
-		return player;
-	}
-
-	public int getFace() {
-		return face;
-	}
-
 }

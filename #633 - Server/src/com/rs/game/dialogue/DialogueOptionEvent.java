@@ -1,7 +1,8 @@
 package com.rs.game.dialogue;
 
+import lombok.Getter;
+
 public class DialogueOptionEvent extends DialogueEvent{
-	
 	
 	public DialogueOptionEvent(String title, String name1, Runnable task1){
 		super((byte) 3, title);
@@ -33,19 +34,12 @@ public class DialogueOptionEvent extends DialogueEvent{
 		this.tasks = new Runnable[] { task1, task2, task3, task4, task5 };
 	}
 	
+	@Getter
 	public String[] names;
 	
+	@Getter
 	public Runnable[] tasks;
-	
-	public String[] getNames() {
-		return names;
-	}
 
-	public Runnable[] getTasks() {
-		return tasks;
-	}
-
-	
 	public String[] getOptionTextArray(){
 		String[] arr = new String[names.length];
 		for (int index = 0; index < names.length; index++){
@@ -53,5 +47,4 @@ public class DialogueOptionEvent extends DialogueEvent{
 		}
 		return arr;
 	}
-
 }

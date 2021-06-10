@@ -438,7 +438,8 @@ public class InterfaceManager {
 			player.getInterfaceManager().removeScreenInterface();
 		if (player.getInterfaceManager().containsInventoryInter())
 			player.getInterfaceManager().removeInventoryInterface();
-		player.getDialogueManager().finishDialogue();
+		if (player.dialog() != null)
+			player.dialog().complete();
 		if (player.getCloseInterfacesEvent() != null) {
 			player.getCloseInterfacesEvent().run();
 			player.setCloseInterfacesEvent(null);

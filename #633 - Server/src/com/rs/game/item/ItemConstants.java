@@ -2,6 +2,7 @@ package com.rs.game.item;
 
 import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
+import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
 
@@ -293,6 +294,8 @@ public class ItemConstants {
 
 	private static final int ITEMS_RANGE = 500;
 
+	private static double price = 0;
+	
 	public static boolean repairItem(Player player, int slot) {
 		Item item = player.getInventory().getItem(slot);
 		String itemName = item.getName().toLowerCase().replace(" (broken)", "")
@@ -308,7 +311,6 @@ public class ItemConstants {
 			String indexName = item.getName().toLowerCase()
 					.replace(itemName, "").replace(" (", "").replace(")", "")
 					.replace(" ", "");
-			double price = 0;
 			if (indexName.equals("broken") || itemName.equals("damaged"))
 				price = (int) (def.getValue() * .25);
 			else
@@ -318,10 +320,14 @@ public class ItemConstants {
 				player.getInventory().deleteItem(
 						new Item(995, (int) price));
 			else {
-				player.getDialogueManager().startDialogue(
-						"SimpleMessage",
-						"You don't have enough coins, you need " + (int) price
+				player.dialog(new DialogueEventListener(player) {
+					
+					@Override
+					public void start() {
+						mes("You don't have enough coins, you need " + (int) price
 								+ " coins to repair this item.");
+					}
+				});
 				return true;
 			}
 			player.getInventory().getItem(slot).setId(itemIndex);

@@ -1,7 +1,11 @@
 package com.rs.game.dialogue;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(callSuper=false)
 public class DialogueItemEvent extends DialogueEvent {
-	
 	
 	public DialogueItemEvent(int itemId, int amount, String text){
 		super((byte) 2, text);
@@ -10,13 +14,4 @@ public class DialogueItemEvent extends DialogueEvent {
 	}
 	
 	private int itemId, amount;
-
-	public int getItemId() {
-		return itemId;
-	}
-
-	public int getAmount() {
-		return amount;
-	}
-
 }

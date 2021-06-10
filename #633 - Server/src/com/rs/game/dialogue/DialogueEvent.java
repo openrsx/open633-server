@@ -1,5 +1,8 @@
 package com.rs.game.dialogue;
 
+import lombok.Data;
+
+@Data
 public class DialogueEvent {
 	
 	public DialogueEvent(byte type, String text){
@@ -12,21 +15,4 @@ public class DialogueEvent {
 	private String text;
 	
 	private boolean removeContinue;
-	
-	public byte getType(){
-		return type;
-	}
-	
-	public String getText(){
-		return text;
-	}
-	
-	public void removeContinueButton(){
-		removeContinue = true;
-	}
-	
-	public boolean isRemoveContinue(){
-		return removeContinue;
-	}
-	
 }

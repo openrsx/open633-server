@@ -14,7 +14,7 @@ public class TestD extends DialogueEventListener {
 	public void start() {
 		mes("yo sup i'm a regular message");
 		player(happy, "lol okay");
-		option("Select one", "Yes", () -> {
+		option("Yes", () -> {
 			System.out.println("hi");
 		}, "No", () -> {
 			System.out.println("bye");

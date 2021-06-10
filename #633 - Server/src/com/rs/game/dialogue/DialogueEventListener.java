@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
-import com.rs.utilities.Utils;
 
 public abstract class DialogueEventListener implements DialogueFaceExpression {
 
@@ -41,23 +40,23 @@ public abstract class DialogueEventListener implements DialogueFaceExpression {
 		return this;
 	}
 
-	public void option(String title, String option1, Runnable task) {
-		dialogueEvent.add(new DialogueOptionEvent(title, option1, task));
+	public void option(String option1, Runnable task) {
+		dialogueEvent.add(new DialogueOptionEvent("", option1, task));
 	}
 
-	public void option(String title, String option1, Runnable task1, String option2, Runnable task2) {
-		dialogueEvent.add(new DialogueOptionEvent(title, option1, task1, option2, task2));
+	public void option(String option1, Runnable task1, String option2, Runnable task2) {
+		dialogueEvent.add(new DialogueOptionEvent("", option1, task1, option2, task2));
 	}
 
-	public void option(String title, String option1, Runnable task1, String option2, Runnable task2, String option3,
+	public void option(String option1, Runnable task1, String option2, Runnable task2, String option3,
 			Runnable task3) {
-		dialogueEvent.add(new DialogueOptionEvent(title, option1, task1, option2, task2, option3, task3));
+		dialogueEvent.add(new DialogueOptionEvent("", option1, task1, option2, task2, option3, task3));
 	}
 
-	public void option(String title, String option1, Runnable task1, String option2, Runnable task2, String option3,
+	public void option(String option1, Runnable task1, String option2, Runnable task2, String option3,
 			Runnable task3, String option4, Runnable task4) {
 		dialogueEvent
-				.add(new DialogueOptionEvent(title, option1, task1, option2, task2, option3, task3, option4, task4));
+				.add(new DialogueOptionEvent("", option1, task1, option2, task2, option3, task3, option4, task4));
 	}
 
 	public void option(String title, String option1, Runnable task1, String option2, Runnable task2, String option3,
@@ -67,7 +66,7 @@ public abstract class DialogueEventListener implements DialogueFaceExpression {
 	}
 
 	public void removeContinue() {
-		dialogueEvent.get(dialogueEvent.size() - 1).removeContinueButton();
+		dialogueEvent.get(dialogueEvent.size() - 1).setRemoveContinue(true);
 	}
 
 	public DialogueEventListener(Player player, Object... args) {
@@ -148,7 +147,7 @@ public abstract class DialogueEventListener implements DialogueFaceExpression {
 
 			// TODO: Fix Entity head models not showing...hmm..
 
-			if (event.entityPlayer()) {
+			if (event.isPlayer()) {
 
 				player.getInterfaceManager().sendChatBoxInterface(64);
 				player.getPackets().sendIComponentText(64, 3, player.getDisplayName());
@@ -185,7 +184,7 @@ public abstract class DialogueEventListener implements DialogueFaceExpression {
 			int index = 2;
 
 			String[] options = event.getOptionTextArray();
-			int interfaceId = 229 + options.length - 1;
+			int interfaceId = 229 + (options.length == 2 ? -1 :  options.length == 5 ? options.length +1 : options.length -1 );
 
 			for (String string : options) {
 				player.getPackets().sendIComponentText(interfaceId, index++, string);

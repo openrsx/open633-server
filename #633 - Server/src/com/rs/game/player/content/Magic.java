@@ -493,7 +493,7 @@ public class Magic {
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			break;
 		case 38:
-			player.move(GameConstants.START_PLAYER_LOCATION, TeleportType.LUNAR);
+			player.move(false, GameConstants.START_PLAYER_LOCATION, TeleportType.LUNAR);
 			break;
 		case 74: // vegeance group
 			if (player.getSkills().getLevel(Skills.MAGIC) < 95) {
@@ -623,7 +623,7 @@ public class Magic {
 			sendAncientTeleportSpell(player, 96, 106, new WorldTile(2977, 3873, 0), LAW_RUNE, 2, WATER_RUNE, 8);
 			break;
 		case 48:
-			player.move(GameConstants.START_PLAYER_LOCATION, TeleportType.ANCIENT);
+			player.move(false, GameConstants.START_PLAYER_LOCATION, TeleportType.ANCIENT);
 			break;
 		}
 	}
@@ -668,7 +668,7 @@ public class Magic {
 			player.getInterfaceManager().sendInterface(432);
 			break;
 		case 24:
-			player.move(GameConstants.START_PLAYER_LOCATION, TeleportType.NORMAL);
+			player.move(false, GameConstants.START_PLAYER_LOCATION, TeleportType.NORMAL);
 			break;
 		case 37: // mobi
 			sendNormalTeleportSpell(player, 10, 19, new WorldTile(2413, 2848, 0), LAW_RUNE, 1, WATER_RUNE, 1, AIR_RUNE,

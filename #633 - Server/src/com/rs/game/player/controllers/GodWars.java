@@ -1,8 +1,6 @@
 package com.rs.game.player.controllers;
 
-import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
-import com.rs.game.ForceMovement;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
@@ -40,7 +38,6 @@ public class GodWars extends Controller {
 		if (getArguments().length == 2)
 			lastPrayerRecharge = (long) this.getArguments()[1];
 		sendInterfaces();
-		sendZarosScript();
 		refresh();
 		return false; // so doesnt remove script
 	}
@@ -51,38 +48,9 @@ public class GodWars extends Controller {
 				: inZamorakPrepare(player) ? 1 : 0);
 	}
 
-	private void sendZarosScript() {
-		if (inZarosArea(player))
-			player.getPackets().sendRunScript(1171);
-	}
-
-	private static boolean hasFullCerimonial(Player player) {
-		int helmId = player.getEquipment().getHatId();
-		int chestId = player.getEquipment().getChestId();
-		int legsId = player.getEquipment().getLegsId();
-		int bootsId = player.getEquipment().getBootsId();
-		int glovesId = player.getEquipment().getGlovesId();
-		if (helmId == -1 || chestId == -1 || legsId == -1 || bootsId == -1
-				|| glovesId == -1)
-			return false;
-		return ItemDefinitions.getItemDefinitions(helmId).getName()
-				.contains("Ancient ceremonial")
-				&& ItemDefinitions.getItemDefinitions(chestId).getName()
-						.contains("Ancient ceremonial")
-				&& ItemDefinitions.getItemDefinitions(legsId).getName()
-						.contains("Ancient ceremonial")
-				&& ItemDefinitions.getItemDefinitions(bootsId).getName()
-						.contains("Ancient ceremonial")
-				&& ItemDefinitions.getItemDefinitions(glovesId).getName()
-						.contains("Ancient ceremonial");
-	}
-
 	@Override
 	public boolean processObjectClick1(final WorldObject object) {
-		if (object.getId() == 57225) {
-			player.getDialogueManager().startDialogue("NexEntrance");
-			return false;
-		} else if (object.getId() == 26287 || object.getId() == 26286
+		if (object.getId() == 26287 || object.getId() == 26286
 				|| object.getId() == 26288 || object.getId() == 26289) {
 			if (lastPrayerRecharge >= Utils.currentTimeMillis()) {
 				player.getPackets()
@@ -101,75 +69,6 @@ public class GodWars extends Controller {
 			player.getPackets().sendGameMessage(
 					"Your prayer points feel rejuvinated.");
 			lastPrayerRecharge = 600000 + Utils.currentTimeMillis();
-		} else if (object.getId() == 57264) {
-			player.getDialogueManager().startDialogue("SimpleMessage",
-					"KUS UMAK (PM Cjay0091 if you know what this means).");
-			return false;
-		} else if (object.getId() == 57258) {
-			boolean withinBankArea = player.getX() >= 2900;
-			boolean hasCerimonial = hasFullCerimonial(player);
-			if (killCount[4] >= 40 || withinBankArea || hasCerimonial) {
-				if (hasCerimonial && !withinBankArea)
-					player.getPackets()
-							.sendGameMessage(
-									"The door recognises your familiarity with the area and allows you to pass through.");
-				if (!withinBankArea) {
-					if (killCount[4] >= 40)
-						killCount[4] -= 40;
-					refresh();
-				}
-				player.addWalkSteps(withinBankArea ? 2899 : 2900, 5203, -1,
-						false);
-			} else
-				player.getPackets()
-						.sendGameMessage(
-								"You don't have enough kills to enter the lair of Zaros.");
-			return false;
-		} else if (object.getId() == 57234) {
-//			if (!Agility.hasLevel(player, 70))
-//				return false;
-			boolean travelingEast = player.getX() < 2863;
-			player.setNextAnimation(new Animation(1133));
-			final WorldTile tile = new WorldTile(
-					2863 + (travelingEast ? 0 : -3), 5219, 0);
-			player.setNextForceMovement(new ForceMovement(tile, 1,
-					travelingEast ? ForceMovement.EAST : ForceMovement.WEST));
-			World.get().submit(new Task(1) {
-				@Override
-				protected void execute() {
-					player.setNextWorldTile(tile);
-					this.cancel();
-				}
-			});
-			return false;
-		} else if (object.getId() == 75089) {
-			boolean insideGate = player.getY() <= 5278;
-			if (insideGate) {
-				player.getDialogueManager()
-						.startDialogue("SimpleMessage",
-								"You pull out your key once more but the door doesn't respond.");
-				return false;
-			}
-			if (player.getInventory().containsItem(20120, 1)) {
-				player.getPackets().sendGameMessage(
-						"You flash the key in front of the door");
-//				player.useStairs(1133, new WorldTile(2887, 5278, 0), 1, 2,
-//						"...and a strange force flings you in.");
-			} else
-				player.getDialogueManager()
-						.startDialogue(
-								"SimpleMessage",
-								"You try to push the door open, but it wont budge.... It looks like there is some kind of key hole.");
-			return false;
-		} else if (object.getId() == 57256) {
-			sendZarosScript();
-//			player.useStairs(-1, new WorldTile(2855, 5222, 0), 1, 2,
-//					"You climb down the stairs.");
-			return false;
-		} else if (object.getId() == 57260) {
-//			player.useStairs(-1, new WorldTile(2887, 5276, 0), 1, 2,
-//					"You climb up the stairs.");
-			return false;
 		} else if (object.getId() == 26293) {
 //			player.useStairs(828, new WorldTile(2913, 3741, 0), 1, 2);
 			player.getControllerManager().forceStop();

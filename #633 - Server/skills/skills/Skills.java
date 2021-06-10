@@ -193,7 +193,7 @@ public final class Skills {
 		int levelDiff = newLevel - oldLevel;
 		if (newLevel > oldLevel) {
 			level[skill] += levelDiff;
-			player.getDialogueManager().startDialogue("LevelUp", skill);
+//			player.getDialogueManager().startDialogue("LevelUp", skill);
 			if (skill == SUMMONING || (skill >= ATTACK && skill <= MAGIC)) {
 				player.getAppearance().generateAppearenceData();
 				if (skill == HITPOINTS)
@@ -223,7 +223,7 @@ public final class Skills {
 		int levelDiff = newLevel - oldLevel;
 		if (newLevel > oldLevel) {
 			level[skill] += levelDiff;
-			player.getDialogueManager().startDialogue("LevelUp", skill);
+//			player.getDialogueManager().startDialogue("LevelUp", skill);
 			if (skill == SUMMONING || (skill >= ATTACK && skill <= MAGIC)) {
 				player.getAppearance().generateAppearenceData();
 				if (skill == HITPOINTS)

@@ -8,6 +8,7 @@ import com.rs.game.Entity;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
+import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Player;
@@ -463,15 +464,23 @@ public class DuelArena extends Controller {
 
 	@Override
 	public boolean processMagicTeleport(WorldTile toTile) {
-		player.getDialogueManager().startDialogue("SimpleMessage",
-				"A magical force prevents you from teleporting from the arena.");
+		player.dialog(new DialogueEventListener(player) {
+			@Override
+			public void start() {
+				mes("A magical force prevents you from teleporting from the arena.");
+			}
+		});
 		return false;
 	}
 
 	@Override
 	public boolean processItemTeleport(WorldTile toTile) {
-		player.getDialogueManager().startDialogue("SimpleMessage",
-				"A magical force prevents you from teleporting from the arena.");
+		player.dialog(new DialogueEventListener(player) {
+			@Override
+			public void start() {
+				mes("A magical force prevents you from teleporting from the arena.");
+			}
+		});
 		return false;
 	}
 
@@ -482,7 +491,7 @@ public class DuelArena extends Controller {
 
 	@Override
 	public boolean processObjectClick1(WorldObject object) {
-		player.getDialogueManager().startDialogue("ForfeitDialouge");
+//		player.getDialogueManager().startDialogue("ForfeitDialouge");
 		return true;
 	}
 

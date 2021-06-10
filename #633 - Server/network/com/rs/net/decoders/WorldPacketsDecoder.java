@@ -36,8 +36,6 @@ import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
 
-import skills.Skills;
-
 public final class WorldPacketsDecoder extends Decoder {
 
 	/**
@@ -985,10 +983,6 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (forceRun)
 				player.setRun(forceRun);
 			player.stopAll();
-			if (player.getDetails().getRights().isStaff())
-				player.getDialogueManager().startDialogue("ModReportD", p2);
-//			else
-//				ReportAbuse.report(player, p2.getDisplayName());
 		} else if (packetId == PLAYER_OPTION_9_PACKET) {
 			boolean forceRun = stream.readUnsignedByte() == 1;
 			int playerIndex = stream.readUnsignedShortLE128();
@@ -1361,27 +1355,6 @@ public final class WorldPacketsDecoder extends Decoder {
 					player.getTrade().addItem(trade_item_X_Slot, value);
 			} else if (player.getTemporaryAttributes().remove("xformring") == Boolean.TRUE)
 				player.getAppearance().transformIntoNPC(value);
-			else if (player.getTemporaryAttributes().get("skillId") != null) {
-				if (player.getEquipment().wearingArmour()) {
-					player.getDialogueManager().finishDialogue();
-					player.getDialogueManager().startDialogue("SimpleMessage",
-							"You cannot do this while having armour on!");
-					return;
-				}
-				int skillId = (Integer) player.getTemporaryAttributes()
-						.remove("skillId");
-				if (skillId == Skills.HITPOINTS && value <= 9)
-					value = 10;
-				else if (value < 1)
-					value = 1;
-				else if (value > 99)
-					value = 99;
-				player.getSkills().set(skillId, value);
-				player.getSkills().setXp(skillId, Skills.getXPForLevel(value));
-				player.getAppearance().generateAppearenceData();
-				player.getDialogueManager().finishDialogue();
-
-			}
 		} else if (packetId == SWITCH_INTERFACE_COMPONENTS_PACKET) {
 
 			int fromInterfaceHash = stream.readInt();
