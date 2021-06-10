@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import com.alex.utils.VarsManager;
 import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
 import com.rs.cores.WorldThread;
