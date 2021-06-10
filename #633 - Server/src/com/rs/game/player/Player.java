@@ -32,7 +32,6 @@ import com.rs.game.player.content.PriceCheckManager;
 import com.rs.game.player.content.TeleportType;
 import com.rs.game.player.content.pet.PetManager;
 import com.rs.game.player.controllers.ControllerManager;
-import com.rs.game.player.dialogues.DialogueManager;
 import com.rs.game.player.type.CombatEffect;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
@@ -70,7 +69,6 @@ public class Player extends Entity {
 	private transient short screenWidth;
 	private transient short screenHeight;
 	private transient InterfaceManager interfaceManager;
-	private transient DialogueManager dialogueManager;
 	private transient HintIconsManager hintIconsManager;
 	private transient ActionManager actionManager;
 	private transient PriceCheckManager priceCheckManager;
@@ -171,7 +169,6 @@ public class Player extends Entity {
 		this.screenHeight = screenHeight;
 		this.isaacKeyPair = isaacKeyPair;
 		interfaceManager = new InterfaceManager(this);
-		dialogueManager = new DialogueManager(this);
 		hintIconsManager = new HintIconsManager(this);
 		priceCheckManager = new PriceCheckManager(this);
 		localPlayerUpdate = new LocalPlayerUpdate(this);
@@ -708,9 +705,9 @@ public class Player extends Entity {
 	 * @param type
 	 * @param player
 	 */
-	public void move(WorldTile tile, TeleportType type, Consumer<Player> player) {
+	public void move(boolean instant, WorldTile tile, TeleportType type, Consumer<Player> player) {
 		lock();
-		LinkedTaskSequence seq = new LinkedTaskSequence();
+		LinkedTaskSequence seq = new LinkedTaskSequence(instant ? 0 : 1, instant);
 		seq.connect(1, () -> {
 			type.getStartAnimation().ifPresent(this::setNextAnimation);
 			type.getStartGraphic().ifPresent(this::setNextGraphics);
@@ -729,9 +726,9 @@ public class Player extends Entity {
 	 * @param type
 	 * @param player
 	 */
-	public void move(WorldTile tile, TeleportType type) {
+	public void move(boolean instant, WorldTile tile, TeleportType type) {
 		lock();
-		LinkedTaskSequence seq = new LinkedTaskSequence();
+		LinkedTaskSequence seq = new LinkedTaskSequence(instant ? 0 : 1, instant);
 		seq.connect(1, () -> {
 			type.getStartAnimation().ifPresent(this::setNextAnimation);
 			type.getStartGraphic().ifPresent(this::setNextGraphics);

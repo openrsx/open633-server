@@ -108,6 +108,11 @@ public final class LinkedTaskSequence extends Task {
 		this.replay = replay;
 	}
 	
+	public LinkedTaskSequence(int delay, boolean instant) {
+		super(delay, instant);
+		this.replay = false;
+	}
+	
 	/**
 	 * Creates a new {@link LinkedTaskSequence} that does not replay upon
 	 * completion.
