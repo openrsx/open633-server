@@ -286,6 +286,9 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (forceRun)
 				player.setRun(forceRun);
 			
+			if (player.dialog() != null)
+				player.dialog().complete();
+			
 			player.getSkillAction().ifPresent(skill -> skill.cancel());
 			
 			int steps = RouteFinder

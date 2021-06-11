@@ -20,6 +20,7 @@ import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.familiar.Steeltitan;
 import com.rs.game.player.actions.Action;
 import com.rs.game.player.content.Magic;
+import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utils;
 import com.rs.utilities.loaders.MapAreas;
@@ -2648,9 +2649,7 @@ public class PlayerCombat extends Action {
 								if (block_tele) {
 									if (target instanceof Player) {
 										Player targetPlayer = (Player) target;
-										targetPlayer.getDetails().getTeleBlockDelay().set((targetPlayer.getPrayer().usingPrayer(0, 17)
-												|| targetPlayer.getPrayer().usingPrayer(1, 7) ? 100000 : 300000));
-										targetPlayer.getPackets().sendGameMessage("You have been teleblocked.", true);
+										Combat.effect(targetPlayer, CombatEffectType.TELEBLOCK);
 									}
 								}
 							}
