@@ -6,6 +6,7 @@ import com.rs.game.Animation;
 import com.rs.game.Graphics;
 import com.rs.game.player.Player;
 import com.rs.game.task.LinkedTaskSequence;
+import com.rs.utilities.Utils;
 
 import lombok.Getter;
 
@@ -124,22 +125,35 @@ public class Emotes {
 		 * @param buttonId
 		 */
 		public static void executeEmote(Player player, int buttonId) {
-			//TODO: Emote timer based on animation length.
-			// local long cehck with utils current time
-			if (!player.getDetails().getWatchMap().get("EMOTE").elapsed(1800)) {
-				return;
-			}
-			player.getDetails().getWatchMap().get("EMOTE").reset();
-			
+			if (isDoingEmote(player))
+	    		return;
 			for (Emote emote : Emote.values()) {
 				if (buttonId == emote.getButtonId()) {
 					emote.getSpecialEmote().ifPresent(user -> user.handleSpecialEmote(player));
 
 					emote.getAnimation().ifPresent(player::setNextAnimation);
 					emote.getGraphics().ifPresent(player::setNextGraphics);
+					if (!isDoingEmote(player))
+					    setNextEmoteEnd(player);
 				}
 			}
 		}
+		
+	    private static void setNextEmoteEnd(Player player) {
+	    	player.setNextEmoteEnd(player.getLastAnimationEnd() - 600);
+	    }
+
+	    public void setNextEmoteEnd(Player player, long delay) {
+	    	player.setNextEmoteEnd(Utils.currentTimeMillis() + delay);
+	    }
+	    
+	    public long getNextEmoteEnd(Player player) {
+	    	return player.getNextEmoteEnd();
+	    }
+
+	    public static boolean isDoingEmote(Player player) {
+	    	return player.getNextEmoteEnd() >= Utils.currentTimeMillis();
+	    }
 	}
 	
 	/**
