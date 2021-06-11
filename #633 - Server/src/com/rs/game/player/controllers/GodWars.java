@@ -104,7 +104,7 @@ public class GodWars extends Controller {
 			final WorldTile tile = new WorldTile(2887, withinZamorak ? 5336
 					: 5346, 0);
 			player.lock();
-			player.setNextWorldTile(object);
+			player.safeForceMoveTile(object);
 			World.get().submit(new Task(1) {
 				@Override
 				protected void execute() {
@@ -124,7 +124,7 @@ public class GodWars extends Controller {
 				protected void execute() {
 					player.unlock();
 					player.setNextAnimation(new Animation(-1));
-					player.setNextWorldTile(tile);
+					player.safeForceMoveTile(tile);
 					this.cancel();
 				}
 			});

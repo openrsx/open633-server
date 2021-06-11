@@ -372,7 +372,7 @@ public class DuelArena extends Controller {
 			player.setLocation(teleTile);
 			return;
 		}
-		player.setNextWorldTile(teleTile);
+		player.safeForceMoveTile(teleTile);
 	}
 
 	private void removeEquipment() {
@@ -607,7 +607,7 @@ public class DuelArena extends Controller {
 				break;
 			teleTile = tile;
 		}
-		player.setNextWorldTile(teleTile);
+		player.safeForceMoveTile(teleTile);
 		final WorldTile location = teleTile;
 		for (int trycount = 0; trycount < 10; trycount++) {
 			teleTile = new WorldTile(noMovement ? location : tile, noMovement ? 1 : 7);
@@ -616,7 +616,7 @@ public class DuelArena extends Controller {
 				break;
 			teleTile = tile;
 		}
-		target.setNextWorldTile(teleTile);
+		target.safeForceMoveTile(teleTile);
 	}
 
 	private void setRules(DuelRules rules, int componentId, int slotId) {

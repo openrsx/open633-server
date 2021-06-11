@@ -351,7 +351,7 @@ public class Player extends Entity {
 		getPackets().sendGameMessage("Welcome to " + GameConstants.SERVER_NAME + ".");
 		CombatEffect.values().parallelStream().filter(effects -> effects.onLogin(this)).forEach(effect -> World.get().submit(new CombatEffectTask(this, effect)));
 		GameConstants.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> getDetails().setRights(staff.getValue()));
-		sendDefaultPlayersOptions();
+		getInterfaceManager().sendDefaultPlayersOptions();
 		checkMultiArea();
 		getInventory().init();
 		getEquipment().checkItems();
@@ -380,12 +380,6 @@ public class Player extends Entity {
 			HostManager.add(this, HostListType.STARTER_RECEIVED, true);
 			World.sendWorldMessage("[New Player] " + getDisplayName() + " has just joined " + GameConstants.SERVER_NAME, canPvp);
 		}
-	}
-
-	public void sendDefaultPlayersOptions() {
-		getPackets().sendPlayerOption("Follow", 2, false);
-		getPackets().sendPlayerOption("Trade with", 4, false);
-		getPackets().sendPlayerOption("Req Assist", 5, false);
 	}
 
 	@Override
@@ -647,7 +641,7 @@ public class Player extends Entity {
 		}).connect(type.getEndDelay(), () -> {
 			type.getEndAnimation().ifPresent(this::setNextAnimation);
 			type.getEndGraphic().ifPresent(this::setNextGraphics);
-			setNextWorldTile(tile);
+			safeForceMoveTile(tile);
 			player.accept(this);
 			unlock();
 		}).start();
@@ -668,7 +662,7 @@ public class Player extends Entity {
 		}).connect(type.getEndDelay(), () -> {
 			type.getEndAnimation().ifPresent(this::setNextAnimation);
 			type.getEndGraphic().ifPresent(this::setNextGraphics);
-			setNextWorldTile(tile);
+			safeForceMoveTile(tile);
 			unlock();
 		}).start();
 	}

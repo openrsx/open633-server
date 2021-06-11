@@ -17,7 +17,7 @@ public final class TeleportCommand implements Command {
 		}
 		try {
 			player.resetWalkSteps();
-			player.setNextWorldTile(new WorldTile(Integer.valueOf(cmd[1]), Integer.valueOf(cmd[2]),
+			player.safeForceMoveTile(new WorldTile(Integer.valueOf(cmd[1]), Integer.valueOf(cmd[2]),
 					cmd.length >= 4 ? Integer.valueOf(cmd[3]) : player.getPlane()));
 		} catch (NumberFormatException e) {
 			player.getPackets().sendPanelBoxMessage("Use: ::tele coordX coordY plane");

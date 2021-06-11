@@ -164,7 +164,7 @@ public class Wilderness extends Controller {
 			World.get().submit(new Task(2) {
 				@Override
 				protected void execute() {
-					player.setNextWorldTile(toTile);
+					player.safeForceMoveTile(toTile);
 					player.faceObject(object);
 					removeIcon();
 					removeControler();
@@ -198,37 +198,6 @@ public class Wilderness extends Controller {
 
 	@Override
 	public boolean sendDeath() {
-		player.lock(7);
-		player.stopAll();
-		//TODO: REDO THIS BIT
-//		WorldTasksManager.schedule(new WorldTask() {
-//			int loop;
-//
-//			@Override
-//			public void run() {
-//				if (loop == 0) {
-//					player.setNextAnimation(new Animation(836));
-//				} else if (loop == 1) {
-//					player.getPackets().sendGameMessage("Oh dear, you have died.");
-//				} else if (loop == 3) {
-//					Player killer = player.getMostDamageReceivedSourcePlayer();
-//					if (killer != null) {
-//						killer.removeDamage(player);
-//						killer.setAttackedByDelay(Utils.currentTimeMillis() + 8000); // imunity
-//					}
-//					player.sendItemsOnDeath(killer);
-//					player.reset();
-////		    player.setNextWorldTile(DeathEvent.HUBS[2]); // edgevile
-//					player.setNextAnimation(new Animation(-1));
-//				} else if (loop == 4) {
-//					removeIcon();
-//					removeControler();
-//					player.getPackets().sendMusicEffect(90);
-//					stop();
-//				}
-//				loop++;
-//			}
-//		}, 0, 1);
 		return false;
 	}
 

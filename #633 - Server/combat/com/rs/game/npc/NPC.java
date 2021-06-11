@@ -219,7 +219,7 @@ public class NPC extends Entity {
 						}
 					}
 					if (!hasWalkSteps()) { // failing finding route
-						setNextWorldTile(new WorldTile(forceWalk));
+						safeForceMoveTile(new WorldTile(forceWalk));
 						forceWalk = null;
 					}
 				} else

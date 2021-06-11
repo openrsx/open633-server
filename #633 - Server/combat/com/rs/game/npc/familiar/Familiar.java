@@ -328,7 +328,7 @@ public abstract class Familiar extends NPC implements Serializable {
 			return;
 		}
 		sentRequestMoveMessage = false;
-		setNextWorldTile(teleTile);
+		safeForceMoveTile(teleTile);
 	}
 
 	public void removeFamiliar() {
