@@ -448,7 +448,7 @@ public class InterfaceManager {
 	
 	public void sendRunButtonConfig() {
 		player.getVarsManager().sendVar(173,
-				player.getResting() == 1 ? 3 : player.getResting() == 2 ? 4 : player.getRun() ? 1 : 0);
+				player.getResting() == 1 ? 3 : player.getResting() == 2 ? 4 : player.isRun() ? 1 : 0);
 	}
 	
 	public void refreshHitPoints() {

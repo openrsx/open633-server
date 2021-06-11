@@ -22,7 +22,7 @@ public class SettingsInterface implements RSInterface {
 			player.stopAll();
 			player.getInterfaceManager().sendInterface(742);
 		} else if (componentId == 3)
-			player.setRun(!player.getRun());
+			player.setRun(!player.isRun());
 		else if (componentId == 4) {
 			player.getDetails().setAllowChatEffects(!player.getDetails().isAllowChatEffects());
 			player.getVarsManager().sendVar(171, player.getDetails().isAllowChatEffects() ? 0 : 1);

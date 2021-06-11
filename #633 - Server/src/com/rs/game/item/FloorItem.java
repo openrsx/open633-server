@@ -116,7 +116,7 @@ public class FloorItem extends Item {
 
 						floorItem.setInvisible(false);
 						for (Player player : World.getPlayers()) {
-							if (player == null || player == owner || !player.isStarted() || player.hasFinished() || player.getPlane() != tile.getPlane() || !player.getMapRegionsIds().contains(regionId))
+							if (player == null || player == owner || !player.isStarted() || player.isFinished() || player.getPlane() != tile.getPlane() || !player.getMapRegionsIds().contains(regionId))
 								continue;
 							player.getPackets().sendGroundItem(floorItem);
 						}
@@ -130,7 +130,7 @@ public class FloorItem extends Item {
 		}
 		int regionId = tile.getRegionId();
 		for (Player player : World.getPlayers()) {
-			if (player == null || !player.isStarted() || player.hasFinished() || player.getPlane() != tile.getPlane() || !player.getMapRegionsIds().contains(regionId))
+			if (player == null || !player.isStarted() || player.isFinished() || player.getPlane() != tile.getPlane() || !player.getMapRegionsIds().contains(regionId))
 				continue;
 			player.getPackets().sendGroundItem(floorItem);
 		}

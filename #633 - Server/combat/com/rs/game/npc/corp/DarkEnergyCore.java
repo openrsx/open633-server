@@ -28,7 +28,7 @@ public class DarkEnergyCore extends NPC {
 
 	@Override
 	public void processNPC() {
-		if (isDead() || hasFinished())
+		if (isDead() || isFinished())
 			return;
 		if (delay > 0) {
 			delay--;

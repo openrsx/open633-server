@@ -80,7 +80,7 @@ public class PlayerCombat extends Action {
 		if (!player.clipedProjectile(target, maxDistance == 0))
 			return 0;
 		if (player.hasWalkSteps())
-			maxDistance += player.getRun() ? 2 : 1;
+			maxDistance += player.isRun() ? 2 : 1;
 		if (!Utils.isOnRange(player.getX(), player.getY(), size, target.getX(), target.getY(), target.getSize(),
 				maxDistance))
 			return 0;
@@ -148,7 +148,7 @@ public class PlayerCombat extends Action {
 					for (int playerIndex : playerIndexes) {
 						Player p2 = World.getPlayers().get(playerIndex);
 						if (p2 == null || p2 == player || p2 == target || p2.isDead() || !p2.isStarted()
-								|| p2.hasFinished() || !p2.isCanPvp() || !p2.isMultiArea()
+								|| p2.isFinished() || !p2.isCanPvp() || !p2.isMultiArea()
 								|| !p2.withinDistance(target, maxDistance) || !player.getControllerManager().canHit(p2))
 							continue;
 						possibleTargets.add(p2);
@@ -161,7 +161,7 @@ public class PlayerCombat extends Action {
 						continue;
 					for (int npcIndex : npcIndexes) {
 						NPC n = World.getNPCs().get(npcIndex);
-						if (n == null || n == target || n == player.getFamiliar() || n.isDead() || n.hasFinished()
+						if (n == null || n == target || n == player.getFamiliar() || n.isDead() || n.isFinished()
 								|| !n.isMultiArea() || !n.withinDistance(target, maxDistance)
 								|| !n.getDefinitions().hasAttackOption() || !player.getControllerManager().canHit(n))
 							continue;
@@ -229,7 +229,7 @@ public class PlayerCombat extends Action {
 				delayMagicHit(2, magicHit);
 				World.sendProjectile(player, target, 178, 18, 18, 50, 50, 0, 0);
 				long currentTime = Utils.currentTimeMillis();
-				if (magicHit.getDamage() > 0 && target.getFrozenBlockedDelay() < currentTime)
+				if (magicHit.getDamage() > 0 && target.getFrozenBlocked() < currentTime)
 					target.addFreezeDelay(5000, true);
 				return 5;
 			case 55:// snare
@@ -239,7 +239,7 @@ public class PlayerCombat extends Action {
 				base_mage_xp = 91.1;
 				Hit snareHit = getMagicHit(player, getRandomMagicMaxHit(player, 30));
 				delayMagicHit(2, snareHit);
-				if (snareHit.getDamage() > 0 && target.getFrozenBlockedDelay() < Utils.currentTimeMillis())
+				if (snareHit.getDamage() > 0 && target.getFrozenBlocked() < Utils.currentTimeMillis())
 					target.addFreezeDelay(10000, true);
 				World.sendProjectile(player, target, 178, 18, 18, 50, 50, 0, 0);
 				return 5;
@@ -250,7 +250,7 @@ public class PlayerCombat extends Action {
 				base_mage_xp = 91.1;
 				Hit entangleHit = getMagicHit(player, getRandomMagicMaxHit(player, 50));
 				delayMagicHit(2, entangleHit);
-				if (entangleHit.getDamage() > 0 && target.getFrozenBlockedDelay() < Utils.currentTimeMillis())
+				if (entangleHit.getDamage() > 0 && target.getFrozenBlocked() < Utils.currentTimeMillis())
 					target.addFreezeDelay(20000, true);
 				World.sendProjectile(player, target, 178, 18, 18, 50, 50, 0, 0);
 				return 5;
@@ -894,7 +894,7 @@ public class PlayerCombat extends Action {
 						magic_sound = 168;
 						long currentTime = Utils.currentTimeMillis();
 						if (target.getSize() >= 2 || target.getFreezeDelay() >= currentTime
-								|| target.getFrozenBlockedDelay() >= currentTime) {
+								|| target.getFrozenBlocked() >= currentTime) {
 							mage_hit_gfx = 1677;
 						} else {
 							mage_hit_gfx = 369;
@@ -1212,7 +1212,7 @@ public class PlayerCombat extends Action {
 						int damage = hit;
 						@Override
 						protected void execute() {
-							if (finalTarget.isDead() || finalTarget.hasFinished()) {
+							if (finalTarget.isDead() || finalTarget.isFinished()) {
 								this.cancel();
 								return;
 							}
@@ -1365,7 +1365,7 @@ public class PlayerCombat extends Action {
 					}
 					long currentTime = Utils.currentTimeMillis();
 					if (getRandomMaxHit(player, weaponId, attackStyle, true) > 0
-							&& target.getFrozenBlockedDelay() < currentTime) {
+							&& target.getFrozenBlocked() < currentTime) {
 						target.addFreezeDelay(delay, true);
 						World.get().submit(new Task(2) {
 							@Override
@@ -2537,7 +2537,7 @@ public class PlayerCombat extends Action {
 				}
 			} else if (hit.getLook() == HitLook.MAGIC_DAMAGE) {
 				if (mage_hit_gfx != 0 && damage > 0) {
-					if (target.getFrozenBlockedDelay() < Utils.currentTimeMillis()) {
+					if (target.getFrozenBlocked() < Utils.currentTimeMillis()) {
 						if (freeze_time > 0) {
 							target.addFreezeDelay(freeze_time, freeze_time == 0);
 							if (target instanceof Player)
@@ -2581,7 +2581,7 @@ public class PlayerCombat extends Action {
 				for (Hit hit : hits) {
 					boolean splash = false;
 					Player player = (Player) hit.getSource();
-					if (player.isDead() || player.hasFinished() || target.isDead() || target.hasFinished())
+					if (player.isDead() || player.isFinished() || target.isDead() || target.isFinished())
 						return;
 					if (hit.getDamage() > -1) {
 						target.applyHit(hit); // also reduces damage if needed, pray
@@ -2954,7 +2954,7 @@ public class PlayerCombat extends Action {
 	}
 
 	private boolean checkAll(Player player) {
-		if (player.isDead() || player.hasFinished() || target.isDead() || target.hasFinished()) {
+		if (player.isDead() || player.isFinished() || target.isDead() || target.isFinished()) {
 			return false;
 		}
 		int distanceX = player.getX() - target.getX();
@@ -3062,7 +3062,7 @@ public class PlayerCombat extends Action {
 			// if (!player.hasWalkSteps()) {
 			if (needCalc) {
 				player.resetWalkSteps();
-				player.calcFollow(target, player.getRun() ? 2 : 1, true, true);
+				player.calcFollow(target, player.isRun() ? 2 : 1, true, true);
 			}
 			// }
 			return true;

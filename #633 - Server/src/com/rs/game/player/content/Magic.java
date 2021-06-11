@@ -514,7 +514,7 @@ public class Magic {
 					continue;
 				for (int playerIndex : playerIndexes) {
 					Player p2 = World.getPlayers().get(playerIndex);
-					if (p2 == null || p2 == player || p2.isDead() || !p2.isStarted() || p2.hasFinished()
+					if (p2 == null || p2 == player || p2.isDead() || !p2.isStarted() || p2.isFinished()
 							|| !p2.withinDistance(player, 4) || !player.getControllerManager().canHit(p2))
 						continue;
 					if (!p2.getDetails().isAcceptAid()) {

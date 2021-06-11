@@ -224,7 +224,7 @@ public final class WorldPacketsDecoder extends Decoder {
 	@Override
 	public void decode(InputStream stream) {
 		while (stream.getRemaining() > 0 && session.getChannel().isConnected()
-				&& !player.hasFinished()) {
+				&& !player.isFinished()) {
 			int packetId = stream.readPacket(player);
 			if (packetId >= PACKET_SIZES.length || packetId < 0) {
 				if (GameConstants.DEBUG)
@@ -335,7 +335,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					&& Utils.getInterfaceDefinitionsComponentsSize(interfaceId) <= componentId)
 				return;
 			final Player p2 = World.getPlayers().get(playerIndex);
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			player.stopAll();
@@ -574,7 +574,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					&& Utils.getInterfaceDefinitionsComponentsSize(interfaceId) <= componentId)
 				return;
 			NPC npc = World.getNPCs().get(npcIndex);
-			if (npc == null || npc.isDead() || npc.hasFinished()
+			if (npc == null || npc.isDead() || npc.isFinished()
 					|| !player.getMapRegionsIds().contains(npc.getRegionId()))
 				return;
 			player.stopAll();
@@ -837,7 +837,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				player.setRun(forceRun);
 			player.stopAll();
 
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player
@@ -884,7 +884,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			int playerIndex = stream.readUnsignedShort();
 			boolean forceRun = stream.readUnsignedByte() == 1;
 			Player p2 = World.getPlayers().get(playerIndex);
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player.isLocked())
@@ -899,7 +899,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			final boolean forceRun = stream.readUnsignedByte() == 1;
 			int playerIndex = stream.readUnsignedShort128();
 			final Player p2 = World.getPlayers().get(playerIndex);
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player.isLocked())
@@ -918,7 +918,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			int playerIndex = stream.readUnsignedShortLE128();
 			boolean forceRun = stream.readUnsignedByte() == 1;
 			final Player p2 = World.getPlayers().get(playerIndex);
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player.isLocked())
@@ -975,7 +975,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			boolean forceRun = stream.readUnsignedByte() == 1;
 			int playerIndex = stream.readUnsignedShortLE128();
 			Player p2 = World.getPlayers().get(playerIndex);
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player.isLocked())
@@ -987,7 +987,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			boolean forceRun = stream.readUnsignedByte() == 1;
 			int playerIndex = stream.readUnsignedShortLE128();
 			Player p2 = World.getPlayers().get(playerIndex);
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player.isLocked())
@@ -1007,7 +1007,7 @@ public final class WorldPacketsDecoder extends Decoder {
 
 
 			NPC npc = World.getNPCs().get(npcIndex);
-			if (npc == null || npc.isDead() || npc.hasFinished()
+			if (npc == null || npc.isDead() || npc.isFinished()
 					|| !player.getMapRegionsIds().contains(npc.getRegionId())
 					|| !npc.getDefinitions().hasAttackOption())
 				return;
@@ -1124,7 +1124,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == AFK_PACKET) {
 			//player.getSession().getChannel().close();
 		} else if (packetId == CLOSE_INTERFACE_PACKET) {
-			if (player.isStarted() && !player.hasFinished()
+			if (player.isStarted() && !player.isFinished()
 					&& !player.isRunning()) { // used
 				// for
 				// old
@@ -1146,7 +1146,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.setScreenWidth((short) stream.readUnsignedShort());
 			player.setScreenHeight((short) stream.readUnsignedShort());
 			boolean switchScreenMode = stream.readUnsignedByte() == 1;
-			if (!player.isStarted() || player.hasFinished()
+			if (!player.isStarted() || player.isFinished()
 					|| displayMode == player.getDisplayMode()
 					|| !player.getInterfaceManager().containsInterface(742))
 				return;

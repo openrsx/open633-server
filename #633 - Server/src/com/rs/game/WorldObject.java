@@ -169,7 +169,7 @@ public class WorldObject extends WorldTile {
 					continue;
 				for (Integer playerIndex : playersIndexes) {
 					Player player = World.getPlayers().get(playerIndex);
-					if (player == null || !player.isStarted() || player.hasFinished()
+					if (player == null || !player.isStarted() || player.isFinished()
 							|| !player.withinDistance(object))
 						continue;
 					player.getPackets().sendObjectAnimation(object, animation);

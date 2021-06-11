@@ -272,7 +272,7 @@ public class NPC extends Entity {
 
 	@Override
 	public void finish() {
-		if (hasFinished())
+		if (isFinished())
 			return;
 		setFinished(true);
 		updateEntityRegion(this);
@@ -281,7 +281,7 @@ public class NPC extends Entity {
 
 	@SneakyThrows(Throwable.class)
 	public void setRespawnTask() {
-		if (!hasFinished()) {
+		if (!isFinished()) {
 			reset();
 			setLocation(getRespawnTile());
 			finish();
@@ -382,7 +382,7 @@ public class NPC extends Entity {
 				if (playerIndexes != null) {
 					for (int playerIndex : playerIndexes) {
 						Player player = World.getPlayers().get(playerIndex);
-						if (player.isDead() || player.hasFinished() || !player.isRunning()
+						if (player.isDead() || player.isFinished() || !player.isRunning()
 								|| player.getAppearance().isHidden()
 								|| !Utils.isOnRange(getX(), getY(), size, player.getX(), player.getY(),
 										player.getSize(), forceTargetDistance > 0 ? forceTargetDistance : agroRatio)
@@ -402,7 +402,7 @@ public class NPC extends Entity {
 				if (npcsIndexes != null) {
 					for (int npcIndex : npcsIndexes) {
 						NPC npc = World.getNPCs().get(npcIndex);
-						if (npc == this || npc.isDead() || npc.hasFinished()
+						if (npc == this || npc.isDead() || npc.isFinished()
 								|| !Utils.isOnRange(getX(), getY(), size, npc.getX(), npc.getY(), npc.getSize(),
 										forceTargetDistance > 0 ? forceTargetDistance : agroRatio)
 								|| !npc.getDefinitions().hasAttackOption()

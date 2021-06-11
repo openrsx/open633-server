@@ -51,7 +51,7 @@ public class CommanderZilyana extends NPC {
 
 	@Override
 	public void setRespawnTask() {
-		if (!hasFinished()) {
+		if (!isFinished()) {
 			reset();
 			setLocation(getRespawnTile());
 			finish();

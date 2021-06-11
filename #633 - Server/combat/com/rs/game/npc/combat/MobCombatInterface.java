@@ -80,7 +80,7 @@ public abstract class MobCombatInterface {
 			protected void execute() {
 				for (Hit hit : hits) {
 					NPC npc = (NPC) hit.getSource();
-					if (npc.isDead() || npc.hasFinished() || target.isDead() || target.hasFinished())
+					if (npc.isDead() || npc.isFinished() || target.isDead() || target.isFinished())
 						return;
 					target.applyHit(hit);
 					npc.getCombat().doDefenceEmote(target);

@@ -23,7 +23,7 @@ public class TestD extends DialogueEventListener {
 		}, "idk", () -> {
 			System.out.println("byess");
 		});
-
+		npc(sad, "I'm sad man..");
 		item(1050, "I'm a santa hat mate.");
 	}
 }

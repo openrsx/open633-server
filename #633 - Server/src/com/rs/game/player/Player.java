@@ -335,7 +335,7 @@ public class Player extends Entity {
 
 	@Override
 	public void setRun(boolean run) {
-		if (run != getRun()) {
+		if (run != isRun()) {
 			super.setRun(run);
 			setUpdateMovementType(true);
 			getInterfaceManager().sendRunButtonConfig();
@@ -448,7 +448,7 @@ public class Player extends Entity {
 	}
 
 	public void finish(final int tryCount) {
-		if (isFinishing() || hasFinished())
+		if (isFinishing() || isFinished())
 			return;
 		setFinishing(true);
 		// if combating doesnt stop when xlog this way ends combat
@@ -473,7 +473,7 @@ public class Player extends Entity {
 	}
 	
 	public void realFinish(boolean shutdown) {
-		if (hasFinished())
+		if (isFinished())
 			return;
 		Logger.globalLog(username, session.getIP(), new String(
 				" has logged out."));
@@ -679,7 +679,7 @@ public class Player extends Entity {
 	public int getMovementType() {
 		if (getTemporaryMovementType() != -1)
 			return getTemporaryMovementType();
-		return getRun() ? RUN_MOVE_TYPE : WALK_MOVE_TYPE;
+		return isRun() ? RUN_MOVE_TYPE : WALK_MOVE_TYPE;
 	}
 	
 	public String getDisplayName() {

@@ -17,7 +17,7 @@ public class WorldMapInterface implements RSInterface {
 			if (componentId == 1 && packetId == 11) {
 				if (player.isResting())
 					player.stopAll();
-				player.setRun(!player.getRun());	
+				player.setRun(!player.isRun());	
 			}
 			if (componentId == 1 && packetId == 29) {
 				if (player.isResting()) {

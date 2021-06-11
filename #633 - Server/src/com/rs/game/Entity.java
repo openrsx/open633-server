@@ -18,6 +18,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
+import com.rs.game.player.content.TeleportType;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.player.type.PoisonType;
@@ -220,8 +221,7 @@ public abstract class Entity extends WorldTile {
 				} else if (player.getEquipment().getAmuletId() != 11090
 						&& player.getEquipment().getRingId() == 11090
 						&& player.getHitpoints() <= player.getMaxHitpoints() * 0.1) {
-//					Magic.sendNormalTeleportSpell(player, 1, 0,
-//							DeathEvent.getRespawnHub(player));
+					player.move(true, GameConstants.START_PLAYER_LOCATION, TeleportType.BLANK);
 					player.getEquipment().deleteItem(11090, 1);
 					player.getPackets()
 							.sendGameMessage(
@@ -258,7 +258,7 @@ public abstract class Entity extends WorldTile {
 			if (!(source instanceof Player))
 				continue;
 			Integer d = receivedDamage.get(source);
-			if (d == null || source.hasFinished()) {
+			if (d == null || source.isFinished()) {
 				receivedDamage.remove(source);
 				continue;
 			}
@@ -272,7 +272,7 @@ public abstract class Entity extends WorldTile {
 
 	public int getDamageReceived(Player source) {
 		Integer d = receivedDamage.get(source);
-		if (d == null || source.hasFinished()) {
+		if (d == null || source.isFinished()) {
 			receivedDamage.remove(source);
 			return -1;
 		}
@@ -282,7 +282,7 @@ public abstract class Entity extends WorldTile {
 	public void processReceivedDamage() {
 		for (Entity source : receivedDamage.keySet()) {
 			Integer damage = receivedDamage.get(source);
-			if (damage == null || source.hasFinished()) {
+			if (damage == null || source.isFinished()) {
 				receivedDamage.remove(source);
 				continue;
 			}
@@ -510,7 +510,7 @@ public abstract class Entity extends WorldTile {
 					if (target == null
 							|| target == this
 							|| target.isDead()
-							|| target.hasFinished()
+							|| target.isFinished()
 							|| target.getPlane() != getPlane()
 							|| !target.isMultiArea()
 							|| (!(this instanceof Familiar) && target instanceof Familiar))
@@ -684,34 +684,9 @@ public abstract class Entity extends WorldTile {
 			return true;
 		}
 		return findBasicRoute(this, (Entity) target, maxStepsCount, true);
-		/*
-		 * else if (true == true) { //just keeping old code
-		 * System.out.println("test"); return findBasicRoute(this, (Entity)
-		 * target, maxStepsCount, true); }
-		 * 
-		 * int[] lastTile = getLastWalkTile(); int myX = lastTile[0]; int myY =
-		 * lastTile[1]; int stepCount = 0; int size = getSize(); int destX =
-		 * target.getX(); int destY = target.getY(); int sizeX = target
-		 * instanceof WorldObject ?
-		 * ((WorldObject)target).getDefinitions().getSizeX() :
-		 * ((Entity)target).getSize(); int sizeY = target instanceof WorldObject
-		 * ? ((WorldObject)target).getDefinitions().getSizeY() : sizeX; while
-		 * (true) { stepCount++; int myRealX = myX; int myRealY = myY; if
-		 * (Utils.isOnR ange(myX, myY, size, destX, destY, sizeX, 0)) return
-		 * true; if (myX < destX) myX++; else if (myX > destX) myX--; if (myY <
-		 * destY) myY++; else if (myY > destY) myY--; if ((this instanceof NPC
-		 * && !canWalkNPC(myX, myY)) || !addWalkStep(myX, myY, lastTile[0],
-		 * lastTile[1], true)) { if (!calculate) return false; myX = myRealX;
-		 * myY = myRealY; int[] myT = calculatedStep(myRealX, myRealY, destX,
-		 * destY, lastTile[0], lastTile[1], sizeX, sizeY); if (myT == null)
-		 * return false; myX = myT[0]; myY = myT[1]; } if (stepCount ==
-		 * maxStepsCount) return true; lastTile[0] = myX; lastTile[1] = myY; if
-		 * (lastTile[0] == destX && lastTile[1] == destY) return true; }
-		 */
 	}
 
 	// used for normal npc follow
-	@SuppressWarnings("unused")
 	private int[] calculatedStep(int myX, int myY, int destX, int destY,
 			int lastX, int lastY, int sizeX, int sizeY) {
 		if (myX < destX) {
@@ -831,10 +806,6 @@ public abstract class Entity extends WorldTile {
 		return true;
 	}
 
-	public ConcurrentLinkedQueue<Object[]> getWalkSteps() {
-		return walkSteps;
-	}
-
 	public void resetWalkSteps() {
 		walkSteps.clear();
 	}
@@ -912,9 +883,7 @@ public abstract class Entity extends WorldTile {
 		processReceivedDamage();
 	}
 
-	public void processEntity() {
-//		poison.processPoison();
-	}
+	public void processEntity() { }
 
 	public void loadMapRegions() {
 		mapRegionsIds.clear();
@@ -979,75 +948,7 @@ public abstract class Entity extends WorldTile {
 				nextGraphics4 = nextGraphics;
 		}
 	}
-
-	public Graphics getNextGraphics1() {
-		return nextGraphics1;
-	}
-
-	public Graphics getNextGraphics2() {
-		return nextGraphics2;
-	}
-
-	public Graphics getNextGraphics3() {
-		return nextGraphics3;
-	}
-
-	public Graphics getNextGraphics4() {
-		return nextGraphics4;
-	}
-
-	public void setDirection(byte direction) {
-		this.direction = direction;
-	}
-
-	public int getDirection() {
-		return direction;
-	}
-
-	public void setFinished(boolean finished) {
-		this.finished = finished;
-	}
-
-	public boolean hasFinished() {
-		return finished;
-	}
-
-	public void setNextWorldTile(WorldTile nextWorldTile) {
-		this.nextWorldTile = nextWorldTile;
-	}
-
-	public WorldTile getNextWorldTile() {
-		return nextWorldTile;
-	}
-
-	public boolean hasTeleported() {
-		return teleported;
-	}
-
-	public WorldTile getLastLoadedMapRegionTile() {
-		return lastLoadedMapRegionTile;
-	}
-
-	public int getNextWalkDirection() {
-		return nextWalkDirection;
-	}
-
-	public int getNextRunDirection() {
-		return nextRunDirection;
-	}
-
-	public void setRun(boolean run) {
-		this.run = run;
-	}
-
-	public boolean getRun() {
-		return run;
-	}
-
-	public Rectangle getNextFaceWorldTile() {
-		return nextFaceWorldTile;
-	}
-
+	
 	// @Deprecated used to face simply a tiel
 	// "use setNextFaceRectanglePrecise(tile, 1, 1)
 	public void setNextFaceWorldTile(WorldTile nextFaceWorldTile) {
@@ -1094,33 +995,9 @@ public abstract class Entity extends WorldTile {
 			lastFaceEntity = nextFaceEntity;
 		}
 	}
-
-	public int getNextFaceEntity() {
-		return nextFaceEntity;
-	}
-
-	public long getFreezeDelay() {
-		return freezeDelay; // 2500 delay
-	}
-
+	
 	public boolean isFrozen() {
 		return freezeDelay >= Utils.currentTimeMillis();
-	}
-
-	public int getLastFaceEntity() {
-		return lastFaceEntity;
-	}
-
-	public long getFrozenBlockedDelay() {
-		return frozenBlocked;
-	}
-
-	public void setFrozeBlocked(int time) {
-		this.frozenBlocked = time;
-	}
-
-	public void setFreezeDelay(int time) {
-		this.freezeDelay = time;
 	}
 
 	public void addFrozenBlockedDelay(int time) {
@@ -1346,7 +1223,7 @@ public abstract class Entity extends WorldTile {
 	}
 	
 	public final void updateEntityRegion(Entity entity) {
-		if (entity.hasFinished()) {
+		if (entity.isFinished()) {
 			if (entity instanceof Player)
 				World.getRegion(entity.getLastRegionId()).removePlayerIndex(entity.getIndex());
 			else

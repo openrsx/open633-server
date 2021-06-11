@@ -333,7 +333,7 @@ public final class MapBuilder {
 			if (playerIndexes != null) {
 				for (int playerIndex : playerIndexes) {
 					Player player = World.getPlayers().get(playerIndex);
-					if (player == null || !player.isStarted() || player.hasFinished())
+					if (player == null || !player.isStarted() || player.isFinished())
 						continue;
 					player.getDetails().setForceNextMapLoadRefresh(true);
 					player.loadMapRegions();

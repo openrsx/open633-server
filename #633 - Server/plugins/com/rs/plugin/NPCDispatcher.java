@@ -135,7 +135,7 @@ public class NPCDispatcher {
 			npcIndex = stream.readUnsignedShort();
 		}
 		final NPC npc = World.getNPCs().get(npcIndex);
-		if (npc == null || npc.isCantInteract() || npc.isDead() || npc.hasFinished()
+		if (npc == null || npc.isCantInteract() || npc.isDead() || npc.isFinished()
 				|| !player.getMapRegionsIds().contains(npc.getRegionId()) || player.isLocked())
 			return;
 		player.setRouteEvent(new RouteEvent(npc, new Runnable() {

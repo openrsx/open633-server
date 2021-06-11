@@ -187,7 +187,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 		}, npc.getSize()));
 	}
 	public static void sendWear(Player player, int[] slotIds) {
-		if (player.hasFinished() || player.isDead())
+		if (player.isFinished() || player.isDead())
 			return;
 		boolean worn = false;
 		Item[] copy = player.getInventory().getItems().getItemsCopy();
@@ -206,7 +206,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 	}
 	
 	public static boolean sendWear2(Player player, int slotId, int itemId) {
-		if (player.hasFinished() || player.isDead())
+		if (player.isFinished() || player.isDead())
 			return false;
 		player.stopAll(false, false);
 		Item item = player.getInventory().getItem(slotId);

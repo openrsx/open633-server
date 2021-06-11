@@ -307,7 +307,7 @@ public class Region {
 			// clips spawned object(either original or non original)
 			clip(object, localX, localY);
 			for (Player p2 : World.getPlayers()) {
-				if (p2 == null || !p2.isStarted() || p2.hasFinished()
+				if (p2 == null || !p2.isStarted() || p2.isFinished()
 						|| !p2.getMapRegionsIds().contains(regionId))
 					continue;
 				p2.getPackets().sendSpawnedObject(object);
@@ -352,7 +352,7 @@ public class Region {
 			return;
 		}
 		for (Player p2 : World.getPlayers()) {
-			if (p2 == null || !p2.isStarted() || p2.hasFinished()
+			if (p2 == null || !p2.isStarted() || p2.isFinished()
 					|| !p2.getMapRegionsIds().contains(regionId))
 				continue;
 			if (original != null)

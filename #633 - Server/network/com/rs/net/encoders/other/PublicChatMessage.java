@@ -27,7 +27,7 @@ public class PublicChatMessage extends ChatMessage {
 				Player p = World.getPlayers().get(playerIndex);
 				if (p == null
 						|| !p.isStarted()
-						|| p.hasFinished()
+						|| p.isFinished()
 						|| p.getLocalPlayerUpdate().getLocalPlayers()[player.getIndex()] == null)
 					continue;
 				p.getPackets().sendPublicMessage(player, message);

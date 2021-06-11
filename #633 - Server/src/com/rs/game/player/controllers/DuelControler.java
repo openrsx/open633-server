@@ -86,7 +86,7 @@ public class DuelControler extends Controller {
 		if (friendly == null)
 			return;
 		Player target = (Player) player.getTemporaryAttributes().remove("DuelTarget");
-		if (target == null || target.hasFinished() || !target.withinDistance(player, 14)
+		if (target == null || target.isFinished() || !target.withinDistance(player, 14)
 				|| !(target.getControllerManager().getController() instanceof DuelControler)) {
 			player.getPackets()
 					.sendGameMessage("Unable to find " + (target == null ? "your target" : target.getDisplayName()));

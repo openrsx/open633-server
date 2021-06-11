@@ -687,7 +687,7 @@ public final class CombatDefinitions {
 				int count = 5;
 				@Override
 				protected void execute() {
-					if (player.isDead() || player.hasFinished()
+					if (player.isDead() || player.isFinished()
 							|| player.getHitpoints() >= player.getMaxHitpoints()) {
 						this.cancel();
 						return;
