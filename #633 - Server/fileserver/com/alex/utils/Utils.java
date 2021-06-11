@@ -4,6 +4,7 @@ import java.math.BigInteger;
 
 import com.alex.io.OutputStream;
 import com.alex.store.Store;
+import com.rs.cache.Cache;
 
 public final class Utils {
 
@@ -46,15 +47,10 @@ public final class Utils {
 			int interfaceId) {
 		return store.getIndexes()[3].getLastFileId(interfaceId);
 	}
-
-	public static final int getItemDefinitionsSize(Store store) {
-		int lastArchiveId = store.getIndexes()[19].getLastArchiveId();
-		return lastArchiveId * 256
-				+ store.getIndexes()[19].getValidFilesCount(lastArchiveId);
+	
+	public static final int getItemDefinitionsSize() {
+		int lastArchiveId = Cache.STORE.getIndexes()[19].getLastArchiveId();
+		return (lastArchiveId * 256 + Cache.STORE.getIndexes()[19]
+				.getValidFilesCount(lastArchiveId)) - 22314;
 	}
-
-	private Utils() {
-
-	}
-
 }

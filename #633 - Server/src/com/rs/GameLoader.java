@@ -26,7 +26,6 @@ import com.rs.utilities.json.impl.MobDropTableLoader;
 import com.rs.utilities.loaders.Censor;
 import com.rs.utilities.loaders.EquipData;
 import com.rs.utilities.loaders.ItemBonuses;
-import com.rs.utilities.loaders.ItemDestroys;
 import com.rs.utilities.loaders.MapArchiveKeys;
 import com.rs.utilities.loaders.MapAreas;
 import com.rs.utilities.loaders.MusicHints;
@@ -94,7 +93,6 @@ public class GameLoader {
 			return null;
 		});
 		getBackgroundLoader().submit(() -> {
-			ItemDestroys.init();
 			MusicHints.init();
 			ShopsHandler.init();
 			return null;

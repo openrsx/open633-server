@@ -213,7 +213,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 		if (item == null || item.getId() != itemId)
 			return false;
 		if (item.getDefinitions().isNoted()
-				|| !item.getDefinitions().isWearItem(
+				|| item.getDefinitions().isWearItem(
 						player.getAppearance().isMale()) && itemId != 4084) {
 			player.getPackets().sendGameMessage("You can't wear that.");
 			return false;
