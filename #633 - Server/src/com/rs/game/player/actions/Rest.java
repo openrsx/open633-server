@@ -2,7 +2,7 @@ package com.rs.game.player.actions;
 
 import com.rs.game.Animation;
 import com.rs.game.player.Player;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class Rest extends Action {
 
@@ -24,7 +24,7 @@ public class Rest extends Action {
 	public boolean start(Player player) {
 		if (!process(player))
 			return false;
-		index = Utils.random(REST_DEFS.length);
+		index = RandomUtils.random(REST_DEFS.length);
 		player.setResting((byte) (musician ? 2 : 1));
 		player.getInterfaceManager().sendRunButtonConfig();
 		player.setNextAnimation(new Animation(REST_DEFS[index][0]));

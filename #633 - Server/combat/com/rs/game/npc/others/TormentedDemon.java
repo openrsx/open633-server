@@ -15,7 +15,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public final class TormentedDemon extends NPC {
 
@@ -51,7 +51,7 @@ public final class TormentedDemon extends NPC {
 		super.processNPC();
 		if (isDead())
 			return;
-		if (Utils.getRandom(40) <= 2)
+		if (RandomUtils.random(40) <= 2)
 			sendRandomProjectile();
 		if (getCombat().process()) {// no point in processing
 			if (shieldTimer > 0)
@@ -132,7 +132,7 @@ public final class TormentedDemon extends NPC {
 	}
 
 	private void sendRandomProjectile() {
-		WorldTile tile = new WorldTile(getX() + Utils.random(7), getY() + Utils.random(7), getPlane());
+		WorldTile tile = new WorldTile(getX() + RandomUtils.random(7), getY() + RandomUtils.random(7), getPlane());
 		setNextAnimation(new Animation(10918));
 		World.sendProjectile(this, tile, 1887, 34, 16, 40, 35, 16, 0);
 		for (int regionId : getMapRegionsIds()) {

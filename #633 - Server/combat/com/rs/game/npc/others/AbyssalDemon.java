@@ -5,6 +5,7 @@ import com.rs.game.Graphics;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 
 public class AbyssalDemon extends NPC {
@@ -19,14 +20,14 @@ public class AbyssalDemon extends NPC {
 		Entity target = getCombat().getTarget();
 		if (target != null
 				&& Utils.isOnRange(target.getX(), target.getY(), target.getSize(), getX(), getY(), getSize(), 4)
-				&& Utils.random(50) == 0)
-			sendTeleport(Utils.random(2) == 0 ? target : this);
+				&& RandomUtils.random(50) == 0)
+			sendTeleport(RandomUtils.random(2) == 0 ? target : this);
 	}
 
 	private void sendTeleport(Entity entity) {
 		int entitySize = entity.getSize();
 		for (int c = 0; c < 10; c++) {
-			int dir = Utils.random(Utils.DIRECTION_DELTA_X.length);
+			int dir = RandomUtils.random(Utils.DIRECTION_DELTA_X.length);
 			if (World.checkWalkStep(entity.getPlane(), entity.getX(), entity.getY(), dir, entitySize)) {
 				entity.setNextGraphics(new Graphics(409));
 				entity.safeForceMoveTile(new WorldTile(getX() + Utils.DIRECTION_DELTA_X[dir],

@@ -9,6 +9,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 import com.rs.utilities.loaders.MapAreas;
 
@@ -57,7 +58,7 @@ public final class NPCCombat {
 		// this gameticket
 		NPCCombatDefinitions defs = npc.getCombatDefinitions();
 		int attackStyle = defs.getAttackStyle();
-		if (target instanceof Familiar && Utils.random(3) == 0) {
+		if (target instanceof Familiar && RandomUtils.random(3) == 0) {
 			Familiar familiar = (Familiar) target;
 			Player player = familiar.getOwner();
 			if (player != null) {

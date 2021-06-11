@@ -21,6 +21,7 @@ import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.encoders.other.ForceTalk;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utilities.Logger;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 
 public class DuelArena extends Controller {
@@ -360,7 +361,7 @@ public class DuelArena extends Controller {
 	}
 
 	private void startEndingTeleport(Player player, boolean loggedOut) {
-		WorldTile tile = LOBBY_TELEPORTS[Utils.random(LOBBY_TELEPORTS.length)];
+		WorldTile tile = LOBBY_TELEPORTS[RandomUtils.random(LOBBY_TELEPORTS.length)];
 		WorldTile teleTile = tile;
 		for (int trycount = 0; trycount < 10; trycount++) {
 			teleTile = new WorldTile(tile, 2);
@@ -598,8 +599,8 @@ public class DuelArena extends Controller {
 		DuelRules rules = player.getLastDuelRules();
 		boolean noMovement = rules.getRule(25);
 		WorldTile tile = rules.getRule(24) ? POSSIBLE_TILE_CENTRE[1][0]
-				: rules.getRule(6) ? POSSIBLE_TILE_CENTRE[2][Utils.random(POSSIBLE_TILE_CENTRE[2].length)]
-						: POSSIBLE_TILE_CENTRE[0][Utils.random(POSSIBLE_TILE_CENTRE[0].length)],
+				: rules.getRule(6) ? POSSIBLE_TILE_CENTRE[2][RandomUtils.random(POSSIBLE_TILE_CENTRE[2].length)]
+						: POSSIBLE_TILE_CENTRE[0][RandomUtils.random(POSSIBLE_TILE_CENTRE[0].length)],
 				teleTile = tile;
 		for (int trycount = 0; trycount < 10; trycount++) {
 			teleTile = new WorldTile(tile, 7);

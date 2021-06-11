@@ -8,7 +8,7 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class Spiritspider extends Familiar {
 
@@ -55,7 +55,7 @@ public class Spiritspider extends Familiar {
 		player.setNextGraphics(new Graphics(1316));
 		WorldTile tile = this;
 		// attemps to randomize tile by 4x4 area
-		for (int trycount = 0; trycount < Utils.getRandom(10); trycount++) {
+		for (int trycount = 0; trycount < RandomUtils.random(10); trycount++) {
 			tile = new WorldTile(this, 2);
 			if (World.isTileFree(this.getPlane(), tile.getX(), tile.getY(), player.getSize()))
 				return true;

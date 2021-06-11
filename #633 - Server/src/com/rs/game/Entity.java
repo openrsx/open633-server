@@ -32,6 +32,7 @@ import com.rs.game.route.strategy.ObjectStrategy;
 import com.rs.game.task.Task;
 import com.rs.net.encoders.other.ForceTalk;
 import com.rs.utilities.MutableNumber;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 
 import lombok.Getter;
@@ -759,7 +760,7 @@ public abstract class Entity extends WorldTile {
 		if (hitpoints > maxHp) {
 			if (isPlayer()) {
 				Player player = (Player) this;
-				if (player.getPrayer().usingPrayer(1, 5) && Utils.getRandom(100) <= 15)
+				if (player.getPrayer().usingPrayer(1, 5) && RandomUtils.random(100) <= 15)
 					return false;
 			}
 			setHitpoints(hitpoints - 1);
@@ -1214,7 +1215,7 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void safeForceMoveTile(final WorldTile desination) {
-		var dir = Utils.random(Utils.DIRECTION_DELTA_X.length);
+		var dir = RandomUtils.random(Utils.DIRECTION_DELTA_X.length);
 		if (World.checkWalkStep(desination.getPlane(), desination.getX(), desination.getY(), dir, 1)) {
 			setNextWorldTile(new WorldTile(desination.getX() + Utils.DIRECTION_DELTA_X[dir],
 					desination.getY() + Utils.DIRECTION_DELTA_Y[dir], desination.getPlane()));

@@ -9,7 +9,7 @@ import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 import skills.Skills;
 
@@ -36,7 +36,7 @@ public class Ibis extends Familiar {
 
 	@SuppressWarnings("unused")
 	private void giveReward() {
-		boolean isSwordFish = Utils.random(3) == 0;
+		boolean isSwordFish = RandomUtils.random(3) == 0;
 		int foragedItem = isSwordFish ? 371 : 359;
 		if (isSwordFish)
 			getOwner().getSkills().addXp(Skills.FISHING, 10);

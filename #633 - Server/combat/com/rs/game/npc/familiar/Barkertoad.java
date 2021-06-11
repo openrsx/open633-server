@@ -10,7 +10,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class Barkertoad extends Familiar {
 
@@ -56,7 +56,7 @@ public class Barkertoad extends Familiar {
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {
-				target.applyHit(new Hit(getOwner(), Utils.random(180), HitLook.MAGIC_DAMAGE));
+				target.applyHit(new Hit(getOwner(), RandomUtils.random(180), HitLook.MAGIC_DAMAGE));
 				target.setNextGraphics(new Graphics(1404));
 				this.cancel();
 			}

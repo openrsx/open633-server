@@ -10,7 +10,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class Spiritdagannoth extends Familiar {
 
@@ -60,7 +60,7 @@ public class Spiritdagannoth extends Familiar {
 				World.get().submit(new Task(1) {
 					@Override
 					protected void execute() {
-						int hitDamage = Utils.random(180);
+						int hitDamage = RandomUtils.random(180);
 						if (hitDamage > 0) {
 							if (target instanceof Player)
 								((Player) target).lock(6);
@@ -76,7 +76,7 @@ public class Spiritdagannoth extends Familiar {
 				this.cancel();
 			}
 		});
-		
+
 		return true;
 	}
 }

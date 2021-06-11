@@ -28,7 +28,7 @@ public final class Logger {
 		try {
 			if (!GameConstants.DEBUG) {
 				globallogs
-						.write("[" + Utils.currentTime("hh:mm:ss z") + "]" + "" + name + " - " + ip + " [ " + o + " ]");
+						.write("[" + TextUtils.currentTime("hh:mm:ss z") + "]" + "" + name + " - " + ip + " [ " + o + " ]");
 				globallogs.newLine();
 				globallogs.flush();
 			}

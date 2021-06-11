@@ -15,6 +15,7 @@ import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 
 public abstract class Familiar extends NPC implements Serializable {
@@ -134,7 +135,7 @@ public abstract class Familiar extends NPC implements Serializable {
 		}
 		if (!getCombat().process()) {
 			if (isAgressive() && owner.getAttackedBy() != null && owner.getAttackedByDelay() > Utils.currentTimeMillis()
-					&& canAttack(owner.getAttackedBy()) && Utils.getRandom(25) == 0)
+					&& canAttack(owner.getAttackedBy()) && RandomUtils.random(25) == 0)
 				getCombat().setTarget(owner.getAttackedBy());
 			else
 				sendFollow();

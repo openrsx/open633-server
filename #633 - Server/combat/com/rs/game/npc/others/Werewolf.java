@@ -7,7 +7,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class Werewolf extends NPC {
 
@@ -28,7 +28,7 @@ public class Werewolf extends NPC {
 	public void processNPC() {
 		if (isDead() || isCantInteract())
 			return;
-		if (getCombat().underCombat() && getId() == realId && Utils.random(5) == 0) {
+		if (getCombat().underCombat() && getId() == realId && RandomUtils.random(5) == 0) {
 			final Entity target = getCombat().getTarget();
 			if (!hasWolfbane(target)) {
 				setNextAnimation(new Animation(6554));

@@ -10,7 +10,7 @@ import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 import skills.Skills;
 
@@ -54,7 +54,7 @@ public abstract class MobCombatInterface {
 			probability = 0.05;
 		if (probability < Math.random())
 			return 0;
-		return Utils.getRandom(maxHit);
+		return RandomUtils.random(maxHit);
 	}
 	
 	public static Hit getRangeHit(NPC npc, int damage) {

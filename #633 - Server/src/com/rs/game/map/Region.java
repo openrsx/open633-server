@@ -17,7 +17,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.utilities.Logger;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.json.GsonHandler;
 import com.rs.utilities.json.impl.NPCAutoSpawn;
 import com.rs.utilities.json.impl.ObjectSpawnLoader;
@@ -700,7 +700,7 @@ public class Region {
 			return -1;
 		if (musicIds.length == 1)
 			return musicIds[0];
-		return musicIds[Utils.getRandom(musicIds.length - 1)];
+		return musicIds[RandomUtils.random(musicIds.length - 1)];
 	}
 
 	public int getLoadMapStage() {

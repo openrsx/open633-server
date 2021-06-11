@@ -4,10 +4,13 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import lombok.Data;
+
 /**
  * A single link within a {@link LinkedTaskSequence}.
  * @author lare96 <http://github.org/lare96>
  */
+@Data
 public abstract class LinkedTask {
 	
 	/**
@@ -52,20 +55,4 @@ public abstract class LinkedTask {
 	 * issues depending on the contents of this link.
 	 */
 	public abstract void execute();
-	
-	/**
-	 * Gets the name of this link.
-	 * @return the name of this link.
-	 */
-	public final String getName() {
-		return name;
-	}
-	
-	/**
-	 * Gets the delay of this link.
-	 * @return the delay of this link.
-	 */
-	public final int getDelay() {
-		return delay;
-	}
 }

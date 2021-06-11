@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import com.rs.game.Entity;
 import com.rs.game.Hit;
 import com.rs.game.Hit.HitLook;
-import com.rs.game.npc.NPC;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
+import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class DarkEnergyCore extends NPC {
 
@@ -42,7 +42,7 @@ public class DarkEnergyCore extends NPC {
 					beast.removeDarkEnergyCore();
 					return;
 				}
-				target = possibleTarget.get(Utils.getRandom(possibleTarget.size() - 1));
+				target = possibleTarget.get(RandomUtils.random(possibleTarget.size() - 1));
 				safeForceMoveTile(new WorldTile(target));
 				World.sendProjectile(this, this, target, 1828, 0, 0, 40, 40, 20, 0);
 			}
@@ -53,8 +53,8 @@ public class DarkEnergyCore extends NPC {
 			changeTarget = 5;
 			return;
 		}
-		int damage = Utils.getRandom(50) + 50;
-		target.applyHit(new Hit(this, Utils.random(1, 131), HitLook.MAGIC_DAMAGE));
+		int damage = RandomUtils.random(50) + 50;
+		target.applyHit(new Hit(this, RandomUtils.random(1, 131), HitLook.MAGIC_DAMAGE));
 		beast.heal(damage);
 		delay = isPoisoned() ? 10 : 3;
 		if (target instanceof Player) {

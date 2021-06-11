@@ -3,7 +3,6 @@ package skills.fishing;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.utilities.RandomUtils;
-import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
@@ -20,7 +19,7 @@ public enum Tool {
 	BIG_NET(305, 16, -1, 0.50, 620, new Catchable[]{Catchable.MACKEREL, Catchable.COD, Catchable.BASS, Catchable.CASKET, Catchable.LEATHER_BOOTS, Catchable.LEATHER_GLOVES, Catchable.OYSTER, Catchable.SEAWEED, Catchable.ROCKTAIL}) {
 		@Override
 		public Item[] onCatch(Player player) {
-			int amount = Utils.inclusive(1, 3);
+			int amount = RandomUtils.inclusive(1, 3);
 			int slots = player.getInventory().getFreeSlots();
 			if(amount > slots)
 				amount = slots;

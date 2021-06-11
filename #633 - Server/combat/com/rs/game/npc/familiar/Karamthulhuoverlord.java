@@ -10,7 +10,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class Karamthulhuoverlord extends Familiar {
 
@@ -58,7 +58,7 @@ public class Karamthulhuoverlord extends Familiar {
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {
-				target.applyHit(new Hit(getOwner(), Utils.getRandom(163), HitLook.MAGIC_DAMAGE));
+				target.applyHit(new Hit(getOwner(), RandomUtils.random(163), HitLook.MAGIC_DAMAGE));
 				target.setNextGraphics(new Graphics(1480));
 				this.cancel();
 			}

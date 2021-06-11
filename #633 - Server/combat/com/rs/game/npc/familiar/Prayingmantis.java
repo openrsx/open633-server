@@ -10,7 +10,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class Prayingmantis extends Familiar {
 
@@ -53,7 +53,7 @@ public class Prayingmantis extends Familiar {
 		getOwner().setNextAnimation(new Animation(7660));
 		setNextAnimation(new Animation(8071));
 		setNextGraphics(new Graphics(1422));
-		final int hitDamage = Utils.random(170);
+		final int hitDamage = RandomUtils.random(170);
 		if (hitDamage > 0) {
 			if (target instanceof Player)
 				((Player) target).getPrayer().drainPrayer(hitDamage);

@@ -43,6 +43,7 @@ import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.game.task.Task;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 import com.rs.utilities.loaders.MapAreas;
 import com.rs.utilities.loaders.NPCBonuses;
@@ -433,7 +434,7 @@ public class NPC extends Entity {
 		}
 		ArrayList<Entity> possibleTarget = getPossibleTargets();
 		if (!possibleTarget.isEmpty()) {
-			Entity target = possibleTarget.get(Utils.random(possibleTarget.size()));
+			Entity target = possibleTarget.get(RandomUtils.random(possibleTarget.size()));
 			setTarget(target);
 			target.setAttackedBy(target);
 			target.setFindTargetDelay(Utils.currentTimeMillis() + 10000);

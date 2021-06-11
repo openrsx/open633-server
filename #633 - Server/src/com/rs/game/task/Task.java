@@ -4,10 +4,13 @@ import java.util.Optional;
 
 import com.rs.game.World;
 
+import lombok.Data;
+
 /**
  * An abstraction model that contains functions that enable units of work to be carried out in cyclic intervals.
  * @author lare96 <http://github.org/lare96>
  */
+@Data
 public abstract class Task {
 	
 	/**
@@ -134,55 +137,5 @@ public abstract class Task {
 	public Task attach(Object newKey) {
 		key = Optional.ofNullable(newKey);
 		return this;
-	}
-	
-	/**
-	 * @return {@code true} if this {@code Task} executes upon being submitted, {@code false} otherwise.
-	 */
-	public boolean isInstant() {
-		return instant;
-	}
-	
-	/**
-	 * Gets the counter of this task.
-	 * @return the counter.
-	 */
-	public int getCounter() {
-		return counter;
-	}
-	
-	/**
-	 * @return The dynamic delay of this {@code Task}.
-	 */
-	public int getDelay() {
-		return delay;
-	}
-	
-	/**
-	 * Sets the delay of this {@code Task} to {@code delay}.
-	 */
-	public void setDelay(int delay) {
-		this.delay = delay;
-	}
-	
-	/**
-	 * @return {@code true} if this {@code Task} is running, {@code false} otherwise.
-	 */
-	public boolean isRunning() {
-		return running;
-	}
-	
-	/**
-	 * Sets the running flag for this {@link Task}.
-	 */
-	public void setRunning(boolean running) {
-		this.running = running;
-	}
-	
-	/**
-	 * @return The attachment for this {@code Task} instance.
-	 */
-	Optional<Object> getAttachment() {
-		return key;
 	}
 }

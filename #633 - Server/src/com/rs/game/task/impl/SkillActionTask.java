@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
 
+import lombok.Getter;
 import skills.SkillHandler;
 
 public final class SkillActionTask extends Task {
@@ -17,6 +18,7 @@ public final class SkillActionTask extends Task {
 	/**
 	 * The skill action we're currently handling.
 	 */
+	@Getter
 	private final SkillHandler action;
 	
 	/**
@@ -122,9 +124,5 @@ public final class SkillActionTask extends Task {
 			action.onStop();
 		}
 		player.setSkillAction(Optional.empty());
-	}
-	
-	public final SkillHandler getAction() {
-		return action;
 	}
 }

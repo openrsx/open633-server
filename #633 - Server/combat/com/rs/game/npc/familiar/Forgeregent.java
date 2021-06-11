@@ -12,7 +12,7 @@ import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
 import com.rs.plugin.RSInterfaceDispatcher;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class Forgeregent extends Familiar {
 
@@ -72,7 +72,7 @@ public class Forgeregent extends Familiar {
 					}
 				}
 				target.setNextGraphics(new Graphics(1393));
-				target.applyHit(new Hit(getOwner(), Utils.random(200), HitLook.MELEE_DAMAGE));
+				target.applyHit(new Hit(getOwner(), RandomUtils.random(200), HitLook.MELEE_DAMAGE));
 				this.cancel();
 			}
 		});

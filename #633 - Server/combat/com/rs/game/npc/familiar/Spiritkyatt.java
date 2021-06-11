@@ -10,7 +10,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class Spiritkyatt extends Familiar {
 
@@ -58,7 +58,7 @@ public class Spiritkyatt extends Familiar {
 		World.get().submit(new Task(1) {
 			@Override
 			protected void execute() {
-				target.applyHit(new Hit(getOwner(), Utils.random(321), HitLook.MAGIC_DAMAGE));
+				target.applyHit(new Hit(getOwner(), RandomUtils.random(321), HitLook.MAGIC_DAMAGE));
 				this.cancel();
 			}
 		});

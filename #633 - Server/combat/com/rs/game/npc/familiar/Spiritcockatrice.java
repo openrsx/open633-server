@@ -11,7 +11,7 @@ import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 import skills.Skills;
 
@@ -82,7 +82,7 @@ public class Spiritcockatrice extends Familiar {
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {
-				target.applyHit(new Hit(getOwner(), Utils.random(100), HitLook.MELEE_DAMAGE));
+				target.applyHit(new Hit(getOwner(), RandomUtils.random(100), HitLook.MELEE_DAMAGE));
 				this.cancel();
 			}
 		});

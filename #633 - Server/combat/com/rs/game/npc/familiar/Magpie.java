@@ -9,7 +9,7 @@ import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
 import com.rs.net.encoders.other.ForceTalk;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 import skills.Skills;
 
@@ -33,7 +33,7 @@ public class Magpie extends Familiar {
 		else
 			theivingTicks++;
 		if (theivingTicks == 30) {
-			getBob().getBeastItems().add(new Item(RANDOM_ITEMS[Utils.random(RANDOM_ITEMS.length)], 1));
+			getBob().getBeastItems().add(new Item(RANDOM_ITEMS[RandomUtils.random(RANDOM_ITEMS.length)], 1));
 			theivingTicks = 0;
 		} else if (theivingTicks % 50 == 0)
 			setNextForceTalk(new ForceTalk("*Tweet*"));

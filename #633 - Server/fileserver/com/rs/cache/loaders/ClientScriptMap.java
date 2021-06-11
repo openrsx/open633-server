@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
+import com.rs.utilities.TextUtils;
 import com.rs.utilities.Utils;
 import com.rs.utilities.loaders.MusicHints;
 
@@ -138,9 +139,9 @@ public final class ClientScriptMap {
 
 	private void readValues(InputStream stream, int opcode) {
 		if (opcode == 1)
-			aChar6337 = Utils.method2782((byte) stream.readByte());
+			aChar6337 = TextUtils.method2782((byte) stream.readByte());
 		else if (opcode == 2)
-			aChar6345 = Utils.method2782((byte) stream.readByte());
+			aChar6345 = TextUtils.method2782((byte) stream.readByte());
 		else if (opcode == 3)
 			defaultStringValue = stream.readString();
 		else if (opcode == 4)

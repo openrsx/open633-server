@@ -6,7 +6,7 @@ import com.rs.game.Hit.HitLook;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class Bloatedleech extends Familiar {
 
@@ -45,7 +45,7 @@ public class Bloatedleech extends Familiar {
 	@Override
 	public boolean submitSpecial(Object object) {
 		Player player = (Player) object;
-		final int damage = Utils.random(100) + 50;
+		final int damage = RandomUtils.random(100) + 50;
 		if (player.getHitpoints() - damage <= 0) {
 			player.getPackets().sendGameMessage("You don't have enough life points to use this special.");
 			return false;

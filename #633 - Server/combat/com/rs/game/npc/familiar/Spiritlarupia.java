@@ -10,7 +10,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 import skills.Skills;
 
@@ -52,7 +52,7 @@ public class Spiritlarupia extends Familiar {
 	public boolean submitSpecial(Object object) {
 		final Entity target = (Entity) object;
 		Player player = getOwner();
-		final int damage = Utils.getRandom(107);
+		final int damage = RandomUtils.random(107);
 		setNextGraphics(new Graphics(1370));
 		setNextAnimation(new Animation(7919));
 		player.setNextAnimation(new Animation(7660));

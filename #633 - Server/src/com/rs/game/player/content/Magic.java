@@ -16,6 +16,7 @@ import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.task.Task;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 
 import skills.Skills;
@@ -736,7 +737,7 @@ public class Magic {
 				continue;
 			else if (hasSpecialRunes(player, runeId, amount))
 				continue;
-			else if (hasStaffOfLight(weaponId) && Utils.getRandom(8) == 0 && runeId != 21773)// 1
+			else if (hasStaffOfLight(weaponId) && RandomUtils.random(8) == 0 && runeId != 21773)// 1
 				// in
 				// eight
 				// chance

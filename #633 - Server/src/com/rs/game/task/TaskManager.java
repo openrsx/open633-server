@@ -67,7 +67,7 @@ public final class TaskManager {
 	 */
 	public void cancel(Object attachment) {
 		for(Task tasks : tasks) {
-			if(Objects.equals(attachment, tasks.getAttachment()))
+			if(Objects.equals(attachment, tasks.getKey()))
 				tasks.cancel();
 		}
 	}

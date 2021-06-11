@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import com.rs.game.WorldTile;
 import com.rs.utilities.Logger;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 
 import lombok.Synchronized;
@@ -62,7 +63,7 @@ public final class MapAreas {
 	@Synchronized("lock")
 	public static final int getRandomAreaHash() {
 		while (true) {
-			long id = Utils.getRandom(Integer.MAX_VALUE) + Utils.getRandom(Integer.MAX_VALUE);
+			long id = RandomUtils.random(Integer.MAX_VALUE) + RandomUtils.random(Integer.MAX_VALUE);
 			id -= Integer.MIN_VALUE;
 			if (id != -1 && !mapAreas.containsKey((int) id))
 				return (int) id;

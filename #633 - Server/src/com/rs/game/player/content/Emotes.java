@@ -146,10 +146,6 @@ public class Emotes {
 	    public void setNextEmoteEnd(Player player, long delay) {
 	    	player.setNextEmoteEnd(Utils.currentTimeMillis() + delay);
 	    }
-	    
-	    public long getNextEmoteEnd(Player player) {
-	    	return player.getNextEmoteEnd();
-	    }
 
 	    public static boolean isDoingEmote(Player player) {
 	    	return player.getNextEmoteEnd() >= Utils.currentTimeMillis();
