@@ -27,7 +27,7 @@ public abstract class MobCombatInterface {
 						: attackStyle == NPCCombatDefinitions.MAGE ? bonuses[CombatDefinitions.MAGIC_ATTACK]
 								: bonuses[CombatDefinitions.STAB_ATTACK];
 		double defence;
-		if (target instanceof Player) {
+		if (target.isPlayer()) {
 			Player targetPlayer = (Player) target;
 			defence = targetPlayer.getSkills().getLevel(Skills.DEFENCE)
 					+ (2 * targetPlayer.getCombatDefinitions().getBonuses()[attackStyle == NPCCombatDefinitions.RANGE
@@ -84,7 +84,7 @@ public abstract class MobCombatInterface {
 						return;
 					target.applyHit(hit);
 					npc.getCombat().doDefenceEmote(target);
-					if (target instanceof Player) {
+					if (target.isPlayer()) {
 						Player targetPlayer = (Player) target;
 						targetPlayer.getInterfaceManager().closeInterfaces();
 						if (targetPlayer.getCombatDefinitions().isAutoRelatie() && !targetPlayer.getActionManager().hasSkillWorking()

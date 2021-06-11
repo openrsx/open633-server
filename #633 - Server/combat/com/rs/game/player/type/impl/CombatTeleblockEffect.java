@@ -19,7 +19,7 @@ public final class CombatTeleblockEffect extends CombatEffect {
 	
 	@Override
 	public boolean apply(Entity c) {
-		if(c instanceof Player) {
+		if(c.isPlayer()) {
 			Player player = (Player) c;
 			if(player.getDetails().getTeleBlockDelay().get() > 0) {
 				return false;
@@ -34,7 +34,7 @@ public final class CombatTeleblockEffect extends CombatEffect {
 	
 	@Override
 	public boolean removeOn(Entity c) {
-		if(c instanceof Player) {
+		if(c.isPlayer()) {
 			Player player = (Player) c;
 			if(player.getDetails().getTeleBlockDelay().get() <= 0) {
 				player.getPackets().sendGameMessage("You feel the effects of the teleblock spell go away.");
@@ -47,7 +47,7 @@ public final class CombatTeleblockEffect extends CombatEffect {
 	
 	@Override
 	public void process(Entity c) {
-		if(c instanceof Player) {
+		if(c.isPlayer()) {
 			Player player = (Player) c;
 			player.getDetails().getTeleBlockDelay().decrementAndGet(50, 0);
 		}
@@ -55,7 +55,7 @@ public final class CombatTeleblockEffect extends CombatEffect {
 	
 	@Override
 	public boolean onLogin(Entity c) {
-		if(c instanceof Player) {
+		if(c.isPlayer()) {
 			Player player = (Player) c;
 			if(player.getDetails().getTeleBlockDelay().get() > 0)
 				return true;

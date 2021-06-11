@@ -76,9 +76,8 @@ public abstract class ActorDeathTask<T extends Entity> extends Task {
 	@Override
 	public final void onException(Exception e) {
 		e.printStackTrace();
-		if(getActor() instanceof Player) {
+		if(getActor().isPlayer()) {
 			Player player = (Player) getActor();
-//			World.get().queueLogout(player);
 			player.logout(false);
 		} else {
 			World.removeNPC((NPC) getActor());

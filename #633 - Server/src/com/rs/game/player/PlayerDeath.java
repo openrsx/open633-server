@@ -58,7 +58,7 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 		getActor().getPrayer().closeAllPrayers();
 		getActor().setRunEnergy(100);
 		
-		if (getActor() instanceof Player) {
+		if (getActor().isPlayer()) {
 			Player killer = (Player) getActor();
 			killer.setAttackedByDelay(4);
 			if(HostManager.same(getActor(), killer)) {

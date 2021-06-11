@@ -437,7 +437,7 @@ public final class WorldPacketsDecoder extends Decoder {
 										.sendGameMessage(
 												"That "
 														+ (player
-																.getAttackedBy() instanceof Player ? "player"
+																.getAttackedBy().isPlayer() ? "player"
 																: "npc")
 														+ " is already in combat.");
 								return;
@@ -516,7 +516,7 @@ public final class WorldPacketsDecoder extends Decoder {
 										.sendGameMessage(
 												"That "
 														+ (player
-																.getAttackedBy() instanceof Player ? "player"
+																.getAttackedBy().isPlayer() ? "player"
 																: "npc")
 														+ " is already in combat.");
 								return;

@@ -235,7 +235,7 @@ public class Prayer {
 	}
 
 	public void increaseTurmoilBonus(Entity entity) {
-		if (entity instanceof Player) {
+		if (entity.isPlayer()) {
 			Player p2 = (Player) entity;
 			leechBonuses[8] = (int) ((100 * Math.floor(0.15 * p2.getSkills()
 					.getLevelForXp(Skills.ATTACK))) / p2.getSkills()

@@ -14,7 +14,7 @@ public class Kurask extends NPC {
 
 	@Override
 	public void handleIngoingHit(Hit hit) {
-		if (hit.getSource() instanceof Player) {
+		if (hit.getSource().isPlayer()) {
 			Player player = (Player) hit.getSource();
 			if (!(player.getEquipment().getWeaponId() == 13290 || player.getEquipment().getWeaponId() == 4158)
 					&& !(PlayerCombat.isRanging(player) == 2 && (player.getEquipment().getAmmoId() == 13280

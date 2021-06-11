@@ -82,7 +82,7 @@ public class Wilderness extends Controller {
 
 	@Override
 	public boolean canAttack(Entity target) {
-		if (target instanceof Player) {
+		if (target.isPlayer()) {
 			Player p2 = (Player) target;
 			if (player.isCanPvp() && !p2.isCanPvp()) {
 				player.getPackets().sendGameMessage("That player is not in the wilderness.");

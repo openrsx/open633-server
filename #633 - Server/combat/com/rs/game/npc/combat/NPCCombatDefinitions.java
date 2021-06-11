@@ -61,7 +61,7 @@ public class NPCCombatDefinitions {
 				&& hit.getLook() != HitLook.MAGIC_DAMAGE)
 			return;
 		Entity source = hit.getSource();
-		if (source instanceof Player) {
+		if (source.isPlayer()) {
 			final Player p2 = (Player) source;
 			if (p2.getPrayer().hasPrayersOn()) {
 				if (p2.getPrayer().usingPrayer(1, 18))

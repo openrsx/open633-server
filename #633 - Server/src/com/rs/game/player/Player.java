@@ -13,6 +13,7 @@ import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
 import com.rs.cores.WorldThread;
 import com.rs.game.Entity;
+import com.rs.game.EntityType;
 import com.rs.game.HintIconsManager;
 import com.rs.game.Hit;
 import com.rs.game.World;
@@ -134,7 +135,7 @@ public class Player extends Entity {
 
 	// creates Player and saved classes
 	public Player(String password) {
-		super(GameConstants.START_PLAYER_LOCATION);
+		super(GameConstants.START_PLAYER_LOCATION, EntityType.PLAYER);
 		setHitpoints(100);
 		appearance = new Appearance();
 		inventory = new Inventory();

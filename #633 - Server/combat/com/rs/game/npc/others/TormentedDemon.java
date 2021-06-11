@@ -80,7 +80,7 @@ public final class TormentedDemon extends NPC {
 	@Override
 	public void handleIngoingHit(final Hit hit) {
 		super.handleIngoingHit(hit);
-		if (hit.getSource() instanceof Player) {// darklight
+		if (hit.getSource().isPlayer()) {// darklight
 			Player player = (Player) hit.getSource();
 			if ((player.getEquipment().getWeaponId() == 6746 || player.getEquipment().getWeaponId() == 2402)
 					&& hit.getLook() == HitLook.MELEE_DAMAGE && hit.getDamage() > 0) {

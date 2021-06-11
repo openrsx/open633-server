@@ -19,7 +19,7 @@ public final class CombatSkullEffect extends CombatEffect {
 	
 	@Override
 	public boolean apply(Entity entity) {
-		if(entity instanceof Player) {
+		if(entity.isPlayer()) {
 			Player player = (Player) entity;
 			if(player.getDetails().getSkullTimer().get() > 0) {
 				return false;
@@ -34,7 +34,7 @@ public final class CombatSkullEffect extends CombatEffect {
 	
 	@Override
 	public boolean removeOn(Entity entity) {
-		if(entity instanceof Player) {
+		if(entity.isPlayer()) {
 			Player player = (Player) entity;
 			if(player.getDetails().getSkullTimer().get() <= 0) {
 				player.getDetails().setSkullId(NO_SKULL);
@@ -48,7 +48,7 @@ public final class CombatSkullEffect extends CombatEffect {
 	
 	@Override
 	public void process(Entity entity) {
-		if(entity instanceof Player) {
+		if(entity.isPlayer()) {
 			Player player = (Player) entity;
 			player.getDetails().getSkullTimer().decrementAndGet(50, 0);
 		}
@@ -56,7 +56,7 @@ public final class CombatSkullEffect extends CombatEffect {
 	
 	@Override
 	public boolean onLogin(Entity entity) {
-		if(entity instanceof Player) {
+		if(entity.isPlayer()) {
 			Player player = (Player) entity;
 			if(player.getDetails().getSkullTimer().get() > 0) {
 				player.getDetails().setSkullId(WHITE_SKULL);

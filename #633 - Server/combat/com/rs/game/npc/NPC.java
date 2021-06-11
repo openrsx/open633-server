@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.game.Entity;
+import com.rs.game.EntityType;
 import com.rs.game.Graphics;
 import com.rs.game.Hit;
 import com.rs.game.World;
@@ -99,7 +100,7 @@ public class NPC extends Entity {
 	 * creates and adds npc
 	 */
 	public NPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
-		super(tile);
+		super(tile, EntityType.NPC);
 		this.id = id;
 		this.respawnTile = new WorldTile(tile);
 		this.mapAreaNameHash = mapAreaNameHash;

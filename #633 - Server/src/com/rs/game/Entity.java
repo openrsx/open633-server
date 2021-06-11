@@ -1,5 +1,7 @@
 package com.rs.game;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
+import com.google.common.base.Preconditions;
 import com.rs.GameConstants;
 import com.rs.cache.loaders.AnimationDefinitions;
 import com.rs.cache.loaders.ObjectDefinitions;
@@ -95,8 +99,9 @@ public abstract class Entity extends WorldTile {
 	private boolean run;
 
 	// creates Entity and saved classes
-	public Entity(WorldTile tile) {
+	public Entity(WorldTile tile, EntityType type) {
 		super(tile);
+		this.type = requireNonNull(type);
 	}
 
 	@Override
@@ -128,7 +133,7 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public int getClientIndex() {
-		return index + (this instanceof Player ? 32768 : 0);
+		return index + (isPlayer() ? 32768 : 0);
 	}
 
 	public void applyHit(Hit hit) {
@@ -202,7 +207,7 @@ public abstract class Entity extends WorldTile {
 		setHitpoints(hitpoints - hit.getDamage());
 		if (hitpoints <= 0)
 			sendDeath(hit.getSource());
-		else if (this instanceof Player) {
+		else if (isPlayer()) {
 			Player player = (Player) this;
 			if (player.getEquipment().getRingId() == 2550) {
 				if (hit.getSource() != null && hit.getSource() != player && hit.getDamage() > 10)
@@ -248,7 +253,7 @@ public abstract class Entity extends WorldTile {
 		Player player = null;
 		int damage = -1;
 		for (Entity source : receivedDamage.keySet()) {
-			if (!(source instanceof Player))
+			if (!(source.isPlayer()))
 				continue;
 			Integer d = receivedDamage.get(source);
 			if (d == null || source.isFinished()) {
@@ -333,12 +338,12 @@ public abstract class Entity extends WorldTile {
 			setLocation(nextWorldTile);
 			nextWorldTile = null;
 			teleported = true;
-			if (this instanceof Player && ((Player) this).getTemporaryMovementType() == -1)
+			if (isPlayer() && ((Player) this).getTemporaryMovementType() == -1)
 				((Player) this).setTemporaryMovementType(Player.TELE_MOVE_TYPE);
 			updateEntityRegion(this);
 			if (needMapUpdate())
 				loadMapRegions();
-			else if (this instanceof Player && lastPlane != getPlane())
+			else if (isPlayer() && lastPlane != getPlane())
 				((Player) this).setClientLoadedMapRegion(false);
 			resetWalkSteps();
 			return;
@@ -352,18 +357,18 @@ public abstract class Entity extends WorldTile {
 //					.currentTimeMillis())
 //				return;
 //		}
-		if (this instanceof Player && ((Player) this).getDetails().getRunEnergy() <= 0)
+		if (isPlayer() && ((Player) this).getDetails().getRunEnergy() <= 0)
 			setRun(false);
 		for (int stepCount = 0; stepCount < (run ? 2 : 1); stepCount++) {
 			Object[] nextStep = getNextWalkStep();
 			if (nextStep == null) {
-				if (stepCount == 1 && this instanceof Player)
+				if (stepCount == 1 && isPlayer())
 					((Player) this).setTemporaryMovementType(Player.WALK_MOVE_TYPE);
 				break;
 			}
 			int dir = (int) nextStep[0];
 			if (((boolean) nextStep[3] && !World.checkWalkStep(getPlane(), getX(), getY(), dir, getSize()))
-					|| (this instanceof Player && !((Player) this).getControllerManager().canMove(dir))) {
+					|| (isPlayer() && !((Player) this).getControllerManager().canMove(dir))) {
 				resetWalkSteps();
 				break;
 			}
@@ -371,7 +376,7 @@ public abstract class Entity extends WorldTile {
 				nextWalkDirection = (byte) dir;
 			} else {
 				nextRunDirection = (byte) dir;
-				if (this instanceof Player)
+				if (isPlayer())
 					((Player) this).drainRunEnergy();
 			}
 			moveLocation(Utils.DIRECTION_DELTA_X[dir], Utils.DIRECTION_DELTA_Y[dir], 0);
@@ -730,7 +735,7 @@ public abstract class Entity extends WorldTile {
 																					// later to
 																					// only check when we want
 			return false;
-		if (this instanceof Player) {
+		if (isPlayer()) {
 			if (!((Player) this).getControllerManager().addWalkStep(lastX, lastY, nextX, nextY))
 				return false;
 		}
@@ -752,7 +757,7 @@ public abstract class Entity extends WorldTile {
 	public boolean restoreHitPoints() {
 		int maxHp = getMaxHitpoints();
 		if (hitpoints > maxHp) {
-			if (this instanceof Player) {
+			if (isPlayer()) {
 				Player player = (Player) this;
 				if (player.getPrayer().usingPrayer(1, 5) && Utils.getRandom(100) <= 15)
 					return false;
@@ -761,7 +766,7 @@ public abstract class Entity extends WorldTile {
 			return true;
 		} else if (hitpoints < maxHp) {
 			setHitpoints(hitpoints + 1);
-			if (this instanceof Player) {
+			if (isPlayer()) {
 				Player player = (Player) this;
 				if (player.getPrayer().usingPrayer(0, 9) && hitpoints < maxHp)
 					setHitpoints(hitpoints + 1);
@@ -824,7 +829,7 @@ public abstract class Entity extends WorldTile {
 		for (int xCalc = minRegionX < 0 ? 0 : minRegionX; xCalc <= ((chunkX + mapHash) / 8); xCalc++)
 			for (int yCalc = minRegionY < 0 ? 0 : minRegionY; yCalc <= ((chunkY + mapHash) / 8); yCalc++) {
 				int regionId = yCalc + (xCalc << 8);
-				if (World.getRegion(regionId, this instanceof Player) instanceof DynamicRegion)
+				if (World.getRegion(regionId, isPlayer()) instanceof DynamicRegion)
 					isAtDynamicRegion = true;
 				mapRegionsIds.add(regionId);
 			}
@@ -934,7 +939,7 @@ public abstract class Entity extends WorldTile {
 	public void addFreezeDelay(long time, boolean entangleMessage) {
 		long currentTime = Utils.currentTimeMillis();
 		if (currentTime > freezeDelay) {
-			if (this instanceof Player) {
+			if (isPlayer()) {
 				Player p = (Player) this;
 				if (!entangleMessage)
 					p.getPackets().sendGameMessage("You have been frozen.");
@@ -1139,7 +1144,7 @@ public abstract class Entity extends WorldTile {
 	 */
 	public void poison(PoisonType type) {
 		poisonType = type;
-		if (this instanceof Player) {
+		if (isPlayer()) {
 			Player player = (Player) this;
 			player.getPackets().sendGameMessage("You have been poisoned!");
 		}
@@ -1148,7 +1153,7 @@ public abstract class Entity extends WorldTile {
 
 	public final void updateEntityRegion(Entity entity) {
 		if (entity.isFinished()) {
-			if (entity instanceof Player)
+			if (isPlayer())
 				World.getRegion(entity.getLastRegionId()).removePlayerIndex(entity.getIndex());
 			else
 				World.getRegion(entity.getLastRegionId()).removeNPCIndex(entity.getIndex());
@@ -1157,7 +1162,7 @@ public abstract class Entity extends WorldTile {
 		short regionId = (short) entity.getRegionId();
 		if (entity.getLastRegionId() != regionId) { // map region entity at
 			// changed
-			if (entity instanceof Player) {
+			if (isPlayer()) {
 				if (entity.getLastRegionId() > 0)
 					World.getRegion(entity.getLastRegionId()).removePlayerIndex(entity.getIndex());
 				Region region = World.getRegion(regionId);
@@ -1177,7 +1182,7 @@ public abstract class Entity extends WorldTile {
 			entity.checkMultiArea();
 			entity.setLastRegionId(regionId);
 		} else {
-			if (entity instanceof Player) {
+			if (isPlayer()) {
 				Player player = (Player) entity;
 				player.getControllerManager().moved();
 				if (player.isStarted())
@@ -1214,5 +1219,67 @@ public abstract class Entity extends WorldTile {
 			setNextWorldTile(new WorldTile(desination.getX() + Utils.DIRECTION_DELTA_X[dir],
 					desination.getY() + Utils.DIRECTION_DELTA_Y[dir], desination.getPlane()));
 		}
+	}
+	
+	/**
+	 * The type of node that this node is.
+	 */
+	private final EntityType type;
+	
+	/**
+	 * Determines if this entity is a {@link Player}.
+	 * @return {@code true} if this entity is a {@link Player}, {@code false}
+	 * otherwise.
+	 */
+	public final boolean isPlayer() {
+		return getType() == EntityType.PLAYER;
+	}
+	
+	/**
+	 * Executes the specified action if the underlying node is a player.
+	 * @param action the action to execute.
+	 */
+	public final void ifPlayer(Consumer<Player> action) {
+		if(!this.isPlayer()) {
+			return;
+		}
+		action.accept(this.toPlayer());
+	}
+	
+	/**
+	 * Casts the {@link Actor} to a {@link Player}.
+	 * @return an instance of this {@link Actor} as a {@link Player}.
+	 */
+	public final Player toPlayer() {
+		Preconditions.checkArgument(isPlayer(), "Cannot cast this entity to player.");
+		return (Player) this;
+	}
+	
+	/**
+	 * Determines if this entity is a {@link Mob}.
+	 * @return {@code true} if this entity is a {@link Mob}, {@code false}
+	 * otherwise.
+	 */
+	public final boolean isNPC() {
+		return getType() == EntityType.NPC;
+	}
+	
+	/**
+	 * Executes the specified action if the underlying node is a player.
+	 * @param action the action to execute.
+	 */
+	public final void ifNpc(Consumer<NPC> action) {
+		if(!this.isNPC())
+			return;
+		action.accept(this.toNPC());
+	}
+	
+	/**
+	 * Casts the {@link Actor} to a {@link Mob}.
+	 * @return an instance of this {@link Actor} as a {@link Mob}.
+	 */
+	public final NPC toNPC() {
+		Preconditions.checkArgument(isNPC(), "Cannot cast this entity to npc.");
+		return (NPC) this;
 	}
 }

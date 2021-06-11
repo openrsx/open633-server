@@ -438,7 +438,7 @@ public class Magic {
 		// doesnt stop what u doing on rs
 		switch (spellId) {
 		case 42:
-			if (!(target instanceof Player))
+			if (!(target.isPlayer()))
 				return;
 			if (player.getSkills().getLevel(Skills.MAGIC) < 93) {
 				player.getPackets().sendGameMessage("Your Magic level is not high enough for this spell.");

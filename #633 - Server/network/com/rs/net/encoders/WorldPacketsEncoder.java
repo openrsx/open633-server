@@ -708,7 +708,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeByte(dst.getX() - src.getX());
 		stream.writeByte(dst.getY() - src.getY());
 		stream.writeShort(
-				lockOn == null ? 0 : (lockOn instanceof Player ? -(lockOn.getIndex() + 1) : lockOn.getIndex() + 1));
+				lockOn == null ? 0 : (lockOn.isPlayer() ? -(lockOn.getIndex() + 1) : lockOn.getIndex() + 1));
 		stream.writeShort(gfxId);
 		stream.writeByte(startHeight);
 		stream.writeByte(endHeight);
@@ -796,10 +796,10 @@ public class WorldPacketsEncoder extends Encoder {
 	public WorldPacketsEncoder sendGraphics(Graphics graphics, Object target) {
 		OutputStream stream = new OutputStream(13);
 		int hash = 0;
-		if (target instanceof Player) {
+		if (((Entity) target).isPlayer()) {
 			Player p = (Player) target;
 			hash = p.getIndex() & 0xffff | 1 << 28;
-		} else if (target instanceof NPC) {
+		} else if (((Entity) target).isNPC()) {
 			NPC n = (NPC) target;
 			hash = n.getIndex() & 0xffff | 1 << 29;
 		} else {

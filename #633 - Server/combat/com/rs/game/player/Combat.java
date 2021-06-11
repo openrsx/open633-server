@@ -98,7 +98,7 @@ public final class Combat {
 	}
 
 	public static boolean isUndead(Entity target) {
-		if (target instanceof Player)
+		if (target.isPlayer())
 			return false;
 		NPC npc = (NPC) target;
 		String name = npc.getDefinitions().getName().toLowerCase();

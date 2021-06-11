@@ -33,7 +33,7 @@ public class DragonCombat extends MobCombatInterface {
 			}
 		} else if (attackStyle == 1 || attackStyle == 2) {
 			int damage = Utils.getRandom(650);
-			final Player player = target instanceof Player ? (Player) target : null;
+			final Player player = target.isPlayer() ? (Player) target : null;
 			if (Combat.hasAntiDragProtection(target) || (player != null
 					&& (player.getPrayer().usingPrayer(0, 17) || player.getPrayer().usingPrayer(1, 7))))
 				damage = 0;
@@ -50,7 +50,7 @@ public class DragonCombat extends MobCombatInterface {
 
 		} else if (attackStyle == 3) {
 			int damage;
-			final Player player = target instanceof Player ? (Player) target : null;
+			final Player player = target.isPlayer() ? (Player) target : null;
 			if (Combat.hasAntiDragProtection(target)) {
 				damage = getRandomMaxHit(npc, 164, NPCCombatDefinitions.MAGE, target);
 				if (player != null)
@@ -74,7 +74,7 @@ public class DragonCombat extends MobCombatInterface {
 			npc.setNextAnimation(new Animation(81));
 		} else if (attackStyle == 4) {
 			int damage;
-			final Player player = target instanceof Player ? (Player) target : null;
+			final Player player = target.isPlayer() ? (Player) target : null;
 			if (Combat.hasAntiDragProtection(target)) {
 				damage = getRandomMaxHit(npc, 164, NPCCombatDefinitions.MAGE, target);
 				if (player != null)
@@ -103,7 +103,7 @@ public class DragonCombat extends MobCombatInterface {
 			npc.setNextAnimation(new Animation(81));
 		} else {
 			int damage;
-			final Player player = target instanceof Player ? (Player) target : null;
+			final Player player = target.isPlayer() ? (Player) target : null;
 			if (Combat.hasAntiDragProtection(target)) {
 				damage = getRandomMaxHit(npc, 164, NPCCombatDefinitions.MAGE, target);
 				if (player != null)
