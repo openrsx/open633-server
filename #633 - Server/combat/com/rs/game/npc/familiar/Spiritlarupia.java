@@ -59,9 +59,8 @@ public class Spiritlarupia extends Familiar {
 		player.setNextGraphics(new Graphics(1316));
 		World.sendProjectile(this, target, 1371, 34, 16, 30, 35, 16, 0);
 		if (damage > 20)
-			if (target instanceof Player)
-				((Player) target).getSkills().set(Skills.STRENGTH,
-						((Player) target).getSkills().getLevel(Skills.STRENGTH) - (damage / 20));
+			target.ifPlayer(targetSelected -> targetSelected.getSkills().set(Skills.STRENGTH,
+						targetSelected.getSkills().getLevel(Skills.STRENGTH) - (damage / 20)));
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {

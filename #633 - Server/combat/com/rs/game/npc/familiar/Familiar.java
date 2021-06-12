@@ -143,11 +143,10 @@ public abstract class Familiar extends NPC implements Serializable {
 	}
 
 	public boolean canAttack(Entity target) {
-		if (target instanceof Player) {
-			Player player = (Player) target;
-			if (!owner.isCanPvp() || !player.isCanPvp())
-				return false;
-		}
+		target.ifPlayer(targetPlayer -> {
+			if (!owner.isCanPvp() || !targetPlayer.isCanPvp())
+				return;
+		});
 		return !target.isDead()
 				&& ((owner.isMultiArea() && isMultiArea() && target.isMultiArea())
 						|| (owner.isForceMultiArea() && target.isForceMultiArea()))

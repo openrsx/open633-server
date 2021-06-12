@@ -19,7 +19,7 @@ public class Werewolf extends NPC {
 	}
 
 	public boolean hasWolfbane(Entity target) {
-		if (target instanceof NPC)
+		if (target.isNPC())
 			return false;
 		return ((Player) target).getEquipment().getWeaponId() == 2952;
 	}

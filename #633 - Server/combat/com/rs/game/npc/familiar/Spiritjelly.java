@@ -57,9 +57,7 @@ public class Spiritjelly extends Familiar {
 		player.setNextGraphics(new Graphics(1316));
 		World.sendProjectile(this, target, 1359, 34, 16, 30, 35, 16, 0);
 		if (damage > 20)
-			if (target instanceof Player)
-				((Player) target).getSkills().set(Skills.ATTACK,
-						((Player) target).getSkills().getLevel(Skills.ATTACK) - (damage / 20));
+			target.ifPlayer(targetSelected -> targetSelected.getSkills().set(Skills.ATTACK, targetSelected.getSkills().getLevel(Skills.ATTACK) - (damage / 20)));
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {

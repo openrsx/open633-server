@@ -54,10 +54,9 @@ public class Prayingmantis extends Familiar {
 		setNextAnimation(new Animation(8071));
 		setNextGraphics(new Graphics(1422));
 		final int hitDamage = RandomUtils.random(170);
-		if (hitDamage > 0) {
-			if (target instanceof Player)
-				((Player) target).getPrayer().drainPrayer(hitDamage);
-		}
+		if (hitDamage > 0) 
+			target.ifPlayer(player -> player.getPrayer().drainPrayer(hitDamage));
+		
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {

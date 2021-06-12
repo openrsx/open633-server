@@ -26,8 +26,7 @@ public class Bork extends NPC {
 		deadTime = System.currentTimeMillis() + (1000 * 60 * 60);
 		resetWalkSteps();
 		for (Entity e : getPossibleTargets()) {
-			if (e instanceof Player) {
-				final Player player = (Player) e;
+			e.ifPlayer(player -> {
 				player.getInterfaceManager().sendInterface(693);
 //				player.getDialogueManager().startDialogue("DagonHai", 7137, player, 1);
 				//TODO: Dialogue
@@ -38,7 +37,7 @@ public class Bork extends NPC {
 						this.cancel();
 					}
 				});
-			}
+			});
 		}
 		getCombat().removeTarget();
 		setNextAnimation(new Animation(getCombatDefinitions().getDeathAnim()));

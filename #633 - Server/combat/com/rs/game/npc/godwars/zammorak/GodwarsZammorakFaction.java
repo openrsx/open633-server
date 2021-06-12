@@ -29,7 +29,7 @@ public class GodwarsZammorakFaction extends NPC {
 			ArrayList<Entity> targets = getPossibleTargets(true, true);
 			ArrayList<Entity> targetsCleaned = new ArrayList<Entity>();
 			for (Entity t : targets) {
-				if (t instanceof GodwarsZammorakFaction || (t instanceof Player && hasGodItem((Player) t)))
+				if (t instanceof GodwarsZammorakFaction || (t.isPlayer() && hasGodItem((Player) t)))
 					continue;
 				targetsCleaned.add(t);
 			}
@@ -86,14 +86,13 @@ public class GodwarsZammorakFaction extends NPC {
 				if (loop == 0) {
 					setNextAnimation(new Animation(defs.getDeathAnim()));
 				} else if (loop >= defs.getDeathDelay()) {
-					if (source instanceof Player) {
-						Player player = (Player) source;
+					source.ifPlayer(player -> {
 						Controller controler = player.getControllerManager().getController();
 						if (controler != null && controler instanceof GodWars) {
 							GodWars godControler = (GodWars) controler;
 							godControler.incrementKillCount(3);
 						}
-					}
+					});
 					drop();
 					reset();
 					setLocation(getRespawnTile());

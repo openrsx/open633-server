@@ -24,6 +24,7 @@ import com.rs.game.minigames.duel.DuelRules;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.actions.ActionManager;
+import com.rs.game.player.content.Emotes.Emote;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.MusicsManager;
 import com.rs.game.player.content.Notes;
@@ -447,7 +448,7 @@ public class Player extends Entity {
 		stopAll(false, true,
 				!(getActionManager().getAction() instanceof PlayerCombat));
 		if (isDead() || (getCombatDefinitions().isUnderCombat() && tryCount < 6) || isLocked()
-		/* || getEmotesManager().isDoingEmote() */) {
+		 || Emote.isDoingEmote(this) ) {
 			CoresManager.slowExecutor.schedule(new Runnable() {
 				@Override
 				public void run() {

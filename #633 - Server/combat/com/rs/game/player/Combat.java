@@ -18,7 +18,7 @@ public final class Combat {
 	}
 
 	public static boolean hasAntiDragProtection(Entity target) {
-		if (target instanceof NPC)
+		if (target.isNPC())
 			return false;
 		Player p2 = (Player) target;
 		int shieldId = p2.getEquipment().getShieldId();
@@ -26,7 +26,7 @@ public final class Combat {
 	}
 
 	public static int getDefenceEmote(Entity target) {
-		if (target instanceof NPC) {
+		if (target.isNPC()) {
 			NPC n = (NPC) target;
 			return n.getCombatDefinitions().getDefenceAnim();
 		} else {

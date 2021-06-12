@@ -58,21 +58,20 @@ public class Forgeregent extends Familiar {
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {
-				if (target instanceof Player) {
-					Player playerTarget = (Player) target;
-					int weaponId = playerTarget.getEquipment().getWeaponId();
+				target.ifPlayer(player -> {
+					int weaponId = player.getEquipment().getWeaponId();
 					if (weaponId != -1) {
 						if (PlayerCombat.getWeaponAttackEmote(weaponId, 1) != 423) {
-							RSInterfaceDispatcher.sendRemove(playerTarget, 3);
+							RSInterfaceDispatcher.sendRemove(player, 3);
 						}
 					}
-					int shieldId = playerTarget.getEquipment().getShieldId();
+					int shieldId = player.getEquipment().getShieldId();
 					if (shieldId != -1) {
-						RSInterfaceDispatcher.sendRemove(playerTarget, 5);
+						RSInterfaceDispatcher.sendRemove(player, 5);
 					}
-				}
-				target.setNextGraphics(new Graphics(1393));
-				target.applyHit(new Hit(getOwner(), RandomUtils.random(200), HitLook.MELEE_DAMAGE));
+					target.setNextGraphics(new Graphics(1393));
+					target.applyHit(new Hit(getOwner(), RandomUtils.random(200), HitLook.MELEE_DAMAGE));
+				});
 				this.cancel();
 			}
 		});

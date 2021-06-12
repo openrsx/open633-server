@@ -6,7 +6,6 @@ import com.rs.game.ForceMovement;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
-import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utils;
@@ -66,7 +65,7 @@ public class Wilderness extends Controller {
 
 	@Override
 	public boolean keepCombating(Entity target) {
-		if (target instanceof NPC)
+		if (target.isNPC())
 			return true;
 		if (!canAttack(target))
 			return false;
@@ -97,7 +96,7 @@ public class Wilderness extends Controller {
 
 	@Override
 	public boolean canHit(Entity target) {
-		if (target instanceof NPC)
+		if (target.isNPC())
 			return true;
 		Player p2 = (Player) target;
 		if (Math.abs(player.getSkills().getCombatLevel() - p2.getSkills().getCombatLevel()) > getWildLevel())

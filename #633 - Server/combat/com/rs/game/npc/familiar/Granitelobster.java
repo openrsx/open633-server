@@ -87,9 +87,8 @@ public class Granitelobster extends Familiar {
 					@Override
 					protected void execute() {
 						if (RandomUtils.random(5) == 0) {
-							if (target instanceof Player)
-								((Player) target).getSkills().set(Skills.DEFENCE,
-										((Player) target).getSkills().getLevel(Skills.DEFENCE));
+							target.ifPlayer(targetSelected -> targetSelected.getSkills().set(Skills.DEFENCE,
+									targetSelected.getSkills().getLevel(Skills.DEFENCE)));
 						}
 						target.applyHit(new Hit(getOwner(), RandomUtils.random(140), HitLook.MELEE_DAMAGE));
 						target.setNextGraphics(new Graphics(1353));

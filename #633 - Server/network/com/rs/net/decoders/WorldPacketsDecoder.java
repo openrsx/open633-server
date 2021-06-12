@@ -445,7 +445,7 @@ public final class WorldPacketsDecoder extends Decoder {
 							if (p2.getAttackedBy() != player
 									&& p2.getAttackedByDelay() > Utils
 											.currentTimeMillis()) {
-								if (p2.getAttackedBy() instanceof NPC) {
+								if (p2.getAttackedBy().isNPC()) {
 									p2.setAttackedBy(player); // changes
 									// enemy
 									// to player,
@@ -524,7 +524,7 @@ public final class WorldPacketsDecoder extends Decoder {
 							if (p2.getAttackedBy() != player
 									&& p2.getAttackedByDelay() > Utils
 											.currentTimeMillis()) {
-								if (p2.getAttackedBy() instanceof NPC) {
+								if (p2.getAttackedBy().isNPC()) {
 									p2.setAttackedBy(player); // changes
 									// enemy
 									// to player,
@@ -867,7 +867,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				}
 				if (p2.getAttackedBy() != player
 						&& p2.getAttackedByDelay() > Utils.currentTimeMillis()) {
-					if (p2.getAttackedBy() instanceof NPC) {
+					if (p2.getAttackedBy().isNPC()) {
 						p2.setAttackedBy(player); // changes enemy to player,
 						// player has priority over
 						// npc on single areas

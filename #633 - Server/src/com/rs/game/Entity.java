@@ -172,11 +172,10 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void processReceivedHits() {
-//		if (this instanceof Player) {
-//			if (((Player) this).getEmotesManager().getNextEmoteEnd() >= Utils
-//					.currentTimeMillis())
-//				return;
-//		}
+		ifPlayer(player -> {
+			if (player.getNextEmoteEnd() >= Utils.currentTimeMillis())
+				return;
+		});
 		Hit hit;
 		int count = 0;
 		while ((hit = receivedHits.poll()) != null && count++ < 10)
@@ -352,12 +351,10 @@ public abstract class Entity extends WorldTile {
 		teleported = false;
 		if (walkSteps.isEmpty())
 			return;
-//		if (this instanceof Player) { // emotes are special on rs, when using
-//										// one u will walk once emote done
-//			if (((Player) this).getEmotesManager().getNextEmoteEnd() >= Utils
-//					.currentTimeMillis())
-//				return;
-//		}
+		ifPlayer(player -> {
+			if (player.getNextEmoteEnd() >= Utils.currentTimeMillis())
+				return;
+		});
 		if (isPlayer() && ((Player) this).getDetails().getRunEnergy() <= 0)
 			setRun(false);
 		for (int stepCount = 0; stepCount < (run ? 2 : 1); stepCount++) {
@@ -415,10 +412,10 @@ public abstract class Entity extends WorldTile {
 		if (tile instanceof Entity) {
 			Entity e = (Entity) tile;
 			WorldTile me = this;
-			if (tile instanceof NPC) {
+			if (((Entity) tile).isNPC()) {
 				NPC n = (NPC) tile;
 				tile = n.getMiddleWorldTile();
-			} else if (this instanceof NPC) {
+			} else if (isNPC()) {
 				NPC n = (NPC) this;
 				me = n.getMiddleWorldTile();
 			}
@@ -430,7 +427,7 @@ public abstract class Entity extends WorldTile {
 	public boolean clipedProjectile(WorldTile tile, boolean checkClose, int size) {
 		int myX = getX();
 		int myY = getY();
-		if (this instanceof NPC) {
+		if (isNPC()) {
 			NPC n = (NPC) this;
 			WorldTile thist = n.getMiddleWorldTile();
 			myX = thist.getX();
@@ -556,53 +553,53 @@ public abstract class Entity extends WorldTile {
 																						// srcSize, srcSize, -1)};
 			if (!Utils.isOnRange(srcPos[0], srcPos[1], srcSize, destPos[0], destPos[1], destSize, 0)) {
 				if (srcScenePos[0] < destScenePos[0] && srcScenePos[1] < destScenePos[1]
-						&& (!(src instanceof NPC) || src.canWalkNPC(srcPos[0] + 1, srcPos[1] + 1))
+						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0] + 1, srcPos[1] + 1))
 						&& src.addWalkStep(srcPos[0] + 1, srcPos[1] + 1, srcPos[0], srcPos[1], true)) {
 					srcPos[0]++;
 					srcPos[1]++;
 					continue;
 				}
 				if (srcScenePos[0] > destScenePos[0] && srcScenePos[1] > destScenePos[1]
-						&& (!(src instanceof NPC) || src.canWalkNPC(srcPos[0] - 1, srcPos[1] - 1))
+						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0] - 1, srcPos[1] - 1))
 						&& src.addWalkStep(srcPos[0] - 1, srcPos[1] - 1, srcPos[0], srcPos[1], true)) {
 					srcPos[0]--;
 					srcPos[1]--;
 					continue;
 				}
 				if (srcScenePos[0] < destScenePos[0] && srcScenePos[1] > destScenePos[1]
-						&& (!(src instanceof NPC) || src.canWalkNPC(srcPos[0] + 1, srcPos[1] - 1))
+						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0] + 1, srcPos[1] - 1))
 						&& src.addWalkStep(srcPos[0] + 1, srcPos[1] - 1, srcPos[0], srcPos[1], true)) {
 					srcPos[0]++;
 					srcPos[1]--;
 					continue;
 				}
 				if (srcScenePos[0] > destScenePos[0] && srcScenePos[1] < destScenePos[1]
-						&& (!(src instanceof NPC) || src.canWalkNPC(srcPos[0] - 1, srcPos[1] + 1))
+						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0] - 1, srcPos[1] + 1))
 						&& src.addWalkStep(srcPos[0] - 1, srcPos[1] + 1, srcPos[0], srcPos[1], true)) {
 					srcPos[0]--;
 					srcPos[1]++;
 					continue;
 				}
 				if (srcScenePos[0] < destScenePos[0]
-						&& (!(src instanceof NPC) || src.canWalkNPC(srcPos[0] + 1, srcPos[1]))
+						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0] + 1, srcPos[1]))
 						&& src.addWalkStep(srcPos[0] + 1, srcPos[1], srcPos[0], srcPos[1], true)) {
 					srcPos[0]++;
 					continue;
 				}
 				if (srcScenePos[0] > destScenePos[0]
-						&& (!(src instanceof NPC) || src.canWalkNPC(srcPos[0] - 1, srcPos[1]))
+						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0] - 1, srcPos[1]))
 						&& src.addWalkStep(srcPos[0] - 1, srcPos[1], srcPos[0], srcPos[1], true)) {
 					srcPos[0]--;
 					continue;
 				}
 				if (srcScenePos[1] < destScenePos[1]
-						&& (!(src instanceof NPC) || src.canWalkNPC(srcPos[0], srcPos[1] + 1))
+						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0], srcPos[1] + 1))
 						&& src.addWalkStep(srcPos[0], srcPos[1] + 1, srcPos[0], srcPos[1], true)) {
 					srcPos[1]++;
 					continue;
 				}
 				if (srcScenePos[1] > destScenePos[1]
-						&& (!(src instanceof NPC) || src.canWalkNPC(srcPos[0], srcPos[1] - 1))
+						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0], srcPos[1] - 1))
 						&& src.addWalkStep(srcPos[0], srcPos[1] - 1, srcPos[0], srcPos[1], true)) {
 					srcPos[1]--;
 					continue;
@@ -641,7 +638,7 @@ public abstract class Entity extends WorldTile {
 	private int[] calculatedStep(int myX, int myY, int destX, int destY, int lastX, int lastY, int sizeX, int sizeY) {
 		if (myX < destX) {
 			myX++;
-			if ((this instanceof NPC && !canWalkNPC(myX, myY)) || !addWalkStep(myX, myY, lastX, lastY, true))
+			if ((isNPC() && !canWalkNPC(myX, myY)) || !addWalkStep(myX, myY, lastX, lastY, true))
 				myX--;
 			else if (!(myX - destX > sizeX || myX - destX < -1 || myY - destY > sizeY || myY - destY < -1)) {
 				if (myX == lastX || myY == lastY)
@@ -650,7 +647,7 @@ public abstract class Entity extends WorldTile {
 			}
 		} else if (myX > destX) {
 			myX--;
-			if ((this instanceof NPC && !canWalkNPC(myX, myY)) || !addWalkStep(myX, myY, lastX, lastY, true))
+			if ((isNPC() && !canWalkNPC(myX, myY)) || !addWalkStep(myX, myY, lastX, lastY, true))
 				myX++;
 			else if (!(myX - destX > sizeX || myX - destX < -1 || myY - destY > sizeY || myY - destY < -1)) {
 				if (myX == lastX || myY == lastY)
@@ -660,7 +657,7 @@ public abstract class Entity extends WorldTile {
 		}
 		if (myY < destY) {
 			myY++;
-			if ((this instanceof NPC && !canWalkNPC(myX, myY)) || !addWalkStep(myX, myY, lastX, lastY, true))
+			if ((isNPC() && !canWalkNPC(myX, myY)) || !addWalkStep(myX, myY, lastX, lastY, true))
 				myY--;
 			else if (!(myX - destX > sizeX || myX - destX < -1 || myY - destY > sizeY || myY - destY < -1)) {
 				if (myX == lastX || myY == lastY)
@@ -669,7 +666,7 @@ public abstract class Entity extends WorldTile {
 			}
 		} else if (myY > destY) {
 			myY--;
-			if ((this instanceof NPC && !canWalkNPC(myX, myY)) || !addWalkStep(myX, myY, lastX, lastY, true)) {
+			if ((isNPC() && !canWalkNPC(myX, myY)) || !addWalkStep(myX, myY, lastX, lastY, true)) {
 				myY++;
 			} else if (!(myX - destX > sizeX || myX - destX < -1 || myY - destY > sizeY || myY - destY < -1)) {
 				if (myX == lastX || myY == lastY)
@@ -1094,7 +1091,7 @@ public abstract class Entity extends WorldTile {
 				myY++;
 			else if (myY > destY)
 				myY--;
-			if ((this instanceof NPC && !canWalkNPC(myX, myY))
+			if ((isNPC() && !canWalkNPC(myX, myY))
 					|| !addWalkStep(myX, myY, lastTile[0], lastTile[1], true)) {
 				if (!calculate)
 					return false;

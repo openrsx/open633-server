@@ -74,14 +74,13 @@ public class Spiritsaratrice extends Familiar {
 		setNextAnimation(new Animation(7766));
 		setNextGraphics(new Graphics(1467));
 		World.sendProjectile(this, target, 1468, 34, 16, 30, 35, 16, 0);
-		if (target instanceof Player) {
-			Player playerTarget = (Player) target;
-			int level = playerTarget.getSkills().getLevelForXp(Skills.PRAYER);
+		target.ifPlayer(targetSelected -> {
+			int level = targetSelected.getSkills().getLevelForXp(Skills.PRAYER);
 			int drained = 3;
 			if (level - drained > 0)
 				drained = level;
-			playerTarget.getSkills().drainLevel(Skills.PRAYER, drained);
-		}
+			targetSelected.getSkills().drainLevel(Skills.PRAYER, drained);
+		});
 		World.get().submit(new Task(1) {
 			@Override
 			protected void execute() {

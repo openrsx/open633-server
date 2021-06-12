@@ -278,7 +278,7 @@ public class PlayerCombat extends Action {
 					baseDamage = 120;
 				}
 				int damage = getRandomMagicMaxHit(player, baseDamage);
-				if (target instanceof NPC) {
+				if (target.isNPC()) {
 					NPC n = (NPC) target;
 					if (n.getId() == 9463) // ice verm
 						damage *= 2;
@@ -331,7 +331,7 @@ public class PlayerCombat extends Action {
 					baseDamage = 150;
 				}
 				damage = getRandomMagicMaxHit(player, baseDamage);
-				if (target instanceof NPC) {
+				if (target.isNPC()) {
 					NPC n = (NPC) target;
 					if (n.getId() == 9463) // ice verm
 						damage *= 2;
@@ -368,7 +368,7 @@ public class PlayerCombat extends Action {
 				mage_hit_gfx = 2739;
 				base_mage_xp = 34.5;
 				damage = getRandomMagicMaxHit(player, 160);
-				if (target instanceof NPC) {
+				if (target.isNPC()) {
 					NPC n = (NPC) target;
 					if (n.getId() == 9463) // ice verm
 						damage *= 2;
@@ -423,7 +423,7 @@ public class PlayerCombat extends Action {
 				mage_hit_gfx = 2740;
 				base_mage_xp = 42.5;
 				damage = getRandomMagicMaxHit(player, 200);
-				if (target instanceof NPC) {
+				if (target.isNPC()) {
 					NPC n = (NPC) target;
 					if (n.getId() == 9463) // ice verm
 						damage *= 2;
@@ -475,7 +475,7 @@ public class PlayerCombat extends Action {
 				mage_hit_gfx = 2741;
 				base_mage_xp = 80;
 				damage = getRandomMagicMaxHit(player, 280);
-				if (damage > 0 && target instanceof NPC) {
+				if (damage > 0 && target.isNPC()) {
 					NPC n = (NPC) target;
 					if (n.getId() == 9463) // ice verm
 						damage *= 2;
@@ -943,7 +943,7 @@ public class PlayerCombat extends Action {
 			return -1;
 		int hit = RandomUtils.random(current + 1);
 		if (hit > 0) {
-			if (target instanceof NPC) {
+			if (target.isNPC()) {
 				NPC n = (NPC) target;
 				if (n.getId() == 9463 && hasFireCape(player)) // ice verm
 					hit += 40;
@@ -1016,7 +1016,7 @@ public class PlayerCombat extends Action {
 				player.getPackets().sendGameMessage("Your magic surged with extra power.");
 			}
 		}
-		if (target instanceof NPC) {
+		if (target.isNPC()) {
 		}
 		boost = magicPerc / 100 + 1;
 		max_hit *= boost;
@@ -2062,7 +2062,7 @@ public class PlayerCombat extends Action {
 			 */
 		}
 		int hit = RandomUtils.random(max_hit);
-		if (target instanceof NPC) {
+		if (target.isNPC()) {
 			NPC n = (NPC) target;
 			if (n.getId() == 9463 && hasFireCape(player))
 				hit += 40;
@@ -2109,7 +2109,7 @@ public class PlayerCombat extends Action {
 				double d = hp / maxhp;
 				otherBonus = 2 - d;
 			}
-			if (target instanceof NPC) {
+			if (target.isNPC()) {
 				if (player.getEquipment().getAmuletId() == 10588 && Combat.isUndead(target))
 					otherBonus += 0.2;
 
@@ -2133,7 +2133,7 @@ public class PlayerCombat extends Action {
 			double rangedLvl = player.getSkills().getLevel(Skills.RANGE);
 			double styleBonus = attackStyle == 0 ? 3 : attackStyle == 1 ? 0 : 1;
 			double otherBonus = 1;
-			if (target instanceof NPC) {
+			if (target.isNPC()) {
 			}
 			double effectiveStrenght = Math.floor(rangedLvl * player.getPrayer().getRangeMultiplier()) + styleBonus;
 			if (fullVoidEquipped(player, 11664, 11675))
@@ -2143,159 +2143,6 @@ public class PlayerCombat extends Action {
 			return (int) Math.floor(baseDamage * specMultiplier * otherBonus);
 		}
 	}
-
-	/*
-	 * public int getRandomMaxHit(Player player, int weaponId, int attackStyle,
-	 * boolean ranging, boolean defenceAffects, double specMultiplier, boolean
-	 * usingSpec) { Random r = new Random(); max_hit = getMaxHit(player, weaponId,
-	 * attackStyle, ranging, usingSpec, specMultiplier); double accuracyMultiplier =
-	 * 1.0; if (defenceAffects) { accuracyMultiplier =
-	 * getSpecialAccuracyModifier(player); } if (ranging && defenceAffects) { double
-	 * accuracy = accuracyMultiplier * getRangeAccuracy(player, attackStyle) + 1;
-	 * double defence = getRangeDefence(target) + 1; if (r.nextInt((int) accuracy) <
-	 * r.nextInt((int) defence)) { return 0; } } else if (defenceAffects) { double
-	 * accuracy = accuracyMultiplier * getMeleeAccuracy(player, attackStyle,
-	 * weaponId) + 1; double defence = getMeleeDefence(target, attackStyle,
-	 * weaponId) + 1; if (r.nextInt((int) accuracy) < r.nextInt((int) defence)) {
-	 * return 0; } } int hit = r.nextInt(max_hit + 1); if (target instanceof NPC) {
-	 * NPC n = (NPC) target; if (n.getId() == 9463 && hasFireCape(player)) hit +=
-	 * 40; } if (player.getAuraManager().usingEquilibrium()) { int perc25MaxHit =
-	 * (int) (max_hit * 0.25); hit -= perc25MaxHit; max_hit -= perc25MaxHit; if (hit
-	 * < 0) hit = 0; if (hit < perc25MaxHit) hit += perc25MaxHit;
-	 * 
-	 * } return hit; }
-	 * 
-	 * /** Gets the melee accuracy of the player.
-	 * 
-	 * @param e The player.
-	 * 
-	 * @param attackStyle The attack style.
-	 * 
-	 * @param weaponId The weapon id.
-	 * 
-	 * @return The melee accuracy.
-	 */
-	/*
-	 * public static double getMeleeAccuracy(Player e, int attackStyle, int
-	 * weaponId) { int style = attackStyle == 0 ? 3 : attackStyle == 2 ? 1 : 0; int
-	 * attLvl = e.getSkills().getLevel(Skills.ATTACK); int attBonus =
-	 * e.getCombatDefinitions
-	 * ().getBonuses()[CombatDefinitions.getMeleeBonusStyle(weaponId, attackStyle)];
-	 * if (weaponId == -2) { attBonus += 82; } double attMult = 1.0 *
-	 * e.getPrayer().getAttackMultiplier(); double accuracyMultiplier = 1.0; if
-	 * (fullVoidEquipped(e, 11665, 11676)) { accuracyMultiplier *= 0.15; } double
-	 * cumulativeAtt = attLvl * attMult + style; return (14 + cumulativeAtt +
-	 * (attBonus / 8) + ((cumulativeAtt * attBonus) / 64)) * accuracyMultiplier; }
-	 * 
-	 * /** Gets the maximum melee hit.
-	 * 
-	 * @param e The player.
-	 * 
-	 * @param attackStyle The attack style.
-	 * 
-	 * @param weaponId The weapon id.
-	 * 
-	 * @return The maximum melee hit.
-	 */
-	/*
-	 * public static double getMeleeMaximum(Player e, int attackStyle, int weaponId)
-	 * { int strLvl = e.getSkills().getLevel(Skills.STRENGTH); int strBonus =
-	 * e.getCombatDefinitions().getBonuses()[CombatDefinitions.STRENGTH_BONUS]; if
-	 * (weaponId == -2) { strBonus += 82; } double strMult =
-	 * e.getPrayer().getStrengthMultiplier(); double xpStyle =
-	 * CombatDefinitions.getXpStyle(weaponId, attackStyle); double style = xpStyle
-	 * == Skills.STRENGTH ? 3 : xpStyle == CombatDefinitions.SHARED ? 1 : 0; int dhp
-	 * = 0; double dharokMod = 1.0; double hitMultiplier = 1.0; if
-	 * (fullDharokEquipped(e)) { dhp = e.getMaxHitpoints() - e.getHitpoints();
-	 * dharokMod = (dhp * 0.001) + 1; } if (fullVoidEquipped(e, 11665, 11676)) {
-	 * hitMultiplier *= 1.1; } double cumulativeStr = (strLvl * strMult + style) *
-	 * dharokMod; return (int) ((14 + cumulativeStr + (strBonus / 8) +
-	 * ((cumulativeStr * strBonus) / 64)) * hitMultiplier); }
-	 * 
-	 * /** Gets the melee defence.
-	 * 
-	 * @param e The entity.
-	 * 
-	 * @param attackStyle The attack style.
-	 * 
-	 * @param weaponId The weapon id.
-	 * 
-	 * @return The maximum melee defence.
-	 */
-	/*
-	 * public static double getMeleeDefence(Entity e, int attackStyle, int weaponId)
-	 * { boolean player = e instanceof Player; int style = player ? ((Player)
-	 * e).getCombatDefinitions().getAttackStyle() : 0; style = style == 2 ? 1 :
-	 * style == 3 ? 3 : 0; int defLvl = player ? ((Player)
-	 * e).getSkills().getLevel(Skills.DEFENCE) : (int) (((NPC) e).getCombatLevel() *
-	 * 0.6); int defBonus = player ? ((Player)
-	 * e).getCombatDefinitions().getBonuses()[
-	 * CombatDefinitions.getMeleeDefenceBonus
-	 * (CombatDefinitions.getMeleeBonusStyle(weaponId, attackStyle))] : 0; if
-	 * (!player) { defBonus = ((NPC) e).getBonuses() != null ? ((NPC)
-	 * e).getBonuses()[ CombatDefinitions.getMeleeDefenceBonus(CombatDefinitions.
-	 * getMeleeBonusStyle(weaponId, attackStyle))] : 0; } double defMult = 1.0 *
-	 * (player ? ((Player) e).getPrayer().getDefenceMultiplier() : 1.0); double
-	 * cumulativeDef = defLvl * defMult + style; return 14 + cumulativeDef +
-	 * (defBonus / 8) + ((cumulativeDef * (defBonus)) / 64); }
-	 * 
-	 * /** Gets the range accuracy of the player.
-	 * 
-	 * @param e The player.
-	 * 
-	 * @param attackStyle The attack style.
-	 * 
-	 * @return The range accuracy.
-	 */
-	/*
-	 * public static double getRangeAccuracy(Player e, int attackStyle) { int style
-	 * = attackStyle == 0 ? 3 : attackStyle == 2 ? 1 : 0; int attLvl =
-	 * e.getSkills().getLevel(Skills.RANGE); int attBonus =
-	 * e.getCombatDefinitions().getBonuses()[4]; double attMult = 1.0 *
-	 * e.getPrayer().getRangeMultiplier() *
-	 * e.getAuraManager().getRangeAccurayMultiplier(); double accuracyMultiplier =
-	 * 1.05; if (fullVoidEquipped(e, 11664, 11675)) { accuracyMultiplier += 0.10; }
-	 * double cumulativeAtt = attLvl * attMult + style; return (14 + cumulativeAtt +
-	 * (attBonus / 8) + ((cumulativeAtt * attBonus) / 64)) * accuracyMultiplier; }
-	 * 
-	 * /** Gets the maximum range hit.
-	 * 
-	 * @param e The player.
-	 * 
-	 * @param attackStyle The attack style.
-	 * 
-	 * @return The maximum range hit.
-	 */
-	/*
-	 * public static double getRangeMaximum(Player e, int attackStyle) { int style =
-	 * attackStyle == 0 ? 3 : attackStyle == 2 ? 1 : 0; int strLvl =
-	 * e.getSkills().getLevel(Skills.RANGE); int strBonus = e.getCombatDefinitions
-	 * ().getBonuses()[CombatDefinitions.RANGED_STR_BONUS]; double strMult = 1.0 *
-	 * e.getPrayer().getRangeMultiplier(); double hitMultiplier = 1.0; if
-	 * (fullVoidEquipped(e, 11664, 11675)) { hitMultiplier += 0.1; } double
-	 * cumulativeStr = strLvl * strMult + style; return (14 + cumulativeStr +
-	 * (strBonus / 8) + ((cumulativeStr * strBonus) / 64)) * hitMultiplier; }
-	 * 
-	 * /** Gets the range defence.
-	 * 
-	 * @param e The entity.
-	 * 
-	 * @return The maximum range defence.
-	 */
-	/*
-	 * public static double getRangeDefence(Entity e) { boolean player = e
-	 * instanceof Player; int style = player ? ((Player)
-	 * e).getCombatDefinitions().getAttackStyle() : 0; style = style == 2 ? 1 :
-	 * style == 3 ? 3 : 0; int defLvl = player ? ((Player)
-	 * e).getSkills().getLevel(Skills.DEFENCE) : (int) (((NPC) e).getCombatLevel() *
-	 * 0.6); int defBonus = player ? ((Player)
-	 * e).getCombatDefinitions().getBonuses()[CombatDefinitions.RANGE_DEF] : 0; if
-	 * (!player) { defBonus = ((NPC) e).getBonuses() != null ? ((NPC)
-	 * e).getBonuses()[9] : 0; } double defMult = 1.0 * (player ? ((Player)
-	 * e).getPrayer().getDefenceMultiplier() : 1.0); double cumulativeDef = defLvl *
-	 * defMult + style; return 14 + cumulativeDef + (defBonus / 8) + ((cumulativeDef
-	 * * defBonus) / 64); }
-	 */
 
 	private double getSpecialAccuracyModifier(Player player) {
 		Item weapon = player.getEquipment().getItem(Equipment.SLOT_WEAPON);
@@ -3005,7 +2852,7 @@ public class PlayerCombat extends Action {
 				}
 			}
 		}
-		if (!(target instanceof NPC && ((NPC) target).isForceMultiAttacked())) {
+		if (!(target.isNPC() && ((NPC) target).isForceMultiAttacked())) {
 
 			if (!target.isMultiArea() || !player.isMultiArea()) {
 				if (player.getAttackedBy() != target && player.getAttackedByDelay() > Utils.currentTimeMillis()) {
@@ -3014,7 +2861,7 @@ public class PlayerCombat extends Action {
 				}
 				if (target.getAttackedBy() != player && target.getAttackedByDelay() > Utils.currentTimeMillis()) {
 					player.getPackets().sendGameMessage("That "
-							+ (player.getAttackedBy() instanceof Player ? "player" : "npc") + " is already in combat.");
+							+ (player.getAttackedBy().isPlayer() ? "player" : "npc") + " is already in combat.");
 					return false;
 				}
 			}
@@ -3659,7 +3506,7 @@ public class PlayerCombat extends Action {
 				player.getPrayer().drainPrayer(drain);
 			}
 		}
-		if (source instanceof Player) {
+		if (source.isPlayer()) {
 			final Player p2 = (Player) source;
 			if (p2.getPrayer().hasPrayersOn()) {
 				if (p2.getPrayer().usingPrayer(0, 24)) { // smite

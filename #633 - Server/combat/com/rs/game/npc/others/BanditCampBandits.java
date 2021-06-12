@@ -23,7 +23,7 @@ public class BanditCampBandits extends NPC {
 		ArrayList<Entity> targets = super.getPossibleTargets();
 		ArrayList<Entity> targetsCleaned = new ArrayList<Entity>();
 		for (Entity t : targets) {
-			if (!(t instanceof Player) || (!GodwarsZammorakFaction.hasGodItem((Player) t)
+			if (!(t.isPlayer()) || (!GodwarsZammorakFaction.hasGodItem((Player) t)
 					&& !GodwarsSaradominFaction.hasGodItem((Player) t)))
 				continue;
 			targetsCleaned.add(t);
@@ -33,7 +33,7 @@ public class BanditCampBandits extends NPC {
 
 	@Override
 	public void setTarget(Entity entity) {
-		if (entity instanceof Player && (GodwarsZammorakFaction.hasGodItem((Player) entity)
+		if (entity.isPlayer() && (GodwarsZammorakFaction.hasGodItem((Player) entity)
 				|| GodwarsSaradominFaction.hasGodItem((Player) entity)))
 			setNextForceTalk(new ForceTalk(
 					GodwarsZammorakFaction.hasGodItem((Player) entity) ? "Time to die, Saradominist filth!"

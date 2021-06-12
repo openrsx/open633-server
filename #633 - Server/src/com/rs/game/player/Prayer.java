@@ -249,7 +249,7 @@ public class Prayer {
 			adjustStat(0, leechBonuses[8]);
 			adjustStat(1, leechBonuses[10]);
 			adjustStat(2, leechBonuses[9]);
-		} else if (entity instanceof NPC) {
+		} else if (entity.isNPC()) {
 			/*
 			 * NPC npc = (NPC) entity;
 			 * 
