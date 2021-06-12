@@ -138,7 +138,7 @@ public final class CommandDispatcher {
 				int plane = Integer.valueOf(cmd[0]);
 				int x = Integer.valueOf(cmd[1]) << 6 | Integer.valueOf(cmd[3]);
 				int y = Integer.valueOf(cmd[2]) << 6 | Integer.valueOf(cmd[4]);
-				player.safeForceMoveTile(new WorldTile(x, y, plane));
+				player.setNextWorldTile(new WorldTile(x, y, plane));
 				return true;
 			}
 		}

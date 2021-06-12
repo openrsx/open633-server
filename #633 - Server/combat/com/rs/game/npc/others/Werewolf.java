@@ -50,7 +50,7 @@ public class Werewolf extends NPC {
 
 	@Override
 	public void reset() {
-		setNPC(realId);
+		setId(realId);
 		super.reset();
 	}
 

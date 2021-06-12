@@ -3,7 +3,6 @@ package com.rs.game.player;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
-import com.rs.game.npc.NPC;
 import com.rs.utilities.Utils;
 
 import skills.Skills;

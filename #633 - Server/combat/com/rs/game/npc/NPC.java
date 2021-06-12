@@ -96,6 +96,11 @@ public class NPC extends Entity {
 	public NPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
 		this(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, false);
 	}
+	
+	public NPC(short id, WorldTile tile) {
+		super(tile, EntityType.NPC);
+		new NPC(id, tile, (byte) -1, false);
+	}
 
 	/*
 	 * creates and adds npc
@@ -133,16 +138,12 @@ public class NPC extends Entity {
 	}
 
 	public void setNextNPCTransformation(short id) {
-		setNPC(id);
+		setId(id);
 		nextTransformation = new Transformation(id);
 		if (getCustomCombatLevel() != -1)
 			changedCombatLevel = true;
 		if (getCustomName() != null)
 			changedName = true;
-	}
-
-	public void setNPC(short id) {
-		this.id = id;
 	}
 
 	@Override
@@ -485,7 +486,7 @@ public class NPC extends Entity {
 	}
 	
 	public void transformIntoNPC(short id) {
-		setNPC(id);
+		setId(id);
 		nextTransformation = new Transformation(id);
 	}
 	

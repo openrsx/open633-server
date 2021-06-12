@@ -44,7 +44,7 @@ public class Strykewyrm extends NPC {
 
 	@Override
 	public void reset() {
-		setNPC(stompId);
+		setId(stompId);
 		super.reset();
 	}
 

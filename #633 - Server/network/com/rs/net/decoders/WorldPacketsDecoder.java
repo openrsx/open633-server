@@ -29,6 +29,7 @@ import com.rs.net.Session;
 import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.PublicChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
+import com.rs.net.packets.PacketDispatcher;
 import com.rs.plugin.CommandDispatcher;
 import com.rs.plugin.NPCDispatcher;
 import com.rs.plugin.ObjectDispatcher;
@@ -259,14 +260,20 @@ public final class WorldPacketsDecoder extends Decoder {
 			 */
 			int startOffset = stream.getOffset();
 			processPackets(packetId, stream, length);
+			
 			stream.setOffset(startOffset + length);
 		}
 	}
 
 	public static void decodeLogicPacket(final Player player, LogicPacket packet) {
 		int packetId = packet.getId();
+		
+		
 		InputStream stream = new InputStream(packet.getData());
 		System.out.println("packet: " + packetId);
+		
+		PacketDispatcher.execute(player, stream, packetId);
+		
 		if (packetId == WALKING_PACKET || packetId == MINI_WALKING_PACKET) {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
@@ -1053,16 +1060,17 @@ public final class WorldPacketsDecoder extends Decoder {
 			}
 			player.getActionManager().setAction(new PlayerCombat(npc));
 		} 
-		else if (packetId == OBJECT_CLICK1_PACKET)
-			ObjectDispatcher.handleOption(player, stream, 1);
-		else if (packetId == OBJECT_CLICK2_PACKET)
-			ObjectDispatcher.handleOption(player, stream, 2);
-		else if (packetId == OBJECT_CLICK3_PACKET)
-			ObjectDispatcher.handleOption(player, stream, 3);
-		else if (packetId == OBJECT_CLICK4_PACKET)
-			ObjectDispatcher.handleOption(player, stream, 4);
-		else if (packetId == OBJECT_CLICK5_PACKET)
-			ObjectDispatcher.handleOption(player, stream, 5);
+//		else if (packetId == OBJECT_CLICK1_PACKET)
+//			
+//			ObjectDispatcher.handleOption(player, stream, 1);
+//		else if (packetId == OBJECT_CLICK2_PACKET)
+//			ObjectDispatcher.handleOption(player, stream, 2);
+//		else if (packetId == OBJECT_CLICK3_PACKET)
+//			ObjectDispatcher.handleOption(player, stream, 3);
+//		else if (packetId == OBJECT_CLICK4_PACKET)
+//			ObjectDispatcher.handleOption(player, stream, 4);
+//		else if (packetId == OBJECT_CLICK5_PACKET)
+//			ObjectDispatcher.handleOption(player, stream, 5);
 		else if (packetId == ITEM_TAKE_PACKET) {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
@@ -1462,7 +1470,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					stream));
 		else if (packetId == OBJECT_EXAMINE_PACKET) {
 			System.out.println("examine packet");
-			ObjectDispatcher.handleOption(player, stream, -1);
+//			ObjectDispatcher.handleOption(player, stream, -1);
 		} else if (packetId == NPC_EXAMINE_PACKET) {
 //			NPCDispatcher.handleExamine(player, stream);
 		} else if (packetId == JOIN_FRIEND_CHAT_PACKET) {

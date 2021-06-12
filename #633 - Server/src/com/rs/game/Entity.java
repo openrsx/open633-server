@@ -3,8 +3,10 @@ package com.rs.game;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -252,10 +254,14 @@ public abstract class Entity extends WorldTile {
 	public Player getMostDamageReceivedSourcePlayer() {
 		Player player = null;
 		int damage = -1;
-		for (Entity source : receivedDamage.keySet()) {
-			if (!(source.isPlayer()))
+		Iterator<Entry<Entity, Integer>> it$ = receivedDamage.entrySet().iterator();
+		while (it$.hasNext()) {
+			Entry<Entity, Integer> entry = it$.next();
+			Entity source = entry.getKey();
+			if (!source.isPlayer()) {
 				continue;
-			Integer d = receivedDamage.get(source);
+			}
+			Integer d = entry.getValue();
 			if (d == null || source.isFinished()) {
 				receivedDamage.remove(source);
 				continue;
@@ -267,6 +273,7 @@ public abstract class Entity extends WorldTile {
 		}
 		return player;
 	}
+
 
 	public int getDamageReceived(Player source) {
 		Integer d = receivedDamage.get(source);
@@ -1211,11 +1218,11 @@ public abstract class Entity extends WorldTile {
 		});
 	}
 
-	public void safeForceMoveTile(final WorldTile desination) {
-		var dir = RandomUtils.random(Utils.DIRECTION_DELTA_X.length);
+	public void safeForceMoveTile(WorldTile desination) {
+		var dir = RandomUtils.random(Utils.DIRECTION_DELTA_X.length -1);
 		if (World.checkWalkStep(desination.getPlane(), desination.getX(), desination.getY(), dir, 1)) {
-			setNextWorldTile(new WorldTile(desination.getX() + Utils.DIRECTION_DELTA_X[dir],
-					desination.getY() + Utils.DIRECTION_DELTA_Y[dir], desination.getPlane()));
+			setNextWorldTile(new WorldTile(desination.getX() + RandomUtils.random(Utils.DIRECTION_DELTA_X[dir]),
+					desination.getY() + RandomUtils.random(Utils.DIRECTION_DELTA_Y[dir]), desination.getPlane()));
 		}
 	}
 	

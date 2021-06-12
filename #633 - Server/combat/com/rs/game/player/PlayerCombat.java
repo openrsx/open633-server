@@ -1124,7 +1124,7 @@ public class PlayerCombat extends Action {
 					int loop = 0;
 					@Override
 					protected void execute() {
-						if ((target.isDead() || player.isDead() || loop > 1) && !World.getNPCs().contains(target)) {
+						if ((target.isDead() || player.isDead() || loop > 1) && !World.getNPCs().contains((NPC) target)) {
 							this.cancel();
 							return;
 						}

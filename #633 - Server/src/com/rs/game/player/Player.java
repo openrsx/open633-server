@@ -630,11 +630,11 @@ public class Player extends Entity {
 	
 	/**
 	 * Queue Teleport type handling with Consumer support
-	 * @param tile
+	 * @param destination
 	 * @param type
 	 * @param player
 	 */
-	public void move(boolean instant, WorldTile tile, TeleportType type, Consumer<Player> player) {
+	public void move(boolean instant, WorldTile destination, TeleportType type, Consumer<Player> player) {
 		lock();
 		LinkedTaskSequence seq = new LinkedTaskSequence(instant ? 0 : 1, instant);
 		seq.connect(1, () -> {
@@ -643,7 +643,7 @@ public class Player extends Entity {
 		}).connect(type.getEndDelay(), () -> {
 			type.getEndAnimation().ifPresent(this::setNextAnimation);
 			type.getEndGraphic().ifPresent(this::setNextGraphics);
-			safeForceMoveTile(tile);
+			safeForceMoveTile(destination);
 			player.accept(this);
 			unlock();
 		}).start();
@@ -651,11 +651,11 @@ public class Player extends Entity {
 	
 	/**
 	 * Queue Teleport type handling
-	 * @param tile
+	 * @param destination
 	 * @param type
 	 * @param player
 	 */
-	public void move(boolean instant, WorldTile tile, TeleportType type) {
+	public void move(boolean instant, WorldTile destination, TeleportType type) {
 		lock();
 		LinkedTaskSequence seq = new LinkedTaskSequence(instant ? 0 : 1, instant);
 		seq.connect(1, () -> {
@@ -664,7 +664,7 @@ public class Player extends Entity {
 		}).connect(type.getEndDelay(), () -> {
 			type.getEndAnimation().ifPresent(this::setNextAnimation);
 			type.getEndGraphic().ifPresent(this::setNextGraphics);
-			safeForceMoveTile(tile);
+			safeForceMoveTile(destination);
 			unlock();
 		}).start();
 	}
