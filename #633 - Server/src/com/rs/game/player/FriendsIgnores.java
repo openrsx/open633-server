@@ -114,7 +114,7 @@ public class FriendsIgnores {
 
 	public void sendFriendsMyStatus(boolean online) {
 		for (Player p2 : World.getPlayers()) {
-			if (p2 == null || !p2.isStarted() || p2.hasFinished())
+			if (p2 == null || !p2.isStarted() || p2.isFinished())
 				continue;
 			p2.getFriendsIgnores().changeFriendStatus(player, online);
 		}

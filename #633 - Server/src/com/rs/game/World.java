@@ -47,8 +47,8 @@ public final class World {
 	@Setter
 	private long exiting_start;
 
-	private static final Predicate<Player> VALID_PLAYER = (player) -> player != null && player.isStarted() && !player.hasFinished();
-	private static final Predicate<NPC> VALID_NPC = (npc) -> npc != null && !npc.hasFinished();
+	private static final Predicate<Player> VALID_PLAYER = (player) -> player != null && player.isStarted() && !player.isFinished();
+	private static final Predicate<NPC> VALID_NPC = (npc) -> npc != null && !npc.isFinished();
 
 	public static Stream<Entity> entities() {
 		return Stream.concat(players(), npcs());
@@ -550,7 +550,7 @@ public final class World {
 		get().setExiting_start(Utils.currentTimeMillis());
 		get().setExiting_delay(delay);
 		for (Player player : World.getPlayers()) {
-			if (player == null || !player.isStarted() || player.hasFinished())
+			if (player == null || !player.isStarted() || player.isFinished())
 				continue;
 			player.getPackets().sendSystemUpdate(delay);
 		}
@@ -574,7 +574,7 @@ public final class World {
 	public static final void sendGraphics(Entity creator, Graphics graphics, WorldTile tile) {
 		if (creator == null) {
 			for (Player player : World.getPlayers()) {
-				if (player == null || !player.isStarted() || player.hasFinished() || !player.withinDistance(tile))
+				if (player == null || !player.isStarted() || player.isFinished() || !player.withinDistance(tile))
 					continue;
 				player.getPackets().sendGraphics(graphics, tile);
 			}
@@ -585,7 +585,7 @@ public final class World {
 					continue;
 				for (Integer playerIndex : playersIndexes) {
 					Player player = players.get(playerIndex);
-					if (player == null || !player.isStarted() || player.hasFinished() || !player.withinDistance(tile))
+					if (player == null || !player.isStarted() || player.isFinished() || !player.withinDistance(tile))
 						continue;
 					player.getPackets().sendGraphics(graphics, tile);
 				}
@@ -602,7 +602,7 @@ public final class World {
 				continue;
 			for (Integer playerIndex : playersIndexes) {
 				Player player = players.get(playerIndex);
-				if (player == null || !player.isStarted() || player.hasFinished()
+				if (player == null || !player.isStarted() || player.isFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
 					continue;
 				player.getPackets().sendProjectile(null, startTile, receiver, gfxId, startHeight, endHeight, speed,
@@ -620,7 +620,7 @@ public final class World {
 				continue;
 			for (Integer playerIndex : playersIndexes) {
 				Player player = players.get(playerIndex);
-				if (player == null || !player.isStarted() || player.hasFinished()
+				if (player == null || !player.isStarted() || player.isFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
 					continue;
 				player.getPackets().sendProjectile(null, shooter, receiver, gfxId, startHeight, endHeight, speed, delay,
@@ -638,7 +638,7 @@ public final class World {
 				continue;
 			for (Integer playerIndex : playersIndexes) {
 				Player player = players.get(playerIndex);
-				if (player == null || !player.isStarted() || player.hasFinished()
+				if (player == null || !player.isStarted() || player.isFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
 					continue;
 				int size = shooter.getSize();
@@ -768,5 +768,10 @@ public final class World {
 	 */
 	public void submit(Task t) {
 		taskManager.submit(t);
+	}
+
+	public static final WorldObject getObjectWithId(WorldTile tile, int id) {
+		return getRegion(tile.getRegionId()).getObjectWithId(tile.getPlane(), tile.getXInRegion(), tile.getYInRegion(),
+				id);
 	}
 }

@@ -37,7 +37,7 @@ public final class CombatPoisonEffect extends CombatEffect {
 	public boolean apply(Entity entity) {
 		if (entity.isPoisoned() || entity.getPoisonType() == null)
 			return false;
-		if (entity instanceof Player) {
+		if (entity.isPlayer()) {
 			Player player = (Player) entity;
 			if (player.getDetails().getPoisonImmunity().get() > 0 || entity.isDead())
 				return false;
@@ -54,7 +54,7 @@ public final class CombatPoisonEffect extends CombatEffect {
 	
 	@Override
 	public void process(Entity entity) {
-		if (entity instanceof Player) {
+		if (entity.isPlayer()) {
 			Player player = (Player) entity;
 			if (entity.getPoisonDamage().get() == 0) {
 				player.getPackets().sendGameMessage("Your poison effects has worn off.");
@@ -62,7 +62,7 @@ public final class CombatPoisonEffect extends CombatEffect {
 			}
 		}
 		if(entity.getPoisonDamage().get() <= 0) {
-			if(entity instanceof Player) {
+			if(entity.isPlayer()) {
 				Player player = (Player) entity;
 				player.getVarsManager().sendVar(102, 1);
 			}

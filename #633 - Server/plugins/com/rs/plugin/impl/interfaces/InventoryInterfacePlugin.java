@@ -17,7 +17,6 @@ import com.rs.game.npc.others.Pet;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.content.Foods;
 import com.rs.game.player.content.Pots;
 import com.rs.game.route.CoordsEvent;
@@ -29,6 +28,8 @@ import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
 import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
+
+import skills.Skills;
 
 @RSInterfaceSignature(interfaceId = {149})
 public class InventoryInterfacePlugin implements RSInterface {
@@ -186,7 +187,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 		}, npc.getSize()));
 	}
 	public static void sendWear(Player player, int[] slotIds) {
-		if (player.hasFinished() || player.isDead())
+		if (player.isFinished() || player.isDead())
 			return;
 		boolean worn = false;
 		Item[] copy = player.getInventory().getItems().getItemsCopy();
@@ -205,14 +206,14 @@ public class InventoryInterfacePlugin implements RSInterface {
 	}
 	
 	public static boolean sendWear2(Player player, int slotId, int itemId) {
-		if (player.hasFinished() || player.isDead())
+		if (player.isFinished() || player.isDead())
 			return false;
 		player.stopAll(false, false);
 		Item item = player.getInventory().getItem(slotId);
 		if (item == null || item.getId() != itemId)
 			return false;
 		if (item.getDefinitions().isNoted()
-				|| !item.getDefinitions().isWearItem(
+				|| item.getDefinitions().isWearItem(
 						player.getAppearance().isMale()) && itemId != 4084) {
 			player.getPackets().sendGameMessage("You can't wear that.");
 			return false;

@@ -8,7 +8,7 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class Fruitbat extends Familiar {
 
@@ -30,7 +30,7 @@ public class Fruitbat extends Familiar {
 	}
 
 	private void addFruitReward() {
-		getBob().getBeastItems().add(new Item(FRUITS[Utils.random(FRUITS.length)], 1));
+		getBob().getBeastItems().add(new Item(FRUITS[RandomUtils.random(FRUITS.length)], 1));
 		fruitTicks = 0;
 	}
 
@@ -65,12 +65,12 @@ public class Fruitbat extends Familiar {
 		player.setNextAnimation(new Animation(7660));
 		player.setNextGraphics(new Graphics(1316));
 		WorldTile tile = this;
-		for (int trycount = 0; trycount < Utils.getRandom(8); trycount++) {
+		for (int trycount = 0; trycount < RandomUtils.random(8); trycount++) {
 			tile = new WorldTile(this, 2);
 			if (World.isTileFree(this.getPlane(), tile.getX(), tile.getY(), player.getSize()))
 				return true;
 			World.sendGraphics(player, new Graphics(1331), tile);
-			FloorItem.createGroundItem(new Item(FRUITS[Utils.random(FRUITS.length)], 1), tile, player, true, 120, true);
+			FloorItem.createGroundItem(new Item(FRUITS[RandomUtils.random(FRUITS.length)], 1), tile, player, true, 120, true);
 		}
 		return false;
 	}

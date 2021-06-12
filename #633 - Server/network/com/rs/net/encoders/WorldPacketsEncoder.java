@@ -27,6 +27,7 @@ import com.rs.net.Session;
 import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.PublicChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 import com.rs.utilities.loaders.MapArchiveKeys;
 
@@ -708,7 +709,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeByte(dst.getX() - src.getX());
 		stream.writeByte(dst.getY() - src.getY());
 		stream.writeShort(
-				lockOn == null ? 0 : (lockOn instanceof Player ? -(lockOn.getIndex() + 1) : lockOn.getIndex() + 1));
+				lockOn == null ? 0 : (lockOn.isPlayer() ? -(lockOn.getIndex() + 1) : lockOn.getIndex() + 1));
 		stream.writeShort(gfxId);
 		stream.writeByte(startHeight);
 		stream.writeByte(endHeight);
@@ -796,10 +797,10 @@ public class WorldPacketsEncoder extends Encoder {
 	public WorldPacketsEncoder sendGraphics(Graphics graphics, Object target) {
 		OutputStream stream = new OutputStream(13);
 		int hash = 0;
-		if (target instanceof Player) {
+		if (((Entity) target).isPlayer()) {
 			Player p = (Player) target;
 			hash = p.getIndex() & 0xffff | 1 << 28;
-		} else if (target instanceof NPC) {
+		} else if (((Entity) target).isNPC()) {
 			NPC n = (NPC) target;
 			hash = n.getIndex() & 0xffff | 1 << 29;
 		} else {
@@ -953,7 +954,7 @@ public class WorldPacketsEncoder extends Encoder {
 		if (!name.equals(display))
 			stream.writeString(name);
 		for (int i = 0; i < 5; i++)
-			stream.writeByte(Utils.getRandom(255));
+			stream.writeByte(RandomUtils.random(255));
 		stream.writeByte(rights);
 		Huffman.sendEncryptMessage(stream, message.getMessage(player.getDetails().isProfanityFilter()));
 		stream.endPacketVarByte();
@@ -1234,7 +1235,7 @@ public class WorldPacketsEncoder extends Encoder {
 		if (!name.equals(display))
 			stream.writeString(name);
 		for (int i = 0; i < 5; i++)
-			stream.writeByte(Utils.getRandom(255));
+			stream.writeByte(RandomUtils.random(255));
 		stream.writeByte(rights);
 		stream.writeShort(message.getFileId());
 		if (message.getMessage(false) != null)
@@ -1262,7 +1263,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeByte(myClan ? 1 : 0);
 		stream.writeString(display);
 		for (int i = 0; i < 5; i++)
-			stream.writeByte(Utils.getRandom(255));
+			stream.writeByte(RandomUtils.random(255));
 		stream.writeByte(rights);
 		Huffman.sendEncryptMessage(stream, message.getMessage(player.getDetails().isProfanityFilter()));
 		stream.endPacketVarByte();
@@ -1277,7 +1278,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeByte(myClan ? 1 : 0);
 		stream.writeString(display);
 		for (int i = 0; i < 5; i++)
-			stream.writeByte(Utils.getRandom(255));
+			stream.writeByte(RandomUtils.random(255));
 		stream.writeByte(rights);
 		stream.writeShort(message.getFileId());
 		if (message.getMessage(false) != null)
@@ -1297,7 +1298,7 @@ public class WorldPacketsEncoder extends Encoder {
 			stream.writeString(name);
 		stream.writeLong(Utils.stringToLong(chatName));
 		for (int i = 0; i < 5; i++)
-			stream.writeByte(Utils.getRandom(255));
+			stream.writeByte(RandomUtils.random(255));
 		stream.writeByte(rights);
 		Huffman.sendEncryptMessage(stream, message.getMessage(player.getDetails().isProfanityFilter()));
 		stream.endPacketVarByte();
@@ -1315,7 +1316,7 @@ public class WorldPacketsEncoder extends Encoder {
 			stream.writeString(name);
 		stream.writeLong(Utils.stringToLong(chatName));
 		for (int i = 0; i < 5; i++)
-			stream.writeByte(Utils.getRandom(255));
+			stream.writeByte(RandomUtils.random(255));
 		stream.writeByte(rights);
 		stream.writeShort(message.getFileId());
 		if (message.getMessage(false) != null)

@@ -8,10 +8,10 @@ import com.rs.game.Graphics;
 import lombok.Getter;
 
 public enum TeleportType {
-	NORMAL(6, Optional.of(new Animation(8939)), Optional.of(new Animation(8941)), Optional.of(new Graphics(1576)), Optional.of(new Graphics(1577))),
+	NORMAL(4, Optional.of(new Animation(8939)), Optional.of(new Animation(8941)), Optional.of(new Graphics(1576)), Optional.of(new Graphics(1577))),
 	ANCIENT(3, Optional.of(new Animation(9599)), Optional.empty(), Optional.of(new Graphics(1681)), Optional.empty()),
 	LUNAR(5, Optional.of(new Animation(9606)), Optional.empty(), Optional.of(new Graphics(1685)), Optional.empty()),
-	TABLET(5, Optional.of(new Animation(4731)), Optional.empty(), Optional.of(new Graphics(678)), Optional.empty()),
+	TABLET(3, Optional.of(new Animation(4731)), Optional.empty(), Optional.of(new Graphics(678)), Optional.empty()),
 	LEVER(4, Optional.of(new Animation(8939)), Optional.of(new Animation(8941)), Optional.of(new Graphics(1576)), Optional.of(new Graphics(1577))),
 	LADDER(2, Optional.of(new Animation(828)), Optional.empty(), Optional.empty(), Optional.empty()),
 	DOOR(2, Optional.of(new Animation(9105)), Optional.empty(), Optional.empty(), Optional.empty()),

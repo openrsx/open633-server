@@ -9,10 +9,11 @@ import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
+
+import skills.Skills;
 
 public class Spiritcoraxatrice extends Familiar {
 
@@ -73,18 +74,18 @@ public class Spiritcoraxatrice extends Familiar {
 		setNextAnimation(new Animation(7766));
 		setNextGraphics(new Graphics(1467));
 		World.sendProjectile(this, target, 1468, 34, 16, 30, 35, 16, 0);
-		if (target instanceof Player) {
-			Player playerTarget = (Player) target;
-			int level = playerTarget.getSkills().getLevelForXp(Skills.SUMMONING);
+		
+		target.ifPlayer(targetSelected -> {
+			int level = targetSelected.getSkills().getLevelForXp(Skills.SUMMONING);
 			int drained = 3;
 			if (level - drained > 0)
 				drained = level;
-			playerTarget.getSkills().drainLevel(Skills.SUMMONING, drained);
-		}
+			targetSelected.getSkills().drainLevel(Skills.SUMMONING, drained);
+		});
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {
-				target.applyHit(new Hit(getOwner(), Utils.random(100), HitLook.MELEE_DAMAGE));
+				target.applyHit(new Hit(getOwner(), RandomUtils.random(100), HitLook.MELEE_DAMAGE));
 				this.cancel();
 			}
 		});

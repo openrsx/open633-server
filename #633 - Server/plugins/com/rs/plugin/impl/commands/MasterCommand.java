@@ -2,9 +2,10 @@ package com.rs.plugin.impl.commands;
 
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
-import com.rs.game.player.Skills;
 import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
+
+import skills.Skills;
 
 /**
  * This is just a dummy command to re-use

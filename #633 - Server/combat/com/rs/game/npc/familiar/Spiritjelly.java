@@ -8,10 +8,11 @@ import com.rs.game.Hit.HitLook;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
+
+import skills.Skills;
 
 public class Spiritjelly extends Familiar {
 
@@ -51,14 +52,12 @@ public class Spiritjelly extends Familiar {
 	public boolean submitSpecial(Object object) {// TODO get special anim
 		final Entity target = (Entity) object;
 		Player player = getOwner();
-		final int damage = Utils.getRandom(100);
+		final int damage = RandomUtils.random(100);
 		player.setNextAnimation(new Animation(7660));
 		player.setNextGraphics(new Graphics(1316));
 		World.sendProjectile(this, target, 1359, 34, 16, 30, 35, 16, 0);
 		if (damage > 20)
-			if (target instanceof Player)
-				((Player) target).getSkills().set(Skills.ATTACK,
-						((Player) target).getSkills().getLevel(Skills.ATTACK) - (damage / 20));
+			target.ifPlayer(targetSelected -> targetSelected.getSkills().set(Skills.ATTACK, targetSelected.getSkills().getLevel(Skills.ATTACK) - (damage / 20)));
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {

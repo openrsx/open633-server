@@ -17,7 +17,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.utilities.Logger;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.json.GsonHandler;
 import com.rs.utilities.json.impl.NPCAutoSpawn;
 import com.rs.utilities.json.impl.ObjectSpawnLoader;
@@ -307,7 +307,7 @@ public class Region {
 			// clips spawned object(either original or non original)
 			clip(object, localX, localY);
 			for (Player p2 : World.getPlayers()) {
-				if (p2 == null || !p2.isStarted() || p2.hasFinished()
+				if (p2 == null || !p2.isStarted() || p2.isFinished()
 						|| !p2.getMapRegionsIds().contains(regionId))
 					continue;
 				p2.getPackets().sendSpawnedObject(object);
@@ -352,7 +352,7 @@ public class Region {
 			return;
 		}
 		for (Player p2 : World.getPlayers()) {
-			if (p2 == null || !p2.isStarted() || p2.hasFinished()
+			if (p2 == null || !p2.isStarted() || p2.isFinished()
 					|| !p2.getMapRegionsIds().contains(regionId))
 				continue;
 			if (original != null)
@@ -700,7 +700,7 @@ public class Region {
 			return -1;
 		if (musicIds.length == 1)
 			return musicIds[0];
-		return musicIds[Utils.getRandom(musicIds.length - 1)];
+		return musicIds[RandomUtils.random(musicIds.length - 1)];
 	}
 
 	public int getLoadMapStage() {

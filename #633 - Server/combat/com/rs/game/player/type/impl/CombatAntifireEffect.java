@@ -29,7 +29,7 @@ public final class CombatAntifireEffect extends CombatEffect {
 
 	@Override
 	public boolean apply(Entity entity) {
-		if(!(entity instanceof Player)) {
+		if(!(entity.isPlayer())) {
 			return false;
 		}
 		Player player = (Player) entity;
@@ -43,7 +43,7 @@ public final class CombatAntifireEffect extends CombatEffect {
 
 	@Override
 	public boolean removeOn(Entity entity) {
-		if(entity instanceof Player) {
+		if(entity.isPlayer()) {
 			Player player = (Player) entity;
 			return !player.getDetails().getAntifireDetails().isPresent() ? true : false;
 		}
@@ -52,7 +52,7 @@ public final class CombatAntifireEffect extends CombatEffect {
 
 	@Override
 	public void process(Entity entity) {
-		if (entity instanceof Player) {
+		if (entity.isPlayer()) {
 			Player player = (Player) entity;
 			if (player.getDetails().getAntifireDetails().isPresent()) {
 				AntifireDetails detail = player.getDetails().getAntifireDetails().get();
@@ -70,7 +70,7 @@ public final class CombatAntifireEffect extends CombatEffect {
 
 	@Override
 	public boolean onLogin(Entity entity) {
-		if (entity instanceof Player) {
+		if (entity.isPlayer()) {
 			Player player = (Player) entity;
 			return player.getDetails().getAntifireDetails().isPresent() ? true : false;
 		}

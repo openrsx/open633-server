@@ -8,7 +8,7 @@ import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.utilities.Chance;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
@@ -89,7 +89,7 @@ public final class DropTable {
 			if(row)
 				count += 1;
 			for(int i = 0; i < count; i++) {
-				Drop rareDrop = Utils.random(rare);
+				Drop rareDrop = RandomUtils.random(rare);
 				if(rareDrop.roll(random)) {
 					Item item = rareDrop.toItem();
 					items.add(item);

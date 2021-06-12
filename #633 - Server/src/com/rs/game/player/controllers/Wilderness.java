@@ -6,11 +6,11 @@ import com.rs.game.ForceMovement;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
-import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utils;
+
+import skills.Skills;
 
 public class Wilderness extends Controller {
 
@@ -65,7 +65,7 @@ public class Wilderness extends Controller {
 
 	@Override
 	public boolean keepCombating(Entity target) {
-		if (target instanceof NPC)
+		if (target.isNPC())
 			return true;
 		if (!canAttack(target))
 			return false;
@@ -81,7 +81,7 @@ public class Wilderness extends Controller {
 
 	@Override
 	public boolean canAttack(Entity target) {
-		if (target instanceof Player) {
+		if (target.isPlayer()) {
 			Player p2 = (Player) target;
 			if (player.isCanPvp() && !p2.isCanPvp()) {
 				player.getPackets().sendGameMessage("That player is not in the wilderness.");
@@ -96,7 +96,7 @@ public class Wilderness extends Controller {
 
 	@Override
 	public boolean canHit(Entity target) {
-		if (target instanceof NPC)
+		if (target.isNPC())
 			return true;
 		Player p2 = (Player) target;
 		if (Math.abs(player.getSkills().getCombatLevel() - p2.getSkills().getCombatLevel()) > getWildLevel())
@@ -163,7 +163,7 @@ public class Wilderness extends Controller {
 			World.get().submit(new Task(2) {
 				@Override
 				protected void execute() {
-					player.setNextWorldTile(toTile);
+					player.safeForceMoveTile(toTile);
 					player.faceObject(object);
 					removeIcon();
 					removeControler();
@@ -197,37 +197,6 @@ public class Wilderness extends Controller {
 
 	@Override
 	public boolean sendDeath() {
-		player.lock(7);
-		player.stopAll();
-		//TODO: REDO THIS BIT
-//		WorldTasksManager.schedule(new WorldTask() {
-//			int loop;
-//
-//			@Override
-//			public void run() {
-//				if (loop == 0) {
-//					player.setNextAnimation(new Animation(836));
-//				} else if (loop == 1) {
-//					player.getPackets().sendGameMessage("Oh dear, you have died.");
-//				} else if (loop == 3) {
-//					Player killer = player.getMostDamageReceivedSourcePlayer();
-//					if (killer != null) {
-//						killer.removeDamage(player);
-//						killer.setAttackedByDelay(Utils.currentTimeMillis() + 8000); // imunity
-//					}
-//					player.sendItemsOnDeath(killer);
-//					player.reset();
-////		    player.setNextWorldTile(DeathEvent.HUBS[2]); // edgevile
-//					player.setNextAnimation(new Animation(-1));
-//				} else if (loop == 4) {
-//					removeIcon();
-//					removeControler();
-//					player.getPackets().sendMusicEffect(90);
-//					stop();
-//				}
-//				loop++;
-//			}
-//		}, 0, 1);
 		return false;
 	}
 

@@ -5,7 +5,7 @@ import com.rs.game.Entity;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.type.CombatEffect;
 import com.rs.game.player.type.CombatEffectType;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public final class Combat {
 
@@ -14,11 +14,11 @@ public final class Combat {
 			return false;
 		if (def < 0) // wont happen unless low def lv plus negative bonus
 			return true;
-		return Utils.random((int) (att + def)) >= def;
+		return RandomUtils.random((int) (att + def)) >= def;
 	}
 
 	public static boolean hasAntiDragProtection(Entity target) {
-		if (target instanceof NPC)
+		if (target.isNPC())
 			return false;
 		Player p2 = (Player) target;
 		int shieldId = p2.getEquipment().getShieldId();
@@ -26,7 +26,7 @@ public final class Combat {
 	}
 
 	public static int getDefenceEmote(Entity target) {
-		if (target instanceof NPC) {
+		if (target.isNPC()) {
 			NPC n = (NPC) target;
 			return n.getCombatDefinitions().getDefenceAnim();
 		} else {
@@ -98,7 +98,7 @@ public final class Combat {
 	}
 
 	public static boolean isUndead(Entity target) {
-		if (target instanceof Player)
+		if (target.isPlayer())
 			return false;
 		NPC npc = (NPC) target;
 		String name = npc.getDefinitions().getName().toLowerCase();

@@ -1,7 +1,7 @@
 package com.rs.game;
 
 import com.rs.GameConstants;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 import lombok.Data;
 
@@ -30,8 +30,8 @@ public class WorldTile {
 	}
 
 	public WorldTile(WorldTile tile, int randomize) {
-		this.x = (short) (tile.x + Utils.getRandom(randomize * 2) - randomize);
-		this.y = (short) (tile.y + Utils.getRandom(randomize * 2) - randomize);
+		this.x = (short) (tile.x + RandomUtils.random(randomize * 2) - randomize);
+		this.y = (short) (tile.y + RandomUtils.random(randomize * 2) - randomize);
 		this.plane = tile.plane;
 	}
 

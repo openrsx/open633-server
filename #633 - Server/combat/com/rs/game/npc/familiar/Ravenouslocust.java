@@ -59,18 +59,17 @@ public class Ravenouslocust extends Familiar {
 					@Override
 					protected void execute() {
 						target.setNextGraphics(new Graphics(1348));
-						if (target instanceof Player) {
-							Player playerTarget = (Player) target;
-							itemLoop: for (Item item : playerTarget.getInventory().getItems().getItems()) {
+						target.ifPlayer(target -> {
+							itemLoop: for (Item item : target.getInventory().getItems().getItems()) {
 								if (item == null)
 									continue;
 								Food food = Food.forId(item.getId());
 								if (food == null)
 									continue;
-								playerTarget.getInventory().deleteItem(item);
+								target.getInventory().deleteItem(item);
 								break itemLoop;
 							}
-						}
+						});
 						this.cancel();
 					}
 				});

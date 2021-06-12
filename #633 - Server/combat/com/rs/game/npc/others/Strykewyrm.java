@@ -44,7 +44,7 @@ public class Strykewyrm extends NPC {
 
 	@Override
 	public void reset() {
-		setNPC(stompId);
+		setId(stompId);
 		super.reset();
 	}
 
@@ -61,7 +61,7 @@ public class Strykewyrm extends NPC {
 				return;
 			}
 			if (npc.getAttackedBy() != player && npc.getAttackedByDelay() > Utils.currentTimeMillis()) {
-				if (npc.getAttackedBy() instanceof NPC) {
+				if (npc.getAttackedBy().isNPC()) {
 					npc.setAttackedBy(player); // changes enemy to player,
 					// player has priority over
 					// npc on single areas

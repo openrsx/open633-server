@@ -9,6 +9,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 import com.rs.utilities.loaders.MapAreas;
 
@@ -24,7 +25,7 @@ public final class NPCCombat {
 	public NPCCombat(NPC npc) {
 		this.npc = npc;
 	}
-	
+
 	/*
 	 * returns if under combat
 	 */
@@ -57,7 +58,7 @@ public final class NPCCombat {
 		// this gameticket
 		NPCCombatDefinitions defs = npc.getCombatDefinitions();
 		int attackStyle = defs.getAttackStyle();
-		if (target instanceof Familiar && Utils.random(3) == 0) {
+		if (target instanceof Familiar && RandomUtils.random(3) == 0) {
 			Familiar familiar = (Familiar) target;
 			Player player = familiar.getOwner();
 			if (player != null) {
@@ -73,7 +74,7 @@ public final class NPCCombat {
 			return 0;
 		}
 		if (npc.hasWalkSteps())
-			maxDistance += npc.getRun() ? 2 : 1;
+			maxDistance += npc.isRun() ? 2 : 1;
 		int size = npc.getSize();
 		int targetSize = target.getSize();
 		if (!Utils.isOnRange(npc.getX(), npc.getY(), size, target.getX(), target.getY(), targetSize, maxDistance))
@@ -87,7 +88,6 @@ public final class NPCCombat {
 	protected void doDefenceEmote(Entity target) {
 		target.setNextAnimationNoPriority(new Animation(Combat.getDefenceEmote(target)));
 	}
-
 
 	public void addAttackedByDelay(Entity target) {
 		target.setAttackedBy(npc);
@@ -107,7 +107,7 @@ public final class NPCCombat {
 		Entity target = this.target; // prevents multithread issues
 		if (target == null)
 			return false;
-		if (npc.isDead() || npc.hasFinished() || npc.isForceWalking() || target.isDead() || target.hasFinished()
+		if (npc.isDead() || npc.isFinished() || npc.isForceWalking() || target.isDead() || target.isFinished()
 				|| npc.getPlane() != target.getPlane())
 			return false;
 		if (npc.getFreezeDelay() >= Utils.currentTimeMillis())
@@ -117,7 +117,8 @@ public final class NPCCombat {
 		int size = npc.getSize();
 		int maxDistance;
 		Player player = (Player) target;
-		boolean agressive = player.getDetails().getWatchMap().get("TOLERANCE").elapsed(GameConstants.TOLERANCE_SECONDS, TimeUnit.SECONDS);
+		boolean agressive = player.getDetails().getWatchMap().get("TOLERANCE").elapsed(GameConstants.TOLERANCE_SECONDS,
+				TimeUnit.SECONDS);
 		if (agressive) {
 			npc.resetCombat();
 			npc.resetWalkSteps();
@@ -199,22 +200,19 @@ public final class NPCCombat {
 			}
 
 			int attackStyle = npc.getCombatDefinitions().getAttackStyle();
-				maxDistance = npc.isForceFollowClose() ? 0
-						: (attackStyle == NPCCombatDefinitions.MELEE || attackStyle == NPCCombatDefinitions.SPECIAL2)
-								? 0
-								: 7;
-				npc.resetWalkSteps();
-				// is far from target, moves to it till can attack
-				if ((!npc.clipedProjectile(target, maxDistance == 0)) || distanceX > size + maxDistance
-						|| distanceX < -1 - maxDistance || distanceY > size + maxDistance
-						|| distanceY < -1 - maxDistance) {
-					if (!npc.addWalkStepsInteract(target.getX(), target.getY(), 2, size, true) && combatDelay < 3)
-						combatDelay = 3;
-					return true;
-				}
-				// if under target, moves
+			maxDistance = npc.isForceFollowClose() ? 0
+					: (attackStyle == NPCCombatDefinitions.MELEE || attackStyle == NPCCombatDefinitions.SPECIAL2) ? 0
+							: 7;
+			npc.resetWalkSteps();
+			// is far from target, moves to it till can attack
+			if ((!npc.clipedProjectile(target, maxDistance == 0)) || distanceX > size + maxDistance
+					|| distanceX < -1 - maxDistance || distanceY > size + maxDistance || distanceY < -1 - maxDistance) {
+				if (!npc.addWalkStepsInteract(target.getX(), target.getY(), 2, size, true) && combatDelay < 3)
+					combatDelay = 3;
+				return true;
+			}
+			// if under target, moves
 
-			
 		}
 		return true && agressive;
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.game.Entity;
+import com.rs.game.EntityType;
 import com.rs.game.Graphics;
 import com.rs.game.Hit;
 import com.rs.game.World;
@@ -42,6 +43,7 @@ import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.game.task.Task;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 import com.rs.utilities.loaders.MapAreas;
 import com.rs.utilities.loaders.NPCBonuses;
@@ -94,12 +96,17 @@ public class NPC extends Entity {
 	public NPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
 		this(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, false);
 	}
+	
+	public NPC(short id, WorldTile tile) {
+		super(tile, EntityType.NPC);
+		new NPC(id, tile, (byte) -1, false);
+	}
 
 	/*
 	 * creates and adds npc
 	 */
 	public NPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
-		super(tile);
+		super(tile, EntityType.NPC);
 		this.id = id;
 		this.respawnTile = new WorldTile(tile);
 		this.mapAreaNameHash = mapAreaNameHash;
@@ -131,16 +138,12 @@ public class NPC extends Entity {
 	}
 
 	public void setNextNPCTransformation(short id) {
-		setNPC(id);
+		setId(id);
 		nextTransformation = new Transformation(id);
 		if (getCustomCombatLevel() != -1)
 			changedCombatLevel = true;
 		if (getCustomName() != null)
 			changedName = true;
-	}
-
-	public void setNPC(short id) {
-		this.id = id;
 	}
 
 	@Override
@@ -219,7 +222,7 @@ public class NPC extends Entity {
 						}
 					}
 					if (!hasWalkSteps()) { // failing finding route
-						setNextWorldTile(new WorldTile(forceWalk));
+						safeForceMoveTile(new WorldTile(forceWalk));
 						forceWalk = null;
 					}
 				} else
@@ -272,7 +275,7 @@ public class NPC extends Entity {
 
 	@Override
 	public void finish() {
-		if (hasFinished())
+		if (isFinished())
 			return;
 		setFinished(true);
 		updateEntityRegion(this);
@@ -281,7 +284,7 @@ public class NPC extends Entity {
 
 	@SneakyThrows(Throwable.class)
 	public void setRespawnTask() {
-		if (!hasFinished()) {
+		if (!isFinished()) {
 			reset();
 			setLocation(getRespawnTile());
 			finish();
@@ -382,7 +385,7 @@ public class NPC extends Entity {
 				if (playerIndexes != null) {
 					for (int playerIndex : playerIndexes) {
 						Player player = World.getPlayers().get(playerIndex);
-						if (player.isDead() || player.hasFinished() || !player.isRunning()
+						if (player.isDead() || player.isFinished() || !player.isRunning()
 								|| player.getAppearance().isHidden()
 								|| !Utils.isOnRange(getX(), getY(), size, player.getX(), player.getY(),
 										player.getSize(), forceTargetDistance > 0 ? forceTargetDistance : agroRatio)
@@ -402,7 +405,7 @@ public class NPC extends Entity {
 				if (npcsIndexes != null) {
 					for (int npcIndex : npcsIndexes) {
 						NPC npc = World.getNPCs().get(npcIndex);
-						if (npc == this || npc.isDead() || npc.hasFinished()
+						if (npc == this || npc.isDead() || npc.isFinished()
 								|| !Utils.isOnRange(getX(), getY(), size, npc.getX(), npc.getY(), npc.getSize(),
 										forceTargetDistance > 0 ? forceTargetDistance : agroRatio)
 								|| !npc.getDefinitions().hasAttackOption()
@@ -432,7 +435,7 @@ public class NPC extends Entity {
 		}
 		ArrayList<Entity> possibleTarget = getPossibleTargets();
 		if (!possibleTarget.isEmpty()) {
-			Entity target = possibleTarget.get(Utils.random(possibleTarget.size()));
+			Entity target = possibleTarget.get(RandomUtils.random(possibleTarget.size()));
 			setTarget(target);
 			target.setAttackedBy(target);
 			target.setFindTargetDelay(Utils.currentTimeMillis() + 10000);
@@ -483,7 +486,7 @@ public class NPC extends Entity {
 	}
 	
 	public void transformIntoNPC(short id) {
-		setNPC(id);
+		setId(id);
 		nextTransformation = new Transformation(id);
 	}
 	

@@ -3,8 +3,9 @@ package com.rs.game.player;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
-import com.rs.game.npc.NPC;
 import com.rs.utilities.Utils;
+
+import skills.Skills;
 
 public class Prayer {
 	
@@ -233,7 +234,7 @@ public class Prayer {
 	}
 
 	public void increaseTurmoilBonus(Entity entity) {
-		if (entity instanceof Player) {
+		if (entity.isPlayer()) {
 			Player p2 = (Player) entity;
 			leechBonuses[8] = (int) ((100 * Math.floor(0.15 * p2.getSkills()
 					.getLevelForXp(Skills.ATTACK))) / p2.getSkills()
@@ -247,7 +248,7 @@ public class Prayer {
 			adjustStat(0, leechBonuses[8]);
 			adjustStat(1, leechBonuses[10]);
 			adjustStat(2, leechBonuses[9]);
-		} else if (entity instanceof NPC) {
+		} else if (entity.isNPC()) {
 			/*
 			 * NPC npc = (NPC) entity;
 			 * 

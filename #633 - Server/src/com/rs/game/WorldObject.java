@@ -21,6 +21,7 @@ public class WorldObject extends WorldTile {
 	private int type;
 	private int rotation;
 	private int life;
+	private boolean disabled;
 
 	public WorldObject(int id, int type, int rotation, WorldTile tile) {
 		super(tile.getX(), tile.getY(), tile.getPlane());
@@ -168,7 +169,7 @@ public class WorldObject extends WorldTile {
 					continue;
 				for (Integer playerIndex : playersIndexes) {
 					Player player = World.getPlayers().get(playerIndex);
-					if (player == null || !player.isStarted() || player.hasFinished()
+					if (player == null || !player.isStarted() || player.isFinished()
 							|| !player.withinDistance(object))
 						continue;
 					player.getPackets().sendObjectAnimation(object, animation);

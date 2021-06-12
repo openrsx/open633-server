@@ -5,9 +5,10 @@ import com.rs.game.Graphics;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
+
+import skills.Skills;
 
 public class Abyssallurker extends Familiar {
 

@@ -9,9 +9,10 @@ import com.rs.game.npc.familiar.Steeltitan;
 import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
-import com.rs.game.player.Skills;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
+
+import skills.Skills;
 
 public abstract class MobCombatInterface {
 	
@@ -26,7 +27,7 @@ public abstract class MobCombatInterface {
 						: attackStyle == NPCCombatDefinitions.MAGE ? bonuses[CombatDefinitions.MAGIC_ATTACK]
 								: bonuses[CombatDefinitions.STAB_ATTACK];
 		double defence;
-		if (target instanceof Player) {
+		if (target.isPlayer()) {
 			Player targetPlayer = (Player) target;
 			defence = targetPlayer.getSkills().getLevel(Skills.DEFENCE)
 					+ (2 * targetPlayer.getCombatDefinitions().getBonuses()[attackStyle == NPCCombatDefinitions.RANGE
@@ -53,7 +54,7 @@ public abstract class MobCombatInterface {
 			probability = 0.05;
 		if (probability < Math.random())
 			return 0;
-		return Utils.getRandom(maxHit);
+		return RandomUtils.random(maxHit);
 	}
 	
 	public static Hit getRangeHit(NPC npc, int damage) {
@@ -79,11 +80,11 @@ public abstract class MobCombatInterface {
 			protected void execute() {
 				for (Hit hit : hits) {
 					NPC npc = (NPC) hit.getSource();
-					if (npc.isDead() || npc.hasFinished() || target.isDead() || target.hasFinished())
+					if (npc.isDead() || npc.isFinished() || target.isDead() || target.isFinished())
 						return;
 					target.applyHit(hit);
 					npc.getCombat().doDefenceEmote(target);
-					if (target instanceof Player) {
+					if (target.isPlayer()) {
 						Player targetPlayer = (Player) target;
 						targetPlayer.getInterfaceManager().closeInterfaces();
 						if (targetPlayer.getCombatDefinitions().isAutoRelatie() && !targetPlayer.getActionManager().hasSkillWorking()

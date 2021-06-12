@@ -50,7 +50,7 @@ public final class PlayerDetails {
 	/**
 	 * The amount of authority this player has over others.
 	 */
-	public Rights rights = Rights.PLAYER;
+	private Rights rights = Rights.PLAYER;
 
 	/**
 	 * An array of Runecrafting pouches that possibly contain values.
@@ -93,12 +93,12 @@ public final class PlayerDetails {
 	/**
 	 * Represents if the Player should be using older item models to display
 	 */
-	public boolean oldItemsLook;
+	private boolean oldItemsLook;
 
 	/**
 	 * Represents the default Yell color for a Player
 	 */
-	public String yellColor = "ff0000";
+	private String yellColor = "ff0000";
 
 	/**
 	 * The creation date
@@ -113,43 +113,83 @@ public final class PlayerDetails {
 	/**
 	 * A collection of Stopwatches
 	 */
-	public HashMap<String, Stopwatch> watchMap = new HashMap<>();
+	private HashMap<String, Stopwatch> watchMap = new HashMap<>();
 
 	/**
-	 * TODO: Add documentation to rest of these imports. Documentation is super
-	 * important so take your time to explain their functions so others can learn!
+	 * Should the Player use Chat effects for overhead text
 	 */
 	private boolean allowChatEffects;
+	
+	/**
+	 * Should the Player accept aid from other Players
+	 */
 	private boolean acceptAid;
+	
+	/**
+	 * Should the Player play with 2 mouse button mode
+	 */
 	private boolean mouseButtons;
+	
+	/**
+	 * Should the Player have their profanity filter on
+	 */
 	private boolean profanityFilter;
-	private byte privateChatSetup;
-	private byte friendChatSetup;
-	private byte clanChatSetup;
-	private byte guestChatSetup;
+	
+	/**
+	 * Should the Player have their next map refreshed
+	 */
 	private boolean forceNextMapLoadRefresh;
+	
+	/**
+	 * The length of a Players ban
+	 */
 	private long banned;
+	
+	/**
+	 * Is the Player permanently banned
+	 */
 	private boolean permBanned;
+	
+	/**
+	 * Does the Player have their Yell turned off
+	 */
 	private boolean yellOff;
+	
 	// game bar status
 	private byte publicStatus;
 	private byte clanStatus;
 	private byte tradeStatus;
 	private byte assistStatus;
 
+	private byte summoningLeftClickOption;
+	
 	// Used for storing recent ips and password
 	private ArrayList<String> passwordList = new ArrayList<String>();
 	private ArrayList<String> ipList = new ArrayList<String>();
 
+	/**
+	 * Represents an instance of the Players Charge handler
+	 */
 	private ChargesManager charges;
 
 	private String currentFriendChatOwner;
-	private String clanName;// , guestClanChat;
+	private String clanName;
 	private boolean connectedClanChannel;
+	
+	/**
+	 * The Skull ID displayed for PVP interactions
+	 * 0, 1, 2
+	 */
+	private byte skullId;
 
-	private byte summoningLeftClickOption;
+	/**
+	 * A list of Player owned Objects
+	 */
 	private List<String> ownedObjectsManagerKeys;
 
+	/**
+	 * Mutable values stored for specified uses
+	 */
 	private final MutableNumber poisonImmunity = new MutableNumber(), skullTimer = new MutableNumber(), teleBlockDelay = new MutableNumber(), prayerDelay = new MutableNumber();
 
 	/**
@@ -165,7 +205,6 @@ public final class PlayerDetails {
 		watchMap.put("DRINKS", new Stopwatch());
 		watchMap.put("TOLERANCE", new Stopwatch());
 		watchMap.put("EMOTE", new Stopwatch());
+		watchMap.put("STUN", new Stopwatch());
 	}
-
-	private byte skullId;
 }

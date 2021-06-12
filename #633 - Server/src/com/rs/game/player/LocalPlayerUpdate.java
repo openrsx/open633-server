@@ -77,11 +77,11 @@ public final class LocalPlayerUpdate {
 	}
 
 	private boolean needsRemove(Player p) {
-		return (p.hasFinished() || !player.withinDistance(p, 14));
+		return (p.isFinished() || !player.withinDistance(p, 14));
 	}
 
 	private boolean needsAdd(Player p) {
-		return p != null && !p.hasFinished() && player.withinDistance(p, 14)
+		return p != null && !p.isFinished() && player.withinDistance(p, 14)
 				&& localAddedPlayers < MAX_PLAYER_ADD;
 	}
 
@@ -234,7 +234,7 @@ public final class LocalPlayerUpdate {
 				if (needUpdate)
 					appendUpdateBlock(p, updateBlockData, needAppearenceUpdate,
 							false);
-				if (p.hasTeleported()) {
+				if (p.isTeleported()) {
 					stream.writeBits(1, 1); // needs update
 					stream.writeBits(1, needUpdate ? 1 : 0);
 					stream.writeBits(2, 3);
@@ -304,7 +304,7 @@ public final class LocalPlayerUpdate {
 							continue;
 						Player p2 = localPlayers[p2Index];
 						if (needsRemove(p2)
-								|| p2.hasTeleported()
+								|| p2.isTeleported()
 								|| p2.getNextWalkDirection() != -1
 								|| (p2.needMasksUpdate() || needAppearenceUpdate(
 										p2.getIndex(), p2.getAppearance()
@@ -477,7 +477,7 @@ public final class LocalPlayerUpdate {
 	}
 
 	private void applyMoveTypeMask(Player p, OutputStream data) {
-		data.writeByteC(p.getRun() ? 2 : 1);
+		data.writeByteC(p.isRun() ? 2 : 1);
 	}
 
 	@SuppressWarnings("unused")

@@ -6,6 +6,7 @@ import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.game.World;
 import com.rs.game.map.Region;
 import com.rs.game.player.Player;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 import com.rs.utilities.loaders.MusicHints;
 
@@ -213,14 +214,14 @@ public final class MusicsManager {
 		if (playListOn && playList.size() > 0) {
 			if (shuffleOn)
 				playingMusic = playList
-						.get(Utils.getRandom(playList.size() - 1));
+						.get(RandomUtils.random(playList.size() - 1));
 			else {
 				if (nextPlayListMusic >= playList.size())
 					nextPlayListMusic = 0;
 				playingMusic = playList.get(nextPlayListMusic++);
 			}
 		} else if (unlockedMusics.size() > 0) // random music
-			playingMusic = unlockedMusics.get(Utils.getRandom(unlockedMusics
+			playingMusic = unlockedMusics.get(RandomUtils.random(unlockedMusics
 					.size() - 1));
 		playMusic(playingMusic);
 	}

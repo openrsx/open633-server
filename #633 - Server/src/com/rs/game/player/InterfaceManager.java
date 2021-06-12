@@ -289,6 +289,12 @@ public class InterfaceManager {
 		removeWindowInterface(isResizableScreen() ? 124 : 217);
 	}
 
+	public void sendDefaultPlayersOptions() {
+		player.getPackets().sendPlayerOption("Follow", 2, false);
+		player.getPackets().sendPlayerOption("Trade with", 4, false);
+		player.getPackets().sendPlayerOption("Req Assist", 5, false);
+	}
+	
 	public void setInterface(boolean clickThrought, int parentInterfaceId, int parentInterfaceComponentId,
 			int interfaceId) {
 		if (GameConstants.DEBUG) {
@@ -438,7 +444,8 @@ public class InterfaceManager {
 			player.getInterfaceManager().removeScreenInterface();
 		if (player.getInterfaceManager().containsInventoryInter())
 			player.getInterfaceManager().removeInventoryInterface();
-		player.getDialogueManager().finishDialogue();
+		if (player.dialog() != null)
+			player.dialog().complete();
 		if (player.getCloseInterfacesEvent() != null) {
 			player.getCloseInterfacesEvent().run();
 			player.setCloseInterfacesEvent(null);
@@ -447,7 +454,7 @@ public class InterfaceManager {
 	
 	public void sendRunButtonConfig() {
 		player.getVarsManager().sendVar(173,
-				player.getResting() == 1 ? 3 : player.getResting() == 2 ? 4 : player.getRun() ? 1 : 0);
+				player.getResting() == 1 ? 3 : player.getResting() == 2 ? 4 : player.isRun() ? 1 : 0);
 	}
 	
 	public void refreshHitPoints() {

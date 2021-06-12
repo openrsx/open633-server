@@ -14,10 +14,12 @@ import com.rs.game.item.ItemConstants;
 import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.task.Task;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
+
+import skills.Skills;
 
 /*
  * content package used for static stuff
@@ -437,7 +439,7 @@ public class Magic {
 		// doesnt stop what u doing on rs
 		switch (spellId) {
 		case 42:
-			if (!(target instanceof Player))
+			if (!(target.isPlayer()))
 				return;
 			if (player.getSkills().getLevel(Skills.MAGIC) < 93) {
 				player.getPackets().sendGameMessage("Your Magic level is not high enough for this spell.");
@@ -492,7 +494,7 @@ public class Magic {
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			break;
 		case 38:
-			player.move(GameConstants.START_PLAYER_LOCATION, TeleportType.LUNAR);
+			player.move(false, GameConstants.START_PLAYER_LOCATION, TeleportType.LUNAR);
 			break;
 		case 74: // vegeance group
 			if (player.getSkills().getLevel(Skills.MAGIC) < 95) {
@@ -513,7 +515,7 @@ public class Magic {
 					continue;
 				for (int playerIndex : playerIndexes) {
 					Player p2 = World.getPlayers().get(playerIndex);
-					if (p2 == null || p2 == player || p2.isDead() || !p2.isStarted() || p2.hasFinished()
+					if (p2 == null || p2 == player || p2.isDead() || !p2.isStarted() || p2.isFinished()
 							|| !p2.withinDistance(player, 4) || !player.getControllerManager().canHit(p2))
 						continue;
 					if (!p2.getDetails().isAcceptAid()) {
@@ -622,7 +624,7 @@ public class Magic {
 			sendAncientTeleportSpell(player, 96, 106, new WorldTile(2977, 3873, 0), LAW_RUNE, 2, WATER_RUNE, 8);
 			break;
 		case 48:
-			player.move(GameConstants.START_PLAYER_LOCATION, TeleportType.ANCIENT);
+			player.move(false, GameConstants.START_PLAYER_LOCATION, TeleportType.ANCIENT);
 			break;
 		}
 	}
@@ -667,7 +669,7 @@ public class Magic {
 			player.getInterfaceManager().sendInterface(432);
 			break;
 		case 24:
-			player.move(GameConstants.START_PLAYER_LOCATION, TeleportType.NORMAL);
+			player.move(false, GameConstants.START_PLAYER_LOCATION, TeleportType.NORMAL);
 			break;
 		case 37: // mobi
 			sendNormalTeleportSpell(player, 10, 19, new WorldTile(2413, 2848, 0), LAW_RUNE, 1, WATER_RUNE, 1, AIR_RUNE,
@@ -735,7 +737,7 @@ public class Magic {
 				continue;
 			else if (hasSpecialRunes(player, runeId, amount))
 				continue;
-			else if (hasStaffOfLight(weaponId) && Utils.getRandom(8) == 0 && runeId != 21773)// 1
+			else if (hasStaffOfLight(weaponId) && RandomUtils.random(8) == 0 && runeId != 21773)// 1
 				// in
 				// eight
 				// chance
@@ -865,7 +867,7 @@ public class Magic {
 							teleTile = tile;
 						}
 					}
-					player.setNextWorldTile(teleTile);
+					player.safeForceMoveTile(teleTile);
 					player.getControllerManager().magicTeleported(teleType);
 					if (player.getControllerManager().getController() == null)
 						teleControlersCheck(player, teleTile);
@@ -925,7 +927,7 @@ public class Magic {
 							break;
 						teleTile = tile;
 					}
-					player.setNextWorldTile(teleTile);
+					player.safeForceMoveTile(teleTile);
 					player.getControllerManager().magicTeleported(ITEM_TELEPORT);
 					if (player.getControllerManager().getController() == null)
 						teleControlersCheck(player, teleTile);

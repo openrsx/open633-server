@@ -5,25 +5,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import com.alex.utils.VarsManager;
 import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
 import com.rs.cores.WorldThread;
 import com.rs.game.Entity;
+import com.rs.game.EntityType;
 import com.rs.game.HintIconsManager;
 import com.rs.game.Hit;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
-import com.rs.game.item.FloorItem;
-import com.rs.game.item.Item;
+import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.map.Region;
 import com.rs.game.minigames.duel.DuelRules;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.actions.ActionManager;
+import com.rs.game.player.content.Emotes.Emote;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.MusicsManager;
 import com.rs.game.player.content.Notes;
@@ -31,13 +32,13 @@ import com.rs.game.player.content.PriceCheckManager;
 import com.rs.game.player.content.TeleportType;
 import com.rs.game.player.content.pet.PetManager;
 import com.rs.game.player.controllers.ControllerManager;
-import com.rs.game.player.dialogues.DialogueManager;
 import com.rs.game.player.type.CombatEffect;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
 import com.rs.game.task.LinkedTaskSequence;
 import com.rs.game.task.Task;
 import com.rs.game.task.impl.CombatEffectTask;
+import com.rs.game.task.impl.SkillActionTask;
 import com.rs.net.AccountCreation;
 import com.rs.net.IsaacKeyPair;
 import com.rs.net.LogicPacket;
@@ -51,6 +52,7 @@ import com.rs.utilities.Utils;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import skills.Skills;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -67,7 +69,6 @@ public class Player extends Entity {
 	private transient short screenWidth;
 	private transient short screenHeight;
 	private transient InterfaceManager interfaceManager;
-	private transient DialogueManager dialogueManager;
 	private transient HintIconsManager hintIconsManager;
 	private transient ActionManager actionManager;
 	private transient PriceCheckManager priceCheckManager;
@@ -81,6 +82,13 @@ public class Player extends Entity {
 	private transient VarsManager varsManager;
 	private transient CoordsEvent coordsEvent; 
 	private transient Region region;
+	private transient long nextEmoteEnd;
+	
+	/**
+	 * The current skill action that is going on for this player.
+	 */
+	private Optional<SkillActionTask> skillAction = Optional.empty();
+	
 	
 	// used for packets logic
 	private transient ConcurrentLinkedQueue<LogicPacket> logicPackets;
@@ -99,7 +107,7 @@ public class Player extends Entity {
 	private transient byte resting;
 	private transient boolean canPvp;
 	private transient boolean cantTrade;
-	private transient long lockDelay; // used for doors and stuff like that
+	private transient long lockDelay;
 	private transient Runnable closeInterfacesEvent;
 	private transient long lastPublicMessage;
 	private transient List<Byte> switchItemCache;
@@ -128,7 +136,7 @@ public class Player extends Entity {
 
 	// creates Player and saved classes
 	public Player(String password) {
-		super(GameConstants.START_PLAYER_LOCATION);
+		super(GameConstants.START_PLAYER_LOCATION, EntityType.PLAYER);
 		setHitpoints(100);
 		appearance = new Appearance();
 		inventory = new Inventory();
@@ -162,7 +170,6 @@ public class Player extends Entity {
 		this.screenHeight = screenHeight;
 		this.isaacKeyPair = isaacKeyPair;
 		interfaceManager = new InterfaceManager(this);
-		dialogueManager = new DialogueManager(this);
 		hintIconsManager = new HintIconsManager(this);
 		priceCheckManager = new PriceCheckManager(this);
 		localPlayerUpdate = new LocalPlayerUpdate(this);
@@ -198,8 +205,7 @@ public class Player extends Entity {
 	}
 
 	public void start() {
-		Logger.globalLog(username, session.getIP(), new String(
-				" has logged in."));
+		Logger.globalLog(username, session.getIP(), new String(" has logged in."));
 		loadMapRegions();
 		setStarted(true);
 		run();
@@ -328,7 +334,7 @@ public class Player extends Entity {
 
 	@Override
 	public void setRun(boolean run) {
-		if (run != getRun()) {
+		if (run != isRun()) {
 			super.setRun(run);
 			setUpdateMovementType(true);
 			getInterfaceManager().sendRunButtonConfig();
@@ -347,7 +353,7 @@ public class Player extends Entity {
 		getPackets().sendGameMessage("Welcome to " + GameConstants.SERVER_NAME + ".");
 		CombatEffect.values().parallelStream().filter(effects -> effects.onLogin(this)).forEach(effect -> World.get().submit(new CombatEffectTask(this, effect)));
 		GameConstants.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> getDetails().setRights(staff.getValue()));
-		sendDefaultPlayersOptions();
+		getInterfaceManager().sendDefaultPlayersOptions();
 		checkMultiArea();
 		getInventory().init();
 		getEquipment().checkItems();
@@ -376,12 +382,6 @@ public class Player extends Entity {
 			HostManager.add(this, HostListType.STARTER_RECEIVED, true);
 			World.sendWorldMessage("[New Player] " + getDisplayName() + " has just joined " + GameConstants.SERVER_NAME, canPvp);
 		}
-	}
-
-	public void sendDefaultPlayersOptions() {
-		getPackets().sendPlayerOption("Follow", 2, false);
-		getPackets().sendPlayerOption("Trade with", 4, false);
-		getPackets().sendPlayerOption("Req Assist", 5, false);
 	}
 
 	@Override
@@ -415,11 +415,11 @@ public class Player extends Entity {
 							"You can't log out until 10 seconds after the end of combat.");
 			return;
 		}
-//		if (getEmotesManager().getNextEmoteEnd() >= currentTime) {
-//			getPackets().sendGameMessage(
-//					"You can't log out while performing an emote.");
-//			return;
-//		}
+		if (getNextEmoteEnd() >= currentTime) {
+			getPackets().sendGameMessage(
+					"You can't log out while performing an emote.");
+			return;
+		}
 		if (isLocked()) {
 			getPackets().sendGameMessage(
 					"You can't log out while performing an action.");
@@ -441,14 +441,14 @@ public class Player extends Entity {
 	}
 
 	public void finish(final int tryCount) {
-		if (isFinishing() || hasFinished())
+		if (isFinishing() || isFinished())
 			return;
 		setFinishing(true);
 		// if combating doesnt stop when xlog this way ends combat
 		stopAll(false, true,
 				!(getActionManager().getAction() instanceof PlayerCombat));
 		if (isDead() || (getCombatDefinitions().isUnderCombat() && tryCount < 6) || isLocked()
-		/* || getEmotesManager().isDoingEmote() */) {
+		 || Emote.isDoingEmote(this) ) {
 			CoresManager.slowExecutor.schedule(new Runnable() {
 				@Override
 				public void run() {
@@ -466,7 +466,7 @@ public class Player extends Entity {
 	}
 	
 	public void realFinish(boolean shutdown) {
-		if (hasFinished())
+		if (isFinished())
 			return;
 		Logger.globalLog(username, session.getIP(), new String(
 				" has logged out."));
@@ -565,71 +565,6 @@ public class Player extends Entity {
 		World.get().submit(new PlayerDeath(this));
 	}
 
-	public void sendItemsOnDeath(Player killer) {
-		if (getDetails().getRights().isStaff())
-			return;
-		getDetails().getCharges().die();
-		CopyOnWriteArrayList<Item> containedItems = new CopyOnWriteArrayList<Item>();
-		for (int i = 0; i < 14; i++) {
-			if (getEquipment().getItem(i) != null && getEquipment().getItem(i).getId() != -1
-					&& getEquipment().getItem(i).getAmount() != -1)
-				containedItems.add(new Item(getEquipment().getItem(i).getId(), getEquipment().getItem(i).getAmount()));
-		}
-		for (int i = 0; i < getInventory().getItemsContainerSize(); i++) {
-			if (getInventory().getItem(i) != null && getInventory().getItem(i).getId() != -1
-					&& getInventory().getItem(i).getAmount() != -1)
-				containedItems.add(new Item(getInventory().getItem(i).getId(), getInventory().getItem(i).getAmount()));
-		}
-		if (containedItems.isEmpty())
-			return;
-		int keptAmount = 0;
-
-		keptAmount = getAppearance().hasSkull() ? 0 : 3;
-		if (getPrayer().usingPrayer(0, 10) || getPrayer().usingPrayer(1, 0))
-			keptAmount++;
-		
-		CopyOnWriteArrayList<Item> keptItems = new CopyOnWriteArrayList<Item>();
-		Item lastItem = new Item(1, 1);
-		for (int i = 0; i < keptAmount; i++) {
-			for (Item item : containedItems) {
-				int price = item.getDefinitions().getValue();
-				if (price >= lastItem.getDefinitions().getValue()) {
-					lastItem = item;
-				}
-			}
-			keptItems.add(lastItem);
-			containedItems.remove(lastItem);
-			lastItem = new Item(1, 1);
-		}
-		getInventory().reset();
-		getEquipment().reset();
-		for (Item item : keptItems) {
-			getInventory().addItem(item);
-		}
-		/** This Checks which items that is listed in the 'PROTECT_ON_DEATH' **/
-		for (Item item : containedItems) {	// This checks the items you had in your inventory or equipped
-			for (String string : GameConstants.PROTECT_ON_DEATH) {	//	This checks the matched items from the list 'PROTECT_ON_DEATH'
-				if (item.getDefinitions().getName().toLowerCase().contains(string) || item.getDefinitions().exchangableItem) {
-					getInventory().addItem(item);	//	This adds the items that is matched and listed in 'PROTECT_ON_DEATH'
-					containedItems.remove(item);	//	This remove the whole list of the contained items that is matched
-				}
-			}
-		}
-
-		/** This to avoid items to be dropped in the list 'PROTECT_ON_DEATH' **/
-		for (Item item : containedItems) {	//	This checks the items you had in your inventory or equipped
-			for (String string : GameConstants.PROTECT_ON_DEATH) {	//	This checks the matched items from the list 'PROTECT_ON_DEATH'
-				if (item.getDefinitions().getName().toLowerCase().contains(string)) {
-					containedItems.remove(item);	//	This remove the whole list of the contained items that is matched
-				}
-			}
-			FloorItem.createGroundItem(item, getLastWorldTile(), killer == null ? this : killer, false, 180, true, true);	//	This dropps the items to the killer, and is showed for 180 seconds
-		}
-		for (Item item : containedItems) {
-			FloorItem.createGroundItem(item, getLastWorldTile(), killer == null ? this : killer, false, 180, true, true);
-		}
-	}
-
 	@Override
 	public int getSize() {
 		return getAppearance().getSize();
@@ -672,7 +607,7 @@ public class Player extends Entity {
 	public int getMovementType() {
 		if (getTemporaryMovementType() != -1)
 			return getTemporaryMovementType();
-		return getRun() ? RUN_MOVE_TYPE : WALK_MOVE_TYPE;
+		return isRun() ? RUN_MOVE_TYPE : WALK_MOVE_TYPE;
 	}
 	
 	public String getDisplayName() {
@@ -695,20 +630,20 @@ public class Player extends Entity {
 	
 	/**
 	 * Queue Teleport type handling with Consumer support
-	 * @param tile
+	 * @param destination
 	 * @param type
 	 * @param player
 	 */
-	public void move(WorldTile tile, TeleportType type, Consumer<Player> player) {
+	public void move(boolean instant, WorldTile destination, TeleportType type, Consumer<Player> player) {
 		lock();
-		LinkedTaskSequence seq = new LinkedTaskSequence();
+		LinkedTaskSequence seq = new LinkedTaskSequence(instant ? 0 : 1, instant);
 		seq.connect(1, () -> {
 			type.getStartAnimation().ifPresent(this::setNextAnimation);
 			type.getStartGraphic().ifPresent(this::setNextGraphics);
 		}).connect(type.getEndDelay(), () -> {
 			type.getEndAnimation().ifPresent(this::setNextAnimation);
 			type.getEndGraphic().ifPresent(this::setNextGraphics);
-			setNextWorldTile(tile);
+			safeForceMoveTile(destination);
 			player.accept(this);
 			unlock();
 		}).start();
@@ -716,21 +651,30 @@ public class Player extends Entity {
 	
 	/**
 	 * Queue Teleport type handling
-	 * @param tile
+	 * @param destination
 	 * @param type
 	 * @param player
 	 */
-	public void move(WorldTile tile, TeleportType type) {
+	public void move(boolean instant, WorldTile destination, TeleportType type) {
 		lock();
-		LinkedTaskSequence seq = new LinkedTaskSequence();
+		LinkedTaskSequence seq = new LinkedTaskSequence(instant ? 0 : 1, instant);
 		seq.connect(1, () -> {
 			type.getStartAnimation().ifPresent(this::setNextAnimation);
 			type.getStartGraphic().ifPresent(this::setNextGraphics);
 		}).connect(type.getEndDelay(), () -> {
 			type.getEndAnimation().ifPresent(this::setNextAnimation);
 			type.getEndGraphic().ifPresent(this::setNextGraphics);
-			setNextWorldTile(tile);
+			safeForceMoveTile(destination);
 			unlock();
 		}).start();
+	}
+	
+	public void dialog(DialogueEventListener listener){
+		getTemporaryAttributes().put("dialogue_event", listener.begin());
+	}
+	
+	public DialogueEventListener dialog(){
+		DialogueEventListener listener = (DialogueEventListener) getTemporaryAttributes().get("dialogue_event");
+		return listener;
 	}
 }

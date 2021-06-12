@@ -21,7 +21,7 @@ public class DreadNip extends NPC {
 	@Override
 	public void processNPC() {
 		super.processNPC();
-		if (owner == null || owner.hasFinished()) {
+		if (owner == null || owner.isFinished()) {
 			finish(-1);
 			return;
 		} else if (getCombat().getTarget() == null || getCombat().getTarget().isDead()) {

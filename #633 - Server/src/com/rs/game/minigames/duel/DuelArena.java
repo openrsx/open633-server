@@ -8,6 +8,7 @@ import com.rs.game.Entity;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
+import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Player;
@@ -20,6 +21,7 @@ import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.encoders.other.ForceTalk;
 import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.utilities.Logger;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 
 public class DuelArena extends Controller {
@@ -359,7 +361,7 @@ public class DuelArena extends Controller {
 	}
 
 	private void startEndingTeleport(Player player, boolean loggedOut) {
-		WorldTile tile = LOBBY_TELEPORTS[Utils.random(LOBBY_TELEPORTS.length)];
+		WorldTile tile = LOBBY_TELEPORTS[RandomUtils.random(LOBBY_TELEPORTS.length)];
 		WorldTile teleTile = tile;
 		for (int trycount = 0; trycount < 10; trycount++) {
 			teleTile = new WorldTile(tile, 2);
@@ -371,7 +373,7 @@ public class DuelArena extends Controller {
 			player.setLocation(teleTile);
 			return;
 		}
-		player.setNextWorldTile(teleTile);
+		player.safeForceMoveTile(teleTile);
 	}
 
 	private void removeEquipment() {
@@ -463,15 +465,23 @@ public class DuelArena extends Controller {
 
 	@Override
 	public boolean processMagicTeleport(WorldTile toTile) {
-		player.getDialogueManager().startDialogue("SimpleMessage",
-				"A magical force prevents you from teleporting from the arena.");
+		player.dialog(new DialogueEventListener(player) {
+			@Override
+			public void start() {
+				mes("A magical force prevents you from teleporting from the arena.");
+			}
+		});
 		return false;
 	}
 
 	@Override
 	public boolean processItemTeleport(WorldTile toTile) {
-		player.getDialogueManager().startDialogue("SimpleMessage",
-				"A magical force prevents you from teleporting from the arena.");
+		player.dialog(new DialogueEventListener(player) {
+			@Override
+			public void start() {
+				mes("A magical force prevents you from teleporting from the arena.");
+			}
+		});
 		return false;
 	}
 
@@ -482,7 +492,7 @@ public class DuelArena extends Controller {
 
 	@Override
 	public boolean processObjectClick1(WorldObject object) {
-		player.getDialogueManager().startDialogue("ForfeitDialouge");
+//		player.getDialogueManager().startDialogue("ForfeitDialouge");
 		return true;
 	}
 
@@ -589,8 +599,8 @@ public class DuelArena extends Controller {
 		DuelRules rules = player.getLastDuelRules();
 		boolean noMovement = rules.getRule(25);
 		WorldTile tile = rules.getRule(24) ? POSSIBLE_TILE_CENTRE[1][0]
-				: rules.getRule(6) ? POSSIBLE_TILE_CENTRE[2][Utils.random(POSSIBLE_TILE_CENTRE[2].length)]
-						: POSSIBLE_TILE_CENTRE[0][Utils.random(POSSIBLE_TILE_CENTRE[0].length)],
+				: rules.getRule(6) ? POSSIBLE_TILE_CENTRE[2][RandomUtils.random(POSSIBLE_TILE_CENTRE[2].length)]
+						: POSSIBLE_TILE_CENTRE[0][RandomUtils.random(POSSIBLE_TILE_CENTRE[0].length)],
 				teleTile = tile;
 		for (int trycount = 0; trycount < 10; trycount++) {
 			teleTile = new WorldTile(tile, 7);
@@ -598,7 +608,7 @@ public class DuelArena extends Controller {
 				break;
 			teleTile = tile;
 		}
-		player.setNextWorldTile(teleTile);
+		player.safeForceMoveTile(teleTile);
 		final WorldTile location = teleTile;
 		for (int trycount = 0; trycount < 10; trycount++) {
 			teleTile = new WorldTile(noMovement ? location : tile, noMovement ? 1 : 7);
@@ -607,7 +617,7 @@ public class DuelArena extends Controller {
 				break;
 			teleTile = tile;
 		}
-		target.setNextWorldTile(teleTile);
+		target.safeForceMoveTile(teleTile);
 	}
 
 	private void setRules(DuelRules rules, int componentId, int slotId) {

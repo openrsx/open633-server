@@ -1,9 +1,10 @@
 package com.rs.game.task.impl;
 
 import com.rs.game.World;
-import com.rs.game.player.Skills;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
+
+import skills.Skills;
 
 public final class RestoreSkillTask extends Task {
 
@@ -30,7 +31,7 @@ public final class RestoreSkillTask extends Task {
 					if (currentLevel > normalLevel && time == 0) {
 						if (skill == Skills.ATTACK || skill == Skills.STRENGTH || skill == Skills.DEFENCE
 								|| skill == Skills.RANGE || skill == Skills.MAGIC) {
-							if (berserker && Utils.getRandom(100) <= 15)
+							if (berserker && RandomUtils.random(100) <= 15)
 								continue c;
 						}
 						player.getSkills().set(skill, currentLevel - 1);

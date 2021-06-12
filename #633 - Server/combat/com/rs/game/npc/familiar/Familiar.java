@@ -15,6 +15,7 @@ import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
+import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 
 public abstract class Familiar extends NPC implements Serializable {
@@ -134,7 +135,7 @@ public abstract class Familiar extends NPC implements Serializable {
 		}
 		if (!getCombat().process()) {
 			if (isAgressive() && owner.getAttackedBy() != null && owner.getAttackedByDelay() > Utils.currentTimeMillis()
-					&& canAttack(owner.getAttackedBy()) && Utils.getRandom(25) == 0)
+					&& canAttack(owner.getAttackedBy()) && RandomUtils.random(25) == 0)
 				getCombat().setTarget(owner.getAttackedBy());
 			else
 				sendFollow();
@@ -142,11 +143,10 @@ public abstract class Familiar extends NPC implements Serializable {
 	}
 
 	public boolean canAttack(Entity target) {
-		if (target instanceof Player) {
-			Player player = (Player) target;
-			if (!owner.isCanPvp() || !player.isCanPvp())
-				return false;
-		}
+		target.ifPlayer(targetPlayer -> {
+			if (!owner.isCanPvp() || !targetPlayer.isCanPvp())
+				return;
+		});
 		return !target.isDead()
 				&& ((owner.isMultiArea() && isMultiArea() && target.isMultiArea())
 						|| (owner.isForceMultiArea() && target.isForceMultiArea()))
@@ -328,7 +328,7 @@ public abstract class Familiar extends NPC implements Serializable {
 			return;
 		}
 		sentRequestMoveMessage = false;
-		setNextWorldTile(teleTile);
+		safeForceMoveTile(teleTile);
 	}
 
 	public void removeFamiliar() {

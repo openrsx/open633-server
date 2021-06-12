@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.utilities.Chance;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 /**
  * A model representing an item within a rational item table that can be dropped.
@@ -57,7 +57,7 @@ public class Drop {
 	 * @return the converted drop.
 	 */
 	public Item toItem() {
-		return new Item(getId(), Utils.inclusive(getMinimum(), getMaximum()));
+		return new Item(getId(), RandomUtils.inclusive(getMinimum(), getMaximum()));
 	}
 	
 	/**

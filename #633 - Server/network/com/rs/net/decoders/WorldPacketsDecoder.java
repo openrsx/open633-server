@@ -4,6 +4,7 @@ import com.rs.GameConstants;
 import com.rs.game.World;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
+import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.npc.NPC;
@@ -12,7 +13,6 @@ import com.rs.game.npc.familiar.Familiar.SpecialAttack;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
-import com.rs.game.player.Skills;
 import com.rs.game.player.actions.PlayerFollow;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.Magic;
@@ -29,6 +29,7 @@ import com.rs.net.Session;
 import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.PublicChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
+import com.rs.net.packets.PacketDispatcher;
 import com.rs.plugin.CommandDispatcher;
 import com.rs.plugin.NPCDispatcher;
 import com.rs.plugin.ObjectDispatcher;
@@ -224,7 +225,7 @@ public final class WorldPacketsDecoder extends Decoder {
 	@Override
 	public void decode(InputStream stream) {
 		while (stream.getRemaining() > 0 && session.getChannel().isConnected()
-				&& !player.hasFinished()) {
+				&& !player.isFinished()) {
 			int packetId = stream.readPacket(player);
 			if (packetId >= PACKET_SIZES.length || packetId < 0) {
 				if (GameConstants.DEBUG)
@@ -259,14 +260,20 @@ public final class WorldPacketsDecoder extends Decoder {
 			 */
 			int startOffset = stream.getOffset();
 			processPackets(packetId, stream, length);
+			
 			stream.setOffset(startOffset + length);
 		}
 	}
 
 	public static void decodeLogicPacket(final Player player, LogicPacket packet) {
 		int packetId = packet.getId();
+		
+		
 		InputStream stream = new InputStream(packet.getData());
 		System.out.println("packet: " + packetId);
+		
+		PacketDispatcher.execute(player, stream, packetId);
+		
 		if (packetId == WALKING_PACKET || packetId == MINI_WALKING_PACKET) {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
@@ -285,6 +292,12 @@ public final class WorldPacketsDecoder extends Decoder {
 			player.stopAll();
 			if (forceRun)
 				player.setRun(forceRun);
+			
+			if (player.dialog() != null)
+				player.dialog().complete();
+			
+			player.getSkillAction().ifPresent(skill -> skill.cancel());
+			
 			int steps = RouteFinder
 					.findRoute(RouteFinder.WALK_ROUTEFINDER, player.getX(),
 							player.getY(), player.getPlane(), player.getSize(),
@@ -332,7 +345,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					&& Utils.getInterfaceDefinitionsComponentsSize(interfaceId) <= componentId)
 				return;
 			final Player p2 = World.getPlayers().get(playerIndex);
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			player.stopAll();
@@ -431,7 +444,7 @@ public final class WorldPacketsDecoder extends Decoder {
 										.sendGameMessage(
 												"That "
 														+ (player
-																.getAttackedBy() instanceof Player ? "player"
+																.getAttackedBy().isPlayer() ? "player"
 																: "npc")
 														+ " is already in combat.");
 								return;
@@ -439,7 +452,7 @@ public final class WorldPacketsDecoder extends Decoder {
 							if (p2.getAttackedBy() != player
 									&& p2.getAttackedByDelay() > Utils
 											.currentTimeMillis()) {
-								if (p2.getAttackedBy() instanceof NPC) {
+								if (p2.getAttackedBy().isNPC()) {
 									p2.setAttackedBy(player); // changes
 									// enemy
 									// to player,
@@ -510,7 +523,7 @@ public final class WorldPacketsDecoder extends Decoder {
 										.sendGameMessage(
 												"That "
 														+ (player
-																.getAttackedBy() instanceof Player ? "player"
+																.getAttackedBy().isPlayer() ? "player"
 																: "npc")
 														+ " is already in combat.");
 								return;
@@ -518,7 +531,7 @@ public final class WorldPacketsDecoder extends Decoder {
 							if (p2.getAttackedBy() != player
 									&& p2.getAttackedByDelay() > Utils
 											.currentTimeMillis()) {
-								if (p2.getAttackedBy() instanceof NPC) {
+								if (p2.getAttackedBy().isNPC()) {
 									p2.setAttackedBy(player); // changes
 									// enemy
 									// to player,
@@ -571,7 +584,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					&& Utils.getInterfaceDefinitionsComponentsSize(interfaceId) <= componentId)
 				return;
 			NPC npc = World.getNPCs().get(npcIndex);
-			if (npc == null || npc.isDead() || npc.hasFinished()
+			if (npc == null || npc.isDead() || npc.isFinished()
 					|| !player.getMapRegionsIds().contains(npc.getRegionId()))
 				return;
 			player.stopAll();
@@ -834,7 +847,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				player.setRun(forceRun);
 			player.stopAll();
 
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player
@@ -861,7 +874,7 @@ public final class WorldPacketsDecoder extends Decoder {
 				}
 				if (p2.getAttackedBy() != player
 						&& p2.getAttackedByDelay() > Utils.currentTimeMillis()) {
-					if (p2.getAttackedBy() instanceof NPC) {
+					if (p2.getAttackedBy().isNPC()) {
 						p2.setAttackedBy(player); // changes enemy to player,
 						// player has priority over
 						// npc on single areas
@@ -881,7 +894,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			int playerIndex = stream.readUnsignedShort();
 			boolean forceRun = stream.readUnsignedByte() == 1;
 			Player p2 = World.getPlayers().get(playerIndex);
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player.isLocked())
@@ -896,7 +909,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			final boolean forceRun = stream.readUnsignedByte() == 1;
 			int playerIndex = stream.readUnsignedShort128();
 			final Player p2 = World.getPlayers().get(playerIndex);
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player.isLocked())
@@ -915,7 +928,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			int playerIndex = stream.readUnsignedShortLE128();
 			boolean forceRun = stream.readUnsignedByte() == 1;
 			final Player p2 = World.getPlayers().get(playerIndex);
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player.isLocked())
@@ -972,7 +985,7 @@ public final class WorldPacketsDecoder extends Decoder {
 			boolean forceRun = stream.readUnsignedByte() == 1;
 			int playerIndex = stream.readUnsignedShortLE128();
 			Player p2 = World.getPlayers().get(playerIndex);
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player.isLocked())
@@ -980,15 +993,11 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (forceRun)
 				player.setRun(forceRun);
 			player.stopAll();
-			if (player.getDetails().getRights().isStaff())
-				player.getDialogueManager().startDialogue("ModReportD", p2);
-//			else
-//				ReportAbuse.report(player, p2.getDisplayName());
 		} else if (packetId == PLAYER_OPTION_9_PACKET) {
 			boolean forceRun = stream.readUnsignedByte() == 1;
 			int playerIndex = stream.readUnsignedShortLE128();
 			Player p2 = World.getPlayers().get(playerIndex);
-			if (p2 == null || p2 == player || p2.isDead() || p2.hasFinished()
+			if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 					|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 				return;
 			if (player.isLocked())
@@ -1008,7 +1017,7 @@ public final class WorldPacketsDecoder extends Decoder {
 
 
 			NPC npc = World.getNPCs().get(npcIndex);
-			if (npc == null || npc.isDead() || npc.hasFinished()
+			if (npc == null || npc.isDead() || npc.isFinished()
 					|| !player.getMapRegionsIds().contains(npc.getRegionId())
 					|| !npc.getDefinitions().hasAttackOption())
 				return;
@@ -1051,16 +1060,17 @@ public final class WorldPacketsDecoder extends Decoder {
 			}
 			player.getActionManager().setAction(new PlayerCombat(npc));
 		} 
-		else if (packetId == OBJECT_CLICK1_PACKET)
-			ObjectDispatcher.handleOption(player, stream, 1);
-		else if (packetId == OBJECT_CLICK2_PACKET)
-			ObjectDispatcher.handleOption(player, stream, 2);
-		else if (packetId == OBJECT_CLICK3_PACKET)
-			ObjectDispatcher.handleOption(player, stream, 3);
-		else if (packetId == OBJECT_CLICK4_PACKET)
-			ObjectDispatcher.handleOption(player, stream, 4);
-		else if (packetId == OBJECT_CLICK5_PACKET)
-			ObjectDispatcher.handleOption(player, stream, 5);
+//		else if (packetId == OBJECT_CLICK1_PACKET)
+//			
+//			ObjectDispatcher.handleOption(player, stream, 1);
+//		else if (packetId == OBJECT_CLICK2_PACKET)
+//			ObjectDispatcher.handleOption(player, stream, 2);
+//		else if (packetId == OBJECT_CLICK3_PACKET)
+//			ObjectDispatcher.handleOption(player, stream, 3);
+//		else if (packetId == OBJECT_CLICK4_PACKET)
+//			ObjectDispatcher.handleOption(player, stream, 4);
+//		else if (packetId == OBJECT_CLICK5_PACKET)
+//			ObjectDispatcher.handleOption(player, stream, 5);
 		else if (packetId == ITEM_TAKE_PACKET) {
 			if (!player.isStarted() || !player.isClientLoadedMapRegion()
 					|| player.isDead())
@@ -1125,7 +1135,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == AFK_PACKET) {
 			//player.getSession().getChannel().close();
 		} else if (packetId == CLOSE_INTERFACE_PACKET) {
-			if (player.isStarted() && !player.hasFinished()
+			if (player.isStarted() && !player.isFinished()
 					&& !player.isRunning()) { // used
 				// for
 				// old
@@ -1141,15 +1151,13 @@ public final class WorldPacketsDecoder extends Decoder {
 			stream.readUnsignedShort();
 		} else if (packetId == IN_OUT_SCREEN_PACKET) {
 			// not using this check because not 100% efficient
-			@SuppressWarnings("unused")
 			boolean inScreen = stream.readByte() == 1;
 		} else if (packetId == SCREEN_PACKET) {
 			byte displayMode = (byte) stream.readUnsignedByte();
 			player.setScreenWidth((short) stream.readUnsignedShort());
 			player.setScreenHeight((short) stream.readUnsignedShort());
-			@SuppressWarnings("unused")
 			boolean switchScreenMode = stream.readUnsignedByte() == 1;
-			if (!player.isStarted() || player.hasFinished()
+			if (!player.isStarted() || player.isFinished()
 					|| displayMode == player.getDisplayMode()
 					|| !player.getInterfaceManager().containsInterface(742))
 				return;
@@ -1164,7 +1172,6 @@ public final class WorldPacketsDecoder extends Decoder {
 			int positionHash = stream.readIntV1();
 			int y = positionHash >> 16; // y;
 			int x = positionHash - (y << 16); // x
-			@SuppressWarnings("unused")
 			boolean clicked;
 			// mass click or stupid autoclicker, lets stop lagg
 			if (time <= 1 || x < 0 || x > player.getScreenWidth() || y < 0
@@ -1192,8 +1199,8 @@ public final class WorldPacketsDecoder extends Decoder {
 				Logger.log(this, "Dialogue: " + interfaceId + ", " + buttonId
 						+ ", " + junk);
 			int componentId = interfaceHash - (interfaceId << 16);
-			player.getDialogueManager().continueDialogue(interfaceId,
-					componentId);
+			if (DialogueEventListener.continueDialogue(player, componentId))
+				return;
 		} else if (packetId == WORLD_MAP_CLICK) {
 			int coordinateHash = stream.readIntV2();
 			int x = coordinateHash >> 14;
@@ -1359,27 +1366,6 @@ public final class WorldPacketsDecoder extends Decoder {
 					player.getTrade().addItem(trade_item_X_Slot, value);
 			} else if (player.getTemporaryAttributes().remove("xformring") == Boolean.TRUE)
 				player.getAppearance().transformIntoNPC(value);
-			else if (player.getTemporaryAttributes().get("skillId") != null) {
-				if (player.getEquipment().wearingArmour()) {
-					player.getDialogueManager().finishDialogue();
-					player.getDialogueManager().startDialogue("SimpleMessage",
-							"You cannot do this while having armour on!");
-					return;
-				}
-				int skillId = (Integer) player.getTemporaryAttributes()
-						.remove("skillId");
-				if (skillId == Skills.HITPOINTS && value <= 9)
-					value = 10;
-				else if (value < 1)
-					value = 1;
-				else if (value > 99)
-					value = 99;
-				player.getSkills().set(skillId, value);
-				player.getSkills().setXp(skillId, Skills.getXPForLevel(value));
-				player.getAppearance().generateAppearenceData();
-				player.getDialogueManager().finishDialogue();
-
-			}
 		} else if (packetId == SWITCH_INTERFACE_COMPONENTS_PACKET) {
 
 			int fromInterfaceHash = stream.readInt();
@@ -1484,7 +1470,7 @@ public final class WorldPacketsDecoder extends Decoder {
 					stream));
 		else if (packetId == OBJECT_EXAMINE_PACKET) {
 			System.out.println("examine packet");
-			ObjectDispatcher.handleOption(player, stream, -1);
+//			ObjectDispatcher.handleOption(player, stream, -1);
 		} else if (packetId == NPC_EXAMINE_PACKET) {
 //			NPCDispatcher.handleExamine(player, stream);
 		} else if (packetId == JOIN_FRIEND_CHAT_PACKET) {
@@ -1571,7 +1557,6 @@ public final class WorldPacketsDecoder extends Decoder {
 				return;
 			player.setLastPublicMessage(Utils.currentTimeMillis() + 300);
 			// just tells you which client script created packet
-			@SuppressWarnings("unused")
 			boolean secondClientScript = stream.readByte() == 1;// script 5059
 			// or 5061
 			int fileId = stream.readUnsignedShort();
@@ -1631,7 +1616,6 @@ public final class WorldPacketsDecoder extends Decoder {
 			if (!player.isRunning())
 				return;
 			boolean clientCommand = stream.readUnsignedByte() == 1;
-			@SuppressWarnings("unused")
 			boolean unknown = stream.readUnsignedByte() == 1;
 			String command = stream.readString();
 			if (!CommandDispatcher.processCommand(player, command, true, clientCommand)
@@ -1643,7 +1627,6 @@ public final class WorldPacketsDecoder extends Decoder {
 			String displayName = stream.readString();
 			int type = stream.readUnsignedByte();
 			boolean mute = stream.readUnsignedByte() == 1;
-			@SuppressWarnings("unused")
 			String unknown2 = stream.readString();
 //			ReportAbuse.report(player, displayName, type, mute);
 		
@@ -1656,9 +1639,7 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (packetId == OPEN_URL_PACKET) {
 			String type = stream.readString();
 			String path = stream.readString();
-			@SuppressWarnings("unused")
 			String unknown = stream.readString();
-			@SuppressWarnings("unused")
 			int flag = stream.readUnsignedByte();
 			
 		} else if (packetId == GRAND_EXCHANGE_ITEM_SELECT_PACKET) {

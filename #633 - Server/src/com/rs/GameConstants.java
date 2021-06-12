@@ -78,7 +78,6 @@ public final class GameConstants {
 	/**
 	 * Memory settings
 	 */
-	public static final Short LOCAL_PLAYERS_LIMIT = 250;
 	public static final Short PLAYERS_LIMIT = 2048;
 	public static final Short NPCS_LIMIT = Short.MAX_VALUE;
 	public static final byte LOCAL_NPCS_LIMIT = 127;

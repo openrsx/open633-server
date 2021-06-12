@@ -25,7 +25,7 @@ public class RockCrabs extends NPC {
 
 	@Override
 	public void reset() {
-		setNPC(realId);
+		setId(realId);
 		super.reset();
 	}
 

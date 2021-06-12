@@ -15,7 +15,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public final class TormentedDemon extends NPC {
 
@@ -51,7 +51,7 @@ public final class TormentedDemon extends NPC {
 		super.processNPC();
 		if (isDead())
 			return;
-		if (Utils.getRandom(40) <= 2)
+		if (RandomUtils.random(40) <= 2)
 			sendRandomProjectile();
 		if (getCombat().process()) {// no point in processing
 			if (shieldTimer > 0)
@@ -80,7 +80,7 @@ public final class TormentedDemon extends NPC {
 	@Override
 	public void handleIngoingHit(final Hit hit) {
 		super.handleIngoingHit(hit);
-		if (hit.getSource() instanceof Player) {// darklight
+		if (hit.getSource().isPlayer()) {// darklight
 			Player player = (Player) hit.getSource();
 			if ((player.getEquipment().getWeaponId() == 6746 || player.getEquipment().getWeaponId() == 2402)
 					&& hit.getLook() == HitLook.MELEE_DAMAGE && hit.getDamage() > 0) {
@@ -132,7 +132,7 @@ public final class TormentedDemon extends NPC {
 	}
 
 	private void sendRandomProjectile() {
-		WorldTile tile = new WorldTile(getX() + Utils.random(7), getY() + Utils.random(7), getPlane());
+		WorldTile tile = new WorldTile(getX() + RandomUtils.random(7), getY() + RandomUtils.random(7), getPlane());
 		setNextAnimation(new Animation(10918));
 		World.sendProjectile(this, tile, 1887, 34, 16, 40, 35, 16, 0);
 		for (int regionId : getMapRegionsIds()) {
@@ -140,7 +140,7 @@ public final class TormentedDemon extends NPC {
 			if (playerIndexes != null) {
 				for (int npcIndex : playerIndexes) {
 					Player player = World.getPlayers().get(npcIndex);
-					if (player == null || player.isDead() || player.hasFinished() || !player.isStarted()
+					if (player == null || player.isDead() || player.isFinished() || !player.isStarted()
 							|| !player.withinDistance(tile, 3))
 						continue;
 					player.getPackets().sendGameMessage("The demon's magical attack splashes on you.");
@@ -152,7 +152,7 @@ public final class TormentedDemon extends NPC {
 
 	@Override
 	public void setRespawnTask() {
-		if (!hasFinished()) {
+		if (!isFinished()) {
 			reset();
 			setLocation(getRespawnTile());
 			finish();

@@ -332,4 +332,14 @@ public final class RandomUtils {
 		return ThreadLocalRandom.current().nextDouble() <= value;
 	}
 	
+	/**
+	 * Finds out if a certain event should happen, and if it should, return true;
+	 *
+	 * @param chance The chance of the event happening
+	 * @return If the event should happen
+	 */
+	public static final boolean percentageChance(int chance) {
+		return (Math.random() * 100) < chance;
+	}
+	
 }

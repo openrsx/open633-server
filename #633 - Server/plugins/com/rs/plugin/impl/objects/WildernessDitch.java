@@ -35,7 +35,7 @@ public class WildernessDitch implements ObjectType {
 				// removeControler();//turn off wilderness player settings
 			}
 
-			player.setNextWorldTile(destination);
+			player.safeForceMoveTile(destination);
 			player.faceObject(object);
 		}
 	}

@@ -10,7 +10,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public class Abyssalparasite extends Familiar {
 
@@ -49,12 +49,11 @@ public class Abyssalparasite extends Familiar {
 	@Override
 	public boolean submitSpecial(Object object) {
 		final Entity target = (Entity) object;
-		final int damage = Utils.random(100);
+		final int damage = RandomUtils.random(100);
 		setNextAnimation(new Animation(7675));
 		setNextGraphics(new Graphics(1422));
 		World.sendProjectile(this, target, 1423, 34, 16, 30, 35, 16, 0);
-		if (target instanceof Player)
-			((Player) target).getPrayer().drainPrayer(damage / 2);
+		target.ifPlayer(player -> player.getPrayer().drainPrayer(damage / 2));
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {

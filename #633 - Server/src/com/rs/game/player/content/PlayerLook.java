@@ -3,6 +3,8 @@ package com.rs.game.player.content;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.GeneralRequirementMap;
 import com.rs.game.Animation;
+import com.rs.game.dialogue.DialogueEventListener;
+import com.rs.game.dialogue.DialogueFaceExpression;
 import com.rs.game.player.Player;
 
 public final class PlayerLook {
@@ -159,31 +161,32 @@ public final class PlayerLook {
 			else
 				skin = 0;
 			player.getTemporaryAttributes().put("MageMakeOverSkin", skin);
-		} else if (buttonId == 33) {
-			Boolean male = (Boolean) player.getTemporaryAttributes().remove("MageMakeOverGender");
-			Integer skin = (Integer) player.getTemporaryAttributes().remove("MageMakeOverSkin");
-			player.getInterfaceManager().closeInterfaces();
-			if (male == null || skin == null)
-				return;
-			if (male == player.getAppearance().isMale() && skin == player.getAppearance().getSkinColor())
-				player.getDialogueManager().startDialogue("MakeOverMage", 2676, 1);
-			else {
-				player.getDialogueManager().startDialogue("MakeOverMage", 2676, 2);
-				if (player.getAppearance().isMale() != male) {
-					if (player.getEquipment().wearingArmour()) {
-						player.getDialogueManager().startDialogue("SimpleMessage",
-								"You cannot have armor on while changing your gender.");
-						return;
-					}
-					if (male)
-						player.getAppearance().resetAppearence();
-					else
-						player.getAppearance().female();
-				}
-				player.getAppearance().setSkinColor(skin);
-				player.getAppearance().generateAppearenceData();
-			}
-		}
+		} 
+//		else if (buttonId == 33) {
+//			Boolean male = (Boolean) player.getTemporaryAttributes().remove("MageMakeOverGender");
+//			Integer skin = (Integer) player.getTemporaryAttributes().remove("MageMakeOverSkin");
+//			player.getInterfaceManager().closeInterfaces();
+//			if (male == null || skin == null)
+//				return;
+//			if (male == player.getAppearance().isMale() && skin == player.getAppearance().getSkinColor())
+//				player.getDialogueManager().startDialogue("MakeOverMage", 2676, 1);
+//			else {
+//				player.getDialogueManager().startDialogue("MakeOverMage", 2676, 2);
+//				if (player.getAppearance().isMale() != male) {
+//					if (player.getEquipment().wearingArmour()) {
+//						player.getDialogueManager().startDialogue("SimpleMessage",
+//								"You cannot have armor on while changing your gender.");
+//						return;
+//					}
+//					if (male)
+//						player.getAppearance().resetAppearence();
+//					else
+//						player.getAppearance().female();
+//				}
+//				player.getAppearance().setSkinColor(skin);
+//				player.getAppearance().generateAppearenceData();
+//			}
+//		}
 	}
 
 	public static void handleHairdresserSalonButtons(Player player, int buttonId, int slotId) {// Hair
@@ -280,8 +283,14 @@ public final class PlayerLook {
 
 	public static void openThessaliasMakeOver(final Player player) {
 		if (player.getEquipment().wearingArmour()) {
-			player.getDialogueManager().startDialogue("SimpleNPCMessage", 548,
-					"You're not able to try on my clothes with all that armour. Take it off and then speak to me again.");
+			player.dialog(new DialogueEventListener(player) {
+
+				@Override
+				public void start() {
+					npc(DialogueFaceExpression.sad,
+							"You're not able to try on my clothes with all that armour. Take it off and then speak to me again.");
+				}
+			}.begin());
 			return;
 		}
 		player.setNextAnimation(new Animation(11623));
@@ -294,8 +303,13 @@ public final class PlayerLook {
 
 			@Override
 			public void run() {
-				player.getDialogueManager().startDialogue("SimpleNPCMessage", 548,
-						"A marvellous choise. You look splendid!");
+				player.dialog(new DialogueEventListener(player) {
+
+					@Override
+					public void start() {
+						npc(DialogueFaceExpression.happy, "A marvellous choise. You look splendid!");
+					}
+				}.begin());
 				player.setNextAnimation(new Animation(-1));
 				player.getAppearance().getAppeareanceData();
 				player.getTemporaryAttributes().remove("ThessaliasMakeOver");
@@ -306,13 +320,25 @@ public final class PlayerLook {
 
 	public static void openHairdresserSalon(final Player player) {
 		if (player.getEquipment().getHatId() != -1) {
-			player.getDialogueManager().startDialogue("SimpleNPCMessage", 598,
-					"I'm afraid I can't see your head at the moment. Please remove your headgear first.");
+			player.dialog(new DialogueEventListener(player) {
+
+				@Override
+				public void start() {
+					npc(DialogueFaceExpression.sad,
+							"I'm afraid I can't see your head at the moment. Please remove your headgear first.");
+				}
+			}.begin());
 			return;
 		}
 		if (player.getEquipment().getWeaponId() != -1 || player.getEquipment().getShieldId() != -1) {
-			player.getDialogueManager().startDialogue("SimpleNPCMessage", 598,
-					"I don't feel comfortable cutting hair when you are wielding something. Please remove what you are holding first.");
+			player.dialog(new DialogueEventListener(player) {
+
+				@Override
+				public void start() {
+					npc(DialogueFaceExpression.sad,
+							"I don't feel comfortable cutting hair when you are wielding something. Please remove what you are holding first.");
+				}
+			}.begin());
 			return;
 		}
 		player.setNextAnimation(new Animation(11623));
@@ -326,8 +352,14 @@ public final class PlayerLook {
 
 			@Override
 			public void run() {
-				player.getDialogueManager().startDialogue("SimpleNPCMessage", 598,
-						"An excellent choise, " + (player.getAppearance().isMale() ? "sir" : "lady") + ".");
+				player.dialog(new DialogueEventListener(player) {
+
+					@Override
+					public void start() {
+						npc(DialogueFaceExpression.sad,
+								"An excellent choise, " + (player.getAppearance().isMale() ? "sir" : "lady") + ".");
+					}
+				}.begin());
 				player.setNextAnimation(new Animation(-1));
 				player.getAppearance().getAppeareanceData();
 				player.getTemporaryAttributes().remove("hairSaloon");
@@ -338,9 +370,13 @@ public final class PlayerLook {
 
 	public static void openYrsaShop(final Player player) {
 		if (player.getEquipment().getBootsId() != -1) {
-			player.getDialogueManager().startDialogue("SimpleNPCMessage", 1301,
-					"I don't feel comfortable helping you try on new boots when you are wearing some already.",
-					"Please remove your boots first.");
+			player.dialog(new DialogueEventListener(player) {
+				@Override
+				public void start() {
+					npc(happy, "I don't feel comfortable helping you try on new boots when you are wearing some already.",
+							"Please remove your boots first.");
+				}
+			});
 			return;
 		}
 		player.setNextAnimation(new Animation(11623));
@@ -353,7 +389,12 @@ public final class PlayerLook {
 
 			@Override
 			public void run() {
-				player.getDialogueManager().startDialogue("SimpleNPCMessage", 548, "Hey, They look great!");
+				player.dialog(new DialogueEventListener(player) {
+					@Override
+					public void start() {
+						npc(happy, "Hey, They look great!");
+					}
+				});
 				player.setNextAnimation(new Animation(-1));
 				player.getAppearance().getAppeareanceData();
 				player.getTemporaryAttributes().remove("YrsaBoot");

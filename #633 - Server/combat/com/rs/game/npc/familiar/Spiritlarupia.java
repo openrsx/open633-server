@@ -8,10 +8,11 @@ import com.rs.game.Hit.HitLook;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
+
+import skills.Skills;
 
 public class Spiritlarupia extends Familiar {
 
@@ -51,16 +52,15 @@ public class Spiritlarupia extends Familiar {
 	public boolean submitSpecial(Object object) {
 		final Entity target = (Entity) object;
 		Player player = getOwner();
-		final int damage = Utils.getRandom(107);
+		final int damage = RandomUtils.random(107);
 		setNextGraphics(new Graphics(1370));
 		setNextAnimation(new Animation(7919));
 		player.setNextAnimation(new Animation(7660));
 		player.setNextGraphics(new Graphics(1316));
 		World.sendProjectile(this, target, 1371, 34, 16, 30, 35, 16, 0);
 		if (damage > 20)
-			if (target instanceof Player)
-				((Player) target).getSkills().set(Skills.STRENGTH,
-						((Player) target).getSkills().getLevel(Skills.STRENGTH) - (damage / 20));
+			target.ifPlayer(targetSelected -> targetSelected.getSkills().set(Skills.STRENGTH,
+						targetSelected.getSkills().getLevel(Skills.STRENGTH) - (damage / 20)));
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {

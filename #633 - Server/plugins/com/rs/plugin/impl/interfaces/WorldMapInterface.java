@@ -17,7 +17,7 @@ public class WorldMapInterface implements RSInterface {
 			if (componentId == 1 && packetId == 11) {
 				if (player.isResting())
 					player.stopAll();
-				player.setRun(!player.getRun());	
+				player.setRun(!player.isRun());	
 			}
 			if (componentId == 1 && packetId == 29) {
 				if (player.isResting()) {
@@ -25,10 +25,10 @@ public class WorldMapInterface implements RSInterface {
 					return;
 				}
 				long currentTime = Utils.currentTimeMillis();
-//				if (player.getEmotesManager().getNextEmoteEnd() >= currentTime) {
-//					player.getPackets().sendGameMessage("You can't rest while perfoming an emote.");
-//					return;
-//				}
+				if (player.getNextEmoteEnd() >= currentTime) {
+					player.getPackets().sendGameMessage("You can't rest while perfoming an emote.");
+					return;
+				}
 				if (player.getLockDelay() >= currentTime) {
 					player.getPackets().sendGameMessage("You can't rest while perfoming an action.");
 					return;

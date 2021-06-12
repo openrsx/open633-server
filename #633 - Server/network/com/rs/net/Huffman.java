@@ -3,7 +3,7 @@ package com.rs.net;
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.io.OutputStream;
-import com.rs.utilities.Utils;
+import com.rs.utilities.TextUtils;
 
 public final class Huffman {
 
@@ -209,7 +209,7 @@ public final class Huffman {
     public static int sendEncryptMessage(OutputStream stream, String message) {
 	try {
 	    int startOffset = stream.getOffset();
-	    byte[] messageData = Utils.getFormatedMessage(message);
+	    byte[] messageData = TextUtils.getFormatedMessage(message);
 	    stream.writeSmart(messageData.length);
 	    stream.checkCapacityPosition(stream.getOffset() + message.length() * 2);
 	    stream.skip(encryptMessage(stream.getOffset(), messageData.length, stream.getBuffer(), 0, messageData));
@@ -232,7 +232,7 @@ public final class Huffman {
 		messageDataLength = maxLength;
 	    byte[] messageData = new byte[messageDataLength];
 	    stream.skip(decryptMessage(messageData, messageDataLength, stream.getBuffer(), stream.getOffset(), 0));
-	    String message = Utils.getUnformatedMessage(messageDataLength, 0, messageData);
+	    String message = TextUtils.getUnformatedMessage(messageDataLength, 0, messageData);
 	    return message;
 	}
 	catch (Throwable e) {

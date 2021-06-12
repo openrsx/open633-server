@@ -29,7 +29,7 @@ public class GodwarsBandosFaction extends NPC {
 			ArrayList<Entity> targets = getPossibleTargets(true, true);
 			ArrayList<Entity> targetsCleaned = new ArrayList<Entity>();
 			for (Entity t : targets) {
-				if (t instanceof GodwarsBandosFaction || (t instanceof Player && hasGodItem((Player) t)))
+				if (t instanceof GodwarsBandosFaction || (t.isPlayer() && hasGodItem((Player) t)))
 					continue;
 				targetsCleaned.add(t);
 			}
@@ -86,14 +86,13 @@ public class GodwarsBandosFaction extends NPC {
 				if (loop == 0) {
 					setNextAnimation(new Animation(defs.getDeathAnim()));
 				} else if (loop >= defs.getDeathDelay()) {
-					if (source instanceof Player) {
-						Player player = (Player) source;
+					source.ifPlayer(player -> {
 						Controller controler = player.getControllerManager().getController();
 						if (controler != null && controler instanceof GodWars) {
 							GodWars godControler = (GodWars) controler;
 							godControler.incrementKillCount(0);
 						}
-					}
+					});
 					drop();
 					reset();
 					setLocation(getRespawnTile());

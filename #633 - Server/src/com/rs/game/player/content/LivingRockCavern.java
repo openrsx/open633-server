@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.rs.cores.CoresManager;
 import com.rs.game.WorldObject;
-import com.rs.utilities.Utils;
+import com.rs.utilities.RandomUtils;
 
 public final class LivingRockCavern {
 
@@ -38,7 +38,7 @@ public final class LivingRockCavern {
 			public void run() {
 				removeRock(rock);
 			}
-		}, Utils.random(8) + 3, TimeUnit.MINUTES);
+		}, RandomUtils.random(8) + 3, TimeUnit.MINUTES);
 	}
 
 	private static void removeRock(final Rocks rock) { 

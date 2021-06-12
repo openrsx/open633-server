@@ -13,7 +13,7 @@ public class LogoutInterface implements RSInterface {
 			System.out.println("failed cont invy inter");
 			return;
 		}
-		if (player.hasFinished())
+		if (player.isFinished())
 			return;
 		player.logout(componentId != 10);
 	}

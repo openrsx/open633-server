@@ -7,15 +7,16 @@ import com.rs.cache.Cache;
 import com.rs.cores.BlockingExecutorService;
 import com.rs.cores.CoresManager;
 import com.rs.game.World;
+import com.rs.game.dialogue.DialogueEventRepository;
 import com.rs.game.map.MapBuilder;
 import com.rs.game.npc.combat.NPCCombatDispatcher;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.controllers.ControllerHandler;
-import com.rs.game.player.dialogues.DialogueHandler;
 import com.rs.net.Huffman;
 import com.rs.net.ServerChannelHandler;
 import com.rs.net.host.HostListType;
 import com.rs.net.host.HostManager;
+import com.rs.net.packets.PacketDispatcher;
 import com.rs.plugin.CommandDispatcher;
 import com.rs.plugin.InventoryDispatcher;
 import com.rs.plugin.NPCDispatcher;
@@ -26,7 +27,6 @@ import com.rs.utilities.json.impl.MobDropTableLoader;
 import com.rs.utilities.loaders.Censor;
 import com.rs.utilities.loaders.EquipData;
 import com.rs.utilities.loaders.ItemBonuses;
-import com.rs.utilities.loaders.ItemDestroys;
 import com.rs.utilities.loaders.MapArchiveKeys;
 import com.rs.utilities.loaders.MapAreas;
 import com.rs.utilities.loaders.MusicHints;
@@ -94,14 +94,13 @@ public class GameLoader {
 			return null;
 		});
 		getBackgroundLoader().submit(() -> {
-			ItemDestroys.init();
 			MusicHints.init();
 			ShopsHandler.init();
 			return null;
 		});
 		getBackgroundLoader().submit(() -> {
 			ControllerHandler.init();
-			DialogueHandler.init();
+			DialogueEventRepository.init();
 			FriendChatsManager.init();
 			World.init();
 			return null;
@@ -120,6 +119,7 @@ public class GameLoader {
 			CommandDispatcher.load();
 			NPCDispatcher.load();
 			NPCCombatDispatcher.load();
+			PacketDispatcher.load();
 			return null;
 		});
 	}

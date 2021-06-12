@@ -17,7 +17,6 @@ import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
-import com.rs.game.player.Skills;
 import com.rs.io.InputStream;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
@@ -25,6 +24,7 @@ import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import skills.Skills;
 
 /**
  * @author Dennis
@@ -254,7 +254,7 @@ public final class RSInterfaceDispatcher {
 	}
 
 	public static boolean sendWear2(Player player, int slotId, int itemId) {
-		if (player.hasFinished() || player.isDead())
+		if (player.isFinished() || player.isDead())
 			return false;
 		player.stopAll(false, false);
 		Item item = player.getInventory().getItem(slotId);
@@ -348,7 +348,7 @@ public final class RSInterfaceDispatcher {
 	}
 
 	public static void sendWear(Player player, int[] slotIds) {
-		if (player.hasFinished() || player.isDead())
+		if (player.isFinished() || player.isDead())
 			return;
 		boolean worn = false;
 		Item[] copy = player.getInventory().getItems().getItemsCopy();

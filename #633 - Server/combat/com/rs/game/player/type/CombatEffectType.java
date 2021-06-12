@@ -5,6 +5,7 @@ import com.rs.game.player.type.impl.AntifireDetails.AntifireType;
 import com.rs.game.player.type.impl.CombatAntifireEffect;
 import com.rs.game.player.type.impl.CombatPoisonEffect;
 import com.rs.game.player.type.impl.CombatSkullEffect;
+import com.rs.game.player.type.impl.CombatTeleblockEffect;
 
 /**
  * The enumerated type whose values represent the collection of different combat
@@ -22,12 +23,12 @@ public enum CombatEffectType {
 	 * The combat skull effect, handles the skulling of players.
 	 */
 	SKULL(new CombatSkullEffect()),
-//	
-//	/**
-//	 * The combat teleblock effect, handles the teleblocking of players.
-//	 */
-//	TELEBLOCK(new CombatTeleblockEffect()),
-//	
+	
+	/**
+	 * The combat teleblock effect, handles the teleblocking of players.
+	 */
+	TELEBLOCK(new CombatTeleblockEffect()),
+	
 	/**
 	 * The combat antifire potion effect, handles the effect of drinking the potion.
 	 */

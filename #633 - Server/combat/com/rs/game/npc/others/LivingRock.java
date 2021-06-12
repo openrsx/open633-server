@@ -72,7 +72,7 @@ public class LivingRock extends NPC {
 	}
 
 	public void takeRemains() {
-		setNPC((short) (getId() - 5));
+		setId((short) (getId() - 5));
 		setLocation(getRespawnTile());
 		setWalkType(NORMAL_WALK);
 		finish();

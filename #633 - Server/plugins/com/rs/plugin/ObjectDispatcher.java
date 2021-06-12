@@ -11,17 +11,15 @@ import java.util.stream.Collectors;
 import com.rs.GameConstants;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.game.WorldObject;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.route.RouteEvent;
-import com.rs.io.InputStream;
 import com.rs.plugin.listener.ObjectType;
 import com.rs.plugin.wrapper.ObjectSignature;
-import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import lombok.SneakyThrows;
 
 /**
  * @author Dennis
@@ -39,6 +37,7 @@ public final class ObjectDispatcher {
 	 * @param player the player executing the Objects.
 	 * @param parts  the string which represents a Objects.
 	 */
+	@SneakyThrows(Exception.class)
 	public static void execute(Player player, WorldObject object, int optionId) {
 		Optional<ObjectType> objects = getObject(object, object.getId());
 
@@ -46,11 +45,7 @@ public final class ObjectDispatcher {
 			player.getPackets().sendGameMessage("Object: " + object.getId() + " is not handled yet.");
 			return;
 		}
-		try {
-			objects.get().execute(player, object, optionId);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		objects.get().execute(player, object, optionId);
 	}
 
 	/**
@@ -124,79 +119,6 @@ public final class ObjectDispatcher {
 	public static void reload() {
 		OBJECTS.clear();
 		load();
-	}
-
-	private static int x;
-	private static int y;
-	private static boolean forceRun;
-	private static int id;
-
-	public static void handleOption(final Player player, InputStream stream, int option) {
-		if (!player.isStarted() || !player.isClientLoadedMapRegion() || player.isDead())
-			return;
-		if (player.isLocked()/*
-								 * || player.getEmotesManager().getNextEmoteEnd() >= Utils.currentTimeMillis()
-								 */)
-			return;
-
-		/**
-		 * This order matters, like "H", then "e, "l," "l", "o". Otherwise it won't make
-		 * sense. So keep in mind never to change this order.
-		 */
-		if (option == 2) {
-			id = stream.readShort128();
-			x = stream.readShortLE128();
-			y = stream.readShortLE128();
-		} else {
-			x = stream.readUnsignedShortLE();
-			y = stream.readUnsignedShortLE();
-			forceRun = stream.readUnsignedByte128() == 1;
-			id = stream.readUnsignedShortLE();
-		}
-
-		if (GameConstants.DEBUG)
-			System.out.println("id " + id + " x " + x + " y " + y + " run? " + forceRun);
-		final WorldTile tile = new WorldTile(x, y, player.getPlane());
-
-		WorldObject mapObject = WorldObject.getObjectWithId(tile, id);
-		if (mapObject == null || mapObject.getId() != id)
-			return;
-
-		final WorldObject object = mapObject;
-
-		player.stopAll();
-		if (forceRun)
-			player.setRun(forceRun);
-
-		if (option == -1) {
-			handleOptionExamine(player, object);
-			return;
-		}
-
-		player.setRouteEvent(new RouteEvent(object, new Runnable() {
-			@Override
-			public void run() {
-				player.stopAll();
-				player.faceObject(object);
-				ObjectDispatcher.execute(player, object, option);
-			}
-		}, false));
-	}
-
-	public static void handleOptionExamine(final Player player, final WorldObject object) {
-		if (GameConstants.DEBUG) {
-			int offsetX = object.getX() - player.getX();
-			int offsetY = object.getY() - player.getY();
-			System.out.println("Offsets" + offsetX + " , " + offsetY);
-		}
-		player.getPackets().sendGameMessage("It's an " + object.getDefinitions().name + ".");
-		if (GameConstants.DEBUG)
-			if (GameConstants.DEBUG)
-
-				Logger.log("ObjectHandler",
-						"examined object id : " + object.getId() + ", " + object.getX() + ", " + object.getY() + ", "
-								+ object.getPlane() + ", " + object.getType() + ", " + object.getRotation() + ", "
-								+ object.getDefinitions().name);
 	}
 
 	@SuppressWarnings("unused")

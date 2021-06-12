@@ -8,7 +8,6 @@ import com.rs.game.Entity;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
-import com.rs.game.player.Player;
 import com.rs.game.task.Task;
 
 public class Bork extends NPC {
@@ -26,8 +25,7 @@ public class Bork extends NPC {
 		deadTime = System.currentTimeMillis() + (1000 * 60 * 60);
 		resetWalkSteps();
 		for (Entity e : getPossibleTargets()) {
-			if (e instanceof Player) {
-				final Player player = (Player) e;
+			e.ifPlayer(player -> {
 				player.getInterfaceManager().sendInterface(693);
 //				player.getDialogueManager().startDialogue("DagonHai", 7137, player, 1);
 				//TODO: Dialogue
@@ -38,7 +36,7 @@ public class Bork extends NPC {
 						this.cancel();
 					}
 				});
-			}
+			});
 		}
 		getCombat().removeTarget();
 		setNextAnimation(new Animation(getCombatDefinitions().getDeathAnim()));
@@ -58,7 +56,7 @@ public class Bork extends NPC {
 
 	@Override
 	public void setRespawnTask() {
-		if (!hasFinished()) {
+		if (!isFinished()) {
 			reset();
 			setLocation(getRespawnTile());
 			finish();
