@@ -7,7 +7,8 @@ import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.map.Region;
 import com.rs.game.player.Player;
-import com.rs.utilities.Logger;
+
+import lombok.SneakyThrows;
 
 public class FloorItem extends Item {
 
@@ -82,6 +83,7 @@ public class FloorItem extends Item {
 		createGroundItem(item, tile, owner, underGrave, hiddenTime, invisible, intoGold, 180);
 	}
 
+	@SneakyThrows(Throwable.class)
 	public static final void createGroundItem(final Item item, final WorldTile tile, final Player owner/* null for default */, final boolean underGrave, long hiddenTime/* default 3minutes */, boolean invisible, boolean intoGold, final int publicTime) {
 		if (intoGold) {
 			if (!ItemConstants.isTradeable(item)) {
@@ -101,29 +103,25 @@ public class FloorItem extends Item {
 			CoresManager.slowExecutor.schedule(new Runnable() {
 				@Override
 				public void run() {
-					try {
-						if (!region.forceGetFloorItems().contains(floorItem))
-							return;
-						int regionId = tile.getRegionId();
-						if (underGrave || !ItemConstants.isTradeable(floorItem) || item.getName().contains("Dr nabanik")) {
-							region.forceGetFloorItems().remove(floorItem);
-							if (owner != null) {
-								if (owner.getMapRegionsIds().contains(regionId) && owner.getPlane() == tile.getPlane())
-									owner.getPackets().sendRemoveGroundItem(floorItem);
-							}
-							return;
+					if (!region.forceGetFloorItems().contains(floorItem))
+						return;
+					int regionId = tile.getRegionId();
+					if (underGrave || !ItemConstants.isTradeable(floorItem) || item.getName().contains("Dr nabanik")) {
+						region.forceGetFloorItems().remove(floorItem);
+						if (owner != null) {
+							if (owner.getMapRegionsIds().contains(regionId) && owner.getPlane() == tile.getPlane())
+								owner.getPackets().sendRemoveGroundItem(floorItem);
 						}
-
-						floorItem.setInvisible(false);
-						for (Player player : World.getPlayers()) {
-							if (player == null || player == owner || !player.isStarted() || player.isFinished() || player.getPlane() != tile.getPlane() || !player.getMapRegionsIds().contains(regionId))
-								continue;
-							player.getPackets().sendGroundItem(floorItem);
-						}
-						removeGroundItem(floorItem, publicTime);
-					} catch (Throwable e) {
-						Logger.handle(e);
+						return;
 					}
+
+					floorItem.setInvisible(false);
+					for (Player player : World.getPlayers()) {
+						if (player == null || player == owner || !player.isStarted() || player.isFinished() || player.getPlane() != tile.getPlane() || !player.getMapRegionsIds().contains(regionId))
+							continue;
+						player.getPackets().sendGroundItem(floorItem);
+					}
+					removeGroundItem(floorItem, publicTime);
 				}
 			}, hiddenTime, TimeUnit.SECONDS);
 			return;
@@ -149,6 +147,7 @@ public class FloorItem extends Item {
 
 	}
 
+	@SneakyThrows(Throwable.class)
 	private static final void removeGroundItem(final FloorItem floorItem, long publicTime) {
 		if (publicTime < 0) {
 			return;
@@ -156,17 +155,12 @@ public class FloorItem extends Item {
 		CoresManager.slowExecutor.schedule(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					int regionId = floorItem.getTile().getRegionId();
-					Region region = World.getRegion(regionId);
-					if (!region.forceGetFloorItems().contains(floorItem))
-						return;
-					region.forceGetFloorItems().remove(floorItem);
-					World.players().filter(p -> p.getPlane() != floorItem.getTile().getPlane() || !p.getMapRegionsIds().contains(regionId)) .forEach(p -> p.getPackets().sendRemoveGroundItem(floorItem));
-					
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
+				int regionId = floorItem.getTile().getRegionId();
+				Region region = World.getRegion(regionId);
+				if (!region.forceGetFloorItems().contains(floorItem))
+					return;
+				region.forceGetFloorItems().remove(floorItem);
+				World.players().filter(p -> p.getPlane() != floorItem.getTile().getPlane() || !p.getMapRegionsIds().contains(regionId)) .forEach(p -> p.getPackets().sendRemoveGroundItem(floorItem));
 			}
 		}, publicTime, TimeUnit.SECONDS);
 	}

@@ -1,10 +1,7 @@
 package com.rs.game.player.content;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.rs.GameConstants;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.cache.loaders.NPCDefinitions;
@@ -15,6 +12,8 @@ import com.rs.game.item.Item;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import lombok.SneakyThrows;
 import skills.Skills;
 
 public class Summoning {
@@ -52,19 +51,14 @@ public class Summoning {
 		player.setFamiliar(npc);
 	}
 
+	@SneakyThrows(Throwable.class)
 	public static Familiar createFamiliar(Player player, Pouch pouch) {
-		try {
-			return (Familiar) Class
-					.forName("com.rs.game.npc.familiar."
-							+ (NPCDefinitions.getNPCDefinitions(getNPCId(pouch.getRealPouchId()))).getName()
-									.replace(" ", "").replace("-", "").replace("(", "").replace(")", ""))
-					.getConstructor(Player.class, Pouch.class, WorldTile.class, int.class, boolean.class)
-					.newInstance(player, pouch, player, -1, true);
-		} catch (Throwable e) {
-			if (!GameConstants.HOSTED)
-				e.printStackTrace();
-			return null;
-		}
+		return (Familiar) Class
+				.forName("com.rs.game.npc.familiar."
+						+ (NPCDefinitions.getNPCDefinitions(getNPCId(pouch.getRealPouchId()))).getName()
+								.replace(" ", "").replace("-", "").replace("(", "").replace(")", ""))
+				.getConstructor(Player.class, Pouch.class, WorldTile.class, int.class, boolean.class)
+				.newInstance(player, pouch, player, -1, true);
 	}
 
 	public static boolean hasPouch(Player player) {
@@ -245,7 +239,7 @@ public class Summoning {
 
 		CLAY_BEAST5(-1, 14430, 0, 0, 1800000, 10);
 
-		private static final Map<Integer, Pouch> pouches = new HashMap<Integer, Pouch>();
+		private static final Object2ObjectArrayMap<Integer, Pouch> pouches = new Object2ObjectArrayMap<Integer, Pouch>();
 
 		static {
 			for (Pouch pouch : Pouch.values()) {

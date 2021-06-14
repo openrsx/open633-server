@@ -11,8 +11,9 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
-import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
+
+import lombok.SneakyThrows;
 
 public class LivingRock extends NPC {
 
@@ -55,13 +56,10 @@ public class LivingRock extends NPC {
 		setWalkType((byte) 0);
 		CoresManager.slowExecutor.schedule(new Runnable() {
 			@Override
+			@SneakyThrows(Throwable.class)
 			public void run() {
-				try {
-					if (remainsId == getId())
-						takeRemains();
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
+				if (remainsId == getId())
+					takeRemains();
 			}
 		}, 3, TimeUnit.MINUTES);
 

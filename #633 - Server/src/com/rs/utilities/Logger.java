@@ -8,10 +8,11 @@ import java.util.Calendar;
 import com.rs.GameConstants;
 import com.rs.net.ServerChannelHandler;
 
+import lombok.SneakyThrows;
+
 public final class Logger {
 
 	private static BufferedWriter globallogs;
-
 	static {
 		try {
 			if (!GameConstants.DEBUG) {
@@ -24,16 +25,13 @@ public final class Logger {
 		}
 	}
 
+	@SneakyThrows(IOException.class)
 	public static void globalLog(String ip, String name, Object o) {
-		try {
-			if (!GameConstants.DEBUG) {
-				globallogs
-						.write("[" + TextUtils.currentTime("hh:mm:ss z") + "]" + "" + name + " - " + ip + " [ " + o + " ]");
-				globallogs.newLine();
-				globallogs.flush();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (!GameConstants.DEBUG) {
+			globallogs
+					.write("[" + TextUtils.currentTime("hh:mm:ss z") + "]" + "" + name + " - " + ip + " [ " + o + " ]");
+			globallogs.newLine();
+			globallogs.flush();
 		}
 	}
 

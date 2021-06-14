@@ -26,8 +26,7 @@ public class ObjectClickPacket implements OutgoingPacket {
 		final WorldTile tile = new WorldTile(x, y, player.getPlane());
 
 		final int regionId = tile.getRegionId();
-		
-		//Theving stalls has an issue reading X/Y coordinates, rest objects are fine so far.
+
 		if (!player.getMapRegionsIds().contains(regionId)) {
 			player.getPackets().sendGameMessage("map doesnt contains region");
 			return;

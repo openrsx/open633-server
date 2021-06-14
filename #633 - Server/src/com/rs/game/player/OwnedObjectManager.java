@@ -3,8 +3,6 @@ package com.rs.game.player;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.rs.game.World;
@@ -12,11 +10,13 @@ import com.rs.game.WorldObject;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+
 public class OwnedObjectManager {
 
 	public static final AtomicLong keyMaker = new AtomicLong();
 
-	private static final Map<String, OwnedObjectManager> ownedObjects = new ConcurrentHashMap<String, OwnedObjectManager>();
+	static Object2ObjectArrayMap<String, OwnedObjectManager> ownedObjects = new Object2ObjectArrayMap<>();
 
 	private Player player;
 	private WorldObject[] objects;

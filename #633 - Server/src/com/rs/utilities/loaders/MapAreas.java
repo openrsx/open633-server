@@ -11,18 +11,19 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
-import java.util.HashMap;
 
 import com.rs.game.WorldTile;
 import com.rs.utilities.Logger;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import lombok.SneakyThrows;
 import lombok.Synchronized;
 
 public final class MapAreas {
 
-	private final static HashMap<Integer, int[]> mapAreas = new HashMap<Integer, int[]>();
+	private final static Object2ObjectArrayMap<Integer, int[]> mapAreas = new Object2ObjectArrayMap<Integer, int[]>();
 	private final static String PACKED_PATH = "data/map/packedMapAreas.ma";
 	private final static Object lock = new Object();
 
@@ -70,43 +71,40 @@ public final class MapAreas {
 		}
 	}
 
+	@SneakyThrows(Throwable.class)
 	private static void loadUnpackedMapAreas() {
 		Logger.log("MapAreas", "Packing map areas...");
-		try {
-			BufferedReader in = new BufferedReader(new FileReader("data/map/unpackedMapAreas.txt"));
-			DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
-			while (true) {
-				String line = in.readLine();
-				if (line == null)
-					break;
-				if (line.startsWith("//"))
-					continue;
-				String[] splitedLine = line.split(" - ", 2);
-				String areaName = splitedLine[0];
-				String[] splitedCoords = splitedLine[1].split(" ");
-				int[] coordsList = new int[splitedCoords.length];
-				if (coordsList.length < 5) {
-					in.close();
-					out.close();
-					throw new RuntimeException("Invalid list for area line: " + line);
-				}
-				for (int i = 0; i < coordsList.length; i++)
-					coordsList[i] = Integer.parseInt(splitedCoords[i]);
-				int areaNameHash = Utils.getNameHash(areaName);
-				if (mapAreas.containsKey(areaNameHash))
-					continue;
-				out.writeInt(areaNameHash);
-				out.writeByte(coordsList.length);
-				for (int i = 0; i < coordsList.length; i++)
-					out.writeShort(coordsList[i]);
-				mapAreas.put(areaNameHash, coordsList);
+		BufferedReader in = new BufferedReader(new FileReader("data/map/unpackedMapAreas.txt"));
+		DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
+		while (true) {
+			String line = in.readLine();
+			if (line == null)
+				break;
+			if (line.startsWith("//"))
+				continue;
+			String[] splitedLine = line.split(" - ", 2);
+			String areaName = splitedLine[0];
+			String[] splitedCoords = splitedLine[1].split(" ");
+			int[] coordsList = new int[splitedCoords.length];
+			if (coordsList.length < 5) {
+				in.close();
+				out.close();
+				throw new RuntimeException("Invalid list for area line: " + line);
 			}
-			in.close();
-			out.flush();
-			out.close();
-		} catch (Throwable e) {
-			Logger.handle(e);
+			for (int i = 0; i < coordsList.length; i++)
+				coordsList[i] = Integer.parseInt(splitedCoords[i]);
+			int areaNameHash = Utils.getNameHash(areaName);
+			if (mapAreas.containsKey(areaNameHash))
+				continue;
+			out.writeInt(areaNameHash);
+			out.writeByte(coordsList.length);
+			for (int i = 0; i < coordsList.length; i++)
+				out.writeShort(coordsList[i]);
+			mapAreas.put(areaNameHash, coordsList);
 		}
+		in.close();
+		out.flush();
+		out.close();
 	}
 
 	private static void loadPackedMapAreas() {

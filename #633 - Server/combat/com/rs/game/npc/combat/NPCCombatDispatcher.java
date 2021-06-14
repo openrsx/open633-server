@@ -14,6 +14,7 @@ import com.rs.game.player.Player;
 import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import lombok.SneakyThrows;
 
 /**
  * TODO: Redo Drops
@@ -34,15 +35,12 @@ public final class NPCCombatDispatcher {
 	 * @param parts the string which represents a mob.
 	 * @throws Exception 
 	 */
+	@SneakyThrows(Exception.class)
 	public static int execute(Player player, NPC npc) {
 		Optional<MobCombatInterface> mobCombat = getMobCombatant(npc);
 		if (!mobCombat.isPresent()) {
 			DefaultCombat defaultScript = new DefaultCombat();
-			try {
-				return defaultScript.execute(player, npc);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			return defaultScript.execute(player, npc);
 		}
 		mobCombat.ifPresent(value -> {
 			try {

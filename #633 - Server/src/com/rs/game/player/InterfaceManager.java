@@ -1,13 +1,10 @@
 package com.rs.game.player;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.rs.GameConstants;
 
-import lombok.Builder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Data;
 
-@Builder
 @Data
 public class InterfaceManager {
 
@@ -46,7 +43,8 @@ public class InterfaceManager {
 	}
 
 	// TODO CLOSE interface tab ids
-	private final ConcurrentHashMap<Integer, Integer> openedinterfaces = new ConcurrentHashMap<Integer, Integer>();
+	Object2ObjectArrayMap<Integer, Integer> openedinterfaces = new Object2ObjectArrayMap<>();
+	
 
 	private boolean resizableScreen;
 	private int rootInterface;

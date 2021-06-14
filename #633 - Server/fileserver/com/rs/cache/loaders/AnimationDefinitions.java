@@ -1,11 +1,12 @@
 package com.rs.cache.loaders;
 
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.utilities.Utils;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 public class AnimationDefinitions {
 
@@ -34,7 +35,7 @@ public class AnimationDefinitions {
 	public int[] anIntArray1362;
 	public boolean effect2Sound;
 
-	private static final ConcurrentHashMap<Integer, AnimationDefinitions> animDefs = new ConcurrentHashMap<Integer, AnimationDefinitions>();
+	static Object2ObjectArrayMap<Integer, AnimationDefinitions> animDefs = new Object2ObjectArrayMap<>();
 
 	public static void main(String[] args) throws IOException {
 		Cache.init();

@@ -3,15 +3,16 @@ package com.rs.utilities.json.impl;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gson.reflect.TypeToken;
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
 import com.rs.utilities.json.GsonHandler;
 import com.rs.utilities.json.GsonLoader;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import lombok.SneakyThrows;
 
 /**
  * @author Tyluur <itstyluur@gmail.com>
@@ -43,22 +44,20 @@ public class ObjectSpawnLoader extends GsonLoader<ObjectSpawnLoader.ObjectSpawn>
 	}
 
 	@Override
+	@SneakyThrows(Exception.class)
 	public List<ObjectSpawn> load() {
 		List<ObjectSpawn> autospawns = null;
 		String json = null;
-		try {
-			File file = new File(getFileLocation());
-			if (!file.exists()) {
-				return null;
-			}
-			FileReader reader = new FileReader(file);
-			char[] chars = new char[(int) file.length()];
-			reader.read(chars);
-			json = new String(chars);
-			reader.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		File file = new File(getFileLocation());
+		if (!file.exists()) {
+			return null;
 		}
+		FileReader reader = new FileReader(file);
+		char[] chars = new char[(int) file.length()];
+		reader.read(chars);
+		json = new String(chars);
+		reader.close();
+		
 		autospawns = gson.fromJson(json, new TypeToken<List<ObjectSpawn>>() {
 		}.getType());
 		return autospawns;
@@ -68,7 +67,7 @@ public class ObjectSpawnLoader extends GsonLoader<ObjectSpawnLoader.ObjectSpawn>
 		return map.get(regionId);
 	}
 
-	private Map<Integer, List<ObjectSpawn>> map = new HashMap<>();
+	private Object2ObjectArrayMap<Integer, List<ObjectSpawn>> map = new Object2ObjectArrayMap<>();
 
 	public static final void loadObjectSpawns(int regionId) {
 		GsonHandler.waitForLoad();

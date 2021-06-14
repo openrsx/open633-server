@@ -3,19 +3,18 @@ package com.rs.cache.loaders;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.utilities.Utils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Data;
 
 @Data
 public class ObjectDefinitions {
 
-	private static final ConcurrentHashMap<Integer, ObjectDefinitions> objectDefinitions = new ConcurrentHashMap<Integer, ObjectDefinitions>();
+	static Object2ObjectArrayMap<Integer, ObjectDefinitions> objectDefinitions = new Object2ObjectArrayMap<>();
 
 	private short[] originalColors;
 	int[] toObjectIds;
@@ -100,7 +99,7 @@ public class ObjectDefinitions {
 	 */
 	private short[] aShortArray3920;
 	int anInt3921;
-	private HashMap<Integer, Object> parameters;
+	private Object2ObjectArrayMap<Integer, Object> parameters;
 	boolean aBoolean3923;
 	boolean aBoolean3924;
 	int anInt3925;
@@ -438,7 +437,7 @@ public class ObjectDefinitions {
 																																						int length = stream
 																																								.readUnsignedByte();
 																																						if (parameters == null)
-																																							parameters = new HashMap<Integer, Object>(
+																																							parameters = new Object2ObjectArrayMap<Integer, Object>(
 																																									length);
 																																						for (int i_60_ = 0; i_60_ < length; i_60_++) {
 																																							boolean bool = stream

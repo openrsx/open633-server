@@ -1,21 +1,21 @@
 package com.rs.game.player.content;
 
-import java.util.HashMap;
-
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Player;
 import com.rs.utilities.Utils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+
 public class ChargesManager {
 
 	private transient Player player;
-
-	private HashMap<Integer, Integer> charges;
+	
+	private Object2ObjectArrayMap<Integer, Integer> charges = new Object2ObjectArrayMap<>();
 
 	public ChargesManager() {
-		charges = new HashMap<Integer, Integer>();
+		charges = new Object2ObjectArrayMap<Integer, Integer>();
 	}
 
 	public void setPlayer(Player player) {

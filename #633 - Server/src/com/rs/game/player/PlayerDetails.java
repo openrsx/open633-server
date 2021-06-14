@@ -1,7 +1,6 @@
 package com.rs.game.player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +11,7 @@ import com.rs.utilities.MutableNumber;
 import com.rs.utilities.Stopwatch;
 import com.rs.utilities.Utils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Data;
 
 /**
@@ -38,8 +38,8 @@ public final class PlayerDetails {
 		ownedObjectsManagerKeys = new LinkedList<String>();
 		passwordList = new ArrayList<String>();
 		ipList = new ArrayList<String>();
-		if (watchMap == null)
-			watchMap = new HashMap<>();
+		if (watchMap == null) 
+			watchMap = new Object2ObjectArrayMap<>();
 	}
 
 	/**
@@ -113,7 +113,8 @@ public final class PlayerDetails {
 	/**
 	 * A collection of Stopwatches
 	 */
-	private HashMap<String, Stopwatch> watchMap = new HashMap<>();
+	
+	private Object2ObjectArrayMap<String, Stopwatch> watchMap = new Object2ObjectArrayMap<>();
 
 	/**
 	 * Should the Player use Chat effects for overhead text

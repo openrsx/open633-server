@@ -12,6 +12,8 @@ import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.npc.godwars.GodWarsBosses;
 import com.rs.game.task.Task;
 
+import lombok.SneakyThrows;
+
 public class CommanderZilyana extends NPC {
 
 	public CommanderZilyana(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea,
@@ -59,20 +61,15 @@ public class CommanderZilyana extends NPC {
 		final NPC npc = this;
 		CoresManager.slowExecutor.schedule(new Runnable() {
 			@Override
+			@SneakyThrows(Exception.class)
 			public void run() {
-				try {
-					setFinished(false);
-					World.addNPC(npc);
-					npc.setLastRegionId((short) 0);
-					updateEntityRegion(npc);
-					loadMapRegions();
-					checkMultiArea();
-					GodWarsBosses.respawnSaradominMinions();
-				} catch (Exception e) {
-					e.printStackTrace();
-				} catch (Error e) {
-					e.printStackTrace();
-				}
+				setFinished(false);
+				World.addNPC(npc);
+				npc.setLastRegionId((short) 0);
+				updateEntityRegion(npc);
+				loadMapRegions();
+				checkMultiArea();
+				GodWarsBosses.respawnSaradominMinions();
 			}
 		}, getCombatDefinitions().getRespawnDelay() * 600, TimeUnit.MILLISECONDS);
 	}

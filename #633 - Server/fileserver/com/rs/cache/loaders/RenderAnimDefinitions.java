@@ -6,11 +6,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.utilities.Utils;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 public class RenderAnimDefinitions {
 
@@ -54,8 +55,8 @@ public class RenderAnimDefinitions {
     public int anInt992;
     public int anInt993;
     public int anInt994;
-
-    private static final ConcurrentHashMap<Integer, RenderAnimDefinitions> renderAimDefs = new ConcurrentHashMap<Integer, RenderAnimDefinitions>();
+    
+    private static Object2ObjectArrayMap<Integer, RenderAnimDefinitions> renderAimDefs = new Object2ObjectArrayMap<>();
 
     public static final RenderAnimDefinitions getRenderAnimDefinitions(int emoteId) {
 	RenderAnimDefinitions defs = renderAimDefs.get(emoteId);

@@ -17,6 +17,7 @@ import com.rs.game.player.Player;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+import lombok.SneakyThrows;
 import lombok.Synchronized;
 import skills.Skills;
 
@@ -65,17 +66,13 @@ public final class Utils {
 	}
 
 	@Synchronized("ALGORITHM_LOCK")
+	@SneakyThrows(Throwable.class)
 	public static final byte[] encryptUsingMD5(byte[] buffer) {
-		try {
-			MessageDigest algorithm = MessageDigest.getInstance("MD5");
-			algorithm.update(buffer);
-			byte[] digest = algorithm.digest();
-			algorithm.reset();
-			return digest;
-		} catch (Throwable e) {
-			Logger.handle(e);
-		}
-		return null;
+		MessageDigest algorithm = MessageDigest.getInstance("MD5");
+		algorithm.update(buffer);
+		byte[] digest = algorithm.digest();
+		algorithm.reset();
+		return digest;
 	}
 
 	public static boolean inCircle(WorldTile location, WorldTile center, int radius) {
@@ -101,6 +98,7 @@ public final class Utils {
 	}
 
 	@SuppressWarnings("rawtypes")
+	@SneakyThrows(Throwable.class)
 	private static List<Class> findClasses(File directory, String packageName) {
 		List<Class> classes = new ArrayList<Class>();
 		if (!directory.exists()) {
@@ -112,12 +110,8 @@ public final class Utils {
 				assert !file.getName().contains(".");
 				classes.addAll(findClasses(file, packageName + "." + file.getName()));
 			} else if (file.getName().endsWith(".class")) {
-				try {
-					classes.add(Class
-							.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
-				} catch (Throwable e) {
-
-				}
+				classes.add(Class
+						.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
 			}
 		}
 		return classes;
@@ -573,19 +567,16 @@ public final class Utils {
 	 * @param directory The directory to iterate through
 	 * @return The list of classes
 	 */
+	@SneakyThrows({InstantiationException.class, IllegalAccessException.class, ClassNotFoundException.class})
 	public static ObjectList<Object> getClassesInDirectory(String directory) {
 		ObjectList<Object> classes = new ObjectArrayList<>();
 		for (File file : new File("./bin/" + directory.replace(".", "/")).listFiles()) {
 			if (file.getName().contains("$")) {
 				continue;
 			}
-			try {
-				Object objectEvent = (Class.forName(directory + "." + file.getName().replace(".class", ""))
-						.newInstance());
-				classes.add(objectEvent);
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-				// e.printStackTrace();
-			}
+			Object objectEvent = (Class.forName(directory + "." + file.getName().replace(".class", ""))
+					.newInstance());
+			classes.add(objectEvent);
 		}
 		return classes;
 	}

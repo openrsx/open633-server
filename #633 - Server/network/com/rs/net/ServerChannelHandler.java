@@ -13,114 +13,112 @@ import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
-import com.rs.GameProperties;
 import com.rs.GameConstants;
+import com.rs.GameProperties;
 import com.rs.cores.CoresManager;
 import com.rs.io.InputStream;
 import com.rs.net.decoders.WorldPacketsDecoder;
-import com.rs.utilities.Logger;
+
+import lombok.SneakyThrows;
 
 public final class ServerChannelHandler extends SimpleChannelHandler {
 
-    private static ChannelGroup channels;
-    private static ServerBootstrap bootstrap;
+	private static ChannelGroup channels;
+	private static ServerBootstrap bootstrap;
 
-    public static final void init() {
-	new ServerChannelHandler();
-    }
+	public static final void init() {
+		new ServerChannelHandler();
+	}
 
-    public static int getConnectedChannelsSize() {
-	return channels == null ? 0 : channels.size();
-    }
-
-    /*
-     * throws exeption so if cant handle channel server closes
-     */
-    private ServerChannelHandler() {
-	channels = new DefaultChannelGroup();
-	bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(CoresManager.serverBossChannelExecutor, CoresManager.serverWorkerChannelExecutor, CoresManager.serverWorkersCount));
-	bootstrap.getPipeline().addLast("handler", this);
-
-	bootstrap.setOption("reuseAddress", true);
-	bootstrap.setOption("child.tcpNoDelay", true);
-	bootstrap.setOption("child.connectTimeoutMillis", GameConstants.CONNECTION_TIMEOUT);
-	bootstrap.setOption("child.TcpAckFrequency", true);
-	// bootstrap.setOption("receiveBufferSizePredictorFactory", new
-	// AdaptiveReceiveBufferSizePredictorFactory(1, 1,
-	// Settings.RECEIVE_DATA_LIMIT));
+	public static int getConnectedChannelsSize() {
+		return channels == null ? 0 : channels.size();
+	}
 
 	/*
-	 * bootstrap.setOption("reuseAddress", true); // reuses adress for bind
-	 * bootstrap.setOption("child.tcpNoDelay", true);
-	 * bootstrap.setOption("child.TcpAckFrequency", true);
-	 * bootstrap.setOption("child.keepAlive", true);
+	 * throws exeption so if cant handle channel server closes
 	 */
+	private ServerChannelHandler() {
+		channels = new DefaultChannelGroup();
+		bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(CoresManager.serverBossChannelExecutor,
+				CoresManager.serverWorkerChannelExecutor, CoresManager.serverWorkersCount));
+		bootstrap.getPipeline().addLast("handler", this);
 
-	bootstrap.bind(new InetSocketAddress(GameProperties.getGameProperties().getInteger("port")));
-    }
+		bootstrap.setOption("reuseAddress", true);
+		bootstrap.setOption("child.tcpNoDelay", true);
+		bootstrap.setOption("child.connectTimeoutMillis", GameConstants.CONNECTION_TIMEOUT);
+		bootstrap.setOption("child.TcpAckFrequency", true);
+		// bootstrap.setOption("receiveBufferSizePredictorFactory", new
+		// AdaptiveReceiveBufferSizePredictorFactory(1, 1,
+		// Settings.RECEIVE_DATA_LIMIT));
 
-    @Override
-    public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) {
-	channels.add(e.getChannel());
-    }
+		/*
+		 * bootstrap.setOption("reuseAddress", true); // reuses adress for bind
+		 * bootstrap.setOption("child.tcpNoDelay", true);
+		 * bootstrap.setOption("child.TcpAckFrequency", true);
+		 * bootstrap.setOption("child.keepAlive", true);
+		 */
 
-    @Override
-    public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) {
-	channels.remove(e.getChannel());
-    }
-
-    @Override
-    public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
-	ctx.setAttachment(new Session(e.getChannel()));
-    }
-
-    @Override
-    public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
-	Object sessionObject = ctx.getAttachment();
-	if (sessionObject != null && sessionObject instanceof Session) {
-	    Session session = (Session) sessionObject;
-	    if (session.getDecoder() == null)
-		return;
-	    if (session.getDecoder() instanceof WorldPacketsDecoder)
-		session.getWorldPackets().getPlayer().finish();
+		bootstrap.bind(new InetSocketAddress(GameProperties.getGameProperties().getInteger("port")));
 	}
-    }
 
-    @Override
-    public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
-	if (!(e.getMessage() instanceof ChannelBuffer))
-	    return;
-	Object sessionObject = ctx.getAttachment();
-	if (sessionObject != null && sessionObject instanceof Session) {
-	    Session session = (Session) sessionObject;
-	    if (session.getDecoder() == null)
-		return;
-	    ChannelBuffer buf = (ChannelBuffer) e.getMessage();
-	    buf.markReaderIndex();
-	    int avail = buf.readableBytes();
-	    if (avail < 1 || avail > GameConstants.RECEIVE_DATA_LIMIT) {
-		System.out.println("avail is: " + avail);
-		return;
-	    }
-	    byte[] buffer = new byte[buf.readableBytes()];
-	    buf.readBytes(buffer);
-	    try {
-		session.getDecoder().decode(new InputStream(buffer));
-	    }
-	    catch (Throwable er) {
-		Logger.handle(er);
-	    }
+	@Override
+	public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) {
+		channels.add(e.getChannel());
 	}
-    }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent ee) throws Exception {
+	@Override
+	public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) {
+		channels.remove(e.getChannel());
+	}
 
-    }
+	@Override
+	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
+		ctx.setAttachment(new Session(e.getChannel()));
+	}
 
-    public static final void shutdown() {
-	channels.close().awaitUninterruptibly();
-	bootstrap.releaseExternalResources();
-    }
+	@Override
+	public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
+		Object sessionObject = ctx.getAttachment();
+		if (sessionObject != null && sessionObject instanceof Session) {
+			Session session = (Session) sessionObject;
+			if (session.getDecoder() == null)
+				return;
+			if (session.getDecoder() instanceof WorldPacketsDecoder)
+				session.getWorldPackets().getPlayer().finish();
+		}
+	}
+
+	@Override
+	@SneakyThrows(Throwable.class)
+	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
+		if (!(e.getMessage() instanceof ChannelBuffer))
+			return;
+		Object sessionObject = ctx.getAttachment();
+		if (sessionObject != null && sessionObject instanceof Session) {
+			Session session = (Session) sessionObject;
+			if (session.getDecoder() == null)
+				return;
+			ChannelBuffer buf = (ChannelBuffer) e.getMessage();
+			buf.markReaderIndex();
+			int avail = buf.readableBytes();
+			if (avail < 1 || avail > GameConstants.RECEIVE_DATA_LIMIT) {
+				System.out.println("avail is: " + avail);
+				return;
+			}
+			byte[] buffer = new byte[buf.readableBytes()];
+			buf.readBytes(buffer);
+			session.getDecoder().decode(new InputStream(buffer));
+		}
+	}
+
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent ee) throws Exception {
+
+	}
+
+	public static final void shutdown() {
+		channels.close().awaitUninterruptibly();
+		bootstrap.releaseExternalResources();
+	}
 
 }

@@ -35,6 +35,7 @@ import com.rs.utilities.loaders.NPCCombatDefinitionsL;
 import com.rs.utilities.loaders.ShopsHandler;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 /**
  *
@@ -66,19 +67,14 @@ public class GameLoader {
 	 *
 	 * @throws IOException
 	 */
+	@SneakyThrows(IOException.class)
 	public void load() {
 		/** Setting the server clock time */
-		try {
-			Cache.init();
-			CoresManager.init();
-			World.init();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Cache.init();
+		CoresManager.init();
+		World.init();
 		getBackgroundLoader().submit(() -> {
 			ServerChannelHandler.init();
-		});
-		getBackgroundLoader().submit(() -> {
 			Huffman.init();
 			MapArchiveKeys.init();
 			MapAreas.init();
@@ -96,6 +92,8 @@ public class GameLoader {
 		getBackgroundLoader().submit(() -> {
 			MusicHints.init();
 			ShopsHandler.init();
+			GsonHandler.initialize();
+			new MobDropTableLoader().load();
 			return null;
 		});
 		getBackgroundLoader().submit(() -> {
@@ -111,8 +109,6 @@ public class GameLoader {
 			HostManager.deserialize(HostListType.MUTED_IP);
 		});
 		getBackgroundLoader().submit(() -> {
-			GsonHandler.initialize();
-			new MobDropTableLoader().load();
 			RSInterfaceDispatcher.load();
 			InventoryDispatcher.load();
 			ObjectDispatcher.load();

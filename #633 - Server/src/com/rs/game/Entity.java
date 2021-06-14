@@ -5,9 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,9 +35,9 @@ import com.rs.utilities.MutableNumber;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.var;
 import skills.Skills;
 
 @Getter
@@ -69,7 +67,7 @@ public abstract class Entity extends WorldTile {
 	// than 1thread
 	// so concurent
 	private transient ConcurrentLinkedQueue<Hit> receivedHits;
-	private transient Map<Entity, Integer> receivedDamage;
+	private transient Object2ObjectArrayMap<Entity, Integer> receivedDamage;
 	private transient boolean finished; // if removed
 	private transient long freezeDelay;
 	// entity masks
@@ -92,7 +90,9 @@ public abstract class Entity extends WorldTile {
 	private transient boolean forceMultiArea;
 	private transient long frozenBlocked;
 	private transient long findTargetDelay;
-	private transient ConcurrentHashMap<Object, Object> temporaryAttributes;
+	
+	Object2ObjectArrayMap<Object, Object> temporaryAttributes = new Object2ObjectArrayMap<>();
+	
 	private transient short hashCode;
 
 	// saving stuff
@@ -117,8 +117,8 @@ public abstract class Entity extends WorldTile {
 		mapRegionsIds = new CopyOnWriteArrayList<Integer>();
 		walkSteps = new ConcurrentLinkedQueue<Object[]>();
 		receivedHits = new ConcurrentLinkedQueue<Hit>();
-		receivedDamage = new ConcurrentHashMap<Entity, Integer>();
-		temporaryAttributes = new ConcurrentHashMap<Object, Object>();
+		receivedDamage = new Object2ObjectArrayMap<Entity, Integer>();
+		temporaryAttributes = new Object2ObjectArrayMap<Object, Object>();
 		nextHits = new ArrayList<Hit>();
 		nextWalkDirection = (byte) (nextRunDirection - 1);
 		lastFaceEntity = -1;
@@ -1219,10 +1219,10 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void safeForceMoveTile(WorldTile desination) {
-		var dir = RandomUtils.random(Utils.DIRECTION_DELTA_X.length -1);
+		int dir = RandomUtils.random(Utils.DIRECTION_DELTA_X.length -1);
 		if (World.checkWalkStep(desination.getPlane(), desination.getX(), desination.getY(), dir, 1)) {
-			setNextWorldTile(new WorldTile(desination.getX() + RandomUtils.random(Utils.DIRECTION_DELTA_X[dir]),
-					desination.getY() + RandomUtils.random(Utils.DIRECTION_DELTA_Y[dir]), desination.getPlane()));
+			setNextWorldTile(new WorldTile(desination.getX() + RandomUtils.random(3),
+					desination.getY() + RandomUtils.random(3), desination.getPlane()));
 		}
 	}
 	

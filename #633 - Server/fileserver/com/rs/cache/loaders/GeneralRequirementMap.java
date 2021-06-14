@@ -1,16 +1,16 @@
 package com.rs.cache.loaders;
 
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+
 public final class GeneralRequirementMap {
 
-	private HashMap<Long, Object> values;
+	private Object2ObjectArrayMap<Long, Object> values;
 
-	private static final ConcurrentHashMap<Integer, GeneralRequirementMap> maps = new ConcurrentHashMap<Integer, GeneralRequirementMap>();
+	
+	static Object2ObjectArrayMap<Integer, GeneralRequirementMap> maps = new Object2ObjectArrayMap<>();
 
 	public static final GeneralRequirementMap getMap(int scriptId) {
 		GeneralRequirementMap script = maps.get(scriptId);
@@ -25,7 +25,7 @@ public final class GeneralRequirementMap {
 
 	}
 
-	public HashMap<Long, Object> getValues() {
+	public Object2ObjectArrayMap<Long, Object> getValues() {
 		return values;
 	}
 
@@ -80,7 +80,7 @@ public final class GeneralRequirementMap {
 		if (opcode == 249) {
 			int length = stream.readUnsignedByte();
 			if (values == null)
-				values = new HashMap<Long, Object>(length);
+				values = new Object2ObjectArrayMap<Long, Object>(length);
 			for (int index = 0; index < length; index++) {
 				boolean stringInstance = stream.readUnsignedByte() == 1;
 				int key = stream.read24BitInt();

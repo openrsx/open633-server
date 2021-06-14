@@ -10,6 +10,8 @@ import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.task.Task;
 
+import lombok.SneakyThrows;
+
 public class Bork extends NPC {
 
 	public static long deadTime;
@@ -63,14 +65,9 @@ public class Bork extends NPC {
 		}
 		CoresManager.slowExecutor.schedule(new Runnable() {
 			@Override
+			@SneakyThrows(Exception.class)
 			public void run() {
-				try {
-					spawn();
-				} catch (Exception e) {
-					e.printStackTrace();
-				} catch (Error e) {
-					e.printStackTrace();
-				}
+				spawn();
 			}
 		}, 1, TimeUnit.HOURS);
 	}

@@ -3,7 +3,6 @@ package com.rs.plugin;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.IncompleteAnnotationException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -176,7 +175,7 @@ public final class RSInterfaceDispatcher {
 			player.getPackets().sendGameMessage("Not enough free space in your inventory.");
 			return true;
 		}
-		HashMap<Integer, Integer> requiriments = item.getDefinitions().getWearingSkillRequiriments();
+		Object2ObjectArrayMap<Integer, Integer> requiriments = item.getDefinitions().getWearingSkillRequiriments();
 		boolean hasRequiriments = true;
 		if (requiriments != null) {
 			for (int skillId : requiriments.keySet()) {
@@ -279,7 +278,7 @@ public final class RSInterfaceDispatcher {
 			player.getPackets().sendGameMessage("Not enough free space in your inventory.");
 			return false;
 		}
-		HashMap<Integer, Integer> requiriments = item.getDefinitions().getWearingSkillRequiriments();
+		Object2ObjectArrayMap<Integer, Integer> requiriments = item.getDefinitions().getWearingSkillRequiriments();
 		boolean hasRequiriments = true;
 		if (requiriments != null) {
 			for (int skillId : requiriments.keySet()) {

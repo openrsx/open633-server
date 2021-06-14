@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 /**
  *
@@ -20,12 +21,9 @@ public final class GameProperties {
 	/**
 	 * Loading the properties
 	 */
+	@SneakyThrows(IOException.class)
 	public void load() {
-		try {
-			properties.load(new FileReader("config.properties"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		properties.load(new FileReader("config.properties"));
 	}
 	
 	/**
@@ -34,13 +32,10 @@ public final class GameProperties {
 	 * @param value
 	 */
 	@SuppressWarnings("deprecation")
+	@SneakyThrows(FileNotFoundException.class)
 	public void changeConfig(String key, String value) {
 		properties.setProperty(key, value);
-		try {
-			properties.save(new FileOutputStream(new File("config.properties")), "");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		properties.save(new FileOutputStream(new File("config.properties")), "");
 		load();
 	}
 

@@ -1,9 +1,7 @@
 package com.rs.game.player.content;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.rs.GameConstants;
@@ -16,13 +14,15 @@ import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
 import com.rs.utilities.Utils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+
 public class FriendChatsManager {
 
 	private String owner;
 	private String ownerDisplayName;
 	private FriendsIgnores settings;
 	private CopyOnWriteArrayList<Player> players;
-	private ConcurrentHashMap<String, Long> bannedPlayers;
+	private Object2ObjectArrayMap<String, Long> bannedPlayers;
 	private byte[] dataBlock;
 
 	/**
@@ -30,10 +30,10 @@ public class FriendChatsManager {
 	 */
 //    private ClanWars clanWars;
 
-	private static HashMap<String, FriendChatsManager> cachedFriendChats;
+	private static Object2ObjectArrayMap<String, FriendChatsManager> cachedFriendChats;
 
 	public static void init() {
-		cachedFriendChats = new HashMap<String, FriendChatsManager>();
+		cachedFriendChats = new Object2ObjectArrayMap<String, FriendChatsManager>();
 	}
 
 	public int getRank(int rights, String username) {
@@ -263,7 +263,7 @@ public class FriendChatsManager {
 		ownerDisplayName = player.getDisplayName();
 		settings = player.getFriendsIgnores();
 		players = new CopyOnWriteArrayList<Player>();
-		bannedPlayers = new ConcurrentHashMap<String, Long>();
+		bannedPlayers = new Object2ObjectArrayMap<String, Long>();
 	}
 
 	public static void destroyChat(Player player) {

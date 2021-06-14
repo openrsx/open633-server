@@ -11,6 +11,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import lombok.SneakyThrows;
+
 /**
  * An <code>ExecutorService</code> that waits for all its events to finish
  * executing.
@@ -46,16 +48,12 @@ public class BlockingExecutorService implements ExecutorService {
 	 *
 	 * @throws ExecutionException if an error in a task occurred.
 	 */
+	@SneakyThrows(InterruptedException.class)
 	public BlockingExecutorService waitForPendingTasks() throws ExecutionException {
 		while (pendingTasks.size() > 0) {
 			if (isShutdown())
 				return this;
-			try {
-				pendingTasks.take().get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				continue;
-			}
+			pendingTasks.take().get();
 		}
 		return this;
 	}

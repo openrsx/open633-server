@@ -8,10 +8,10 @@ import com.rs.cores.CoresManager;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
-import com.rs.utilities.Logger;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -81,51 +81,42 @@ public class WorldObject extends WorldTile {
 				object.getYInRegion());
 	}
 
+	@SneakyThrows(Throwable.class)
 	public static final void spawnObjectTemporary(final WorldObject object, long time) {
 		spawnObject(object);
 		CoresManager.slowExecutor.schedule(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					if (!isSpawnedObject(object))
-						return;
-					removeObject(object);
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
+				if (!isSpawnedObject(object))
+					return;
+				removeObject(object);
 			}
 
 		}, time, TimeUnit.MILLISECONDS);
 	}
 
+	@SneakyThrows(Throwable.class)
 	public static final boolean removeObjectTemporary(final WorldObject object, long time) {
 		removeObject(object);
 		CoresManager.slowExecutor.schedule(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					spawnObject(object);
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
+				spawnObject(object);
 			}
 
 		}, time, TimeUnit.MILLISECONDS);
 		return true;
 	}
 
+	@SneakyThrows(Throwable.class)
 	public static final void spawnTempGroundObject(final WorldObject object, final int replaceId, long time) {
 		spawnObject(object);
 		CoresManager.slowExecutor.schedule(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					removeObject(object);
-					//seems weird.
-					FloorItem.createGroundItem(new Item(replaceId), object, null, false, 180, true);
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
+				removeObject(object);
+				//seems weird.
+				FloorItem.createGroundItem(new Item(replaceId), object, null, false, 180, true);
 			}
 		}, time, TimeUnit.MILLISECONDS);
 	}

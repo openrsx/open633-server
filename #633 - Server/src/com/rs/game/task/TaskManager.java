@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+import lombok.SneakyThrows;
 
 /**
  * Handles the processing and execution of {@link Task}s.
@@ -20,6 +21,7 @@ public final class TaskManager {
 	/**
 	 * Runs an iteration of the {@link Task} processing logic. All {@link Exception}s thrown by {@code Task}s.
 	 */
+	@SneakyThrows(Exception.class)
 	public void sequence() {
 		if(!tasks.isEmpty()) {
 			Iterator<Task> $it = tasks.iterator();
@@ -32,11 +34,7 @@ public final class TaskManager {
 				}
 				it.onSequence();
 				if(it.needsExecute() && it.canExecute()) {
-					try {
-						it.execute();
-					} catch(Exception e) {
-						it.onException(e);
-					}
+					it.execute();
 				}
 			}
 		}
@@ -46,18 +44,14 @@ public final class TaskManager {
 	 * Schedules {@code t} to run in the underlying {@code TaskManager}.
 	 * @param task The {@link Task} to schedule.
 	 */
+	@SneakyThrows(Exception.class)
 	public void submit(Task task) {
 		if(!task.canExecute()) {
 			return;
 		}
 		task.onSubmit();
 		if(task.isInstant()) {
-			try {
-				task.execute();
-			} catch(Exception e) {
-				e.printStackTrace();
-				task.onException(e);
-			}
+			task.execute();
 		}
 		tasks.add(task);
 	}

@@ -11,17 +11,18 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
-import java.util.HashMap;
 
 import com.rs.utilities.Logger;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Cleanup;
+import lombok.SneakyThrows;
 
 public class EquipData {
 
 	public static final byte SLOT = 0, TYPE = 1;
 
-	private final static HashMap<Integer, Integer[]> equipData = new HashMap<Integer, Integer[]>();
+	static Object2ObjectArrayMap<Integer, Integer[]> equipData = new Object2ObjectArrayMap<>();
 	private final static String PACKED_PATH = "data/items/packedEquipData.e";
 	private final static String UNPACKED_PATH = "data/items/unpackedEquipData.txt";
 
@@ -32,21 +33,18 @@ public class EquipData {
 			loadPackedEquips();
 	}
 
+	@SneakyThrows(Throwable.class)
 	private static void loadUnpackedEquips() {
-		try {
-			@Cleanup
-			RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
-			FileChannel channel = in.getChannel();
-			ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0,
-					channel.size());
-			while (buffer.hasRemaining()) {
-				int id = buffer.getShort() & 0xffff;
-				int slot = buffer.get();
-				int type = buffer.get();
-				equipData.put(id, new Integer[] { slot, type });
-			}
-		} catch (Throwable e) {
-			Logger.handle(e);
+		@Cleanup
+		RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
+		FileChannel channel = in.getChannel();
+		ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0,
+				channel.size());
+		while (buffer.hasRemaining()) {
+			int id = buffer.getShort() & 0xffff;
+			int slot = buffer.get();
+			int type = buffer.get();
+			equipData.put(id, new Integer[] { slot, type });
 		}
 	}
 

@@ -1,9 +1,6 @@
 package com.rs.game;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -31,11 +28,12 @@ import com.rs.game.task.impl.RestoreSpecialTask;
 import com.rs.game.task.impl.ShopRestockTask;
 import com.rs.game.task.impl.SummoningPassiveTask;
 import com.rs.utilities.AntiFlood;
-import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 
 public final class World {
 
@@ -66,7 +64,7 @@ public final class World {
 	private static final EntityList<NPC> npcs = new EntityList<NPC>(GameConstants.NPCS_LIMIT);
 	
 	@Getter
-	private static final Map<Integer, Region> regions = Collections.synchronizedMap(new HashMap<Integer, Region>());
+	private static Object2ObjectArrayMap<Integer, Region> regions = new Object2ObjectArrayMap<>();
 
 	public static final void init() {
 		World.get().submit(new RestoreRunEnergyTask());
@@ -117,13 +115,8 @@ public final class World {
 	public static void checkControlersAtMove(Player player) {
 		if (player.getControllerManager().getController() == null) {
 			String control = null;
-//			if (!(player.getControlerManager().getControler() instanceof RequestController)
-//					&& RequestController.inWarRequest(player))
-//				control = "clan_wars_request";
 			if (DuelControler.isAtDuelArena(player))
 				control = "DuelControler";
-//			else if (FfaZone.inArea(player))
-//				control = "clan_wars_ffa";
 			if (control != null)
 				player.getControllerManager().startControler(control);
 		}
@@ -176,12 +169,6 @@ public final class World {
 	public static final boolean checkProjectileStep(int plane, int x, int y, int dir, int size) {
 		int xOffset = Utils.DIRECTION_DELTA_X[dir];
 		int yOffset = Utils.DIRECTION_DELTA_Y[dir];
-		/*
-		 * int rotation = getRotation(plane,x+xOffset,y+yOffset); if(rotation != 0) {
-		 * dir += rotation; if(dir >= Utils.DIRECTION_DELTA_X.length) dir = dir -
-		 * (Utils.DIRECTION_DELTA_X.length-1); xOffset = Utils.DIRECTION_DELTA_X[dir];
-		 * yOffset = Utils.DIRECTION_DELTA_Y[dir]; }
-		 */
 		if (size == 1) {
 			int mask = getClipedOnlyMask(plane, x + Utils.DIRECTION_DELTA_X[dir], y + Utils.DIRECTION_DELTA_Y[dir]);
 			if (xOffset == -1 && yOffset == 0)
@@ -544,6 +531,7 @@ public final class World {
 		return npcs;
 	}
 
+	@SneakyThrows(Throwable.class)
 	public static final void safeShutdown(final boolean restart, short delay) {
 		if (get().getExiting_start() != 0)
 			return;
@@ -557,16 +545,8 @@ public final class World {
 		CoresManager.slowExecutor.schedule(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					for (Player player : World.getPlayers()) {
-						if (player == null || !player.isStarted())
-							continue;
-						player.realFinish(true);
-					}
-					Launcher.shutdown();
-				} catch (Throwable e) {
-					Logger.handle(e);
-				}
+				World.players().forEach(player -> player.realFinish(true));
+				Launcher.shutdown();
 			}
 		}, delay, TimeUnit.SECONDS);
 	}
@@ -742,7 +722,7 @@ public final class World {
 	}
 
 
-		/**
+	/**
 	 * An implementation of the singleton pattern to prevent indirect
 	 * instantiation of this class file.
 	 */

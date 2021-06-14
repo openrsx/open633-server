@@ -1,7 +1,6 @@
 package com.rs.game.player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import com.rs.game.World;
@@ -11,11 +10,13 @@ import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
 import com.rs.utilities.Utils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+
 public class FriendsIgnores {
 
 	// friends chat
 	private String chatName;
-	private HashMap<String, Integer> friendsChatRanks;
+	private Object2ObjectArrayMap<String, Integer> friendsChatRanks = new Object2ObjectArrayMap<>();
 	private byte whoCanEnterChat;
 	private byte whoCanTalkOnChat;
 	private byte whoCanKickOnChat;
@@ -33,10 +34,10 @@ public class FriendsIgnores {
 
 	private transient Player player;
 
-	public HashMap<String, Integer> getFriendsChatRanks() {
+	public Object2ObjectArrayMap<String, Integer> getFriendsChatRanks() {
 		if (friendsChatRanks == null) {// temporary
 			whoCanKickOnChat = 7;
-			friendsChatRanks = new HashMap<String, Integer>(200);
+			friendsChatRanks = new Object2ObjectArrayMap<String, Integer>(200);
 			for (String friend : friends)
 				friendsChatRanks.put(friend, 0);
 		}
@@ -85,7 +86,7 @@ public class FriendsIgnores {
 	public FriendsIgnores() {
 		friends = new ArrayList<String>(200);
 		ignores = new ArrayList<String>(100);
-		friendsChatRanks = new HashMap<String, Integer>(200);
+		friendsChatRanks = new Object2ObjectArrayMap<String, Integer>(200);
 		whoCanKickOnChat = 7;
 		whoCanShareloot = -1;
 	}

@@ -1,6 +1,5 @@
 package com.rs.plugin.impl.interfaces;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.rs.GameConstants;
@@ -29,6 +28,7 @@ import com.rs.plugin.wrapper.RSInterfaceSignature;
 import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import skills.Skills;
 
 @RSInterfaceSignature(interfaceId = {149})
@@ -235,7 +235,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 					"Not enough free space in your inventory.");
 			return false;
 		}
-		HashMap<Integer, Integer> requiriments = item.getDefinitions()
+		Object2ObjectArrayMap<Integer, Integer> requiriments = item.getDefinitions()
 				.getWearingSkillRequiriments();
 		boolean hasRequiriments = true;
 		if (requiriments != null) {

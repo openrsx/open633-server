@@ -1,8 +1,5 @@
 package com.rs.game.player.content;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Hit;
@@ -11,6 +8,7 @@ import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.utilities.RandomUtils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import skills.Skills;
 
 /**
@@ -295,7 +293,7 @@ public class Foods {
 		/**
 		 * A map of object ids to foods.
 		 */
-		private static Map<Integer, Food> foods = new HashMap<Integer, Food>();
+		private static Object2ObjectArrayMap<Integer, Food> foods = new Object2ObjectArrayMap<Integer, Food>();
 
 		/**
 		 * Gets a food by an object id.

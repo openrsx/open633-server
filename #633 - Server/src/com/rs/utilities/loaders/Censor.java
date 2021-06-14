@@ -17,6 +17,8 @@ import java.util.List;
 import com.rs.utilities.Logger;
 import com.rs.utilities.TextUtils;
 
+import lombok.SneakyThrows;
+
 public class Censor {
 
 	private final static List<String> censoredWords = new ArrayList<String>();
@@ -43,18 +45,15 @@ public class Censor {
 		return TextUtils.fixChatMessage(message);
 	}
 
+	@SneakyThrows(Throwable.class)
 	private static void loadPackedCensoredWords() {
-		try {
-			RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
-			FileChannel channel = in.getChannel();
-			ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
-			while (buffer.hasRemaining())
-				censoredWords.add(readAlexString(buffer));
-			channel.close();
-			in.close();
-		} catch (Throwable e) {
-			Logger.handle(e);
-		}
+		RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
+		FileChannel channel = in.getChannel();
+		ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
+		while (buffer.hasRemaining())
+			censoredWords.add(readAlexString(buffer));
+		channel.close();
+		in.close();
 	}
 
 	private static void loadUnpackedCensoredWords() {

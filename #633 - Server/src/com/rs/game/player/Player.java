@@ -52,6 +52,7 @@ import com.rs.utilities.Utils;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import skills.Skills;
 
 @Data
@@ -440,6 +441,7 @@ public class Player extends Entity {
 		finish(0);
 	}
 
+	@SneakyThrows(Throwable.class)
 	public void finish(final int tryCount) {
 		if (isFinishing() || isFinished())
 			return;
@@ -452,12 +454,8 @@ public class Player extends Entity {
 			CoresManager.slowExecutor.schedule(new Runnable() {
 				@Override
 				public void run() {
-					try {
-						setFinishing(false);
-						finish(tryCount + 1);
-					} catch (Throwable e) {
-						Logger.handle(e);
-					}
+					setFinishing(false);
+					finish(tryCount + 1);
 				}
 			}, 10, TimeUnit.SECONDS);
 			return;

@@ -7,8 +7,9 @@ import com.rs.cores.CoresManager;
 import com.rs.game.World;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
-import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
+
+import lombok.SneakyThrows;
 
 public final class FadingScreen {
 	
@@ -21,17 +22,14 @@ public final class FadingScreen {
 		unfade(player, 2500, startTime, event);
 	}
 
+	@SneakyThrows(Throwable.class)
 	public static void unfade(final Player player, long endTime, long startTime, final Runnable event) {
 		long leftTime = endTime - (Utils.currentTimeMillis() - startTime);
 		if (leftTime > 0) {
 			CoresManager.slowExecutor.schedule(new TimerTask() {
 				@Override
 				public void run() {
-					try {
-						unfade(player, event);
-					} catch (Throwable e) {
-						Logger.handle(e);
-					}
+					unfade(player, event);
 				}
 
 			}, leftTime, TimeUnit.MILLISECONDS);
@@ -39,6 +37,7 @@ public final class FadingScreen {
 			unfade(player, event);
 	}
 
+	@SneakyThrows(Throwable.class)
 	public static void unfade(final Player player, Runnable event) {
 		event.run();
 		World.get().submit(new Task(0) {
@@ -48,12 +47,8 @@ public final class FadingScreen {
 				CoresManager.slowExecutor.schedule(new TimerTask() {
 					@Override
 					public void run() {
-						try {
-							player.getInterfaceManager().closeFadingInterface();
-							player.unlock();
-						} catch (Throwable e) {
-							Logger.handle(e);
-						}
+						player.getInterfaceManager().closeFadingInterface();
+						player.unlock();
 					}
 				}, 2, TimeUnit.SECONDS);
 				this.cancel();

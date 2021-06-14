@@ -1,12 +1,13 @@
 package com.rs.utilities.json;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.rs.utilities.json.impl.NPCAutoSpawn;
 import com.rs.utilities.json.impl.ObjectSpawnLoader;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import lombok.SneakyThrows;
 
 /**
  * @author Tyluur <itstyluur@gmail.com>
@@ -17,18 +18,15 @@ public class GsonHandler {
 	/**
 	 * Initializes all json loaders
 	 */
+	@SneakyThrows(Exception.class)
 	public static void initialize() {
 		try {
 			addJsonLoaders();
 		} catch (InstantiationException | IllegalAccessException e1) {
 			e1.printStackTrace();
 		}
-		try {
-			for (GsonLoader<?> loader : CLASSES) {
-				loader.initialize();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		for (GsonLoader<?> loader : CLASSES) {
+			loader.initialize();
 		}
 		LOADED = Boolean.TRUE;
 	}
@@ -59,21 +57,18 @@ public class GsonHandler {
 	 * @param <T>
 	 */
 	@SuppressWarnings("unchecked")
+	@SneakyThrows(Exception.class)
 	public static <T> T getJsonLoader(Class<?> clazz) {
-		try {
-			GsonLoader<?> loader = CACHED_LOADERS.get(clazz.getSimpleName());
-			if (loader != null) {
-				return (T) loader;
-			} else {
-				for (GsonLoader<?> listLoader : CLASSES) {
-					if (listLoader.getClass().getSimpleName().equals(clazz.getSimpleName())) {
-						CACHED_LOADERS.put(listLoader.getClass().getSimpleName(), listLoader);
-						return (T) listLoader;
-					}
+		GsonLoader<?> loader = CACHED_LOADERS.get(clazz.getSimpleName());
+		if (loader != null) {
+			return (T) loader;
+		} else {
+			for (GsonLoader<?> listLoader : CLASSES) {
+				if (listLoader.getClass().getSimpleName().equals(clazz.getSimpleName())) {
+					CACHED_LOADERS.put(listLoader.getClass().getSimpleName(), listLoader);
+					return (T) listLoader;
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		return null;
 	}
@@ -84,7 +79,7 @@ public class GsonHandler {
 	public static boolean LOADED = Boolean.FALSE;
 
 	/** The cached loaders */
-	private static Map<String, GsonLoader<?>> CACHED_LOADERS = new HashMap<String, GsonLoader<?>>();
+	private static Object2ObjectArrayMap<String, GsonLoader<?>> CACHED_LOADERS = new Object2ObjectArrayMap<String, GsonLoader<?>>();
 
 	/**
 	 * Adds all of the loaders to the map

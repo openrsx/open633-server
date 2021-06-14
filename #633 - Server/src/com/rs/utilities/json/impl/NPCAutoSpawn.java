@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gson.reflect.TypeToken;
 import com.rs.cache.Cache;
@@ -15,6 +13,9 @@ import com.rs.game.npc.NPC;
 import com.rs.utilities.json.GsonHandler;
 import com.rs.utilities.json.GsonLoader;
 import com.rs.utilities.loaders.NPCSpawning;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import lombok.SneakyThrows;
 
 public class NPCAutoSpawn extends GsonLoader<NPCSpawning> {
 
@@ -79,22 +80,20 @@ public class NPCAutoSpawn extends GsonLoader<NPCSpawning> {
 	}
 
 	@Override
+	@SneakyThrows(Exception.class)
 	public List<NPCSpawning> load() {
 		List<NPCSpawning> autospawns = null;
 		String json = null;
-		try {
-			File file = new File(getFileLocation());
-			if (!file.exists()) {
-				return null;
-			}
-			FileReader reader = new FileReader(file);
-			char[] chars = new char[(int) file.length()];
-			reader.read(chars);
-			json = new String(chars);
-			reader.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		File file = new File(getFileLocation());
+		if (!file.exists()) {
+			return null;
 		}
+		FileReader reader = new FileReader(file);
+		char[] chars = new char[(int) file.length()];
+		reader.read(chars);
+		json = new String(chars);
+		reader.close();
+		
 		autospawns = gson.fromJson(json, new TypeToken<List<NPCSpawning>>() {
 		}.getType());
 		return autospawns;
@@ -117,7 +116,7 @@ public class NPCAutoSpawn extends GsonLoader<NPCSpawning> {
 		return map.get(regionId);
 	}
 
-	private final Map<Integer, List<NPCSpawning>> map = new HashMap<>();
+	private final Object2ObjectArrayMap<Integer, List<NPCSpawning>> map = new Object2ObjectArrayMap<>();
 
 	public enum Direction {
 

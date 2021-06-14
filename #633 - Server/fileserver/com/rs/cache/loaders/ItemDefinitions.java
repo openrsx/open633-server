@@ -1,9 +1,7 @@
 package com.rs.cache.loaders;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.alex.utils.Constants;
 import com.rs.cache.Cache;
@@ -14,13 +12,14 @@ import com.rs.io.InputStream;
 import com.rs.utilities.loaders.EquipData;
 import com.rs.utilities.loaders.ItemBonuses;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Data;
 import skills.Skills;
 
 @Data
 public final class ItemDefinitions {
 
-	private static final ConcurrentHashMap<Integer, ItemDefinitions> itemsDefinitions = new ConcurrentHashMap<Integer, ItemDefinitions>();
+	static Object2ObjectArrayMap<Integer, ItemDefinitions> itemsDefinitions = new Object2ObjectArrayMap<>();
 
 	public int id;
 	public boolean loaded;
@@ -102,8 +101,8 @@ public final class ItemDefinitions {
 	public boolean noted;
 	public boolean lended;
 
-	public HashMap<Integer, Object> clientScriptData;
-	public HashMap<Integer, Integer> itemRequiriments;
+	Object2ObjectArrayMap<Integer, Object> clientScriptData = new Object2ObjectArrayMap<>();
+	Object2ObjectArrayMap<Integer, Integer> itemRequiriments = new Object2ObjectArrayMap<>();
 	public int[] unknownArray5;
 	public int[] unknownArray4;
 	public byte[] unknownArray6;
@@ -476,11 +475,11 @@ public final class ItemDefinitions {
 		return items;
 	}
 	
-	public HashMap<Integer, Integer> getWearingSkillRequiriments() {
+	public Object2ObjectArrayMap<Integer, Integer> getWearingSkillRequiriments() {
 		if (clientScriptData == null)
 			return null;
 		if (itemRequiriments == null) {
-			HashMap<Integer, Integer> skills = new HashMap<Integer, Integer>();
+			Object2ObjectArrayMap<Integer, Integer> skills = new Object2ObjectArrayMap<Integer, Integer>();
 			for (int i = 0; i < 10; i++) {
 				Integer skill = (Integer) clientScriptData.get(749 + (i * 2));
 				if (skill != null) {
@@ -684,7 +683,7 @@ public final class ItemDefinitions {
 		} else if (opcode == 249) {
 			int length = stream.readUnsignedByte();
 			if (clientScriptData == null)
-				clientScriptData = new HashMap<Integer, Object>(length);
+				clientScriptData = new Object2ObjectArrayMap<Integer, Object>(length);
 			for (int index = 0; index < length; index++) {
 				boolean stringInstance = stream.readUnsignedByte() == 1;
 				int key = stream.read24BitInt();

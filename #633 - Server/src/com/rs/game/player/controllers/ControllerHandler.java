@@ -1,28 +1,22 @@
 package com.rs.game.player.controllers;
 
-import java.util.HashMap;
-
-import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.SneakyThrows;
 
 public class ControllerHandler {
 
-	private static final HashMap<Object, Class<Controller>> handledControlers = new HashMap<Object, Class<Controller>>();
+	static Object2ObjectArrayMap<Object, Class<Controller>> handledControlers = new Object2ObjectArrayMap<>();
 
+	@SneakyThrows(Throwable.class)
 	public static final void init() {
-		try {
-			@SuppressWarnings("unchecked")
-			Class<Controller>[] regular = Utils.getClasses("com.rs.game.player.controllers");
-			for (Class<Controller> c : regular) {
-				if (c.isAnonymousClass()) // next
-					continue;
-				handledControlers.put(c.getSimpleName(), c);
-			}
-			
-		} catch (Throwable e) {
-			Logger.handle(e);
+		@SuppressWarnings("unchecked")
+		Class<Controller>[] regular = Utils.getClasses("com.rs.game.player.controllers");
+		for (Class<Controller> c : regular) {
+			if (c.isAnonymousClass()) // next
+				continue;
+			handledControlers.put(c.getSimpleName(), c);
 		}
 	}
 

@@ -10,6 +10,8 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import lombok.SneakyThrows;
+
 /**
  * @author Tyluur <itstyluur@gmail.com>
  * @since Mar 1, 2014
@@ -54,19 +56,16 @@ public abstract class GsonLoader<T> {
 	 * @param data
 	 *            The list to save
 	 */
+	@SneakyThrows(Exception.class)
 	public void save(List<T> data) {
-		try {
-			File file = new File(getFileLocation());
-			if (!file.getParentFile().exists()) {
-				file.getParentFile().mkdirs();
-			}
-			FileWriter fw = new FileWriter(getFileLocation());
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(gson.toJson(data));
-			bw.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		File file = new File(getFileLocation());
+		if (!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
 		}
+		FileWriter fw = new FileWriter(getFileLocation());
+		BufferedWriter bw = new BufferedWriter(fw);
+		bw.write(gson.toJson(data));
+		bw.close();
 	}
 
 	/**

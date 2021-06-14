@@ -24,6 +24,8 @@ import com.rs.utilities.json.impl.ObjectSpawnLoader;
 import com.rs.utilities.loaders.MapArchiveKeys;
 import com.rs.utilities.loaders.NPCSpawning;
 
+import lombok.SneakyThrows;
+
 public class Region {
 	public static final int[] OBJECT_SLOTS = new int[] { 0, 0, 0, 0, 1, 1, 1,
 			1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3 };
@@ -56,25 +58,22 @@ public class Region {
 		// players cant go in
 	}
 
+	@SneakyThrows(Throwable.class)
 	public void checkLoadMap() {
 		if (getLoadMapStage() == 0) {
 			setLoadMapStage(1);
 			CoresManager.slowExecutor.execute(new Runnable() {
 				@Override
 				public void run() {
-					try {
-						loadRegionMap();
-						setLoadMapStage(2);
-						if (!isLoadedObjectSpawns()) {
-							loadObjectSpawns();
-							setLoadedObjectSpawns(true);
-						}
-						if (!isLoadedNPCSpawns()) {
-							loadNPCSpawns(regionId);
-							setLoadedNPCSpawns(true);
-						}
-					} catch (Throwable e) {
-						Logger.handle(e);
+					loadRegionMap();
+					setLoadMapStage(2);
+					if (!isLoadedObjectSpawns()) {
+						loadObjectSpawns();
+						setLoadedObjectSpawns(true);
+					}
+					if (!isLoadedNPCSpawns()) {
+						loadNPCSpawns(regionId);
+						setLoadedNPCSpawns(true);
 					}
 				}
 			});
