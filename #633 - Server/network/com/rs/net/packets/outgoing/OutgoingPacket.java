@@ -1,4 +1,4 @@
-package com.rs.net.packets;
+package com.rs.net.packets.outgoing;
 
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
@@ -16,5 +16,5 @@ public interface OutgoingPacket {
 	 * @param entity
 	 * @throws Exception
 	 */
-	public void execute(Player player, InputStream input);
+	public void execute(Player player, InputStream stream);
 }

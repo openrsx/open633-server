@@ -1,4 +1,4 @@
-package com.rs.net.packets;
+package com.rs.net.packets.outgoing;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface PacketSignature {
+public @interface OutgoingPacketSignature {
 
 	/**
 	 * The Packet ID

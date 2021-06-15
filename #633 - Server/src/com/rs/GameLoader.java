@@ -16,7 +16,7 @@ import com.rs.net.Huffman;
 import com.rs.net.ServerChannelHandler;
 import com.rs.net.host.HostListType;
 import com.rs.net.host.HostManager;
-import com.rs.net.packets.PacketDispatcher;
+import com.rs.net.packets.outgoing.OutgoingPacketDispatcher;
 import com.rs.plugin.CommandDispatcher;
 import com.rs.plugin.InventoryDispatcher;
 import com.rs.plugin.NPCDispatcher;
@@ -115,7 +115,7 @@ public class GameLoader {
 			CommandDispatcher.load();
 			NPCDispatcher.load();
 			NPCCombatDispatcher.load();
-			PacketDispatcher.load();
+			OutgoingPacketDispatcher.load();
 			return null;
 		});
 	}

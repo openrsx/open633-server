@@ -4,6 +4,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import com.rs.net.decoders.WorldPacketsDecoder;
+
 public final class CoresManager {
 
 	protected static volatile boolean shutdown;
@@ -25,6 +27,7 @@ public final class CoresManager {
 				? Executors.newScheduledThreadPool(availableProcessors >= 12 ? 4 : 2, new SlowThreadFactory())
 				: Executors.newSingleThreadScheduledExecutor(new SlowThreadFactory());
 		worldThread.start();
+		WorldPacketsDecoder.loadPacketSizes();
 	}
 
 	public static void shutdown() {

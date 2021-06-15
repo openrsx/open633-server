@@ -1,4 +1,4 @@
-package com.rs.net.packets;
+package com.rs.net.packets.outgoing;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.IncompleteAnnotationException;
@@ -17,12 +17,12 @@ import lombok.SneakyThrows;
 /**
  * @author Dennis
  */
-public final class PacketDispatcher {
+public class OutgoingPacketDispatcher {
 
 	/**
 	 * The object map which contains all the interface on the world.
 	 */
-	private static final Object2ObjectArrayMap<PacketSignature, OutgoingPacket> PACKET = new Object2ObjectArrayMap<>();
+	private static final Object2ObjectArrayMap<OutgoingPacketSignature, OutgoingPacket> PACKET = new Object2ObjectArrayMap<>();
 
 	/**
 	 * Executes the specified interface if it's registered.
@@ -33,12 +33,7 @@ public final class PacketDispatcher {
 	@SneakyThrows(Exception.class)
 	public static void execute(Player player, InputStream input, int packetId) {
 		Optional<OutgoingPacket> outgoingPacket = getVerifiedPacket(packetId);
-		if (!outgoingPacket.isPresent()) {
-			player.getPackets().sendGameMessage(packetId + " is not handled yet.");
-			return;
-		}
-		if (matchesSize(outgoingPacket.get(), input.getLength()))
-			outgoingPacket.get().execute(player, input);
+		outgoingPacket.filter(packet -> matchesSize(packet, input.getLength())).ifPresent(packet -> packet.execute(player, input));
 	}
 
 	/**
@@ -48,7 +43,7 @@ public final class PacketDispatcher {
 	 * @return an Optional with the found value, {@link Optional#empty} otherwise.
 	 */
 	private static Optional<OutgoingPacket> getVerifiedPacket(int id) {
-		for (Entry<PacketSignature, OutgoingPacket> outgoingPacket : PACKET.entrySet()) {
+		for (Entry<OutgoingPacketSignature, OutgoingPacket> outgoingPacket : PACKET.entrySet()) {
 			if (isPacket(outgoingPacket.getValue(), id)) {
 				return Optional.of(outgoingPacket.getValue());
 			}
@@ -57,14 +52,14 @@ public final class PacketDispatcher {
 	}
 
 	private static boolean isPacket(OutgoingPacket outgoingPacket, int packetId) {
-		Annotation annotation = outgoingPacket.getClass().getAnnotation(PacketSignature.class);
-		PacketSignature signature = (PacketSignature) annotation;
+		Annotation annotation = outgoingPacket.getClass().getAnnotation(OutgoingPacketSignature.class);
+		OutgoingPacketSignature signature = (OutgoingPacketSignature) annotation;
 		return signature.packetId() == packetId;
 	}
 	
 	private static boolean matchesSize(OutgoingPacket outgoingPacket, int size) {
-		Annotation annotation = outgoingPacket.getClass().getAnnotation(PacketSignature.class);
-		PacketSignature signature = (PacketSignature) annotation;
+		Annotation annotation = outgoingPacket.getClass().getAnnotation(OutgoingPacketSignature.class);
+		OutgoingPacketSignature signature = (OutgoingPacketSignature) annotation;
 		if (signature.packetSize() != size)
 			System.out.println("Invalid Packet size!");
 		return signature.packetSize() == size;
@@ -77,15 +72,15 @@ public final class PacketDispatcher {
 	 * <b>Method should only be called once on start-up.</b>
 	 */
 	public static void load() {
-		List<OutgoingPacket> packets = Utils.getClassesInDirectory("com.rs.net.packets.impl").stream()
+		List<OutgoingPacket> packets = Utils.getClassesInDirectory("com.rs.net.packets.outgoing.impl").stream()
 				.map(clazz -> (OutgoingPacket) clazz).collect(Collectors.toList());
 
 		for (OutgoingPacket outgoingPacket : packets) {
-			if (outgoingPacket.getClass().getAnnotation(PacketSignature.class) == null) {
-				throw new IncompleteAnnotationException(PacketSignature.class,
+			if (outgoingPacket.getClass().getAnnotation(OutgoingPacketSignature.class) == null) {
+				throw new IncompleteAnnotationException(OutgoingPacketSignature.class,
 						outgoingPacket.getClass().getName() + " has no annotation.");
 			}
-			PACKET.put(outgoingPacket.getClass().getAnnotation(PacketSignature.class), outgoingPacket);
+			PACKET.put(outgoingPacket.getClass().getAnnotation(OutgoingPacketSignature.class), outgoingPacket);
 		}
 	}
 

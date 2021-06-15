@@ -1,4 +1,4 @@
-package com.rs.net.packets.impl;
+package com.rs.net.packets.outgoing.impl;
 
 import com.rs.GameConstants;
 import com.rs.game.World;
@@ -7,11 +7,11 @@ import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
-import com.rs.net.packets.OutgoingPacket;
-import com.rs.net.packets.PacketSignature;
+import com.rs.net.packets.outgoing.OutgoingPacket;
+import com.rs.net.packets.outgoing.OutgoingPacketSignature;
 import com.rs.plugin.ObjectDispatcher;
 
-@PacketSignature(packetId = 75, packetSize = 7, description = "First click packet")
+@OutgoingPacketSignature(packetId = 75, packetSize = 7, description = "First click packet")
 public class ObjectClickPacket implements OutgoingPacket {
 
 	@Override
