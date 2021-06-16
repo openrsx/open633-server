@@ -1,4 +1,4 @@
-package com.rs.net.packets.outgoing.impl;
+package com.rs.net.packets.logic.impl;
 
 import com.rs.game.World;
 import com.rs.game.WorldTile;
@@ -6,12 +6,12 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.player.Player;
 import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
-import com.rs.net.packets.outgoing.OutgoingPacket;
-import com.rs.net.packets.outgoing.OutgoingPacketSignature;
+import com.rs.net.packets.logic.LogicPacket;
+import com.rs.net.packets.logic.LogicPacketSignature;
 import com.rs.utilities.Logger;
 
-@OutgoingPacketSignature(packetId = 30, packetSize = 7, description = "Takes an Item from the Ground tile")
-public class ItemTakePacket implements OutgoingPacket {
+@LogicPacketSignature(packetId = 30, packetSize = 7, description = "Takes an Item from the Ground tile")
+public class ItemTakePacket implements LogicPacket {
 
 	@Override
 	public void execute(Player player, InputStream stream) {

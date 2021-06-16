@@ -1,14 +1,14 @@
-package com.rs.net.packets.outgoing.impl;
+package com.rs.net.packets.logic.impl;
 
 import com.rs.game.World;
 import com.rs.game.player.Player;
 import com.rs.game.player.actions.PlayerFollow;
 import com.rs.io.InputStream;
-import com.rs.net.packets.outgoing.OutgoingPacket;
-import com.rs.net.packets.outgoing.OutgoingPacketSignature;
+import com.rs.net.packets.logic.LogicPacket;
+import com.rs.net.packets.logic.LogicPacketSignature;
 
-@OutgoingPacketSignature(packetId = 76, packetSize = 3, description = "The Second menu option for a Player")
-public class PlayerOptionTwoPacket implements OutgoingPacket {
+@LogicPacketSignature(packetId = 76, packetSize = 3, description = "The Second menu option for a Player")
+public class PlayerOptionTwoPacket implements LogicPacket {
 
 	@Override
 	public void execute(Player player, InputStream stream) {

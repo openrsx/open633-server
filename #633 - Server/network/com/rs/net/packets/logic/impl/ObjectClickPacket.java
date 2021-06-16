@@ -1,4 +1,4 @@
-package com.rs.net.packets.outgoing.impl;
+package com.rs.net.packets.logic.impl;
 
 import com.rs.GameConstants;
 import com.rs.game.World;
@@ -7,12 +7,12 @@ import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
-import com.rs.net.packets.outgoing.OutgoingPacket;
-import com.rs.net.packets.outgoing.OutgoingPacketSignature;
+import com.rs.net.packets.logic.LogicPacket;
+import com.rs.net.packets.logic.LogicPacketSignature;
 import com.rs.plugin.ObjectDispatcher;
 
-@OutgoingPacketSignature(packetId = 75, packetSize = 7, description = "First click packet")
-public class ObjectClickPacket implements OutgoingPacket {
+@LogicPacketSignature(packetId = 75, packetSize = 7, description = "First click packet")
+public class ObjectClickPacket implements LogicPacket {
 
 	@Override
 	public void execute(Player player, InputStream input) {

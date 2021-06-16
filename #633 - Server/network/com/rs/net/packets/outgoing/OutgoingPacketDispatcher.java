@@ -2,6 +2,7 @@ package com.rs.net.packets.outgoing;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.IncompleteAnnotationException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -32,8 +33,8 @@ public class OutgoingPacketDispatcher {
 	 */
 	@SneakyThrows(Exception.class)
 	public static void execute(Player player, InputStream input, int packetId) {
-		Optional<OutgoingPacket> outgoingPacket = getVerifiedPacket(packetId);
-		outgoingPacket.filter(packet -> matchesSize(packet, input.getLength())).ifPresent(packet -> packet.execute(player, input));
+		Optional<OutgoingPacket> incomingPacket = getVerifiedPacket(packetId);
+		incomingPacket.ifPresent(packet -> packet.execute(player, input));
 	}
 
 	/**
@@ -43,26 +44,18 @@ public class OutgoingPacketDispatcher {
 	 * @return an Optional with the found value, {@link Optional#empty} otherwise.
 	 */
 	private static Optional<OutgoingPacket> getVerifiedPacket(int id) {
-		for (Entry<OutgoingPacketSignature, OutgoingPacket> outgoingPacket : PACKET.entrySet()) {
-			if (isPacket(outgoingPacket.getValue(), id)) {
-				return Optional.of(outgoingPacket.getValue());
+		for (Entry<OutgoingPacketSignature, OutgoingPacket> incomingPacket : PACKET.entrySet()) {
+			if (isPacket(incomingPacket.getValue(), id)) {
+				return Optional.of(incomingPacket.getValue());
 			}
 		}
 		return Optional.empty();
 	}
 
-	private static boolean isPacket(OutgoingPacket outgoingPacket, int packetId) {
-		Annotation annotation = outgoingPacket.getClass().getAnnotation(OutgoingPacketSignature.class);
+	private static boolean isPacket(OutgoingPacket incomingPacket, int packetId) {
+		Annotation annotation = incomingPacket.getClass().getAnnotation(OutgoingPacketSignature.class);
 		OutgoingPacketSignature signature = (OutgoingPacketSignature) annotation;
-		return signature.packetId() == packetId;
-	}
-	
-	private static boolean matchesSize(OutgoingPacket outgoingPacket, int size) {
-		Annotation annotation = outgoingPacket.getClass().getAnnotation(OutgoingPacketSignature.class);
-		OutgoingPacketSignature signature = (OutgoingPacketSignature) annotation;
-		if (signature.packetSize() != size)
-			System.out.println("Invalid Packet size!");
-		return signature.packetSize() == size;
+		return Arrays.stream(signature.packetId()).anyMatch(packet -> packet == packetId);
 	}
 
 	/**

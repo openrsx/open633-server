@@ -1,4 +1,4 @@
-package com.rs.net.packets.outgoing.impl;
+package com.rs.net.packets.logic.impl;
 
 import com.rs.game.World;
 import com.rs.game.npc.NPC;
@@ -6,12 +6,12 @@ import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
 import com.rs.io.InputStream;
-import com.rs.net.packets.outgoing.OutgoingPacket;
-import com.rs.net.packets.outgoing.OutgoingPacketSignature;
+import com.rs.net.packets.logic.LogicPacket;
+import com.rs.net.packets.logic.LogicPacketSignature;
 import com.rs.utilities.Utils;
 
-@OutgoingPacketSignature(packetId = 21, packetSize = 3, description = "Attack an NPC")
-public class AttackNPCPacket implements OutgoingPacket {
+@LogicPacketSignature(packetId = 21, packetSize = 3, description = "Attack an NPC")
+public class AttackNPCPacket implements LogicPacket {
 
 	@Override
 	public void execute(Player player, InputStream stream) {

@@ -1,4 +1,4 @@
-package com.rs.net.packets.outgoing.impl;
+package com.rs.net.packets.logic.impl;
 
 import com.rs.game.WorldObject;
 import com.rs.game.WorldTile;
@@ -6,13 +6,13 @@ import com.rs.game.item.Item;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
-import com.rs.net.packets.outgoing.OutgoingPacket;
-import com.rs.net.packets.outgoing.OutgoingPacketSignature;
+import com.rs.net.packets.logic.LogicPacket;
+import com.rs.net.packets.logic.LogicPacketSignature;
 import com.rs.plugin.ObjectDispatcher;
 import com.rs.utilities.Utils;
 
-@OutgoingPacketSignature(packetId = 58, packetSize = 15, description = "An Interface that's used onto a Object (Magic, etc..)")
-public class InterfaceOnObjectPacket implements OutgoingPacket {
+@LogicPacketSignature(packetId = 58, packetSize = 15, description = "An Interface that's used onto a Object (Magic, etc..)")
+public class InterfaceOnObjectPacket implements LogicPacket {
 
 	@Override
 	public void execute(Player player, InputStream stream) {

@@ -1,16 +1,16 @@
-package com.rs.net.packets.outgoing.impl;
+package com.rs.net.packets.logic.impl;
 
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.io.InputStream;
-import com.rs.net.packets.outgoing.OutgoingPacket;
-import com.rs.net.packets.outgoing.OutgoingPacketSignature;
+import com.rs.net.packets.logic.LogicPacket;
+import com.rs.net.packets.logic.LogicPacketSignature;
 import com.rs.utilities.Utils;
 
-@OutgoingPacketSignature(packetId = 36, packetSize = 5, description = "Basic Walking packet")
-public class WalkingPacket implements OutgoingPacket {
+@LogicPacketSignature(packetId = 36, packetSize = 5, description = "Basic Walking packet")
+public class WalkingPacket implements LogicPacket {
 
 	@Override
 	public void execute(Player player, InputStream stream) {
