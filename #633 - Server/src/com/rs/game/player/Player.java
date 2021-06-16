@@ -20,7 +20,6 @@ import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.map.Region;
-import com.rs.game.minigames.duel.DuelRules;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.actions.ActionManager;
@@ -39,14 +38,15 @@ import com.rs.game.task.LinkedTaskSequence;
 import com.rs.game.task.Task;
 import com.rs.game.task.impl.CombatEffectTask;
 import com.rs.game.task.impl.SkillActionTask;
+import com.rs.io.InputStream;
 import com.rs.net.AccountCreation;
 import com.rs.net.IsaacKeyPair;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
-import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
 import com.rs.net.host.HostListType;
 import com.rs.net.host.HostManager;
+import com.rs.net.packets.logic.LogicPacketDispatcher;
 import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
 
@@ -77,18 +77,12 @@ public class Player extends Entity {
 	private transient FriendChatsManager currentFriendChat;
 	private transient boolean toogleLootShare;
 	private transient Trade trade;
-	private transient DuelRules lastDuelRules;
 	private transient IsaacKeyPair isaacKeyPair;
 	private transient Pet pet;
 	private transient VarsManager varsManager;
 	private transient CoordsEvent coordsEvent; 
 	private transient Region region;
 	private transient long nextEmoteEnd;
-	
-	/**
-	 * The current skill action that is going on for this player.
-	 */
-	private Optional<SkillActionTask> skillAction = Optional.empty();
 	
 	
 	// used for packets logic
@@ -120,6 +114,11 @@ public class Player extends Entity {
 	 * Personal details & information stored for a Player
 	 */
 	private PlayerDetails details;
+	
+	/**
+	 * The current skill action that is going on for this player.
+	 */
+	private Optional<SkillActionTask> skillAction = Optional.empty();
 	
 	private Appearance appearance;
 	private Inventory inventory;
@@ -179,21 +178,21 @@ public class Player extends Entity {
 		trade = new Trade(this);
 		varsManager = new VarsManager(this);
 		// loads player on saved instances
-		appearance.setPlayer(this);
-		inventory.setPlayer(this);
-		equipment.setPlayer(this);
-		skills.setPlayer(this);
-		combatDefinitions.setPlayer(this);
-		prayer.setPlayer(this);
-		bank.setPlayer(this);
-		controllerManager.setPlayer(this);
-		musicsManager.setPlayer(this);
-		notes.setPlayer(this);
-		friendsIgnores.setPlayer(this);
+		getAppearance().setPlayer(this);
+		getInventory().setPlayer(this);
+		getEquipment().setPlayer(this);
+		getSkills().setPlayer(this);
+		getCombatDefinitions().setPlayer(this);
+		getPrayer().setPlayer(this);
+		getBank().setPlayer(this);
+		getControllerManager().setPlayer(this);
+		getMusicsManager().setPlayer(this);
+		getNotes().setPlayer(this);
+		getFriendsIgnores().setPlayer(this);
 		getDetails().getCharges().setPlayer(this);
-		petManager.setPlayer(this);
+		getPetManager().setPlayer(this);
 		setDirection((byte) Utils.getFaceDirection(0, -1));
-		temporaryMovementType = -1;
+		setTemporaryMovementType((byte) -1);
 		logicPackets = new ConcurrentLinkedQueue<LogicPacket>();
 		switchItemCache = Collections.synchronizedList(new ArrayList<Byte>());
 		initEntity();
@@ -209,7 +208,7 @@ public class Player extends Entity {
 		Logger.globalLog(username, session.getIP(), new String(" has logged in."));
 		loadMapRegions();
 		setStarted(true);
-		run();
+		login();
 		if (isDead())
 			sendDeath(null);
 	}
@@ -280,8 +279,10 @@ public class Player extends Entity {
 
 	public void processLogicPackets() {
 		LogicPacket packet;
-		while ((packet = getLogicPackets().poll()) != null)
-			WorldPacketsDecoder.decodeLogicPacket(this, packet);
+		while ((packet = getLogicPackets().poll()) != null) {
+			InputStream stream = new InputStream(packet.getData());
+			LogicPacketDispatcher.execute(this, stream, packet.getId());
+		}
 	}
 
 	@Override
@@ -291,10 +292,10 @@ public class Player extends Entity {
 
 	@Override
 	public void processEntity() {
-		processLogicPackets();
 		if (isDead())
 			return;
 		super.processEntity();
+		processLogicPackets();
 		if (getCoordsEvent() != null && getCoordsEvent().processEvent(this))
 			setCoordsEvent(null);
 		if (getRouteEvent() != null && getRouteEvent().processEvent(this))
@@ -342,16 +343,11 @@ public class Player extends Entity {
 		}
 	}
 
-	public void run() {
-		if (World.get().getExiting_start() != 0) {
-			short delayPassed = (short) ((Utils.currentTimeMillis() - World.get().getExiting_start()) / 1000);
-			getPackets().sendSystemUpdate(World.get().getExiting_delay() - delayPassed);
-		}
+	public void login() {
 		getDetails().setLastIP(getSession().getIP());
 		getInterfaceManager().sendInterfaces();
-		getPackets().sendRunEnergy();
+		getPackets().sendRunEnergy().sendGameBarStages().sendGameMessage("Welcome to " + GameConstants.SERVER_NAME + ".");
 		getInterfaceManager().sendRunButtonConfig();
-		getPackets().sendGameMessage("Welcome to " + GameConstants.SERVER_NAME + ".");
 		CombatEffect.values().parallelStream().filter(effects -> effects.onLogin(this)).forEach(effect -> World.get().submit(new CombatEffectTask(this, effect)));
 		GameConstants.STAFF.entrySet().parallelStream().filter(p -> getUsername().equalsIgnoreCase(p.getKey())).forEach(staff -> getDetails().setRights(staff.getValue()));
 		getInterfaceManager().sendDefaultPlayersOptions();
@@ -365,7 +361,6 @@ public class Player extends Entity {
 		getFriendsIgnores().init();
 		getInterfaceManager().refreshHitPoints();
 		getPrayer().refreshPrayerPoints();
-		getPackets().sendGameBarStages();
 		getMusicsManager().init();
 		getNotes().init();
 		if (getFamiliar() != null)
@@ -375,7 +370,7 @@ public class Player extends Entity {
 		setRunning(true);
 		setUpdateMovementType(true);
 		getAppearance().generateAppearenceData();
-		getControllerManager().login(); // checks what to do on login after welcome
+		getControllerManager().login();
 		OwnedObjectManager.linkKeys(this);
 		
 		if (!HostManager.contains(getUsername(), HostListType.STARTER_RECEIVED)) {
@@ -398,42 +393,6 @@ public class Player extends Entity {
 			setMultiArea(isAtMultiArea);
 			getPackets().sendGlobalConfig(616, 0);
 		}
-	}
-
-	/**
-	 * Logs the player out.
-	 * 
-	 * @param lobby
-	 *            If we're logging out to the lobby.
-	 */
-	public void logout(boolean lobby) {
-		if (!isRunning())
-			return;
-		long currentTime = Utils.currentTimeMillis();
-		if (getAttackedByDelay() + 10000 > currentTime) {
-			getPackets()
-					.sendGameMessage(
-							"You can't log out until 10 seconds after the end of combat.");
-			return;
-		}
-		if (getNextEmoteEnd() >= currentTime) {
-			getPackets().sendGameMessage(
-					"You can't log out while performing an emote.");
-			return;
-		}
-		if (isLocked()) {
-			getPackets().sendGameMessage(
-					"You can't log out while performing an action.");
-			return;
-		}
-		getPackets().sendLogout(lobby);
-		setRunning(false);
-	}
-
-	public void forceLogout() {
-		getPackets().sendLogout(false);
-		setRunning(false);
-		realFinish(false);
 	}
 
 	@Override
@@ -492,9 +451,9 @@ public class Player extends Entity {
 	public boolean restoreHitPoints() {
 		boolean update = super.restoreHitPoints();
 		if (update) {
-			if (prayer.usingPrayer(0, 9))
+			if (getPrayer().usingPrayer(0, 9))
 				super.restoreHitPoints();
-			if (resting != 0)
+			if (getResting() != 0)
 				super.restoreHitPoints();
 			getInterfaceManager().refreshHitPoints();
 		}
@@ -504,13 +463,12 @@ public class Player extends Entity {
 	@Override
 	public void removeHitpoints(Hit hit) {
 		super.removeHitpoints(hit);
-		getInterfaceManager().refreshHitPoints();
 	}
 
 	@Override
 	public int getMaxHitpoints() {
-		return skills.getLevel(Skills.HITPOINTS) * 10
-				+ equipment.getEquipmentHpIncrease();
+		return getSkills().getLevel(Skills.HITPOINTS) * 10
+				+ getEquipment().getEquipmentHpIncrease();
 	}
 
 	public int getMessageIcon() {
@@ -518,7 +476,7 @@ public class Player extends Entity {
 	}
 
 	public WorldPacketsEncoder getPackets() {
-		return session.getWorldPackets();
+		return getSession().getWorldPackets();
 	}
 
 	public void drainRunEnergy() {
@@ -535,7 +493,7 @@ public class Player extends Entity {
 	}
 
 	public boolean isResting() {
-		return resting != 0;
+		return getResting() != 0;
 	}
 
 	@Override
@@ -594,7 +552,6 @@ public class Player extends Entity {
 	@Override
 	public void heal(int ammount, int extra) {
 		super.heal(ammount, extra);
-		getInterfaceManager().refreshHitPoints();
 	}
 
 	public void addLogicPacketToQueue(LogicPacket packet) {

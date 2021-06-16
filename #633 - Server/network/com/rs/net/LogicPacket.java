@@ -2,23 +2,17 @@ package com.rs.net;
 
 import com.rs.io.InputStream;
 
+import lombok.Data;
+
+@Data
 public class LogicPacket {
 
-    private int id;
-    byte[] data;
+	private final int id;
+	private final byte[] data;
 
-    public LogicPacket(int id, int size, InputStream stream) {
-	this.id = id;
-	data = new byte[size];
-	stream.getBytes(data, 0, size);
-    }
-
-    public int getId() {
-	return id;
-    }
-
-    public byte[] getData() {
-	return data;
-    }
-
+	public LogicPacket(int id, int size, InputStream stream) {
+		this.id = id;
+		data = new byte[size];
+		stream.getBytes(data, 0, size);
+	}
 }

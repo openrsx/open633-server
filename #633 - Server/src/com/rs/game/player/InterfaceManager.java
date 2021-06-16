@@ -43,7 +43,7 @@ public class InterfaceManager {
 	}
 
 	// TODO CLOSE interface tab ids
-	Object2ObjectArrayMap<Integer, Integer> openedinterfaces = new Object2ObjectArrayMap<>();
+	private Object2ObjectArrayMap<Integer, Integer> openedinterfaces = new Object2ObjectArrayMap<>();
 	
 
 	private boolean resizableScreen;

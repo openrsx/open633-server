@@ -167,7 +167,7 @@ public class Wilderness extends Controller {
 					player.faceObject(object);
 					removeIcon();
 					removeControler();
-					player.resetReceivedDamage();
+					player.getReceivedDamage().clear();
 					player.unlock();
 					this.cancel();
 				}

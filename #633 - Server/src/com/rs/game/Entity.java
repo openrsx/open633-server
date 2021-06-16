@@ -209,12 +209,8 @@ public abstract class Entity extends WorldTile {
 		setHitpoints(hitpoints - hit.getDamage());
 		if (hitpoints <= 0)
 			sendDeath(hit.getSource());
-		else if (isPlayer()) {
-			Player player = (Player) this;
-			if (player.getEquipment().getRingId() == 2550) {
-				if (hit.getSource() != null && hit.getSource() != player && hit.getDamage() > 10)
-					hit.getSource().applyHit(new Hit(player, (int) (hit.getDamage() * 0.1), HitLook.REGULAR_DAMAGE));
-			}
+		
+		ifPlayer(player -> {
 			if (player.getPrayer().hasPrayersOn()) {
 				if ((hitpoints < player.getMaxHitpoints() * 0.1) && player.getPrayer().usingPrayer(0, 23)) {
 					setNextGraphics(new Graphics(436));
@@ -240,7 +236,8 @@ public abstract class Entity extends WorldTile {
 				player.getPackets()
 						.sendGameMessage("Your pheonix necklace heals you, but is destroyed in the process.");
 			}
-		}
+			player.getInterfaceManager().refreshHitPoints();
+		});
 	}
 
 	public void resetReceivedDamage() {
@@ -313,6 +310,7 @@ public abstract class Entity extends WorldTile {
 
 	public void heal(int ammount) {
 		heal(ammount, 0);
+		ifPlayer(player -> player.getInterfaceManager().refreshHitPoints());
 	}
 
 	public void heal(int ammount, int extra) {

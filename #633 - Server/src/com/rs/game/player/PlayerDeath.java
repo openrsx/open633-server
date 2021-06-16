@@ -45,8 +45,7 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 	@Override
 	public void postDeath() {
 		getActor().getInterfaceManager().sendInterface(153);
-		getActor().getPackets().sendMusicEffect(90);
-		getActor().getPackets().sendGameMessage("Oh dear, you have died.");
+		getActor().getPackets().sendMusicEffect(90).sendGameMessage("Oh dear, you have died.");
 		getActor().safeForceMoveTile(new WorldTile(GameConstants.START_PLAYER_LOCATION));
 		getActor().setNextAnimation(new Animation(-1));
 		getActor().heal(getActor().getMaxHitpoints());

@@ -60,8 +60,7 @@ public class GameLoader {
 	 * An executor service which handles background loading tasks.
 	 */
 	@Getter
-	private final BlockingExecutorService backgroundLoader = new BlockingExecutorService(
-			Executors.newCachedThreadPool());
+	private final BlockingExecutorService backgroundLoader = new BlockingExecutorService(Executors.newCachedThreadPool());
 
 	/**
 	 * Loads everything here
@@ -80,7 +79,6 @@ public class GameLoader {
 			MapArchiveKeys.init();
 			MapAreas.init();
 			MapBuilder.init();
-			return null;
 		});
 		getBackgroundLoader().submit(() -> {
 			EquipData.init();
@@ -88,21 +86,18 @@ public class GameLoader {
 			Censor.init();
 			NPCCombatDefinitionsL.init();
 			NPCBonuses.init();
-			return null;
 		});
 		getBackgroundLoader().submit(() -> {
 			MusicHints.init();
 			ShopsHandler.init();
 			GsonHandler.initialize();
 			new MobDropTableLoader().load();
-			return null;
 		});
 		getBackgroundLoader().submit(() -> {
 			ControllerHandler.init();
 			DialogueEventRepository.init();
 			FriendChatsManager.init();
 			World.init();
-			return null;
 		});
 		getBackgroundLoader().submit(() -> {
 			HostManager.deserialize(HostListType.STARTER_RECEIVED);
@@ -118,7 +113,6 @@ public class GameLoader {
 			NPCCombatDispatcher.load();
 			LogicPacketDispatcher.load();
 			OutgoingPacketDispatcher.load();
-			return null;
 		});
 	}
 }

@@ -15,6 +15,6 @@ public class LogoutInterface implements RSInterface {
 		}
 		if (player.isFinished())
 			return;
-		player.logout(componentId != 10);
+		player.getSession().logout(player, componentId != 10);
 	}
 }

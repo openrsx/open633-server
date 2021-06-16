@@ -7,7 +7,6 @@ import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
-import com.rs.net.packets.logic.LogicPacketDispatcher;
 import com.rs.net.packets.outgoing.OutgoingPacketDispatcher;
 
 public final class WorldPacketsDecoder extends Decoder {
@@ -198,11 +197,4 @@ public final class WorldPacketsDecoder extends Decoder {
 			ATTACK_NPC,INTERFACE_ON_PLAYER,INTERFACE_ON_NPC,NPC_CLICK1_PACKET,NPC_CLICK2_PACKET,NPC_CLICK3_PACKET,NPC_CLICK4_PACKET, 
 			OBJECT_CLICK1_PACKET,OBJECT_CLICK2_PACKET,OBJECT_CLICK3_PACKET,OBJECT_CLICK4_PACKET,INTERFACE_ON_OBJECT,SWITCH_INTERFACE_COMPONENTS_PACKET
 	};
-
-	public static void decodeLogicPacket(final Player player, LogicPacket packet) {
-		InputStream stream = new InputStream(packet.getData());
-		if (GameConstants.DEBUG)
-			System.out.println("packet: " + packet.getId());
-		LogicPacketDispatcher.execute(player, stream, packet.getId());
-	}
 }

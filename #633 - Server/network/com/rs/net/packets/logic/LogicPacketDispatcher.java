@@ -60,9 +60,9 @@ public class LogicPacketDispatcher {
 	private static boolean matchesSize(LogicPacket outgoingPacket, int size) {
 		Annotation annotation = outgoingPacket.getClass().getAnnotation(LogicPacketSignature.class);
 		LogicPacketSignature signature = (LogicPacketSignature) annotation;
-		if (signature.packetSize() != size)
-			System.out.println("Invalid Packet size!");
-		return signature.packetSize() == size;
+		if (signature.packetSize() == 0) 
+			System.out.println("hey");
+		return signature.packetSize() == 0 || signature.packetSize() == size;
 	}
 
 	/**

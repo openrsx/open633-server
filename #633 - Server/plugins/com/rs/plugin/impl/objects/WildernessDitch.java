@@ -44,7 +44,7 @@ public class WildernessDitch implements ObjectType {
 		setDestinationNorth();
 		player.setNextForceMovement(new ForceMovement(new WorldTile(player), 1, destination, 2,
 				ditch.getRotation() == 0 || ditch.getRotation() == 2 ? ForceMovement.SOUTH : ForceMovement.EAST));
-		player.resetReceivedDamage();
+		player.getReceivedDamage().clear();
 		player.unlock();
 	}
 
@@ -52,7 +52,7 @@ public class WildernessDitch implements ObjectType {
 		setDestinationSouth();
 		player.setNextForceMovement(new ForceMovement(new WorldTile(player), 1, destination, 2,
 				ditch.getRotation() == 0 || ditch.getRotation() == 2 ? ForceMovement.NORTH : ForceMovement.WEST));
-		player.resetReceivedDamage();
+		player.getReceivedDamage().clear();
 	}
 
 	private void setDestinationSouth() {

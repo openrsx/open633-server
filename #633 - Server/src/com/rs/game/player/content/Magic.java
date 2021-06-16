@@ -11,7 +11,6 @@ import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
-import com.rs.game.minigames.duel.DuelArena;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
 import com.rs.game.player.controllers.Wilderness;
@@ -454,10 +453,6 @@ public class Magic {
 				player.getPackets().sendGameMessage(((Player) target).getDisplayName() + " is not accepting aid");
 				return;
 			}
-			if (((Player) target).getControllerManager().getController() != null
-					&& ((Player) target).getControllerManager().getController() instanceof DuelArena) {
-				return;
-			}
 			if (!checkRunes(player, true, ASTRAL_RUNE, 3, DEATH_RUNE, 2, EARTH_RUNE, 10))
 				return;
 			player.setNextAnimation(new Animation(4411));
@@ -520,9 +515,6 @@ public class Magic {
 						continue;
 					if (!p2.getDetails().isAcceptAid()) {
 						player.getPackets().sendGameMessage(p2.getDisplayName() + " is not accepting aid");
-						continue;
-					} else if (p2.getControllerManager().getController() != null
-							&& p2.getControllerManager().getController() instanceof DuelArena) {
 						continue;
 					}
 					p2.setNextGraphics(new Graphics(725, 0, 100));

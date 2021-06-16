@@ -15,7 +15,6 @@ import com.rs.game.npc.dragons.KingBlackDragon;
 import com.rs.game.npc.others.Bork;
 import com.rs.game.npc.others.TormentedDemon;
 import com.rs.game.player.Player;
-import com.rs.game.player.controllers.DuelControler;
 import com.rs.game.route.Flags;
 import com.rs.game.task.Task;
 import com.rs.game.task.TaskManager;
@@ -114,11 +113,11 @@ public final class World {
 
 	public static void checkControlersAtMove(Player player) {
 		if (player.getControllerManager().getController() == null) {
-			String control = null;
-			if (DuelControler.isAtDuelArena(player))
-				control = "DuelControler";
-			if (control != null)
-				player.getControllerManager().startControler(control);
+//			String control = null;
+//			if (DuelControler.isAtDuelArena(player))
+//				control = "DuelControler";
+//			if (control != null)
+//				player.getControllerManager().startControler(control);
 		}
 	}
 
