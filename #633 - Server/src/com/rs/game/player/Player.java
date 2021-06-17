@@ -31,6 +31,7 @@ import com.rs.game.player.content.PriceCheckManager;
 import com.rs.game.player.content.TeleportType;
 import com.rs.game.player.content.pet.PetManager;
 import com.rs.game.player.controllers.ControllerManager;
+import com.rs.game.player.spells.passive.PassiveSpellDispatcher;
 import com.rs.game.player.type.CombatEffect;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
@@ -83,6 +84,7 @@ public class Player extends Entity {
 	private transient CoordsEvent coordsEvent; 
 	private transient Region region;
 	private transient long nextEmoteEnd;
+	private transient PassiveSpellDispatcher spellDispatcher;
 	
 	
 	// used for packets logic
@@ -151,6 +153,7 @@ public class Player extends Entity {
 		friendsIgnores = new FriendsIgnores();
 		petManager = new PetManager();
 		details = new PlayerDetails();
+		spellDispatcher = new PassiveSpellDispatcher();
 		getDetails().setPassword(password);
 	}
 
@@ -177,6 +180,7 @@ public class Player extends Entity {
 		actionManager = new ActionManager(this);
 		trade = new Trade(this);
 		varsManager = new VarsManager(this);
+		spellDispatcher = new PassiveSpellDispatcher();
 		// loads player on saved instances
 		getAppearance().setPlayer(this);
 		getInventory().setPlayer(this);

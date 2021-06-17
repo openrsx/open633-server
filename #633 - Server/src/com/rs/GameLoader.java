@@ -12,6 +12,7 @@ import com.rs.game.map.MapBuilder;
 import com.rs.game.npc.combat.NPCCombatDispatcher;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.controllers.ControllerHandler;
+import com.rs.game.player.spells.passive.PassiveSpellDispatcher;
 import com.rs.net.Huffman;
 import com.rs.net.ServerChannelHandler;
 import com.rs.net.host.HostListType;
@@ -113,6 +114,9 @@ public class GameLoader {
 			NPCCombatDispatcher.load();
 			LogicPacketDispatcher.load();
 			OutgoingPacketDispatcher.load();
+		});
+		getBackgroundLoader().submit(() -> {
+			PassiveSpellDispatcher.load();
 		});
 	}
 }
