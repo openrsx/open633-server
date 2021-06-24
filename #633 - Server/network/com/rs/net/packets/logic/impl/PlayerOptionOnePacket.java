@@ -25,7 +25,7 @@ public class PlayerOptionOnePacket implements LogicPacket {
 		if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 				|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 			return;
-		if (player.isLocked() /* || player.getEmotesManager().isDoingEmote() */
+		if (player.getMovement().isLocked() /* || player.getEmotesManager().isDoingEmote() */
 				|| !player.getControllerManager().canPlayerOption1(p2))
 			return;
 		if (!player.isCanPvp())

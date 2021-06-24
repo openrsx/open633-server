@@ -28,7 +28,7 @@ public class Magpie extends Familiar {
 	@Override
 	public void processNPC() {
 		super.processNPC();
-		if (!getWalkSteps().isEmpty())
+		if (!getMovement().getWalkSteps().isEmpty())
 			theivingTicks += 2;
 		else
 			theivingTicks++;

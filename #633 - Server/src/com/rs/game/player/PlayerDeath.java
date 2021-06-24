@@ -24,7 +24,7 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 	public void preDeath() {
 		if (!getActor().getControllerManager().sendDeath())
 			return;
-		getActor().lock();
+		getActor().getMovement().lock();
 		getActor().setNextAnimation(new Animation(836));
 	}
 
@@ -52,7 +52,7 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 		final int maxPrayer = getActor().getSkills().getLevelForXp(Skills.PRAYER) * 10;
 		getActor().getPrayer().restorePrayer(maxPrayer);
 		getActor().setNextAnimation(new Animation(-1));
-		getActor().unlock();
+		getActor().getMovement().unlock();
 		getActor().getCombatDefinitions().resetSpecialAttack();
 		getActor().getPrayer().closeAllPrayers();
 		getActor().setRunEnergy(100);

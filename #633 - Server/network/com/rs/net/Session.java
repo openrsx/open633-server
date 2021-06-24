@@ -9,6 +9,7 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 
 import com.rs.game.player.Player;
+import com.rs.io.InputStream;
 import com.rs.io.OutputStream;
 import com.rs.net.decoders.ClientPacketsDecoder;
 import com.rs.net.decoders.Decoder;
@@ -19,6 +20,7 @@ import com.rs.net.encoders.Encoder;
 import com.rs.net.encoders.GrabPacketsEncoder;
 import com.rs.net.encoders.LoginPacketsEncoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
+import com.rs.net.packets.logic.LogicPacketDispatcher;
 import com.rs.utilities.Utils;
 
 import lombok.SneakyThrows;
@@ -152,31 +154,26 @@ public class Session {
 			player.getDetails().getIpList().add(player.getDetails().getLastIP());
 		return;
 	}
-	
+
 	/**
 	 * Logs the player out.
 	 * 
-	 * @param lobby
-	 *            If we're logging out to the lobby.
+	 * @param lobby If we're logging out to the lobby.
 	 */
 	public void logout(Player player, boolean lobby) {
 		if (!player.isRunning())
 			return;
 		long currentTime = Utils.currentTimeMillis();
 		if (player.getAttackedByDelay() + 10000 > currentTime) {
-			player.getPackets()
-					.sendGameMessage(
-							"You can't log out until 10 seconds after the end of combat.");
+			player.getPackets().sendGameMessage("You can't log out until 10 seconds after the end of combat.");
 			return;
 		}
 		if (player.getNextEmoteEnd() >= currentTime) {
-			player.getPackets().sendGameMessage(
-					"You can't log out while performing an emote.");
+			player.getPackets().sendGameMessage("You can't log out while performing an emote.");
 			return;
 		}
-		if (player.isLocked()) {
-			player.getPackets().sendGameMessage(
-					"You can't log out while performing an action.");
+		if (player.getMovement().isLocked()) {
+			player.getPackets().sendGameMessage("You can't log out while performing an action.");
 			return;
 		}
 		player.getPackets().sendLogout(lobby);
@@ -187,5 +184,13 @@ public class Session {
 		player.getPackets().sendLogout(false);
 		player.setRunning(false);
 		player.realFinish(false);
+	}
+
+	public void processLogicPackets(Player player) {
+		LogicPacket packet;
+		while ((packet = player.getLogicPackets().poll()) != null) {
+			InputStream stream = new InputStream(packet.getData());
+			LogicPacketDispatcher.execute(player, stream, packet.getId());
+		}
 	}
 }

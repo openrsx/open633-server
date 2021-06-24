@@ -24,7 +24,7 @@ public class AttackNPCPacket implements LogicPacket {
 		if (npc == null || npc.isDead() || npc.isFinished() || !player.getMapRegionsIds().contains(npc.getRegionId())
 				|| !npc.getDefinitions().hasAttackOption())
 			return;
-		if (player.isLocked()/* || player.getEmotesManager().isDoingEmote() */)
+		if (player.getMovement().isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 			return;
 		if (!player.getControllerManager().canAttack(npc))
 			return;

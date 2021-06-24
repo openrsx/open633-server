@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -21,6 +20,8 @@ import com.rs.game.map.Region;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
+import com.rs.game.player.LocalNPCUpdate;
+import com.rs.game.player.LocalPlayerUpdate;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.TeleportType;
 import com.rs.game.player.controllers.Wilderness;
@@ -36,6 +37,7 @@ import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayFIFOQueue;
 import lombok.Getter;
 import lombok.Setter;
 import skills.Skills;
@@ -48,13 +50,9 @@ public abstract class Entity extends WorldTile {
 
 	// transient stuff
 	private transient int index;
-	private transient short lastRegionId; // the last region the entity was at
+	private transient short lastRegionId;
 	private transient WorldTile lastLoadedMapRegionTile;
-	private transient CopyOnWriteArrayList<Integer> mapRegionsIds; // called by
-	// more than
-	// 1thread
-	// so
-	// concurent
+	private transient CopyOnWriteArrayList<Integer> mapRegionsIds;
 	private transient byte direction;
 	private transient WorldTile lastWorldTile;
 	private transient WorldTile nextWorldTile;
@@ -62,14 +60,12 @@ public abstract class Entity extends WorldTile {
 	private transient byte nextRunDirection;
 	private transient Rectangle nextFaceWorldTile;
 	private transient boolean teleported;
-	private transient ConcurrentLinkedQueue<Object[]> walkSteps;// called by
-																// more
-	// than 1thread
-	// so concurent
-	private transient ConcurrentLinkedQueue<Hit> receivedHits;
+	// than 1thread so concurent
+	private transient ObjectArrayFIFOQueue<Hit> receivedHits;
 	private transient Object2ObjectArrayMap<Entity, Integer> receivedDamage;
-	private transient boolean finished; // if removed
+	private transient boolean finished;
 	private transient long freezeDelay;
+	
 	// entity masks
 	private transient Animation nextAnimation;
 	private transient Graphics nextGraphics1;
@@ -81,19 +77,19 @@ public abstract class Entity extends WorldTile {
 	private transient ForceTalk nextForceTalk;
 	private transient int nextFaceEntity;
 	private transient int lastFaceEntity;
-	private transient Entity attackedBy; // whos attacking you, used for single
-	private transient long attackedByDelay; // delay till someone else can
-	// attack you
+	private transient Entity attackedBy;
+	private transient long attackedByDelay; 
+	
 	private transient boolean multiArea;
 	private transient boolean isAtDynamicRegion;
 	private transient long lastAnimationEnd;
 	private transient boolean forceMultiArea;
 	private transient long frozenBlocked;
 	private transient long findTargetDelay;
-	
-	Object2ObjectArrayMap<Object, Object> temporaryAttributes = new Object2ObjectArrayMap<>();
-	
 	private transient short hashCode;
+	private transient EntityMovement movement;
+
+	private transient Object2ObjectArrayMap<Object, Object> temporaryAttributes = new Object2ObjectArrayMap<>();
 
 	// saving stuff
 	private int hitpoints;
@@ -115,24 +111,14 @@ public abstract class Entity extends WorldTile {
 	public final void initEntity() {
 		hashCode = (short) hashCodeGenerator.getAndIncrement();
 		mapRegionsIds = new CopyOnWriteArrayList<Integer>();
-		walkSteps = new ConcurrentLinkedQueue<Object[]>();
-		receivedHits = new ConcurrentLinkedQueue<Hit>();
+		receivedHits = new ObjectArrayFIFOQueue<Hit>();
 		receivedDamage = new Object2ObjectArrayMap<Entity, Integer>();
 		temporaryAttributes = new Object2ObjectArrayMap<Object, Object>();
 		nextHits = new ArrayList<Hit>();
 		nextWalkDirection = (byte) (nextRunDirection - 1);
 		lastFaceEntity = -1;
 		nextFaceEntity = -2;
-	}
-
-	public int getReceivedDamage(Entity source) {
-		int receivedDamage = 0;
-		for (Hit hit : receivedHits) {
-			if (hit.getSource() != source)
-				continue;
-			receivedDamage += hit.getDamage();
-		}
-		return receivedDamage;
+		setMovement(new EntityMovement());
 	}
 
 	public int getClientIndex() {
@@ -142,10 +128,7 @@ public abstract class Entity extends WorldTile {
 	public void applyHit(Hit hit) {
 		if (isDead())
 			return;
-		// todo damage for who gets drop
-		receivedHits.add(hit); // added hit first because, soaking added after,
-		// if applyhit used right there shouldnt be any
-		// problem
+		receivedHits.enqueue(hit);
 		handleIngoingHit(hit);
 	}
 
@@ -153,9 +136,9 @@ public abstract class Entity extends WorldTile {
 
 	public void reset(boolean attributes) {
 		setHitpoints(getMaxHitpoints());
-		receivedHits.clear();
+		receivedHits.trim();
 		resetCombat();
-		walkSteps.clear();
+		getMovement().getWalkSteps().clear();
 		resetReceivedDamage();
 		setAttackedBy(null);
 		setAttackedByDelay(0);
@@ -178,17 +161,20 @@ public abstract class Entity extends WorldTile {
 			if (player.getNextEmoteEnd() >= Utils.currentTimeMillis())
 				return;
 		});
-		Hit hit;
+		ObjectArrayFIFOQueue<Hit> hit;
 		int count = 0;
-		while ((hit = receivedHits.poll()) != null && count++ < 10)
+		while (!receivedHits.isEmpty() && (hit = receivedHits) != null && count++ < 10)
 			processHit(hit);
 	}
 
-	private void processHit(Hit hit) {
+	private void processHit(ObjectArrayFIFOQueue<Hit> hit) {
 		if (isDead())
 			return;
-		removeHitpoints(hit);
-		nextHits.add(hit);
+		while (!receivedHits.isEmpty()) {
+			removeHitpoints(hit);
+			nextHits.add(hit.first());
+			hit.dequeue();
+		}
 	}
 
 	public void resetReceivedHits() {
@@ -196,20 +182,20 @@ public abstract class Entity extends WorldTile {
 		receivedHits.clear();
 	}
 
-	public void removeHitpoints(Hit hit) {
-		if (isDead() || hit.getLook() == HitLook.ABSORB_DAMAGE)
+	public void removeHitpoints(ObjectArrayFIFOQueue<Hit> hit) {
+		if (isDead())
 			return;
-		if (hit.getLook() == HitLook.HEALED_DAMAGE) {
-			heal(hit.getDamage());
+		if (hit.first().getLook() == HitLook.HEALED_DAMAGE) {
+			heal(hit.first().getDamage());
 			return;
 		}
-		if (hit.getDamage() > hitpoints)
-			hit.setDamage(hitpoints);
-		addReceivedDamage(hit.getSource(), hit.getDamage());
-		setHitpoints(hitpoints - hit.getDamage());
+		if (hit.first().getDamage() > hitpoints)
+			hit.first().setDamage(hitpoints);
+		addReceivedDamage(hit.first().getSource(), hit.first().getDamage());
+		setHitpoints(hitpoints - hit.first().getDamage());
 		if (hitpoints <= 0)
-			sendDeath(hit.getSource());
-		
+			sendDeath(hit.first().getSource());
+
 		ifPlayer(player -> {
 			if (player.getPrayer().hasPrayersOn()) {
 				if ((hitpoints < player.getMaxHitpoints() * 0.1) && player.getPrayer().usingPrayer(0, 23)) {
@@ -219,7 +205,7 @@ public abstract class Entity extends WorldTile {
 					player.getPrayer().setPrayerpoints(0);
 				} else if (player.getEquipment().getAmuletId() != 11090 && player.getEquipment().getRingId() == 11090
 						&& player.getHitpoints() <= player.getMaxHitpoints() * 0.1) {
-					player.move(true, GameConstants.START_PLAYER_LOCATION, TeleportType.BLANK);
+					player.getMovement().move(player, true, GameConstants.START_PLAYER_LOCATION, TeleportType.BLANK);
 					player.getEquipment().deleteItem(11090, 1);
 					player.getPackets()
 							.sendGameMessage("Your ring of life saves you, but is destroyed in the process.");
@@ -270,7 +256,6 @@ public abstract class Entity extends WorldTile {
 		}
 		return player;
 	}
-
 
 	public int getDamageReceived(Player source) {
 		Integer d = receivedDamage.get(source);
@@ -323,7 +308,7 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public boolean hasWalkSteps() {
-		return !walkSteps.isEmpty();
+		return !getMovement().getWalkSteps().isEmpty();
 	}
 
 	public abstract void sendDeath(Entity source);
@@ -344,7 +329,7 @@ public abstract class Entity extends WorldTile {
 			nextWorldTile = null;
 			teleported = true;
 			if (isPlayer() && ((Player) this).getTemporaryMovementType() == -1)
-				((Player) this).setTemporaryMovementType(Player.TELE_MOVE_TYPE);
+				((Player) this).setTemporaryMovementType(getMovement().TELE_MOVE_TYPE);
 			updateEntityRegion(this);
 			if (needMapUpdate())
 				loadMapRegions();
@@ -354,7 +339,7 @@ public abstract class Entity extends WorldTile {
 			return;
 		}
 		teleported = false;
-		if (walkSteps.isEmpty())
+		if (getMovement().getWalkSteps().isEmpty())
 			return;
 		ifPlayer(player -> {
 			if (player.getNextEmoteEnd() >= Utils.currentTimeMillis())
@@ -366,7 +351,7 @@ public abstract class Entity extends WorldTile {
 			Object[] nextStep = getNextWalkStep();
 			if (nextStep == null) {
 				if (stepCount == 1 && isPlayer())
-					((Player) this).setTemporaryMovementType(Player.WALK_MOVE_TYPE);
+					((Player) this).setTemporaryMovementType(getMovement().WALK_MOVE_TYPE);
 				break;
 			}
 			int dir = (int) nextStep[0];
@@ -477,7 +462,7 @@ public abstract class Entity extends WorldTile {
 	}
 
 	private int getPreviewNextWalkStep() {
-		Object[] step = walkSteps.poll();
+		Object[] step = getMovement().getWalkSteps().poll();
 		if (step == null)
 			return -1;
 		return (int) step[0];
@@ -585,26 +570,22 @@ public abstract class Entity extends WorldTile {
 					srcPos[1]++;
 					continue;
 				}
-				if (srcScenePos[0] < destScenePos[0]
-						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0] + 1, srcPos[1]))
+				if (srcScenePos[0] < destScenePos[0] && (!(src.isNPC()) || src.canWalkNPC(srcPos[0] + 1, srcPos[1]))
 						&& src.addWalkStep(srcPos[0] + 1, srcPos[1], srcPos[0], srcPos[1], true)) {
 					srcPos[0]++;
 					continue;
 				}
-				if (srcScenePos[0] > destScenePos[0]
-						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0] - 1, srcPos[1]))
+				if (srcScenePos[0] > destScenePos[0] && (!(src.isNPC()) || src.canWalkNPC(srcPos[0] - 1, srcPos[1]))
 						&& src.addWalkStep(srcPos[0] - 1, srcPos[1], srcPos[0], srcPos[1], true)) {
 					srcPos[0]--;
 					continue;
 				}
-				if (srcScenePos[1] < destScenePos[1]
-						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0], srcPos[1] + 1))
+				if (srcScenePos[1] < destScenePos[1] && (!(src.isNPC()) || src.canWalkNPC(srcPos[0], srcPos[1] + 1))
 						&& src.addWalkStep(srcPos[0], srcPos[1] + 1, srcPos[0], srcPos[1], true)) {
 					srcPos[1]++;
 					continue;
 				}
-				if (srcScenePos[1] > destScenePos[1]
-						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0], srcPos[1] - 1))
+				if (srcScenePos[1] > destScenePos[1] && (!(src.isNPC()) || src.canWalkNPC(srcPos[0], srcPos[1] - 1))
 						&& src.addWalkStep(srcPos[0], srcPos[1] - 1, srcPos[0], srcPos[1], true)) {
 					srcPos[1]--;
 					continue;
@@ -721,7 +702,7 @@ public abstract class Entity extends WorldTile {
 	}
 
 	private int[] getLastWalkTile() {
-		Object[] objects = walkSteps.toArray();
+		Object[] objects = getMovement().getWalkSteps().toArray();
 		if (objects.length == 0)
 			return new int[] { getX(), getY() };
 		Object step[] = (Object[]) objects[objects.length - 1];
@@ -742,16 +723,16 @@ public abstract class Entity extends WorldTile {
 			if (!((Player) this).getControllerManager().addWalkStep(lastX, lastY, nextX, nextY))
 				return false;
 		}
-		walkSteps.add(new Object[] { dir, nextX, nextY, check });
+		getMovement().getWalkSteps().add(new Object[] { dir, nextX, nextY, check });
 		return true;
 	}
 
 	public void resetWalkSteps() {
-		walkSteps.clear();
+		getMovement().getWalkSteps().clear();
 	}
 
 	private Object[] getNextWalkStep() {
-		Object[] step = walkSteps.poll();
+		Object[] step = getMovement().getWalkSteps().poll();
 		if (step == null)
 			return null;
 		return step;
@@ -1096,8 +1077,7 @@ public abstract class Entity extends WorldTile {
 				myY++;
 			else if (myY > destY)
 				myY--;
-			if ((isNPC() && !canWalkNPC(myX, myY))
-					|| !addWalkStep(myX, myY, lastTile[0], lastTile[1], true)) {
+			if ((isNPC() && !canWalkNPC(myX, myY)) || !addWalkStep(myX, myY, lastTile[0], lastTile[1], true)) {
 				if (!calculate)
 					return false;
 				myX = myRealX;
@@ -1217,72 +1197,82 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void safeForceMoveTile(WorldTile desination) {
-		int dir = RandomUtils.random(Utils.DIRECTION_DELTA_X.length -1);
+		int dir = RandomUtils.random(Utils.DIRECTION_DELTA_X.length - 1);
 		if (World.checkWalkStep(desination.getPlane(), desination.getX(), desination.getY(), dir, 1)) {
 			setNextWorldTile(new WorldTile(desination.getX() + RandomUtils.random(3),
 					desination.getY() + RandomUtils.random(3), desination.getPlane()));
 		}
 	}
-	
+
 	/**
 	 * The type of node that this node is.
 	 */
 	private final EntityType type;
-	
+
 	/**
 	 * Determines if this entity is a {@link Player}.
+	 * 
 	 * @return {@code true} if this entity is a {@link Player}, {@code false}
-	 * otherwise.
+	 *         otherwise.
 	 */
 	public final boolean isPlayer() {
 		return getType() == EntityType.PLAYER;
 	}
-	
+
 	/**
 	 * Executes the specified action if the underlying node is a player.
+	 * 
 	 * @param action the action to execute.
 	 */
 	public final void ifPlayer(Consumer<Player> action) {
-		if(!this.isPlayer()) {
+		if (!this.isPlayer()) {
 			return;
 		}
 		action.accept(this.toPlayer());
 	}
-	
+
 	/**
 	 * Casts the {@link Actor} to a {@link Player}.
+	 * 
 	 * @return an instance of this {@link Actor} as a {@link Player}.
 	 */
 	public final Player toPlayer() {
 		Preconditions.checkArgument(isPlayer(), "Cannot cast this entity to player.");
 		return (Player) this;
 	}
-	
+
 	/**
 	 * Determines if this entity is a {@link Mob}.
+	 * 
 	 * @return {@code true} if this entity is a {@link Mob}, {@code false}
-	 * otherwise.
+	 *         otherwise.
 	 */
 	public final boolean isNPC() {
 		return getType() == EntityType.NPC;
 	}
-	
+
 	/**
 	 * Executes the specified action if the underlying node is a player.
+	 * 
 	 * @param action the action to execute.
 	 */
 	public final void ifNpc(Consumer<NPC> action) {
-		if(!this.isNPC())
+		if (!this.isNPC())
 			return;
 		action.accept(this.toNPC());
 	}
-	
+
 	/**
 	 * Casts the {@link Actor} to a {@link Mob}.
+	 * 
 	 * @return an instance of this {@link Actor} as a {@link Mob}.
 	 */
 	public final NPC toNPC() {
 		Preconditions.checkArgument(isNPC(), "Cannot cast this entity to npc.");
 		return (NPC) this;
 	}
+
+	// used for update
+	private transient LocalPlayerUpdate localPlayerUpdate;
+	private transient LocalNPCUpdate localNPCUpdate;
 }

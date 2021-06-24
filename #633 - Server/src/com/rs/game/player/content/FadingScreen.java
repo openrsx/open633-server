@@ -14,7 +14,7 @@ import lombok.SneakyThrows;
 public final class FadingScreen {
 	
 	public static void fade(final Player player, final Runnable event) {
-		player.lock();
+		player.getMovement().lock();
 		unfade(player, fade(player), event);
 	}
 
@@ -48,7 +48,7 @@ public final class FadingScreen {
 					@Override
 					public void run() {
 						player.getInterfaceManager().closeFadingInterface();
-						player.unlock();
+						player.getMovement().unlock();
 					}
 				}, 2, TimeUnit.SECONDS);
 				this.cancel();

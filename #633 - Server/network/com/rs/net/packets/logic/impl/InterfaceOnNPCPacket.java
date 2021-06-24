@@ -24,7 +24,7 @@ public class InterfaceOnNPCPacket implements LogicPacket {
 	public void execute(Player player, InputStream stream) {
 		if (!player.isStarted() || !player.isClientLoadedMapRegion() || player.isDead())
 			return;
-		if (player.isLocked() /* || player.getEmotesManager().isDoingEmote() */)
+		if (player.getMovement().isLocked() /* || player.getEmotesManager().isDoingEmote() */)
 			return;
 		@SuppressWarnings("unused")
 		int itemId = stream.readUnsignedShortLE128();

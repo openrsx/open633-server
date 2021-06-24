@@ -9,7 +9,6 @@ public class KingBlackDragon extends NPC {
 			boolean spawned) {
 		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
 		setLureDelay((short) 0);
-		setDropRateFactor(1); // double chance
 	}
 
 	public static boolean atKBD(WorldTile tile) {

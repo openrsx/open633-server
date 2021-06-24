@@ -20,7 +20,7 @@ public class EquipmentInterface implements RSInterface {
 		player.stopAll();
 
 		if (componentId == 42) {
-			if (player.getInterfaceManager().containsScreenInter() || player.isLocked()) {
+			if (player.getInterfaceManager().containsScreenInter() || player.getMovement().isLocked()) {
 				player.getPackets()
 						.sendGameMessage("Please finish what you're doing before opening the price checker.");
 				return;

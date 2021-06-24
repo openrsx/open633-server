@@ -84,7 +84,7 @@ public class NPCDispatcher {
 	private static boolean isMobNamed(NPCType mobType, NPC mob) {
 		Annotation annotation = mobType.getClass().getAnnotation(NPCSignature.class);
 		NPCSignature signature = (NPCSignature) annotation;
-		return Arrays.stream(signature.name()).anyMatch(mobName -> mob.getName().contains(mobName));
+		return Arrays.stream(signature.name()).anyMatch(mobName -> mob.getDefinitions().getName().contains(mobName));
 	}
 	
 	/**
@@ -136,7 +136,7 @@ public class NPCDispatcher {
 		}
 		final NPC npc = World.getNPCs().get(npcIndex);
 		if (npc == null || npc.isCantInteract() || npc.isDead() || npc.isFinished()
-				|| !player.getMapRegionsIds().contains(npc.getRegionId()) || player.isLocked())
+				|| !player.getMapRegionsIds().contains(npc.getRegionId()) || player.getMovement().isLocked())
 			return;
 		player.setRouteEvent(new RouteEvent(npc, new Runnable() {
 			@Override

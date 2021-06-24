@@ -16,7 +16,7 @@ public class MiniWalkingPacket implements LogicPacket {
 	public void execute(Player player, InputStream stream) {
 		if (!player.isStarted() || !player.isClientLoadedMapRegion() || player.isDead())
 			return;
-		if (player.isLocked())
+		if (player.getMovement().isLocked())
 			return;
 		if (player.getFreezeDelay() >= Utils.currentTimeMillis()) {
 			player.getPackets().sendGameMessage("A magical force prevents you from moving.");

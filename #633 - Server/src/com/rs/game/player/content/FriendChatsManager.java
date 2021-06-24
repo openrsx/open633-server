@@ -1,6 +1,5 @@
 package com.rs.game.player.content;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -295,18 +294,18 @@ public class FriendChatsManager {
 	}
 
 	public static List<Player> getLootSharingPeople(Player player) {
-		if (!player.isToogleLootShare())
-			return null;
-		FriendChatsManager chat = player.getCurrentFriendChat();
-		if (chat == null)
-			return null;
-		List<Player> players = new ArrayList<Player>();
-		for (Player p2 : player.getCurrentFriendChat().getPlayers()) {
-			if (p2.isToogleLootShare() && p2.withinDistance(player))
-				players.add(p2);
-		}
-		return players;
-
+//		if (!player.isToogleLootShare())
+//			return null;
+//		FriendChatsManager chat = player.getCurrentFriendChat();
+//		if (chat == null)
+//			return null;
+//		List<Player> players = new ArrayList<Player>();
+//		for (Player p2 : player.getCurrentFriendChat().getPlayers()) {
+//			if (p2.isToogleLootShare() && p2.withinDistance(player))
+//				players.add(p2);
+//		}
+//		return players;
+		return null;
 	}
 
 	public static void toogleLootShare(Player player) {
@@ -323,8 +322,8 @@ public class FriendChatsManager {
 			return;
 		}
 //		player.toogleLootShare();
-		if (player.isToogleLootShare())
-			player.getPackets().sendGameMessage("LootShare is now active.");
+//		if (player.isToogleLootShare())
+//			player.getPackets().sendGameMessage("LootShare is now active.");
 	}
 
 	public static void joinChat(String ownerName, Player player) {

@@ -94,7 +94,7 @@ public class Strykewyrm extends NPC {
 			return;
 		}
 		player.setNextAnimation(new Animation(4278));
-		player.lock(2);
+		player.getMovement().lock(2);
 		npc.setCantInteract(true);
 		World.get().submit(new Task(1) {
 			@Override

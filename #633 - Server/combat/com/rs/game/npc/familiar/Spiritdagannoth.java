@@ -63,7 +63,7 @@ public class Spiritdagannoth extends Familiar {
 						int hitDamage = RandomUtils.random(180);
 						if (hitDamage > 0) {
 							if (target.isPlayer())
-								((Player) target).lock(6);
+								((Player) target).getMovement().lock(6);
 							else
 								target.addFreezeDelay(6000);
 						}

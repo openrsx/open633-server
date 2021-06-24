@@ -41,7 +41,7 @@ public class InterfaceOnInterfacePacket implements OutgoingPacket {
 			if (itemUsed == null || usedWith == null || itemUsed.getId() != itemUsedId
 					|| usedWith.getId() != usedWithId)
 				return;
-			if (player.isLocked()/* || player.getEmotesManager().isDoingEmote() */)
+			if (player.getMovement().isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 				return;
 			player.stopAll();
 			if (!player.getControllerManager().canUseItemOnItem(itemUsed, usedWith))

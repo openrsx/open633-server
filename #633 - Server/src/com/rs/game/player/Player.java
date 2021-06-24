@@ -11,13 +11,12 @@ import java.util.function.Consumer;
 import com.alex.utils.VarsManager;
 import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
-import com.rs.cores.WorldThread;
 import com.rs.game.Entity;
+import com.rs.game.EntityMovement;
 import com.rs.game.EntityType;
 import com.rs.game.HintIconsManager;
 import com.rs.game.Hit;
 import com.rs.game.World;
-import com.rs.game.WorldTile;
 import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.map.Region;
 import com.rs.game.npc.familiar.Familiar;
@@ -28,18 +27,15 @@ import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.MusicsManager;
 import com.rs.game.player.content.Notes;
 import com.rs.game.player.content.PriceCheckManager;
-import com.rs.game.player.content.TeleportType;
 import com.rs.game.player.content.pet.PetManager;
 import com.rs.game.player.controllers.ControllerManager;
 import com.rs.game.player.spells.passive.PassiveSpellDispatcher;
 import com.rs.game.player.type.CombatEffect;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
-import com.rs.game.task.LinkedTaskSequence;
 import com.rs.game.task.Task;
 import com.rs.game.task.impl.CombatEffectTask;
 import com.rs.game.task.impl.SkillActionTask;
-import com.rs.io.InputStream;
 import com.rs.net.AccountCreation;
 import com.rs.net.IsaacKeyPair;
 import com.rs.net.LogicPacket;
@@ -47,10 +43,10 @@ import com.rs.net.Session;
 import com.rs.net.encoders.WorldPacketsEncoder;
 import com.rs.net.host.HostListType;
 import com.rs.net.host.HostManager;
-import com.rs.net.packets.logic.LogicPacketDispatcher;
 import com.rs.utilities.Logger;
 import com.rs.utilities.Utils;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayFIFOQueue;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
@@ -60,23 +56,32 @@ import skills.Skills;
 @EqualsAndHashCode(callSuper=false)
 public class Player extends Entity {
 
-	public static final byte TELE_MOVE_TYPE = 127, WALK_MOVE_TYPE = 1,
-			RUN_MOVE_TYPE = 2;
-
-	// transient stuff
 	private transient String username;
 	private transient Session session;
 	private transient boolean clientLoadedMapRegion;
 	private transient byte displayMode;
 	private transient short screenWidth;
 	private transient short screenHeight;
+	private transient byte temporaryMovementType;
+	private transient boolean updateMovementType;
+	private transient boolean started;
+	private transient boolean running;
+	private transient byte resting;
+	private transient boolean canPvp;
+	private transient boolean cantTrade;
+	private transient Runnable closeInterfacesEvent;
+	private transient long lastPublicMessage;
+	private transient List<Byte> switchItemCache;
+	private transient boolean disableEquip;
+	private transient boolean invulnerable;
+	private transient boolean finishing;
+	
 	private transient InterfaceManager interfaceManager;
 	private transient HintIconsManager hintIconsManager;
 	private transient ActionManager actionManager;
 	private transient PriceCheckManager priceCheckManager;
 	private transient RouteEvent routeEvent;
 	private transient FriendChatsManager currentFriendChat;
-	private transient boolean toogleLootShare;
 	private transient Trade trade;
 	private transient IsaacKeyPair isaacKeyPair;
 	private transient Pet pet;
@@ -85,43 +90,18 @@ public class Player extends Entity {
 	private transient Region region;
 	private transient long nextEmoteEnd;
 	private transient PassiveSpellDispatcher spellDispatcher;
-	
-	
-	// used for packets logic
 	private transient ConcurrentLinkedQueue<LogicPacket> logicPackets;
-
-	// used for update
-	private transient LocalPlayerUpdate localPlayerUpdate;
-	private transient LocalNPCUpdate localNPCUpdate;
-
-	private transient byte temporaryMovementType;
-	private transient boolean updateMovementType;
-
-	// player stages
-	private transient boolean started;
-	private transient boolean running;
-
-	private transient byte resting;
-	private transient boolean canPvp;
-	private transient boolean cantTrade;
-	private transient long lockDelay;
-	private transient Runnable closeInterfacesEvent;
-	private transient long lastPublicMessage;
-	private transient List<Byte> switchItemCache;
-	private transient boolean disableEquip;
-	private transient boolean invulnerable;
-	private transient boolean finishing;
-	
-	/**
-	 * Personal details & information stored for a Player
-	 */
-	private PlayerDetails details;
+	private transient EntityMovement movement;
 	
 	/**
 	 * The current skill action that is going on for this player.
 	 */
 	private Optional<SkillActionTask> skillAction = Optional.empty();
 	
+	/**
+	 * Personal details & information stored for a Player
+	 */
+	private PlayerDetails details;
 	private Appearance appearance;
 	private Inventory inventory;
 	private Equipment equipment;
@@ -136,52 +116,49 @@ public class Player extends Entity {
 	private Familiar familiar;
 	private PetManager petManager;
 
-	// creates Player and saved classes
 	public Player(String password) {
 		super(GameConstants.START_PLAYER_LOCATION, EntityType.PLAYER);
 		setHitpoints(100);
-		appearance = new Appearance();
-		inventory = new Inventory();
-		equipment = new Equipment();
-		skills = new Skills();
-		combatDefinitions = new CombatDefinitions();
-		prayer = new Prayer();
-		bank = new Bank();
-		controllerManager = new ControllerManager();
-		musicsManager = new MusicsManager();
-		notes = new Notes();
-		friendsIgnores = new FriendsIgnores();
-		petManager = new PetManager();
-		details = new PlayerDetails();
-		spellDispatcher = new PassiveSpellDispatcher();
+		setAppearance(new Appearance());
+		setInventory(new Inventory());
+		setEquipment(new Equipment());
+		setSkills(new Skills());
+		setCombatDefinitions(new CombatDefinitions());
+		setPrayer(new Prayer());
+		setBank(new Bank());
+		setControllerManager(new ControllerManager());
+		setMusicsManager(new MusicsManager());
+		setNotes(new Notes());
+		setFriendsIgnores(new FriendsIgnores());
+		setPetManager(new PetManager());
+		setDetails(new PlayerDetails());
+		setSpellDispatcher(new PassiveSpellDispatcher());
 		getDetails().setPassword(password);
 	}
 
 	public void init(Session session, String username, byte displayMode,
 			short screenWidth, short screenHeight, IsaacKeyPair isaacKeyPair) {
-		// temporary deleted after reset all chars
-		if (details == null)
-			details = new PlayerDetails();
-		if (petManager == null)
-			petManager = new PetManager();
-		if (notes == null)
-			notes = new Notes();
-		this.session = session;
-		this.username = username;
-		this.displayMode = displayMode;
-		this.screenWidth = screenWidth;
-		this.screenHeight = screenHeight;
-		this.isaacKeyPair = isaacKeyPair;
-		interfaceManager = new InterfaceManager(this);
-		hintIconsManager = new HintIconsManager(this);
-		priceCheckManager = new PriceCheckManager(this);
-		localPlayerUpdate = new LocalPlayerUpdate(this);
-		localNPCUpdate = new LocalNPCUpdate(this);
-		actionManager = new ActionManager(this);
-		trade = new Trade(this);
-		varsManager = new VarsManager(this);
-		spellDispatcher = new PassiveSpellDispatcher();
-		// loads player on saved instances
+		if (getDetails() == null)
+			setDetails(new PlayerDetails());
+		if (getPetManager() == null)
+			setPetManager(new PetManager());
+		if (getNotes() == null)
+			setNotes(new Notes());
+		setSession(session);
+		setUsername(username);
+		setDisplayMode(displayMode);
+		setScreenWidth(screenWidth);
+		setScreenHeight(screenHeight);
+		setIsaacKeyPair(isaacKeyPair);
+		setInterfaceManager(new InterfaceManager(this));
+		setHintIconsManager(new HintIconsManager(this));
+		setPriceCheckManager(new PriceCheckManager(this));
+		setLocalPlayerUpdate(new LocalPlayerUpdate(this));
+		setLocalNPCUpdate(new LocalNPCUpdate(this));
+		setActionManager(new ActionManager(this));
+		setTrade(new Trade(this));
+		setVarsManager(new VarsManager(this));
+		setSpellDispatcher(new PassiveSpellDispatcher());
 		getAppearance().setPlayer(this);
 		getInventory().setPlayer(this);
 		getEquipment().setPlayer(this);
@@ -197,8 +174,8 @@ public class Player extends Entity {
 		getPetManager().setPlayer(this);
 		setDirection((byte) Utils.getFaceDirection(0, -1));
 		setTemporaryMovementType((byte) -1);
-		logicPackets = new ConcurrentLinkedQueue<LogicPacket>();
-		switchItemCache = Collections.synchronizedList(new ArrayList<Byte>());
+		setLogicPackets(new ConcurrentLinkedQueue<LogicPacket>());
+		setSwitchItemCache(Collections.synchronizedList(new ArrayList<Byte>()));
 		initEntity();
 		World.addPlayer(this);
 		updateEntityRegion(this);
@@ -281,14 +258,6 @@ public class Player extends Entity {
 		getDetails().setForceNextMapLoadRefresh(false);
 	}
 
-	public void processLogicPackets() {
-		LogicPacket packet;
-		while ((packet = getLogicPackets().poll()) != null) {
-			InputStream stream = new InputStream(packet.getData());
-			LogicPacketDispatcher.execute(this, stream, packet.getId());
-		}
-	}
-
 	@Override
 	public void processEntityUpdate() {
 		super.processEntityUpdate();
@@ -299,7 +268,7 @@ public class Player extends Entity {
 		if (isDead())
 			return;
 		super.processEntity();
-		processLogicPackets();
+		getSession().processLogicPackets(this);
 		if (getCoordsEvent() != null && getCoordsEvent().processEvent(this))
 			setCoordsEvent(null);
 		if (getRouteEvent() != null && getRouteEvent().processEvent(this))
@@ -314,7 +283,7 @@ public class Player extends Entity {
 
 	@Override
 	public void processReceivedHits() {
-		if (isLocked())
+		if (getMovement().isLocked())
 			return;
 		super.processReceivedHits();
 	}
@@ -409,10 +378,8 @@ public class Player extends Entity {
 		if (isFinishing() || isFinished())
 			return;
 		setFinishing(true);
-		// if combating doesnt stop when xlog this way ends combat
-		stopAll(false, true,
-				!(getActionManager().getAction() instanceof PlayerCombat));
-		if (isDead() || (getCombatDefinitions().isUnderCombat() && tryCount < 6) || isLocked()
+		stopAll(false, true, !(getActionManager().getAction() instanceof PlayerCombat));
+		if (isDead() || (getCombatDefinitions().isUnderCombat() && tryCount < 6) || getMovement().isLocked()
 		 || Emote.isDoingEmote(this) ) {
 			CoresManager.slowExecutor.schedule(new Runnable() {
 				@Override
@@ -465,7 +432,7 @@ public class Player extends Entity {
 	}
 
 	@Override
-	public void removeHitpoints(Hit hit) {
+	public void removeHitpoints(ObjectArrayFIFOQueue<Hit> hit) {
 		super.removeHitpoints(hit);
 	}
 
@@ -530,29 +497,6 @@ public class Player extends Entity {
 		return getAppearance().getSize();
 	}
 
-	public void setCanPvp(boolean canPvp) {
-		setCanPvp(canPvp);
-		getAppearance().generateAppearenceData();
-		getPackets().sendPlayerOption(canPvp ? "Attack" : "null", 1, true);
-		getPackets().sendPlayerUnderNPCPriority(canPvp);
-	}
-
-	public boolean isLocked() {
-		return getLockDelay() > WorldThread.WORLD_CYCLE;// Utils.currentTimeMillis();
-	}
-
-	public void lock() {
-		setLockDelay(Long.MAX_VALUE);
-	}
-
-	public void lock(long time) {
-		setLockDelay(time == -1 ? Long.MAX_VALUE : WorldThread.WORLD_CYCLE + time);
-	}
-
-	public void unlock() {
-		setLockDelay(0);
-	}
-
 	@Override
 	public void heal(int ammount, int extra) {
 		super.heal(ammount, extra);
@@ -561,12 +505,6 @@ public class Player extends Entity {
 	public void addLogicPacketToQueue(LogicPacket packet) {
 		getLogicPackets().stream().filter(type -> type.getId() == packet.getId()).forEach(logical -> getLogicPackets().remove(logical));
 		getLogicPackets().add(packet);
-	}
-
-	public int getMovementType() {
-		if (getTemporaryMovementType() != -1)
-			return getTemporaryMovementType();
-		return isRun() ? RUN_MOVE_TYPE : WALK_MOVE_TYPE;
 	}
 	
 	public String getDisplayName() {
@@ -585,47 +523,6 @@ public class Player extends Entity {
 				cancel();
 			}
 		}.submit();
-	}
-	
-	/**
-	 * Queue Teleport type handling with Consumer support
-	 * @param destination
-	 * @param type
-	 * @param player
-	 */
-	public void move(boolean instant, WorldTile destination, TeleportType type, Consumer<Player> player) {
-		lock();
-		LinkedTaskSequence seq = new LinkedTaskSequence(instant ? 0 : 1, instant);
-		seq.connect(1, () -> {
-			type.getStartAnimation().ifPresent(this::setNextAnimation);
-			type.getStartGraphic().ifPresent(this::setNextGraphics);
-		}).connect(type.getEndDelay(), () -> {
-			type.getEndAnimation().ifPresent(this::setNextAnimation);
-			type.getEndGraphic().ifPresent(this::setNextGraphics);
-			safeForceMoveTile(destination);
-			player.accept(this);
-			unlock();
-		}).start();
-	}
-	
-	/**
-	 * Queue Teleport type handling
-	 * @param destination
-	 * @param type
-	 * @param player
-	 */
-	public void move(boolean instant, WorldTile destination, TeleportType type) {
-		lock();
-		LinkedTaskSequence seq = new LinkedTaskSequence(instant ? 0 : 1, instant);
-		seq.connect(1, () -> {
-			type.getStartAnimation().ifPresent(this::setNextAnimation);
-			type.getStartGraphic().ifPresent(this::setNextGraphics);
-		}).connect(type.getEndDelay(), () -> {
-			type.getEndAnimation().ifPresent(this::setNextAnimation);
-			type.getEndGraphic().ifPresent(this::setNextGraphics);
-			safeForceMoveTile(destination);
-			unlock();
-		}).start();
 	}
 	
 	public void dialog(DialogueEventListener listener){

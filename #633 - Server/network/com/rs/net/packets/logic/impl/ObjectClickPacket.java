@@ -35,7 +35,7 @@ public class ObjectClickPacket implements LogicPacket {
 		if (mapObject == null) {
 			return;
 		}
-		if (player.isDead() || player.isLocked()) {
+		if (player.isDead() || player.getMovement().isLocked()) {
 			return;
 		}
 		if (mapObject.getId() != id) {

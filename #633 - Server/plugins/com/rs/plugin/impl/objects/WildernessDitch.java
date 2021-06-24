@@ -23,7 +23,7 @@ public class WildernessDitch implements ObjectType {
 			int ditchY = object.getY();
 
 			player.stopAll();
-			player.lock(4);
+			player.getMovement().lock(4);
 			player.setNextAnimation(new Animation(6132));
 
 			if (playerY > ditchY) {// You are starting south
@@ -42,15 +42,15 @@ public class WildernessDitch implements ObjectType {
 
 	private void hopNorth() {
 		setDestinationNorth();
-		player.setNextForceMovement(new ForceMovement(new WorldTile(player), 1, destination, 2,
+		player.setNextForceMovement(new ForceMovement(new WorldTile(player), destination, 1, 2,
 				ditch.getRotation() == 0 || ditch.getRotation() == 2 ? ForceMovement.SOUTH : ForceMovement.EAST));
 		player.getReceivedDamage().clear();
-		player.unlock();
+		player.getMovement().unlock();
 	}
 
 	private void hopSouth() {
 		setDestinationSouth();
-		player.setNextForceMovement(new ForceMovement(new WorldTile(player), 1, destination, 2,
+		player.setNextForceMovement(new ForceMovement(new WorldTile(player), destination, 1, 2,
 				ditch.getRotation() == 0 || ditch.getRotation() == 2 ? ForceMovement.NORTH : ForceMovement.WEST));
 		player.getReceivedDamage().clear();
 	}

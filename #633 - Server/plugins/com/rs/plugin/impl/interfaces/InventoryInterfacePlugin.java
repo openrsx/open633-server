@@ -36,6 +36,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 
 	@Override
 	public void execute(Player player, int interfaceId, int componentId, int packetId, byte slotId, int slotId2) throws Exception {
+		System.out.println(packetId);
 		if (componentId == 0) {
 			if (slotId > 27 || player.getInterfaceManager().containsInventoryInter())
 				return;
@@ -45,17 +46,17 @@ public class InventoryInterfacePlugin implements RSInterface {
 			
 			switch(packetId) {
 			case WorldPacketsDecoder.ACTION_BUTTON1_PACKET:
+				InventoryDispatcher.execute(player, item, 1);
+				break;
+			case WorldPacketsDecoder.ACTION_BUTTON2_PACKET:
 				long time = Utils.currentTimeMillis();
-				if (player.getLockDelay() >= time || player.getNextEmoteEnd() >= time)
+				if (player.getMovement().getLockDelay() >= time || player.getNextEmoteEnd() >= time)
 					return;
 				player.stopAll(false);
 				if (Foods.eat(player, item, slotId))
 					return;
 				if (Pots.pot(player, item, slotId))
 					return;
-				InventoryDispatcher.execute(player, item, 1);
-				break;
-			case WorldPacketsDecoder.ACTION_BUTTON2_PACKET:
 				if (player.isDisableEquip())
 					return;
 				long passedTime = Utils.currentTimeMillis() - WorldThread.WORLD_CYCLE;
@@ -94,7 +95,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON7_PACKET:
 				long dropTime = Utils.currentTimeMillis();
-				if (player.getLockDelay() >= dropTime || player.getNextEmoteEnd() >= dropTime)
+				if (player.getMovement().getLockDelay() >= dropTime || player.getNextEmoteEnd() >= dropTime)
 					return;
 				if (!player.getControllerManager().canDropItem(item))
 					return;

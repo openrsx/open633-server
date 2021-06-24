@@ -708,4 +708,11 @@ public final class CombatDefinitions {
 	public boolean isUnderCombat() {
 		return player.getAttackedByDelay() + 10000 >= Utils.currentTimeMillis();
 	}
+	
+	public void setCanPvp(boolean canPvp) {
+		player.setCanPvp(canPvp);
+		player.getAppearance().generateAppearenceData();
+		player.getPackets().sendPlayerOption(canPvp ? "Attack" : "null", 1, true);
+		player.getPackets().sendPlayerUnderNPCPriority(canPvp);
+	}
 }

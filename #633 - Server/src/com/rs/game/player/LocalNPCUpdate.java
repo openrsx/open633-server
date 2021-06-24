@@ -92,10 +92,7 @@ public final class LocalNPCUpdate {
 				if (n == null || n.isFinished() || localNPCs.contains(n)
 						|| !n.withinDistance(player, 14) || n.isDead())
 					continue;
-				boolean needUpdate = n.needMasksUpdate()
-						|| n.getLastFaceEntity() != -1
-						|| n.getCustomCombatLevel() >= 0
-						|| n.getCustomName() != null;
+				boolean needUpdate = n.needMasksUpdate() || n.getLastFaceEntity() != -1;
 				int x = n.getX() - player.getX();
 				int y = n.getY() - player.getY();
 				stream.writeBits(15, n.getIndex());

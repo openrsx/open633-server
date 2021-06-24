@@ -151,14 +151,14 @@ public class Wilderness extends Controller {
 	@Override
 	public boolean processObjectClick1(final WorldObject object) {
 		if (isDitch(object.getId())) {
-			player.lock();
+			player.getMovement().lock();
 			player.setNextAnimation(new Animation(6132));
 			final WorldTile toTile = new WorldTile(
 					object.getRotation() == 1 || object.getRotation() == 3 ? object.getX() + 2 : player.getX(),
 					object.getRotation() == 0 || object.getRotation() == 2 ? object.getY() - 1 : player.getY(),
 					object.getPlane());
 
-			player.setNextForceMovement(new ForceMovement(new WorldTile(player), 1, toTile, 2,
+			player.setNextForceMovement(new ForceMovement(new WorldTile(player), toTile, 1, 2,
 					object.getRotation() == 0 || object.getRotation() == 2 ? ForceMovement.SOUTH : ForceMovement.EAST));
 			World.get().submit(new Task(2) {
 				@Override
@@ -168,7 +168,7 @@ public class Wilderness extends Controller {
 					removeIcon();
 					removeControler();
 					player.getReceivedDamage().clear();
-					player.unlock();
+					player.getMovement().unlock();
 					this.cancel();
 				}
 			});

@@ -128,7 +128,7 @@ public final class Pickpocketing extends Thieving {
 //			getPlayer().damage(new Hit(hit, Hitsplat.NORMAL, HitIcon.NONE));
 			getPlayer().setNextAnimation(STUN_ANIMATION);
 			getPlayer().setNextGraphics(STUN_GRAPHIC);
-			getPlayer().lock(definition.seconds);
+			getPlayer().getMovement().lock(definition.seconds);
 		} else {
 			getPlayer().getInventory().addItem(loot);
 			getPlayer().getPackets().sendGameMessage("You pick the victims pocket.");

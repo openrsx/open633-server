@@ -22,7 +22,7 @@ public class InterfaceOnPlayerPacket implements LogicPacket {
 	public void execute(Player player, InputStream stream) {
 		if (!player.isStarted() || !player.isClientLoadedMapRegion() || player.isDead())
 			return;
-		if (player.isLocked()/* || player.getEmotesManager().isDoingEmote() */)
+		if (player.getMovement().isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 			return;
 		final int itemId = stream.readUnsignedShort128();
 		int interfaceSlot = stream.readUnsignedShortLE();

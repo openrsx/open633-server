@@ -18,7 +18,7 @@ public class PlayerOptionThreePacket implements LogicPacket {
 		if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 				|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 			return;
-		if (player.isLocked())
+		if (player.getMovement().isLocked())
 			return;
 		if (forceRun)
 			player.setRun(forceRun);

@@ -1,7 +1,6 @@
 package com.rs.game.player.spells.passive;
 
 import java.lang.annotation.Annotation;
-import java.lang.annotation.IncompleteAnnotationException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -89,16 +88,9 @@ public final class PassiveSpellDispatcher {
 	}
 
 	public static void load() {
-		List<PassiveSpell> packets = Utils.getClassesInDirectory("com.rs.game.player.spells.passive.impl").stream()
+		List<PassiveSpell> spellLoader = Utils.getClassesInDirectory("com.rs.game.player.spells.passive.impl").stream()
 				.map(clazz -> (PassiveSpell) clazz).collect(Collectors.toList());
-
-		for (PassiveSpell spells : packets) {
-			if (spells.getClass().getAnnotation(PassiveSpellSignature.class) == null) {
-				throw new IncompleteAnnotationException(PassiveSpellSignature.class,
-						spells.getClass().getName() + " has no annotation.");
-			}
-			SPELLS.put(spells.getClass().getAnnotation(PassiveSpellSignature.class), spells);
-		}
+		spellLoader.forEach(spell -> SPELLS.put(spell.getClass().getAnnotation(PassiveSpellSignature.class), spell));
 	}
 
 	public void reload() {

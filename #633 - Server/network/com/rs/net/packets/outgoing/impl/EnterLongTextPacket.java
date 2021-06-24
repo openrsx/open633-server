@@ -43,7 +43,7 @@ public class EnterLongTextPacket implements OutgoingPacket {
 			} else {
 				player.getPetManager().setTrollBabyName(value);
 				if (player.getPet() != null && player.getPet().getId() == Pets.TROLL_BABY.getBabyNpcId()) {
-					player.getPet().setName(value);
+					player.getPet().getDefinitions().setName(value);
 				}
 			}
 		}

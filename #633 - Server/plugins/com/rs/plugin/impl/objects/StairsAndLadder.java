@@ -19,16 +19,16 @@ public class StairsAndLadder implements ObjectType {
 				@Override
 				public void start() {
 					option("Go-Up", () -> {
-						player.move(true,new WorldTile(player.getX(), player.getY(), player.getPlane() + 1), TeleportType.BLANK);
+						player.getMovement().move(player, true,new WorldTile(player.getX(), player.getY(), player.getPlane() + 1), TeleportType.BLANK);
 					},
 					"Go-Down", () -> {
-						player.move(true,new WorldTile(player.getX(), player.getY(), player.getPlane() - 1), TeleportType.BLANK);
+						player.getMovement().move(player, true,new WorldTile(player.getX(), player.getY(), player.getPlane() - 1), TeleportType.BLANK);
 					});
 				}
 			});
 		else if (object.getDefinitions().getOption(optionId).equalsIgnoreCase("Climb-up"))
-			player.move(true, new WorldTile(player.getX(), player.getY(), player.getPlane() + 1), TeleportType.BLANK);
+			player.getMovement().move(player, true, new WorldTile(player.getX(), player.getY(), player.getPlane() + 1), TeleportType.BLANK);
 		else if (object.getDefinitions().getOption(optionId).equalsIgnoreCase("Climb-down"))
-			player.move(true, new WorldTile(player.getX(), player.getY(), player.getPlane() - 1), TeleportType.BLANK);
+			player.getMovement().move(player, true, new WorldTile(player.getX(), player.getY(), player.getPlane() - 1), TeleportType.BLANK);
 	}
 }

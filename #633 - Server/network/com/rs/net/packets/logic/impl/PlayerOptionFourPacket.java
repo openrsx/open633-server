@@ -18,7 +18,7 @@ public class PlayerOptionFourPacket implements LogicPacket {
 		if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 				|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 			return;
-		if (player.isLocked())
+		if (player.getMovement().isLocked())
 			return;
 		if (forceRun)
 			player.setRun(forceRun);
@@ -41,7 +41,7 @@ public class PlayerOptionFourPacket implements LogicPacket {
 				if (p2.getInterfaceManager().containsScreenInter() || p2.isCantTrade()
 						|| p2.getControllerManager().getController() != null
 
-						|| p2.isLocked()) {
+						|| p2.getMovement().isLocked()) {
 					player.getPackets().sendGameMessage("The other player is busy.");
 					return;
 				}

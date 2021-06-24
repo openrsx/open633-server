@@ -17,7 +17,7 @@ public class ItemTakePacket implements LogicPacket {
 	public void execute(Player player, InputStream stream) {
 		if (!player.isStarted() || !player.isClientLoadedMapRegion() || player.isDead())
 			return;
-		if (player.isLocked())
+		if (player.getMovement().isLocked())
 			return;
 		int x = stream.readUnsignedShort128();
 		final int id = stream.readUnsignedShort();

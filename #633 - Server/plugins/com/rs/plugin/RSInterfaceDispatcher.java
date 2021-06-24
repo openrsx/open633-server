@@ -112,7 +112,7 @@ public final class RSInterfaceDispatcher {
 		if (Utils.getInterfaceDefinitionsSize() <= interfaceId) {
 			return;
 		}
-		if (player.isDead() || player.isLocked()) {
+		if (player.isDead() || player.getMovement().isLocked()) {
 			return;
 		}
 		if (!player.getInterfaceManager().containsInterface(interfaceId)) {

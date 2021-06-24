@@ -1632,14 +1632,14 @@ public class PlayerCombat extends Action {
 				});
 				if (target.isPlayer()) {
 					final Player other = (Player) target;
-					other.lock();
+					other.getMovement().lock();
 //					other.getWatchMap().get("FOOD").reset();
 					other.setDisableEquip(true);
 					World.get().submit(new Task(5) {
 						@Override
 						protected void execute() {
 							other.setDisableEquip(false);
-							other.unlock();
+							other.getMovement().unlock();
 						}
 					});
 				} else {

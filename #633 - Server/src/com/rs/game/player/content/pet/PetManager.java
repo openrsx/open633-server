@@ -123,7 +123,7 @@ public final class PetManager {
 			}
 			if (trollBabyName == null) {
 				trollBabyName = ItemDefinitions.getItemDefinitions(foodId).getName();
-				npc.setName(trollBabyName);
+				npc.getDefinitions().setName(trollBabyName);
 				npc.setNextForceTalk(new ForceTalk("YUM! Me likes " + trollBabyName + "!"));
 			}
 			player.getInventory().deleteItem(foodId, 1);

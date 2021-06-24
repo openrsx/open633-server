@@ -64,7 +64,7 @@ public final class Pet extends NPC {
 		this.pet = Pets.forId(itemId);
 		setRun(true);
 		if (pet == Pets.TROLL_BABY && owner.getPetManager().getTrollBabyName() != null) {
-			setName(owner.getPetManager().getTrollBabyName());
+			getDefinitions().setName(owner.getPetManager().getTrollBabyName());
 		}
 		sendMainConfigurations();
 	}

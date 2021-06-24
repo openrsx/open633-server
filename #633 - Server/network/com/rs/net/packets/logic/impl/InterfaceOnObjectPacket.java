@@ -26,7 +26,7 @@ public class InterfaceOnObjectPacket implements LogicPacket {
 		int x = stream.readShort128();
 		if (!player.isStarted() || !player.isClientLoadedMapRegion() || player.isDead())
 			return;
-		if (player.isLocked()/* || player.getEmotesManager().isDoingEmote() */)
+		if (player.getMovement().isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 			return;
 		final WorldTile tile = new WorldTile(x, y, player.getPlane());
 		int regionId = tile.getRegionId();
@@ -39,7 +39,7 @@ public class InterfaceOnObjectPacket implements LogicPacket {
 		final Item item = player.getInventory().getItem(slot);
 		if (player.isDead() || Utils.getInterfaceDefinitionsSize() <= interfaceId)
 			return;
-		if (player.isLocked())
+		if (player.getMovement().isLocked())
 			return;
 		if (!player.getInterfaceManager().containsInterface(interfaceId))
 			return;

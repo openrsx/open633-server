@@ -8,24 +8,17 @@ public class Rectangle {
 	/**
 	 * X of rect.
 	 */
-	private int x;
+	private final int x;
 	/**
 	 * Y of rect.
 	 */
-	private int y;
+	private final int y;
 	/**
 	 * Size X of rect.
 	 */
-	private int sizeX;
+	private final int sizeX;
 	/**
 	 * Size Y of rect.
 	 */
-	private int sizeY;
-
-	public Rectangle(int x, int y, int sizeX, int sizeY) {
-		this.x = x;
-		this.y = y;
-		this.sizeX = sizeX;
-		this.sizeY = sizeY;
-	}
+	private final int sizeY;
 }

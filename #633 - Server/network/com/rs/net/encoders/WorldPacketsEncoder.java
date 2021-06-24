@@ -14,7 +14,6 @@ import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
-import com.rs.game.item.ItemsContainerNew;
 import com.rs.game.map.DynamicRegion;
 import com.rs.game.map.Region;
 import com.rs.game.npc.NPC;
@@ -444,7 +443,7 @@ public class WorldPacketsEncoder extends Encoder {
 		return this;
 	}
 
-	public WorldPacketsEncoder sendItemsContainer(int key, ItemsContainerNew container) {
+	public WorldPacketsEncoder sendItemsContainer(int key, ItemsContainer<Item> container) {
 		OutputStream stream = new OutputStream();
 		stream.writePacketVarShort(player, 19);
 		stream.writeShort(key);
