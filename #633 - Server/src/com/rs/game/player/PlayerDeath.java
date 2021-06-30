@@ -37,9 +37,9 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 		getActor().getDetails().setAntifireDetails(Optional.empty());	
 		getActor().getDetails().getSkullTimer().set(0);
 		getActor().getDetails().getWatchMap().get("TOLERANCE").reset();
-		getActor().stopAll();
+		getActor().getMovement().stopAll(getActor());
 		if (getActor().getFamiliar() != null)
-			getActor().getFamiliar().sendDeath(getActor());
+			getActor().getFamiliar().sendDeath(Optional.of(getActor()));
 	}
 
 	@Override

@@ -1,21 +1,19 @@
 package com.rs.game;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.cores.CoresManager;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class WorldObject extends WorldTile {
+public class GameObject extends WorldTile {
 
 	private int id;
 	private int type;
@@ -23,7 +21,7 @@ public class WorldObject extends WorldTile {
 	private int life;
 	private boolean disabled;
 
-	public WorldObject(int id, int type, int rotation, WorldTile tile) {
+	public GameObject(int id, int type, int rotation, WorldTile tile) {
 		super(tile.getX(), tile.getY(), tile.getPlane());
 		this.id = id;
 		this.type = type;
@@ -31,7 +29,7 @@ public class WorldObject extends WorldTile {
 		this.life = 1;
 	}
 
-	public WorldObject(int id, int type, int rotation, int x, int y, int plane) {
+	public GameObject(int id, int type, int rotation, int x, int y, int plane) {
 		super(x, y, plane);
 		this.id = id;
 		this.type = type;
@@ -39,7 +37,7 @@ public class WorldObject extends WorldTile {
 		this.life = 1;
 	}
 
-	public WorldObject(int id, int type, int rotation, int x, int y, int plane, int life) {
+	public GameObject(int id, int type, int rotation, int x, int y, int plane, int life) {
 		super(x, y, plane);
 		this.id = id;
 		this.type = type;
@@ -47,7 +45,7 @@ public class WorldObject extends WorldTile {
 		this.life = life;
 	}
 
-	public WorldObject(WorldObject object) {
+	public GameObject(GameObject object) {
 		super(object.getX(), object.getY(), object.getPlane());
 		this.id = object.id;
 		this.type = object.type;
@@ -63,11 +61,11 @@ public class WorldObject extends WorldTile {
 		return ObjectDefinitions.getObjectDefinitions(id);
 	}
 	
-	public static final boolean isSpawnedObject(WorldObject object) {
+	public static final boolean isSpawnedObject(GameObject object) {
 		return World.getRegion(object.getRegionId()).getSpawnedObjects().contains(object);
 	}
 
-	public static final void spawnObject(WorldObject object) {
+	public static final void spawnObject(GameObject object) {
 		World.getRegion(object.getRegionId()).spawnObject(object, object.getPlane(), object.getXInRegion(),
 				object.getYInRegion(), false);
 	}
@@ -76,62 +74,51 @@ public class WorldObject extends WorldTile {
 		World.getRegion(tile.getRegionId()).unclip(tile.getPlane(), tile.getXInRegion(), tile.getYInRegion());
 	}
 
-	public static final void removeObject(WorldObject object) {
+	public static final void removeObject(GameObject object) {
 		World.getRegion(object.getRegionId()).removeObject(object, object.getPlane(), object.getXInRegion(),
 				object.getYInRegion());
 	}
 
 	@SneakyThrows(Throwable.class)
-	public static final void spawnObjectTemporary(final WorldObject object, long time) {
+	public static final void spawnObjectTemporary(final GameObject object, long time) {
 		spawnObject(object);
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				if (!isSpawnedObject(object))
-					return;
-				removeObject(object);
-			}
-
-		}, time, TimeUnit.MILLISECONDS);
+		CoresManager.schedule(() -> {
+			if (!isSpawnedObject(object))
+				return;
+			removeObject(object);
+		}, (int) time);
 	}
 
 	@SneakyThrows(Throwable.class)
-	public static final boolean removeObjectTemporary(final WorldObject object, long time) {
+	public static final boolean removeObjectTemporary(final GameObject object, long time) {
 		removeObject(object);
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				spawnObject(object);
-			}
-
-		}, time, TimeUnit.MILLISECONDS);
+		CoresManager.schedule(() -> {
+			spawnObject(object);
+		}, (int) time);
 		return true;
 	}
 
 	@SneakyThrows(Throwable.class)
-	public static final void spawnTempGroundObject(final WorldObject object, final int replaceId, long time) {
+	public static final void spawnTempGroundObject(final GameObject object, final int replaceId, long time) {
 		spawnObject(object);
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				removeObject(object);
-				//seems weird.
-				FloorItem.createGroundItem(new Item(replaceId), object, null, false, 180, true);
-			}
-		}, time, TimeUnit.MILLISECONDS);
+		CoresManager.schedule(() -> {
+			removeObject(object);
+			//seems weird.
+			FloorItem.createGroundItem(new Item(replaceId), object, null, false, 180, true);
+		}, (int) time);
 	}
 
-	public static final WorldObject getStandartObject(WorldTile tile) {
+	public static final GameObject getStandartObject(WorldTile tile) {
 		return World.getRegion(tile.getRegionId()).getStandartObject(tile.getPlane(), tile.getXInRegion(),
 				tile.getYInRegion());
 	}
 
-	public static final WorldObject getObjectWithType(WorldTile tile, int type) {
+	public static final GameObject getObjectWithType(WorldTile tile, int type) {
 		return World.getRegion(tile.getRegionId()).getObjectWithType(tile.getPlane(), tile.getXInRegion(),
 				tile.getYInRegion(), type);
 	}
 
-	public static final WorldObject getObjectWithSlot(WorldTile tile, int slot) {
+	public static final GameObject getObjectWithSlot(WorldTile tile, int slot) {
 		return World.getRegion(tile.getRegionId()).getObjectWithSlot(tile.getPlane(), tile.getXInRegion(),
 				tile.getYInRegion(), slot);
 	}
@@ -141,24 +128,24 @@ public class WorldObject extends WorldTile {
 				tile.getYInRegion(), id);
 	}
 
-	public static final WorldObject getObjectWithId(WorldTile tile, int id) {
+	public static final GameObject getObjectWithId(WorldTile tile, int id) {
 		return World.getRegion(tile.getRegionId()).getObjectWithId(tile.getPlane(), tile.getXInRegion(), tile.getYInRegion(),
 				id);
 	}
 
-	public static final void sendObjectAnimation(WorldObject object, Animation animation) {
+	public static final void sendObjectAnimation(GameObject object, Animation animation) {
 		sendObjectAnimation(null, object, animation);
 	}
 
-	public static final void sendObjectAnimation(Entity creator, WorldObject object, Animation animation) {
+	public static final void sendObjectAnimation(Entity creator, GameObject object, Animation animation) {
 		if (creator == null) {
 			World.players().filter(p -> p.withinDistance(object)).forEach(player -> player.getPackets().sendObjectAnimation(object, animation));
 		} else {
 			for (int regionId : creator.getMapRegionsIds()) {
-				List<Integer> playersIndexes = World.getRegion(regionId).getPlayerIndexes();
+				ObjectArrayList<Short> playersIndexes = World.getRegion(regionId).getPlayersIndexes();
 				if (playersIndexes == null)
 					continue;
-				for (Integer playerIndex : playersIndexes) {
+				for (Short playerIndex : playersIndexes) {
 					Player player = World.getPlayers().get(playerIndex);
 					if (player == null || !player.isStarted() || player.isFinished()
 							|| !player.withinDistance(object))

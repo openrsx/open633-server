@@ -1,7 +1,6 @@
 package com.rs.game.npc.others;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
 import com.rs.cores.CoresManager;
 import com.rs.game.Animation;
@@ -16,6 +15,8 @@ import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public final class TormentedDemon extends NPC {
 
@@ -105,7 +106,7 @@ public final class TormentedDemon extends NPC {
 	}
 
 	@Override
-	public void sendDeath(Entity source) {
+	public void sendDeath(Optional<Entity> source) {
 		final NPCCombatDefinitions defs = getCombatDefinitions();
 		resetWalkSteps();
 		getCombat().removeTarget();
@@ -136,7 +137,7 @@ public final class TormentedDemon extends NPC {
 		setNextAnimation(new Animation(10918));
 		World.sendProjectile(this, tile, 1887, 34, 16, 40, 35, 16, 0);
 		for (int regionId : getMapRegionsIds()) {
-			List<Integer> playerIndexes = World.getRegion(regionId).getPlayerIndexes();
+			ObjectArrayList<Short> playerIndexes = World.getRegion(regionId).getPlayersIndexes();
 			if (playerIndexes != null) {
 				for (int npcIndex : playerIndexes) {
 					Player player = World.getPlayers().get(npcIndex);
@@ -158,20 +159,17 @@ public final class TormentedDemon extends NPC {
 			finish();
 		}
 		final NPC npc = this;
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				setFinished(false);
-				World.addNPC(npc);
-				npc.setLastRegionId((short) 0);
-				updateEntityRegion(npc);
-				loadMapRegions();
-				checkMultiArea();
-				shieldTimer = 0;
-				fixedCombatType = 0;
-				fixedAmount = 0;
-			}
-		}, getCombatDefinitions().getRespawnDelay() * 600, TimeUnit.MILLISECONDS);
+		CoresManager.schedule(() -> {
+			setFinished(false);
+			World.addNPC(npc);
+			npc.setLastRegionId((short) 0);
+			updateEntityRegion(npc);
+			loadMapRegions();
+			checkMultiArea();
+			shieldTimer = 0;
+			fixedCombatType = 0;
+			fixedAmount = 0;
+		}, 3 * 60);
 	}
 
 	public static boolean atTD(WorldTile tile) {

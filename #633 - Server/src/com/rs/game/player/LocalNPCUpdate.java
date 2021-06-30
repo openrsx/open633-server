@@ -2,14 +2,15 @@ package com.rs.game.player;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import com.rs.GameConstants;
 import com.rs.game.Hit;
 import com.rs.game.World;
 import com.rs.game.npc.NPC;
 import com.rs.io.OutputStream;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public final class LocalNPCUpdate {
 
@@ -67,10 +68,10 @@ public final class LocalNPCUpdate {
 				if (n.getNextRunDirection() != -1)
 					stream.writeBits(1, 1);
 				stream.writeBits(3,
-						Utils.getNpcMoveDirection(n.getNextWalkDirection()));
+						Utility.getNpcMoveDirection(n.getNextWalkDirection()));
 				if (n.getNextRunDirection() != -1)
 					stream.writeBits(3,
-							Utils.getNpcMoveDirection(n.getNextRunDirection()));
+							Utility.getNpcMoveDirection(n.getNextRunDirection()));
 				stream.writeBits(1, needUpdate ? 1 : 0);
 			} else if (needUpdate)
 				stream.writeBits(2, 0);
@@ -82,7 +83,7 @@ public final class LocalNPCUpdate {
 	private void addInScreenNPCs(OutputStream stream,
 			OutputStream updateBlockData) {
 		for (int regionId : player.getMapRegionsIds()) {
-			List<Integer> indexes = World.getRegion(regionId).getNPCsIndexes();
+			ObjectArrayList<Short> indexes = World.getRegion(regionId).getNpcsIndexes();
 			if (indexes == null)
 				continue;
 			for (int npcIndex : indexes) {

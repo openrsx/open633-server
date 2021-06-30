@@ -505,7 +505,7 @@ public class WalkRouteFinder {
 		int startX = Math.max(graphBaseX, transmitRegionX << 6), startY = Math.max(graphBaseY, transmitRegionY << 6);
 		int endX = Math.min(graphBaseX + GRAPH_SIZE, (transmitRegionX << 6) + 64), endY = Math.min(graphBaseY + GRAPH_SIZE, (transmitRegionY << 6) + 64);
 		Region region = World.getRegion(transmitRegionX << 8 | transmitRegionY, true);
-		RegionMap map = region.getRegionMap();
+		RegionMap map = region.getMap();
 		if (map == null || region.getLoadMapStage() != 2 || !region.isLoadedObjectSpawns()) {
 		    for (int fillX = startX; fillX < endX; fillX++)
 			for (int fillY = startY; fillY < endY; fillY++)

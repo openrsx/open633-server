@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
@@ -54,7 +54,7 @@ public class GraphicDefinitions {
 	int model = NPCDefinitions.getNPCDefinitions(1).modelIds[0];
 	System.out.println(model);
 	int offset = 300;
-	for (int i = 0; i < Utils.getGraphicDefinitionsSize(); i++) {
+	for (int i = 0; i < Utility.getGraphicDefinitionsSize(); i++) {
 	    GraphicDefinitions def = GraphicDefinitions.getAnimationDefinitions(i);
 	    if (def == null) 
 		continue;

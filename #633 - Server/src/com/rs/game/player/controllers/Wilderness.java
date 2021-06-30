@@ -4,11 +4,11 @@ import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.ForceMovement;
 import com.rs.game.World;
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import skills.Skills;
 
@@ -72,7 +72,7 @@ public class Wilderness extends Controller {
 //		if (target.getAttackedBy() != player && player.getAttackedBy() != target)
 //			player.setWildernessSkull();
 		if (player.getCombatDefinitions().getSpellId() <= 0
-				&& Utils.inCircle(new WorldTile(3105, 3933, 0), target, 24)) {
+				&& Utility.inCircle(new WorldTile(3105, 3933, 0), target, 24)) {
 			player.getPackets().sendGameMessage("You can only use magic in the arena.");
 			return false;
 		}
@@ -110,7 +110,7 @@ public class Wilderness extends Controller {
 			player.getPackets().sendGameMessage("A mysterious force prevents you from teleporting.");
 			return false;
 		}
-		if (player.getDetails().getTeleBlockDelay().get() > Utils.currentTimeMillis()) {
+		if (player.getDetails().getTeleBlockDelay().get() > Utility.currentTimeMillis()) {
 			player.getPackets().sendGameMessage("A mysterious force prevents you from teleporting.");
 			return false;
 		}
@@ -124,7 +124,7 @@ public class Wilderness extends Controller {
 			player.getPackets().sendGameMessage("A mysterious force prevents you from teleporting.");
 			return false;
 		}
-		if (player.getDetails().getTeleBlockDelay().get() > Utils.currentTimeMillis()) {
+		if (player.getDetails().getTeleBlockDelay().get() > Utility.currentTimeMillis()) {
 			player.getPackets().sendGameMessage("A mysterious force prevents you from teleporting.");
 			return false;
 		}
@@ -133,7 +133,7 @@ public class Wilderness extends Controller {
 
 	@Override
 	public boolean processObjectTeleport(WorldTile toTile) {
-		if (player.getDetails().getTeleBlockDelay().get() > Utils.currentTimeMillis()) {
+		if (player.getDetails().getTeleBlockDelay().get() > Utility.currentTimeMillis()) {
 			player.getPackets().sendGameMessage("A mysterious force prevents you from teleporting.");
 			return false;
 		}
@@ -149,7 +149,7 @@ public class Wilderness extends Controller {
 	}
 
 	@Override
-	public boolean processObjectClick1(final WorldObject object) {
+	public boolean processObjectClick1(final GameObject object) {
 		if (isDitch(object.getId())) {
 			player.getMovement().lock();
 			player.setNextAnimation(new Animation(6132));
@@ -181,7 +181,7 @@ public class Wilderness extends Controller {
 	}
 
 	@Override
-	public boolean processObjectClick2(final WorldObject object) {
+	public boolean processObjectClick2(final GameObject object) {
 		if (object.getId() == 2557 || object.getId() == 65717) {
 //	    Thieving.pickDoor(player, object);
 			return false;

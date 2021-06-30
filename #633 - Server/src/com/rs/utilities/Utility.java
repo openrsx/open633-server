@@ -6,9 +6,7 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 
 import com.rs.GameConstants;
 import com.rs.cache.Cache;
@@ -21,7 +19,7 @@ import lombok.SneakyThrows;
 import lombok.Synchronized;
 import skills.Skills;
 
-public final class Utils {
+public final class Utility {
 
 	private static final Object ALGORITHM_LOCK = new Object();
 
@@ -35,15 +33,7 @@ public final class Utils {
 	public static long currentTimeMillis() {
 		return INIT_MILLIS + millisSinceClassInit();
 	}
-
-	/*
-	 * private static long timeCorrection; private static long lastTimeUpdate;
-	 * 
-	 * public static synchronized long currentTimeMillis() { long l =
-	 * System.currentTimeMillis(); if (l < lastTimeUpdate) timeCorrection +=
-	 * lastTimeUpdate - l; lastTimeUpdate = l; return l + timeCorrection; }
-	 */
-
+	
 	public static String getFormattedNumber(int amount) {
 		return new DecimalFormat("#,###,###").format(amount);
 	}
@@ -85,12 +75,12 @@ public final class Utils {
 		assert classLoader != null;
 		String path = packageName.replace('.', '/');
 		Enumeration<URL> resources = classLoader.getResources(path);
-		List<File> dirs = new ArrayList<File>();
+		ObjectArrayList<File> dirs = new ObjectArrayList<File>();
 		while (resources.hasMoreElements()) {
 			URL resource = resources.nextElement();
 			dirs.add(new File(resource.getFile().replaceAll("%20", " ")));
 		}
-		ArrayList<Class> classes = new ArrayList<Class>();
+		ObjectArrayList<Class> classes = new ObjectArrayList<Class>();
 		for (File directory : dirs) {
 			classes.addAll(findClasses(directory, packageName));
 		}
@@ -99,8 +89,8 @@ public final class Utils {
 
 	@SuppressWarnings("rawtypes")
 	@SneakyThrows(Throwable.class)
-	private static List<Class> findClasses(File directory, String packageName) {
-		List<Class> classes = new ArrayList<Class>();
+	private static ObjectArrayList<Class> findClasses(File directory, String packageName) {
+		ObjectArrayList<Class> classes = new ObjectArrayList<Class>();
 		if (!directory.exists()) {
 			return classes;
 		}
@@ -579,5 +569,13 @@ public final class Utils {
 			classes.add(objectEvent);
 		}
 		return classes;
+	}
+	
+	public static final int getAngleTo(WorldTile fromTile, WorldTile toTile) {
+		return getAngleTo(toTile.getX() - fromTile.getX(), toTile.getY() - fromTile.getY());
+	}
+
+	public static final int getAngleTo(int xOffset, int yOffset) {
+		return ((int) (Math.atan2(-xOffset, -yOffset) * 2607.5945876176133)) & 0x3fff;
 	}
 }

@@ -2,7 +2,7 @@ package com.rs.net.packets.logic.impl;
 
 import com.rs.GameConstants;
 import com.rs.game.World;
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.route.RouteEvent;
@@ -31,7 +31,7 @@ public class ObjectClickPacket implements LogicPacket {
 			player.getPackets().sendGameMessage("map doesnt contains region");
 			return;
 		}
-		WorldObject mapObject = World.getObjectWithId(tile, id);
+		GameObject mapObject = World.getObjectWithId(tile, id);
 		if (mapObject == null) {
 			return;
 		}
@@ -41,19 +41,16 @@ public class ObjectClickPacket implements LogicPacket {
 		if (mapObject.getId() != id) {
 			return;
 		}
-		final WorldObject worldObject = mapObject;
+		final GameObject worldObject = mapObject;
 
-		player.stopAll();
+		player.getMovement().stopAll(player);
 		if (forceRun)
 			player.setRun(forceRun);
 
-		player.setRouteEvent(new RouteEvent(worldObject, new Runnable() {
-			@Override
-			public void run() {
-				player.stopAll();
-				player.faceObject(worldObject);
-				ObjectDispatcher.execute(player, worldObject, 1);
-			}
+		player.setRouteEvent(new RouteEvent(worldObject, () -> {
+			player.getMovement().stopAll(player);
+			player.faceObject(worldObject);
+			ObjectDispatcher.execute(player, worldObject, 1);
 		}, false));
 	}
 }

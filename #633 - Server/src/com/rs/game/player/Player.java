@@ -1,16 +1,11 @@
 package com.rs.game.player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import com.alex.utils.VarsManager;
 import com.rs.GameConstants;
-import com.rs.cores.CoresManager;
 import com.rs.game.Entity;
 import com.rs.game.EntityMovement;
 import com.rs.game.EntityType;
@@ -22,7 +17,6 @@ import com.rs.game.map.Region;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.actions.ActionManager;
-import com.rs.game.player.content.Emotes.Emote;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.MusicsManager;
 import com.rs.game.player.content.Notes;
@@ -36,7 +30,6 @@ import com.rs.game.route.RouteEvent;
 import com.rs.game.task.Task;
 import com.rs.game.task.impl.CombatEffectTask;
 import com.rs.game.task.impl.SkillActionTask;
-import com.rs.net.AccountCreation;
 import com.rs.net.IsaacKeyPair;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
@@ -44,12 +37,12 @@ import com.rs.net.encoders.WorldPacketsEncoder;
 import com.rs.net.host.HostListType;
 import com.rs.net.host.HostManager;
 import com.rs.utilities.Logger;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayFIFOQueue;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
 import skills.Skills;
 
 @Data
@@ -71,7 +64,7 @@ public class Player extends Entity {
 	private transient boolean cantTrade;
 	private transient Runnable closeInterfacesEvent;
 	private transient long lastPublicMessage;
-	private transient List<Byte> switchItemCache;
+	private transient ObjectArrayList<Byte> switchItemCache;
 	private transient boolean disableEquip;
 	private transient boolean invulnerable;
 	private transient boolean finishing;
@@ -172,10 +165,10 @@ public class Player extends Entity {
 		getFriendsIgnores().setPlayer(this);
 		getDetails().getCharges().setPlayer(this);
 		getPetManager().setPlayer(this);
-		setDirection((byte) Utils.getFaceDirection(0, -1));
+		setDirection((byte) Utility.getFaceDirection(0, -1));
 		setTemporaryMovementType((byte) -1);
 		setLogicPackets(new ConcurrentLinkedQueue<LogicPacket>());
-		setSwitchItemCache(Collections.synchronizedList(new ArrayList<Byte>()));
+		setSwitchItemCache(new ObjectArrayList<Byte>());
 		initEntity();
 		World.addPlayer(this);
 		updateEntityRegion(this);
@@ -191,33 +184,7 @@ public class Player extends Entity {
 		setStarted(true);
 		login();
 		if (isDead())
-			sendDeath(null);
-	}
-
-	public void stopAll() {
-		stopAll(true);
-	}
-
-	public void stopAll(boolean stopWalk) {
-		stopAll(stopWalk, true);
-	}
-
-	public void stopAll(boolean stopWalk, boolean stopInterface) {
-		stopAll(stopWalk, stopInterface, true);
-	}
-
-	public void stopAll(boolean stopWalk, boolean stopInterfaces,
-			boolean stopActions) {
-		setRouteEvent(null);
-		if (stopInterfaces)
-			getInterfaceManager().closeInterfaces();
-		if (stopWalk) {
-			setCoordsEvent(null);
-			resetWalkSteps();
-		}
-		if (stopActions)
-			getActionManager().forceStop();
-		getCombatDefinitions().resetSpells(false);
+			sendDeath(Optional.empty());
 	}
 
 	@Override
@@ -370,65 +337,12 @@ public class Player extends Entity {
 
 	@Override
 	public void finish() {
-		finish(0);
-	}
-
-	@SneakyThrows(Throwable.class)
-	public void finish(final int tryCount) {
-		if (isFinishing() || isFinished())
-			return;
-		setFinishing(true);
-		stopAll(false, true, !(getActionManager().getAction() instanceof PlayerCombat));
-		if (isDead() || (getCombatDefinitions().isUnderCombat() && tryCount < 6) || getMovement().isLocked()
-		 || Emote.isDoingEmote(this) ) {
-			CoresManager.slowExecutor.schedule(new Runnable() {
-				@Override
-				public void run() {
-					setFinishing(false);
-					finish(tryCount + 1);
-				}
-			}, 10, TimeUnit.SECONDS);
-			return;
-		}
-		realFinish(false);
-	}
-	
-	public void realFinish(boolean shutdown) {
-		if (isFinished())
-			return;
-		Logger.globalLog(username, session.getIP(), new String(
-				" has logged out."));
-		stopAll();
-		getControllerManager().logout();
-		setRunning(false);
-		getFriendsIgnores().sendFriendsMyStatus(false);
-		if (getCurrentFriendChat() != null)
-			getCurrentFriendChat().leaveChat(this, true);
-		if (getFamiliar() != null && !getFamiliar().isFinished())
-			getFamiliar().dissmissFamiliar(true);
-		else if (getPet() != null)
-			getPet().finish();
-		setFinished(true);
-		getSession().setDecoder(-1);
-		AccountCreation.savePlayer(this);
-		updateEntityRegion(this);
-		World.removePlayer(this);
-		if (GameConstants.DEBUG)
-			Logger.log(this, "Finished Player: " + username + ", pass: "
-					+ getDetails().getPassword());
+		getSession().finish(this, 0);
 	}
 
 	@Override
 	public boolean restoreHitPoints() {
-		boolean update = super.restoreHitPoints();
-		if (update) {
-			if (getPrayer().usingPrayer(0, 9))
-				super.restoreHitPoints();
-			if (getResting() != 0)
-				super.restoreHitPoints();
-			getInterfaceManager().refreshHitPoints();
-		}
-		return update;
+		return super.restoreHitPoints();
 	}
 
 	@Override
@@ -448,6 +362,7 @@ public class Player extends Entity {
 
 	public WorldPacketsEncoder getPackets() {
 		return getSession().getWorldPackets();
+
 	}
 
 	public void drainRunEnergy() {
@@ -488,7 +403,7 @@ public class Player extends Entity {
 	}
 	
 	@Override
-	public void sendDeath(final Entity source) {
+	public void sendDeath(Optional<Entity> source) {
 		World.get().submit(new PlayerDeath(this));
 	}
 
@@ -508,7 +423,7 @@ public class Player extends Entity {
 	}
 	
 	public String getDisplayName() {
-		return Utils.formatPlayerNameForDisplay(getUsername());
+		return Utility.formatPlayerNameForDisplay(getUsername());
 	}
 
 	/**

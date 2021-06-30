@@ -1,6 +1,6 @@
 package com.rs.net.packets.logic.impl;
 
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.player.Inventory;
@@ -9,7 +9,7 @@ import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
 import com.rs.plugin.ObjectDispatcher;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 @LogicPacketSignature(packetId = 58, packetSize = 15, description = "An Interface that's used onto a Object (Magic, etc..)")
 public class InterfaceOnObjectPacket implements LogicPacket {
@@ -32,12 +32,12 @@ public class InterfaceOnObjectPacket implements LogicPacket {
 		int regionId = tile.getRegionId();
 		if (!player.getMapRegionsIds().contains(regionId))
 			return;
-		WorldObject mapObject = WorldObject.getObjectWithId(tile, objectId);
+		GameObject mapObject = GameObject.getObjectWithId(tile, objectId);
 		if (mapObject == null || mapObject.getId() != objectId)
 			return;
-		final WorldObject object = mapObject;
+		final GameObject object = mapObject;
 		final Item item = player.getInventory().getItem(slot);
-		if (player.isDead() || Utils.getInterfaceDefinitionsSize() <= interfaceId)
+		if (player.isDead() || Utility.getInterfaceDefinitionsSize() <= interfaceId)
 			return;
 		if (player.getMovement().isLocked())
 			return;
@@ -45,7 +45,7 @@ public class InterfaceOnObjectPacket implements LogicPacket {
 			return;
 		if (item == null || item.getId() != itemId)
 			return;
-		player.stopAll();
+		player.getMovement().stopAll(player);
 		if (forceRun)
 			player.setRun(forceRun);
 		switch (interfaceId) {

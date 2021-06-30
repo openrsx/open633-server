@@ -402,12 +402,9 @@ public class InterfaceManager {
 		setWindowInterface(isResizableScreen() ? 40 : 200, backgroundInterface);
 		setWindowInterface(isResizableScreen() ? 41 : 201, interfaceId);
 
-		player.setCloseInterfacesEvent(new Runnable() {
-			@Override
-			public void run() {
-				removeWindowInterface(isResizableScreen() ? 40 : 200);
-				removeWindowInterface(isResizableScreen() ? 41 : 201);
-			}
+		player.setCloseInterfacesEvent(() -> {
+			removeWindowInterface(isResizableScreen() ? 40 : 200);
+			removeWindowInterface(isResizableScreen() ? 41 : 201);
 		});
 	}
 
@@ -415,12 +412,9 @@ public class InterfaceManager {
 		setRootInterface(475, false);
 		setInterface(true, 475, 57, 751);
 		setInterface(true, 475, 55, 752);
-		player.setCloseInterfacesEvent(new Runnable() {
-			@Override
-			public void run() {
-				setDefaultRootInterface();
-				player.getPackets().sendResetCamera();
-			}
+		player.setCloseInterfacesEvent(() -> {
+			setDefaultRootInterface();
+			player.getPackets().sendResetCamera();
 		});
 	}
 

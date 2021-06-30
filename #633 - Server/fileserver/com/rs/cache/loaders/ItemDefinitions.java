@@ -1,8 +1,5 @@
 package com.rs.cache.loaders;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.alex.utils.Constants;
 import com.rs.cache.Cache;
 import com.rs.game.item.Item;
@@ -13,6 +10,7 @@ import com.rs.utilities.loaders.EquipData;
 import com.rs.utilities.loaders.ItemBonuses;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Data;
 import skills.Skills;
 
@@ -440,10 +438,10 @@ public final class ItemDefinitions {
 		return -1;
 	}
 
-	public List<Item> getCreateItemRequirements(boolean infusingScroll) {
+	public ObjectArrayList<Item> getCreateItemRequirements(boolean infusingScroll) {
 		if (clientScriptData == null)
 			return null;
-		List<Item> items = new ArrayList<Item>();
+		ObjectArrayList<Item> items = new ObjectArrayList<Item>();
 		int requiredId = -1;
 		int requiredAmount = -1;
 		for (int key : clientScriptData.keySet()) {

@@ -17,7 +17,7 @@ public class EquipmentInterface implements RSInterface {
 			throws Exception {
 		if (player.getInterfaceManager().containsInventoryInter())
 			return;
-		player.stopAll();
+		player.getMovement().stopAll(player);
 
 		if (componentId == 42) {
 			if (player.getInterfaceManager().containsScreenInter() || player.getMovement().isLocked()) {
@@ -25,7 +25,7 @@ public class EquipmentInterface implements RSInterface {
 						.sendGameMessage("Please finish what you're doing before opening the price checker.");
 				return;
 			}
-			player.stopAll();
+			player.getMovement().stopAll(player);
 			player.getPriceCheckManager().openPriceCheck();
 
 		} else if (componentId == 39) {
@@ -162,13 +162,10 @@ public class EquipmentInterface implements RSInterface {
 		player.getPackets().sendGlobalString(321, "Stats for " + item.getName());
 		player.getPackets().sendGlobalString(324, b.toString());
 		player.getPackets().sendHideIComponent(667, 49, false);
-		player.setCloseInterfacesEvent(new Runnable() {
-			@Override
-			public void run() {
-				player.getPackets().sendGlobalString(321, "");
-				player.getPackets().sendGlobalString(324, "");
-				player.getPackets().sendHideIComponent(667, 49, true);
-			}
+		player.setCloseInterfacesEvent(() -> {
+			player.getPackets().sendGlobalString(321, "");
+			player.getPackets().sendGlobalString(324, "");
+			player.getPackets().sendHideIComponent(667, 49, true);
 		});
 	}
 }

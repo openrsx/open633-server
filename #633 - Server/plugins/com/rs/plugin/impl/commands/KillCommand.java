@@ -22,6 +22,6 @@ public final class KillCommand implements Command {
 		if (target == null)
 			return;
 		target.applyHit(new Hit(target, player.getHitpoints(), HitLook.REGULAR_DAMAGE));
-		target.stopAll();
+		target.getMovement().stopAll(target);
 	}
 }

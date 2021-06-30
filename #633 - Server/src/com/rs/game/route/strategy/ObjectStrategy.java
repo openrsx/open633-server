@@ -1,6 +1,6 @@
 package com.rs.game.route.strategy;
 
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.route.RouteStrategy;
 
 public class ObjectStrategy extends RouteStrategy {
@@ -38,7 +38,7 @@ public class ObjectStrategy extends RouteStrategy {
 	 */
 	private int accessBlockFlag;
 
-	public ObjectStrategy(WorldObject object) {
+	public ObjectStrategy(GameObject object) {
 		this.x = object.getX();
 		this.y = object.getY();
 		this.routeType = getType(object);
@@ -91,7 +91,7 @@ public class ObjectStrategy extends RouteStrategy {
 		return sizeY;
 	}
 
-	private int getType(WorldObject object) {
+	private int getType(GameObject object) {
 		int type = object.getType();
 		if ((type >= 0 && type <= 3) || type == 9)
 			return 0; // wall

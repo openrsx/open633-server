@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
@@ -43,7 +43,7 @@ public class AnimationDefinitions {
 		int[] buffer = new int[100000];
 		int size = 0;
 
-		for (int i = 0; i < Utils.getAnimationDefinitionsSize(); i++) {
+		for (int i = 0; i < Utility.getAnimationDefinitionsSize(); i++) {
 			AnimationDefinitions defs = getAnimationDefinitions(i);
 			if (defs == null || defs.emoteItem == -1)
 				continue;

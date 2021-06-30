@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.google.common.util.concurrent.AbstractScheduledService;
 import com.rs.GameConstants;
 import com.rs.Launcher;
 import com.rs.cores.CoresManager;
@@ -27,14 +28,14 @@ import com.rs.game.task.impl.RestoreSpecialTask;
 import com.rs.game.task.impl.ShopRestockTask;
 import com.rs.game.task.impl.SummoningPassiveTask;
 import com.rs.utilities.AntiFlood;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
-public final class World {
+public final class World extends AbstractScheduledService {
 
 	@Getter
 	@Setter
@@ -166,10 +167,10 @@ public final class World {
 	}
 
 	public static final boolean checkProjectileStep(int plane, int x, int y, int dir, int size) {
-		int xOffset = Utils.DIRECTION_DELTA_X[dir];
-		int yOffset = Utils.DIRECTION_DELTA_Y[dir];
+		int xOffset = Utility.DIRECTION_DELTA_X[dir];
+		int yOffset = Utility.DIRECTION_DELTA_Y[dir];
 		if (size == 1) {
-			int mask = getClipedOnlyMask(plane, x + Utils.DIRECTION_DELTA_X[dir], y + Utils.DIRECTION_DELTA_Y[dir]);
+			int mask = getClipedOnlyMask(plane, x + Utility.DIRECTION_DELTA_X[dir], y + Utility.DIRECTION_DELTA_Y[dir]);
 			if (xOffset == -1 && yOffset == 0)
 				return (mask & 0x42240000) == 0;
 			if (xOffset == 1 && yOffset == 0)
@@ -286,7 +287,7 @@ public final class World {
 	}
 
 	public static final boolean checkWalkStep(int plane, int x, int y, int dir, int size) {
-		return checkWalkStep(plane, x, y, Utils.DIRECTION_DELTA_X[dir], Utils.DIRECTION_DELTA_Y[dir], size);
+		return checkWalkStep(plane, x, y, Utility.DIRECTION_DELTA_X[dir], Utility.DIRECTION_DELTA_Y[dir], size);
 	}
 
 	public static final boolean checkWalkStep(int plane, int x, int y, int xOffset, int yOffset, int size) {
@@ -498,16 +499,6 @@ public final class World {
 		}
 		return true;
 	}
-
-//	public static Player getPlayer(String username) {
-//		for (Player player : getPlayers()) {
-//			if (player == null)
-//				continue;
-//			if (player.getUsername().equals(username))
-//				return player;
-//		}
-//		return null;
-//	}
 	
 	public static final Optional<Player> getPlayer(String username) {
 		return players().filter(p -> p.getUsername().equals(username)).findAny();
@@ -518,7 +509,7 @@ public final class World {
 	}
 
 	public static final Player getPlayerByDisplayName(String username) {
-		String formatedUsername = Utils.formatPlayerNameForDisplay(username);
+		String formatedUsername = Utility.formatPlayerNameForDisplay(username);
 		return players().filter(p -> p.getUsername().equalsIgnoreCase(formatedUsername) || p.getDisplayName().equalsIgnoreCase(formatedUsername)).findFirst().orElse(null);
 	}
 
@@ -534,20 +525,17 @@ public final class World {
 	public static final void safeShutdown(final boolean restart, short delay) {
 		if (get().getExiting_start() != 0)
 			return;
-		get().setExiting_start(Utils.currentTimeMillis());
+		get().setExiting_start(Utility.currentTimeMillis());
 		get().setExiting_delay(delay);
 		for (Player player : World.getPlayers()) {
 			if (player == null || !player.isStarted() || player.isFinished())
 				continue;
 			player.getPackets().sendSystemUpdate(delay);
 		}
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				World.players().forEach(player -> player.realFinish(true));
-				Launcher.shutdown();
-			}
-		}, delay, TimeUnit.SECONDS);
+		CoresManager.schedule(() -> {
+			World.players().forEach(player -> player.getSession().realFinish(player, true));
+			Launcher.shutdown();
+		}, delay);
 	}
 
 	public static final void sendGraphics(Entity creator, Graphics graphics, WorldTile tile) {
@@ -559,10 +547,10 @@ public final class World {
 			}
 		} else {
 			for (int regionId : creator.getMapRegionsIds()) {
-				List<Integer> playersIndexes = getRegion(regionId).getPlayerIndexes();
+				List<Short> playersIndexes = getRegion(regionId).getPlayersIndexes();
 				if (playersIndexes == null)
 					continue;
-				for (Integer playerIndex : playersIndexes) {
+				for (Short playerIndex : playersIndexes) {
 					Player player = players.get(playerIndex);
 					if (player == null || !player.isStarted() || player.isFinished() || !player.withinDistance(tile))
 						continue;
@@ -576,10 +564,10 @@ public final class World {
 	public static final void sendProjectile(Entity shooter, WorldTile startTile, WorldTile receiver, int gfxId,
 			int startHeight, int endHeight, int speed, int delay, int curve, int startDistanceOffset) {
 		for (int regionId : shooter.getMapRegionsIds()) {
-			List<Integer> playersIndexes = getRegion(regionId).getPlayerIndexes();
+			List<Short> playersIndexes = getRegion(regionId).getPlayersIndexes();
 			if (playersIndexes == null)
 				continue;
-			for (Integer playerIndex : playersIndexes) {
+			for (Short playerIndex : playersIndexes) {
 				Player player = players.get(playerIndex);
 				if (player == null || !player.isStarted() || player.isFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
@@ -594,10 +582,10 @@ public final class World {
 	public static final void sendProjectile(Entity shooter, WorldTile receiver, int gfxId, int startHeight,
 			int endHeight, int speed, int delay, int curve, int startDistanceOffset) {
 		for (int regionId : shooter.getMapRegionsIds()) {
-			List<Integer> playersIndexes = getRegion(regionId).getPlayerIndexes();
+			List<Short> playersIndexes = getRegion(regionId).getPlayersIndexes();
 			if (playersIndexes == null)
 				continue;
-			for (Integer playerIndex : playersIndexes) {
+			for (Short playerIndex : playersIndexes) {
 				Player player = players.get(playerIndex);
 				if (player == null || !player.isStarted() || player.isFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
@@ -612,10 +600,10 @@ public final class World {
 	public static final void sendProjectile(Entity shooter, Entity receiver, int gfxId, int startHeight, int endHeight,
 			int speed, int delay, int curve, int startDistanceOffset) {
 		for (int regionId : shooter.getMapRegionsIds()) {
-			List<Integer> playersIndexes = getRegion(regionId).getPlayerIndexes();
+			List<Short> playersIndexes = getRegion(regionId).getPlayersIndexes();
 			if (playersIndexes == null)
 				continue;
-			for (Integer playerIndex : playersIndexes) {
+			for (Short playerIndex : playersIndexes) {
 				Player player = players.get(playerIndex);
 				if (player == null || !player.isStarted() || player.isFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
@@ -702,22 +690,13 @@ public final class World {
 	}
 
 	public static void sendWorldMessage(String message, boolean forStaff) {
-		for (Player p : World.getPlayers()) {
-			if (p == null || !p.isRunning() || p.getDetails().isYellOff() || (forStaff && !p.getDetails().getRights().isStaff())
-					|| p.getInterfaceManager().containsReplacedChatBoxInter())
-				continue;
-			p.getPackets().sendGameMessage(message);
-		}
+		World.players().filter(p -> p == null || !p.isRunning() || p.getDetails().isYellOff() || (forStaff && !p.getDetails().getRights().isStaff())
+					|| p.getInterfaceManager().containsReplacedChatBoxInter()).forEach(player -> player.getPackets().sendGameMessage(message));
 	}
-
+	
 	public static void sendIgnoreableWorldMessage(Player sender, String message, boolean forStaff) {
-		for (Player p : World.getPlayers()) {
-			if (p == null || !p.isRunning() || p.getDetails().isYellOff() || (forStaff && !p.getDetails().getRights().isStaff())
-					|| p.getFriendsIgnores().containsIgnore(sender.getUsername())
-					|| p.getInterfaceManager().containsReplacedChatBoxInter())
-				continue;
-			p.getPackets().sendGameMessage(message);
-		}
+		World.players().filter(p -> p == null || !p.isRunning() || p.getDetails().isYellOff() || (forStaff && !p.getDetails().getRights().isStaff())
+				|| p.getFriendsIgnores().containsIgnore(sender.getUsername()) || p.getInterfaceManager().containsReplacedChatBoxInter()).forEach(player -> player.getPackets().sendGameMessage(message));
 	}
 
 
@@ -743,14 +722,38 @@ public final class World {
 	
 	/**
 	 * Submits {@code t} to the backing {@link TaskManager}.
-	 * @param t the task to submit to the queue.
+	 * @param task the task to submit to the queue.
 	 */
-	public void submit(Task t) {
-		taskManager.submit(t);
+	public void submit(Task task) {
+		getTaskManager().submit(task);
 	}
 
-	public static final WorldObject getObjectWithId(WorldTile tile, int id) {
+	public static final GameObject getObjectWithId(WorldTile tile, int id) {
 		return getRegion(tile.getRegionId()).getObjectWithId(tile.getPlane(), tile.getXInRegion(), tile.getYInRegion(),
 				id);
+	}
+
+	@Override
+	protected void runOneIteration() throws Exception {
+		World.get().getTaskManager().sequence();
+		
+		World.players().forEach(player -> player.processEntity());
+		World.npcs().forEach(npc -> npc.processEntity());
+		
+		World.players().forEach(player -> player.processEntityUpdate());
+		World.npcs().forEach(npc -> npc.processEntityUpdate());
+
+		World.players().forEach(player -> {
+			player.getPackets().sendLocalPlayersUpdate();
+			player.getPackets().sendLocalNPCsUpdate();
+		});
+		
+		World.players().forEach(player -> player.resetMasks());
+		World.npcs().forEach(npc -> npc.resetMasks());
+	}
+
+	@Override
+	protected Scheduler scheduler() {
+		return Scheduler.newFixedDelaySchedule(600, 600, TimeUnit.MILLISECONDS);
 	}
 }

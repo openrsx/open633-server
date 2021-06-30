@@ -1,7 +1,5 @@
 package com.rs.game.player.content;
 
-import java.util.List;
-
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.cache.loaders.NPCDefinitions;
@@ -13,6 +11,7 @@ import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
 import skills.Skills;
 
@@ -339,7 +338,7 @@ public class Summoning {
 		boolean infusingScroll = (boolean) player.getTemporaryAttributes().remove("infusing_scroll"),
 				hasRequirements = false;
 		ItemDefinitions def = ItemDefinitions.getItemDefinitions(pouch.getRealPouchId());
-		List<Item> itemReq = def.getCreateItemRequirements(infusingScroll);
+		ObjectArrayList<Item> itemReq = def.getCreateItemRequirements(infusingScroll);
 		int level = getRequiredLevel(pouch.getRealPouchId());
 		if (itemReq != null) {
 			itemCount: for (int i = 0; i < creationCount; i++) {

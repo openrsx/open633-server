@@ -7,7 +7,7 @@ import com.rs.game.player.content.Shop;
 import com.rs.io.InputStream;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 @OutgoingPacketSignature(packetId = 10, description = "Represents a handler for Interface Component switching")
 public class SwitchInterfaceComponentsPacket implements OutgoingPacket {
@@ -35,8 +35,8 @@ public class SwitchInterfaceComponentsPacket implements OutgoingPacket {
 		// System.out.println(toInterfaceId + " " + fromInterfaceId + " "
 		// + fromComponentId + " " + toComponentId);
 
-		if (Utils.getInterfaceDefinitionsSize() <= fromInterfaceId
-				|| Utils.getInterfaceDefinitionsSize() <= toInterfaceId)
+		if (Utility.getInterfaceDefinitionsSize() <= fromInterfaceId
+				|| Utility.getInterfaceDefinitionsSize() <= toInterfaceId)
 			return;
 		if (!player.getInterfaceManager()
 				.containsInterface(fromInterfaceId)
@@ -44,10 +44,10 @@ public class SwitchInterfaceComponentsPacket implements OutgoingPacket {
 						toInterfaceId))
 			return;
 		if (fromComponentId != -1
-				&& Utils.getInterfaceDefinitionsComponentsSize(fromInterfaceId) <= fromComponentId)
+				&& Utility.getInterfaceDefinitionsComponentsSize(fromInterfaceId) <= fromComponentId)
 			return;
 		if (toComponentId != -1
-				&& Utils.getInterfaceDefinitionsComponentsSize(toInterfaceId) <= toComponentId)
+				&& Utility.getInterfaceDefinitionsComponentsSize(toInterfaceId) <= toComponentId)
 			return;
 		if (fromInterfaceId == Inventory.INVENTORY_INTERFACE
 				&& fromComponentId == 0

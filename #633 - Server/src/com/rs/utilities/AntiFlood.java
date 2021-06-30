@@ -1,8 +1,8 @@
 package com.rs.utilities;
 
-import java.util.ArrayList;
-
 import com.rs.GameConstants;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
  * Anti Flood
@@ -11,22 +11,22 @@ import com.rs.GameConstants;
  */
 public final class AntiFlood {
 
-    private static ArrayList<String> connections = new ArrayList<String>(GameConstants.PLAYERS_LIMIT * 100);
+	private static ObjectArrayList<String> connections = new ObjectArrayList<String>(GameConstants.PLAYERS_LIMIT * 100);
 
-    public static void add(String ip) {
-	connections.add(ip);
-    }
-
-    public static void remove(String ip) {
-	connections.remove(ip);
-    }
-
-    public static int getSessionsIP(String ip) {
-	int amount = 1;
-	for (int i = 0; i < connections.size(); i++) {
-	    if (connections.get(i).equalsIgnoreCase(ip))
-		amount++;
+	public static void add(String ip) {
+		connections.add(ip);
 	}
-	return amount;
-    }
+
+	public static void remove(String ip) {
+		connections.remove(ip);
+	}
+
+	public static int getSessionsIP(String ip) {
+		int amount = 1;
+		for (int i = 0; i < connections.size(); i++) {
+			if (connections.get(i).equalsIgnoreCase(ip))
+				amount++;
+		}
+		return amount;
+	}
 }

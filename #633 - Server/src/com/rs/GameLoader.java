@@ -10,6 +10,7 @@ import com.rs.game.World;
 import com.rs.game.dialogue.DialogueEventRepository;
 import com.rs.game.map.MapBuilder;
 import com.rs.game.npc.combat.NPCCombatDispatcher;
+import com.rs.game.npc.global.GenericNPCDispatcher;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.controllers.ControllerHandler;
 import com.rs.game.player.spells.passive.PassiveSpellDispatcher;
@@ -75,6 +76,7 @@ public class GameLoader {
 		CoresManager.init();
 		World.init();
 		getBackgroundLoader().submit(() -> {
+			World.get().startAsync().awaitRunning();
 			ServerChannelHandler.init();
 			Huffman.init();
 			MapArchiveKeys.init();
@@ -98,7 +100,6 @@ public class GameLoader {
 			ControllerHandler.init();
 			DialogueEventRepository.init();
 			FriendChatsManager.init();
-			World.init();
 		});
 		getBackgroundLoader().submit(() -> {
 			HostManager.deserialize(HostListType.STARTER_RECEIVED);
@@ -114,6 +115,7 @@ public class GameLoader {
 			NPCCombatDispatcher.load();
 			LogicPacketDispatcher.load();
 			OutgoingPacketDispatcher.load();
+			GenericNPCDispatcher.load();
 		});
 		getBackgroundLoader().submit(() -> {
 			PassiveSpellDispatcher.load();

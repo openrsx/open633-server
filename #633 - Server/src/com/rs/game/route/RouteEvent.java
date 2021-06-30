@@ -1,7 +1,7 @@
 package com.rs.game.route;
 
 import com.rs.game.Entity;
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.player.Player;
@@ -107,8 +107,8 @@ public class RouteEvent {
 	if (object instanceof Entity) {
 	    return player.getPlane() == ((Entity)object).getPlane();
 	}
-	else if (object instanceof WorldObject) {
-	    return player.getPlane() == ((WorldObject)object).getPlane();
+	else if (object instanceof GameObject) {
+	    return player.getPlane() == ((GameObject)object).getPlane();
 	}
 	else if (object instanceof FloorItem) {
 	    return player.getPlane() == ((FloorItem)object).getTile().getPlane();
@@ -122,8 +122,8 @@ public class RouteEvent {
 	if (object instanceof Entity) {
 	    return new RouteStrategy[] { new EntityStrategy((Entity) object) };
 	}
-	else if (object instanceof WorldObject) {
-	    return new RouteStrategy[] { new ObjectStrategy((WorldObject) object) };
+	else if (object instanceof GameObject) {
+	    return new RouteStrategy[] { new ObjectStrategy((GameObject) object) };
 	}
 	else if (object instanceof FloorItem) {
 	    FloorItem item = (FloorItem)object;

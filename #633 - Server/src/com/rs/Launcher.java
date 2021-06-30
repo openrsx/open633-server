@@ -1,7 +1,5 @@
 package com.rs;
 
-import java.util.concurrent.TimeUnit;
-
 import com.alex.store.Index;
 import com.rs.cache.Cache;
 import com.rs.cache.loaders.ItemDefinitions;
@@ -13,7 +11,7 @@ import com.rs.game.map.MapBuilder;
 import com.rs.game.map.Region;
 import com.rs.net.ServerChannelHandler;
 import com.rs.utilities.Logger;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import lombok.SneakyThrows;
 
@@ -29,24 +27,21 @@ public class Launcher {
 		}
 		GameConstants.HOSTED = Boolean.parseBoolean(args[2]);
 		GameConstants.DEBUG = Boolean.parseBoolean(args[1]);
-		long currentTime = Utils.currentTimeMillis();
+		long currentTime = Utility.currentTimeMillis();
 		
 		GameLoader.getLOADER().getBackgroundLoader().waitForPendingTasks().shutdown();
 		
 		Logger.log("Launcher", "Server took "
-				+ (Utils.currentTimeMillis() - currentTime)
+				+ (Utility.currentTimeMillis() - currentTime)
 				+ " milli seconds to launch.");
 		addCleanMemoryTask();
 	}
 
 	@SneakyThrows(Throwable.class)
 	private static void addCleanMemoryTask() {
-		CoresManager.slowExecutor.scheduleWithFixedDelay(new Runnable() {
-			@Override
-			public void run() {
-				cleanMemory(Runtime.getRuntime().freeMemory() < GameConstants.MIN_FREE_MEM_ALLOWED);
-			}
-		}, 0, 10, TimeUnit.MINUTES);
+		CoresManager.schedule(() -> {
+			cleanMemory(Runtime.getRuntime().freeMemory() < GameConstants.MIN_FREE_MEM_ALLOWED);
+		}, 10);
 	}
 
 	public static void cleanMemory(boolean force) {

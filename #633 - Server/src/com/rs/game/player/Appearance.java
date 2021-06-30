@@ -3,7 +3,7 @@ package com.rs.game.player;
 import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.game.item.Item;
 import com.rs.io.OutputStream;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 public class Appearance {
 
@@ -165,7 +165,7 @@ public class Appearance {
 		// done separated for safe because of synchronization
 		byte[] appeareanceData = new byte[stream.getOffset()];
 		System.arraycopy(stream.getBuffer(), 0, appeareanceData, 0, appeareanceData.length);
-		byte[] md5Hash = Utils.encryptUsingMD5(appeareanceData);
+		byte[] md5Hash = Utility.encryptUsingMD5(appeareanceData);
 		this.appeareanceData = appeareanceData;
 		md5AppeareanceDataHash = md5Hash;
 	}

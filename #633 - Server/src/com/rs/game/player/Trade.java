@@ -38,12 +38,7 @@ public class Trade {
 				refreshStageMessage(true);
 				player.getInterfaceManager().sendInterface(335);
 				player.getInterfaceManager().sendInventoryInterface(336);
-				player.setCloseInterfacesEvent(new Runnable() {
-					@Override
-					public void run() {
-						closeTrade(CloseTradeStage.CANCEL);
-					}
-				});
+				player.setCloseInterfacesEvent(() -> closeTrade(CloseTradeStage.CANCEL));
 			}
 		}
 	}

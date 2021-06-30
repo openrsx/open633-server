@@ -22,13 +22,10 @@ public class PlayerOptionThreePacket implements LogicPacket {
 			return;
 		if (forceRun)
 			player.setRun(forceRun);
-		player.stopAll();
-		player.setRouteEvent(new RouteEvent(p2, new Runnable() {
-			@Override
-			public void run() {
-				if (!player.getControllerManager().canPlayerOption3(p2))
-					return;
-			}
+		player.getMovement().stopAll(player);
+		player.setRouteEvent(new RouteEvent(p2, () ->  {
+			if (!player.getControllerManager().canPlayerOption3(p2))
+				return;
 		}));
 	}
 }

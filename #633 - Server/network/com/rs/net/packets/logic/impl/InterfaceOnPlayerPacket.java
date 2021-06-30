@@ -13,7 +13,7 @@ import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 @LogicPacketSignature(packetId = 34, packetSize = 11, description = "An Interface that's used onto a Player (Magic, etc..)")
 public class InterfaceOnPlayerPacket implements LogicPacket {
@@ -31,19 +31,19 @@ public class InterfaceOnPlayerPacket implements LogicPacket {
 		int interfaceHash = stream.readInt();
 		int interfaceId = interfaceHash >> 16;
 		int componentId = interfaceHash - (interfaceId << 16);
-		if (Utils.getInterfaceDefinitionsSize() <= interfaceId)
+		if (Utility.getInterfaceDefinitionsSize() <= interfaceId)
 			return;
 		if (!player.getInterfaceManager().containsInterface(interfaceId))
 			return;
 		if (componentId == 65535)
 			componentId = -1;
-		if (componentId != -1 && Utils.getInterfaceDefinitionsComponentsSize(interfaceId) <= componentId)
+		if (componentId != -1 && Utility.getInterfaceDefinitionsComponentsSize(interfaceId) <= componentId)
 			return;
 		final Player p2 = World.getPlayers().get(playerIndex);
 		if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 				|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 			return;
-		player.stopAll();
+		player.getMovement().stopAll(player);
 		if (forceRun)
 			player.setRun(forceRun);
 		switch (interfaceId) {
@@ -55,14 +55,11 @@ public class InterfaceOnPlayerPacket implements LogicPacket {
 			final Item item = player.getInventory().getItem(interfaceSlot);
 			if (item == null || item.getId() != itemId)
 				return;
-			player.setRouteEvent(new RouteEvent(p2, new Runnable() {
-				@Override
-				public void run() {
-					if (!player.getControllerManager().processItemOnPlayer(p2, item))
-						return;
-//					if (itemId == 4155)
-//						player.getSlayerManager().invitePlayer(p2);
-				}
+			player.setRouteEvent(new RouteEvent(p2, () -> {
+				if (!player.getControllerManager().processItemOnPlayer(p2, item))
+					return;
+//				if (itemId == 4155)
+//					player.getSlayerManager().invitePlayer(p2);
 			}));
 			break;
 		case 662:
@@ -119,13 +116,13 @@ public class InterfaceOnPlayerPacket implements LogicPacket {
 						return;
 					}
 					if (!p2.isMultiArea() || !player.isMultiArea()) {
-						if (player.getAttackedBy() != p2 && player.getAttackedByDelay() > Utils.currentTimeMillis()) {
+						if (player.getAttackedBy() != p2 && player.getAttackedByDelay() > Utility.currentTimeMillis()) {
 							player.getPackets()
 									.sendGameMessage("That " + (player.getAttackedBy().isPlayer() ? "player" : "npc")
 											+ " is already in combat.");
 							return;
 						}
-						if (p2.getAttackedBy() != player && p2.getAttackedByDelay() > Utils.currentTimeMillis()) {
+						if (p2.getAttackedBy() != player && p2.getAttackedByDelay() > Utility.currentTimeMillis()) {
 							if (p2.getAttackedBy().isNPC()) {
 								p2.setAttackedBy(player); // changes
 								// enemy
@@ -184,13 +181,13 @@ public class InterfaceOnPlayerPacket implements LogicPacket {
 						return;
 					}
 					if (!p2.isMultiArea() || !player.isMultiArea()) {
-						if (player.getAttackedBy() != p2 && player.getAttackedByDelay() > Utils.currentTimeMillis()) {
+						if (player.getAttackedBy() != p2 && player.getAttackedByDelay() > Utility.currentTimeMillis()) {
 							player.getPackets()
 									.sendGameMessage("That " + (player.getAttackedBy().isPlayer() ? "player" : "npc")
 											+ " is already in combat.");
 							return;
 						}
-						if (p2.getAttackedBy() != player && p2.getAttackedByDelay() > Utils.currentTimeMillis()) {
+						if (p2.getAttackedBy() != player && p2.getAttackedByDelay() > Utility.currentTimeMillis()) {
 							if (p2.getAttackedBy().isNPC()) {
 								p2.setAttackedBy(player); // changes
 								// enemy

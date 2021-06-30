@@ -1,6 +1,6 @@
 package com.rs.plugin.impl.objects;
 
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.WorldTile;
 import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.player.Player;
@@ -12,7 +12,7 @@ import com.rs.plugin.wrapper.ObjectSignature;
 public class StairsAndLadder implements ObjectType {
 
 	@Override
-	public void execute(Player player, WorldObject object, int optionId) throws Exception {
+	public void execute(Player player, GameObject object, int optionId) throws Exception {
 		//if special else do this
 		if (object.getDefinitions().getOption(optionId).equalsIgnoreCase("Climb"))
 			player.dialog(new DialogueEventListener(player) {

@@ -1,20 +1,18 @@
 package com.rs.game.player.content;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.rs.game.player.Player;
 
-public final class Notes implements Serializable {
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-	private static final long serialVersionUID = 5564620907978487391L;
+public final class Notes {
 
-	private List<Note> notes;
+	private ObjectArrayList<Note> notes;
 	private transient Player player;
 
 	public Notes() {
-		notes = new ArrayList<Note>(30);
+		notes = new ObjectArrayList<Note>(30);
 	}
 
 	public void setPlayer(Player player) {
@@ -162,7 +160,7 @@ public final class Notes implements Serializable {
 		return (int) (Math.pow(4, noteId) * colour);
 	}
 
-	public List<Note> getNotes() {
+	public ObjectArrayList<Note> getNotes() {
 		return notes;
 	}
 

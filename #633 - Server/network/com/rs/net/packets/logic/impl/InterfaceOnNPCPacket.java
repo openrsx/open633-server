@@ -15,7 +15,7 @@ import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
 import com.rs.plugin.NPCDispatcher;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 @LogicPacketSignature(packetId = 2, packetSize = 11, description = "An Interface that's used onto a NPC (Magic, etc..)")
 public class InterfaceOnNPCPacket implements LogicPacket {
@@ -35,18 +35,18 @@ public class InterfaceOnNPCPacket implements LogicPacket {
 		int interfaceId = interfaceHash >> 16;
 		int componentId = interfaceHash - (interfaceId << 16);
 
-		if (Utils.getInterfaceDefinitionsSize() <= interfaceId)
+		if (Utility.getInterfaceDefinitionsSize() <= interfaceId)
 			return;
 		if (!player.getInterfaceManager().containsInterface(interfaceId))
 			return;
 		if (componentId == 65535)
 			componentId = -1;
-		if (componentId != -1 && Utils.getInterfaceDefinitionsComponentsSize(interfaceId) <= componentId)
+		if (componentId != -1 && Utility.getInterfaceDefinitionsComponentsSize(interfaceId) <= componentId)
 			return;
 		NPC npc = World.getNPCs().get(npcIndex);
 		if (npc == null || npc.isDead() || npc.isFinished() || !player.getMapRegionsIds().contains(npc.getRegionId()))
 			return;
-		player.stopAll();
+		player.getMovement().stopAll(player);
 		if (forceRun)
 			player.setRun(forceRun);
 		if (interfaceId != Inventory.INVENTORY_INTERFACE) {
@@ -138,11 +138,11 @@ public class InterfaceOnNPCPacket implements LogicPacket {
 					} else if (!npc.isForceMultiAttacked()) {
 						if (!npc.isMultiArea() || !player.isMultiArea()) {
 							if (player.getAttackedBy() != npc
-									&& player.getAttackedByDelay() > Utils.currentTimeMillis()) {
+									&& player.getAttackedByDelay() > Utility.currentTimeMillis()) {
 								player.getPackets().sendGameMessage("You are already in combat.");
 								return;
 							}
-							if (npc.getAttackedBy() != player && npc.getAttackedByDelay() > Utils.currentTimeMillis()) {
+							if (npc.getAttackedBy() != player && npc.getAttackedByDelay() > Utility.currentTimeMillis()) {
 								player.getPackets().sendGameMessage("This npc is already in combat.");
 								return;
 							}
@@ -200,11 +200,11 @@ public class InterfaceOnNPCPacket implements LogicPacket {
 					} else if (!npc.isForceMultiAttacked()) {
 						if (!npc.isMultiArea() || !player.isMultiArea()) {
 							if (player.getAttackedBy() != npc
-									&& player.getAttackedByDelay() > Utils.currentTimeMillis()) {
+									&& player.getAttackedByDelay() > Utility.currentTimeMillis()) {
 								player.getPackets().sendGameMessage("You are already in combat.");
 								return;
 							}
-							if (npc.getAttackedBy() != player && npc.getAttackedByDelay() > Utils.currentTimeMillis()) {
+							if (npc.getAttackedBy() != player && npc.getAttackedByDelay() > Utility.currentTimeMillis()) {
 								player.getPackets().sendGameMessage("This npc is already in combat.");
 								return;
 							}

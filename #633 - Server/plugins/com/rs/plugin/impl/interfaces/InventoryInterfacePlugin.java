@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.rs.GameConstants;
 import com.rs.cache.io.InputStream;
-import com.rs.cores.WorldThread;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
@@ -26,7 +25,7 @@ import com.rs.plugin.RSInterfaceDispatcher;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
 import com.rs.utilities.Logger;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import skills.Skills;
@@ -49,17 +48,17 @@ public class InventoryInterfacePlugin implements RSInterface {
 				InventoryDispatcher.execute(player, item, 1);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON2_PACKET:
-				long time = Utils.currentTimeMillis();
+				long time = Utility.currentTimeMillis();
 				if (player.getMovement().getLockDelay() >= time || player.getNextEmoteEnd() >= time)
 					return;
-				player.stopAll(false);
+				player.getMovement().stopAll(player, false);
 				if (Foods.eat(player, item, slotId))
 					return;
 				if (Pots.pot(player, item, slotId))
 					return;
 				if (player.isDisableEquip())
 					return;
-				long passedTime = Utils.currentTimeMillis() - WorldThread.WORLD_CYCLE;
+				long passedTime = Utility.currentTimeMillis() - 600 /*WorldThread.WORLD_CYCLE*/;
 				if (player.getSwitchItemCache().isEmpty()) {
 					player.getSwitchItemCache().add(slotId);
 					World.get().submit(new Task(passedTime >= 600 ? 0 : passedTime > 330 ? 1 : 0) {
@@ -72,7 +71,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 								slot[i] = slots.get(i);
 							player.getSwitchItemCache().clear();
 							RSInterfaceDispatcher.sendWear(player, slot);
-							player.stopAll(false, true, false);
+							player.getMovement().stopAll(player, false, true, false);
 							this.cancel();
 						}
 					});
@@ -94,12 +93,12 @@ public class InventoryInterfacePlugin implements RSInterface {
 				InventoryDispatcher.execute(player, item, 6);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON7_PACKET:
-				long dropTime = Utils.currentTimeMillis();
+				long dropTime = Utility.currentTimeMillis();
 				if (player.getMovement().getLockDelay() >= dropTime || player.getNextEmoteEnd() >= dropTime)
 					return;
 				if (!player.getControllerManager().canDropItem(item))
 					return;
-				player.stopAll(false);
+				player.getMovement().stopAll(player, false);
 				
 				if (item.getDefinitions().isOverSized()) {
 					player.getPackets().sendGameMessage("The item appears to be oversized.");
@@ -161,7 +160,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 			if (itemUsed == null || usedWith == null || itemUsed.getId() != itemUsedId
 					|| usedWith.getId() != itemUsedWithId)
 				return;
-			player.stopAll();
+			player.getMovement().stopAll(player);
 			
 			if (GameConstants.DEBUG)
 				Logger.log("ItemHandler", "Used:" + itemUsed.getId() + ", With:" + usedWith.getId());
@@ -172,17 +171,14 @@ public class InventoryInterfacePlugin implements RSInterface {
 		if (item == null) {
 			return;
 		}
-		player.setCoordsEvent(new CoordsEvent(npc, new Runnable() {
-			@Override
-			public void run() {
-				if (!player.getInventory().containsItem(item.getId(), item.getAmount())) {
-					return;
-				}
-				if (npc instanceof Pet) {
-					player.faceEntity(npc);
-					player.getPetManager().eat(item.getId(), (Pet) npc);
-					return;
-				}
+		player.setCoordsEvent(new CoordsEvent(npc, () -> {
+			if (!player.getInventory().containsItem(item.getId(), item.getAmount())) {
+				return;
+			}
+			if (npc instanceof Pet) {
+				player.faceEntity(npc);
+				player.getPetManager().eat(item.getId(), (Pet) npc);
+				return;
 			}
 		}, npc.getSize()));
 	}
@@ -208,7 +204,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 	public static boolean sendWear2(Player player, int slotId, int itemId) {
 		if (player.isFinished() || player.isDead())
 			return false;
-		player.stopAll(false, false);
+		player.getMovement().stopAll(player,false, false);
 		Item item = player.getInventory().getItem(slotId);
 		if (item == null || item.getId() != itemId)
 			return false;

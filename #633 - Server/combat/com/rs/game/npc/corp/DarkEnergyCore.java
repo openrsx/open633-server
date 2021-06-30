@@ -1,6 +1,6 @@
 package com.rs.game.npc.corp;
 
-import java.util.ArrayList;
+import java.util.Optional;
 
 import com.rs.game.Entity;
 import com.rs.game.Hit;
@@ -10,6 +10,8 @@ import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.utilities.RandomUtils;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class DarkEnergyCore extends NPC {
 
@@ -36,7 +38,7 @@ public class DarkEnergyCore extends NPC {
 		}
 		if (changeTarget > 0) {
 			if (changeTarget == 1) {
-				ArrayList<Entity> possibleTarget = beast.getPossibleTargets();
+				ObjectArrayList<Entity> possibleTarget = beast.getPossibleTargets();
 				if (possibleTarget.isEmpty()) {
 					finish();
 					beast.removeDarkEnergyCore();
@@ -69,7 +71,7 @@ public class DarkEnergyCore extends NPC {
 	}
 
 	@Override
-	public void sendDeath(Entity source) {
+	public void sendDeath(Optional<Entity> source) {
 		super.sendDeath(source);
 		beast.removeDarkEnergyCore();
 	}

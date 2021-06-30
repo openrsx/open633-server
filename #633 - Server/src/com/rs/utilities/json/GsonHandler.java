@@ -1,12 +1,10 @@
 package com.rs.utilities.json;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.rs.utilities.json.impl.NPCAutoSpawn;
 import com.rs.utilities.json.impl.ObjectSpawnLoader;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
 
 /**
@@ -84,5 +82,5 @@ public class GsonHandler {
 	/**
 	 * Adds all of the loaders to the map
 	 */
-	private static final List<GsonLoader<?>> CLASSES = new ArrayList<GsonLoader<?>>();
+	private static final ObjectArrayList<GsonLoader<?>> CLASSES = new ObjectArrayList<GsonLoader<?>>();
 }

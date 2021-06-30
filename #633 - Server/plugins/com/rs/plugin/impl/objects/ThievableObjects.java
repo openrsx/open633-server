@@ -2,7 +2,7 @@ package com.rs.plugin.impl.objects;
 
 import java.util.stream.IntStream;
 
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.player.Player;
 import com.rs.plugin.listener.ObjectType;
 import com.rs.plugin.wrapper.ObjectSignature;
@@ -18,7 +18,7 @@ public class ThievableObjects implements ObjectType {
 	 * Not sure why, cause rest objects are handled just fine.
 	 */
 	@Override
-	public void execute(Player player, WorldObject object, int optionId) throws Exception {
+	public void execute(Player player, GameObject object, int optionId) throws Exception {
 		for(StallData data : StallData.values()) {
 			Stalls stall = new Stalls(player, data, object);
 			IntStream.of(data.objectId).filter(stallObject -> object.getId() == stallObject).forEach(stallObject -> stall.start());

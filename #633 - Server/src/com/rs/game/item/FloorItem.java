@@ -1,7 +1,5 @@
 package com.rs.game.item;
 
-import java.util.concurrent.TimeUnit;
-
 import com.rs.cores.CoresManager;
 import com.rs.game.World;
 import com.rs.game.WorldTile;
@@ -100,30 +98,28 @@ public class FloorItem extends Item {
 		if (invisible && hiddenTime != -1) {
 			if (owner != null)
 				owner.getPackets().sendGroundItem(floorItem);
-			CoresManager.slowExecutor.schedule(new Runnable() {
-				@Override
-				public void run() {
-					if (!region.forceGetFloorItems().contains(floorItem))
-						return;
-					int regionId = tile.getRegionId();
-					if (underGrave || !ItemConstants.isTradeable(floorItem) || item.getName().contains("Dr nabanik")) {
-						region.forceGetFloorItems().remove(floorItem);
-						if (owner != null) {
-							if (owner.getMapRegionsIds().contains(regionId) && owner.getPlane() == tile.getPlane())
-								owner.getPackets().sendRemoveGroundItem(floorItem);
-						}
-						return;
+			CoresManager.schedule(() -> {
+				if (!region.forceGetFloorItems().contains(floorItem))
+					return;
+				int regionId = tile.getRegionId();
+				if (underGrave || !ItemConstants.isTradeable(floorItem) || item.getName().contains("Dr nabanik")) {
+					region.forceGetFloorItems().remove(floorItem);
+					if (owner != null) {
+						if (owner.getMapRegionsIds().contains(regionId) && owner.getPlane() == tile.getPlane())
+							owner.getPackets().sendRemoveGroundItem(floorItem);
 					}
-
-					floorItem.setInvisible(false);
-					for (Player player : World.getPlayers()) {
-						if (player == null || player == owner || !player.isStarted() || player.isFinished() || player.getPlane() != tile.getPlane() || !player.getMapRegionsIds().contains(regionId))
-							continue;
-						player.getPackets().sendGroundItem(floorItem);
-					}
-					removeGroundItem(floorItem, publicTime);
+					return;
 				}
-			}, hiddenTime, TimeUnit.SECONDS);
+
+				floorItem.setInvisible(false);
+				for (Player player : World.getPlayers()) {
+					if (player == null || player == owner || !player.isStarted() || player.isFinished() || player.getPlane() != tile.getPlane() || !player.getMapRegionsIds().contains(regionId))
+						continue;
+					player.getPackets().sendGroundItem(floorItem);
+				}
+				removeGroundItem(floorItem, publicTime);
+			}, (int) hiddenTime);
+			
 			return;
 		}
 		int regionId = tile.getRegionId();
@@ -152,17 +148,14 @@ public class FloorItem extends Item {
 		if (publicTime < 0) {
 			return;
 		}
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				int regionId = floorItem.getTile().getRegionId();
-				Region region = World.getRegion(regionId);
-				if (!region.forceGetFloorItems().contains(floorItem))
-					return;
-				region.forceGetFloorItems().remove(floorItem);
-				World.players().filter(p -> p.getPlane() != floorItem.getTile().getPlane() || !p.getMapRegionsIds().contains(regionId)) .forEach(p -> p.getPackets().sendRemoveGroundItem(floorItem));
-			}
-		}, publicTime, TimeUnit.SECONDS);
+		CoresManager.schedule(() -> {
+			int regionId = floorItem.getTile().getRegionId();
+			Region region = World.getRegion(regionId);
+			if (!region.forceGetFloorItems().contains(floorItem))
+				return;
+			region.forceGetFloorItems().remove(floorItem);
+			World.players().filter(p -> p.getPlane() != floorItem.getTile().getPlane() || !p.getMapRegionsIds().contains(regionId)) .forEach(p -> p.getPackets().sendRemoveGroundItem(floorItem));
+		}, (int) publicTime);
 	}
 
 	public static final boolean removeGroundItem(Player player, FloorItem floorItem) {

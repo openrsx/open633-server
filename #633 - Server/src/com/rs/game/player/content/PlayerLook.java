@@ -299,21 +299,16 @@ public final class PlayerLook {
 		player.getTemporaryAttributes().put("ThessaliasMakeOver", 0);
 		player.getPackets().sendUnlockIComponentOptionSlots(729, 12, 0, 100, 0);
 		player.getPackets().sendUnlockIComponentOptionSlots(729, 17, 0, ClientScriptMap.getMap(3282).getSize() * 2, 0);
-		player.setCloseInterfacesEvent(new Runnable() {
-
-			@Override
-			public void run() {
-				player.dialog(new DialogueEventListener(player) {
-
-					@Override
-					public void start() {
-						npc(DialogueFaceExpression.happy, "A marvellous choise. You look splendid!");
-					}
-				}.begin());
-				player.setNextAnimation(new Animation(-1));
-				player.getAppearance().getAppeareanceData();
-				player.getTemporaryAttributes().remove("ThessaliasMakeOver");
-			}
+		player.setCloseInterfacesEvent(() -> {
+			player.dialog(new DialogueEventListener(player) {
+				@Override
+				public void start() {
+					npc(DialogueFaceExpression.happy, "A marvellous choise. You look splendid!");
+				}
+			}.begin());
+			player.setNextAnimation(new Animation(-1));
+			player.getAppearance().getAppeareanceData();
+			player.getTemporaryAttributes().remove("ThessaliasMakeOver");
 
 		});
 	}
@@ -348,23 +343,17 @@ public final class PlayerLook {
 		player.getPackets().sendUnlockIComponentOptionSlots(309, 16, 0, ClientScriptMap.getMap(2345).getSize() * 2, 0);
 		player.getPackets().sendIComponentText(309, 20, "Free!");
 		player.getTemporaryAttributes().put("hairSaloon", true);
-		player.setCloseInterfacesEvent(new Runnable() {
-
-			@Override
-			public void run() {
-				player.dialog(new DialogueEventListener(player) {
-
-					@Override
-					public void start() {
-						npc(DialogueFaceExpression.sad,
-								"An excellent choise, " + (player.getAppearance().isMale() ? "sir" : "lady") + ".");
-					}
-				}.begin());
-				player.setNextAnimation(new Animation(-1));
-				player.getAppearance().getAppeareanceData();
-				player.getTemporaryAttributes().remove("hairSaloon");
-			}
-
+		player.setCloseInterfacesEvent(() -> {
+			player.dialog(new DialogueEventListener(player) {
+				@Override
+				public void start() {
+					npc(DialogueFaceExpression.sad,
+							"An excellent choise, " + (player.getAppearance().isMale() ? "sir" : "lady") + ".");
+				}
+			}.begin());
+			player.setNextAnimation(new Animation(-1));
+			player.getAppearance().getAppeareanceData();
+			player.getTemporaryAttributes().remove("hairSaloon");
 		});
 	}
 
@@ -385,20 +374,16 @@ public final class PlayerLook {
 		player.getTemporaryAttributes().put("YrsaBoot", 0);
 		player.getPackets().sendUnlockIComponentOptionSlots(728, 12, 0, 500, 0);
 		player.getPackets().sendUnlockIComponentOptionSlots(728, 7, 0, ClientScriptMap.getMap(3297).getSize() * 2, 0);
-		player.setCloseInterfacesEvent(new Runnable() {
-
-			@Override
-			public void run() {
-				player.dialog(new DialogueEventListener(player) {
-					@Override
-					public void start() {
-						npc(happy, "Hey, They look great!");
-					}
-				});
-				player.setNextAnimation(new Animation(-1));
-				player.getAppearance().getAppeareanceData();
-				player.getTemporaryAttributes().remove("YrsaBoot");
-			}
+		player.setCloseInterfacesEvent(() -> {
+			player.dialog(new DialogueEventListener(player) {
+				@Override
+				public void start() {
+					npc(happy, "Hey, They look great!");
+				}
+			});
+			player.setNextAnimation(new Animation(-1));
+			player.getAppearance().getAppeareanceData();
+			player.getTemporaryAttributes().remove("YrsaBoot");
 		});
 	}
 

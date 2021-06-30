@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.impl.DefaultCombat;
 import com.rs.game.player.Player;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.SneakyThrows;
@@ -90,7 +90,7 @@ public final class NPCCombatDispatcher {
 	 * <b>Method should only be called once on start-up.</b>
 	 */
 	public static void load() {
-		List<MobCombatInterface> interfaces = Utils.getClassesInDirectory("com.rs.game.npc.combat.impl").stream().map(clazz -> (MobCombatInterface) clazz).collect(Collectors.toList());
+		List<MobCombatInterface> interfaces = Utility.getClassesInDirectory("com.rs.game.npc.combat.impl").stream().map(clazz -> (MobCombatInterface) clazz).collect(Collectors.toList());
 		
 		for(MobCombatInterface MobCombatInterface : interfaces) {
 			if(MobCombatInterface.getClass().getAnnotation(MobCombatSignature.class) == null) {

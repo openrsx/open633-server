@@ -1,7 +1,5 @@
 package com.rs.game.player;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import com.rs.cache.loaders.ItemDefinitions;
@@ -23,9 +21,10 @@ import com.rs.game.player.content.Magic;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 import com.rs.utilities.loaders.MapAreas;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import skills.Skills;
 
 public class PlayerCombat extends Action {
@@ -83,7 +82,7 @@ public class PlayerCombat extends Action {
 			return 0;
 		if (player.hasWalkSteps())
 			maxDistance += player.isRun() ? 2 : 1;
-		if (!Utils.isOnRange(player.getX(), player.getY(), size, target.getX(), target.getY(), target.getSize(),
+		if (!Utility.isOnRange(player.getX(), player.getY(), size, target.getX(), target.getY(), target.getSize(),
 				maxDistance))
 			return 0;
 		if (!player.getControllerManager().keepCombating(target))
@@ -117,7 +116,7 @@ public class PlayerCombat extends Action {
 
 	private void addAttackedByDelay(Entity player) {
 		target.setAttackedBy(player);
-		target.setAttackedByDelay(Utils.currentTimeMillis() + 6000); // 8seconds
+		target.setAttackedByDelay(Utility.currentTimeMillis() + 6000); // 8seconds
 	}
 
 	public static int getMeleeCombatDelay(Player player, int weaponId) {
@@ -138,13 +137,13 @@ public class PlayerCombat extends Action {
 	}
 
 	public Entity[] getMultiAttackTargets(Player player, int maxDistance, int maxAmtTargets) {
-		List<Entity> possibleTargets = new ArrayList<Entity>();
+		ObjectArrayList<Entity> possibleTargets = new ObjectArrayList<Entity>();
 		possibleTargets.add(target);
 		if (target.isMultiArea()) {
 			y: for (int regionId : target.getMapRegionsIds()) {
 				Region region = World.getRegion(regionId);
 				if (target.isPlayer()) {
-					List<Integer> playerIndexes = region.getPlayerIndexes();
+					ObjectArrayList<Short> playerIndexes = region.getPlayersIndexes();
 					if (playerIndexes == null)
 						continue;
 					for (int playerIndex : playerIndexes) {
@@ -158,7 +157,7 @@ public class PlayerCombat extends Action {
 							break y;
 					}
 				} else {
-					List<Integer> npcIndexes = region.getNPCsIndexes();
+					ObjectArrayList<Short> npcIndexes = region.getNpcsIndexes();
 					if (npcIndexes == null)
 						continue;
 					for (int npcIndex : npcIndexes) {
@@ -230,7 +229,7 @@ public class PlayerCombat extends Action {
 				Hit magicHit = getMagicHit(player, getRandomMagicMaxHit(player, 20));
 				delayMagicHit(2, magicHit);
 				World.sendProjectile(player, target, 178, 18, 18, 50, 50, 0, 0);
-				long currentTime = Utils.currentTimeMillis();
+				long currentTime = Utility.currentTimeMillis();
 				if (magicHit.getDamage() > 0 && target.getFrozenBlocked() < currentTime)
 					target.addFreezeDelay(5000, true);
 				return 5;
@@ -241,7 +240,7 @@ public class PlayerCombat extends Action {
 				base_mage_xp = 91.1;
 				Hit snareHit = getMagicHit(player, getRandomMagicMaxHit(player, 30));
 				delayMagicHit(2, snareHit);
-				if (snareHit.getDamage() > 0 && target.getFrozenBlocked() < Utils.currentTimeMillis())
+				if (snareHit.getDamage() > 0 && target.getFrozenBlocked() < Utility.currentTimeMillis())
 					target.addFreezeDelay(10000, true);
 				World.sendProjectile(player, target, 178, 18, 18, 50, 50, 0, 0);
 				return 5;
@@ -252,7 +251,7 @@ public class PlayerCombat extends Action {
 				base_mage_xp = 91.1;
 				Hit entangleHit = getMagicHit(player, getRandomMagicMaxHit(player, 50));
 				delayMagicHit(2, entangleHit);
-				if (entangleHit.getDamage() > 0 && target.getFrozenBlocked() < Utils.currentTimeMillis())
+				if (entangleHit.getDamage() > 0 && target.getFrozenBlocked() < Utility.currentTimeMillis())
 					target.addFreezeDelay(20000, true);
 				World.sendProjectile(player, target, 178, 18, 18, 50, 50, 0, 0);
 				return 5;
@@ -432,7 +431,7 @@ public class PlayerCombat extends Action {
 				World.sendProjectile(player, target, 2735, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 86: // teleblock
-				if (target.isPlayer() && ((Player) target).getDetails().getTeleBlockDelay().get() <= Utils.currentTimeMillis()) {
+				if (target.isPlayer() && ((Player) target).getDetails().getTeleBlockDelay().get() <= Utility.currentTimeMillis()) {
 					player.setNextGraphics(new Graphics(1841));
 					player.setNextAnimation(new Animation(10503));
 					mage_hit_gfx = 1843;
@@ -894,7 +893,7 @@ public class PlayerCombat extends Action {
 					@Override
 					public boolean attack() {
 						magic_sound = 168;
-						long currentTime = Utils.currentTimeMillis();
+						long currentTime = Utility.currentTimeMillis();
 						if (target.getSize() >= 2 || target.getFreezeDelay() >= currentTime
 								|| target.getFrozenBlocked() >= currentTime) {
 							mage_hit_gfx = 1677;
@@ -905,7 +904,7 @@ public class PlayerCombat extends Action {
 						base_mage_xp = 52;
 						int damage = getRandomMagicMaxHit(player, 300);
 						Hit hit = getMagicHit(player, damage);
-						delayMagicHit(Utils.getDistance(player, target) > 3 ? 4 : 2, hit);
+						delayMagicHit(Utility.getDistance(player, target) > 3 ? 4 : 2, hit);
 						World.sendProjectile(player, target, 368, 60, 32, 50, 50, 0, 0);
 						if (!nextTarget) {
 							if (damage == -1)
@@ -1267,7 +1266,7 @@ public class PlayerCombat extends Action {
 							target.setNextGraphics(new Graphics(755));
 							if (target.isPlayer()) {
 								Player p2 = (Player) target;
-								p2.stopAll();
+								p2.getMovement().stopAll(p2);
 							} else {
 								NPC n = (NPC) target;
 								n.setTarget(null);
@@ -1365,7 +1364,7 @@ public class PlayerCombat extends Action {
 							delay = 5000;
 						}
 					}
-					long currentTime = Utils.currentTimeMillis();
+					long currentTime = Utility.currentTimeMillis();
 					if (getRandomMaxHit(player, weaponId, attackStyle, true) > 0
 							&& target.getFrozenBlocked() < currentTime) {
 						target.addFreezeDelay(delay, true);
@@ -1579,7 +1578,7 @@ public class PlayerCombat extends Action {
 
 	@SuppressWarnings("unused")
 	private int getRangeHitDelay(Player player) {
-		return Utils.getDistance(player.getX(), player.getY(), target.getX(), target.getY()) >= 5 ? 2 : 1;
+		return Utility.getDistance(player.getX(), player.getY(), target.getX(), target.getY()) >= 5 ? 2 : 1;
 	}
 
 	private int meleeAttack(final Player player) {
@@ -1616,7 +1615,7 @@ public class PlayerCombat extends Action {
 			case 13774:
 			case 13776:
 				player.setNextAnimation(new Animation(12017));
-				player.stopAll();
+				player.getMovement().stopAll(player);
 				target.setNextGraphics(new Graphics(80, 5, 60));
 
 				if (!target.addWalkSteps(target.getX() - player.getX() + target.getX(),
@@ -2386,11 +2385,11 @@ public class PlayerCombat extends Action {
 				}
 			} else if (hit.getLook() == HitLook.MAGIC_DAMAGE) {
 				if (mage_hit_gfx != 0 && damage > 0) {
-					if (target.getFrozenBlocked() < Utils.currentTimeMillis()) {
+					if (target.getFrozenBlocked() < Utility.currentTimeMillis()) {
 						if (freeze_time > 0) {
 							target.addFreezeDelay(freeze_time, freeze_time == 0);
 							if (target.isPlayer())
-								((Player) target).stopAll(false);
+								((Player) target).getMovement().stopAll((Player) target, false);
 							target.addFrozenBlockedDelay(freeze_time + (4 * 1000));
 						}
 					}
@@ -2855,11 +2854,11 @@ public class PlayerCombat extends Action {
 		if (!(target.isNPC() && ((NPC) target).isForceMultiAttacked())) {
 
 			if (!target.isMultiArea() || !player.isMultiArea()) {
-				if (player.getAttackedBy() != target && player.getAttackedByDelay() > Utils.currentTimeMillis()) {
+				if (player.getAttackedBy() != target && player.getAttackedByDelay() > Utility.currentTimeMillis()) {
 					player.getPackets().sendGameMessage("You are already in combat.");
 					return false;
 				}
-				if (target.getAttackedBy() != player && target.getAttackedByDelay() > Utils.currentTimeMillis()) {
+				if (target.getAttackedBy() != player && target.getAttackedByDelay() > Utility.currentTimeMillis()) {
 					player.getPackets().sendGameMessage("That "
 							+ (player.getAttackedBy().isPlayer() ? "player" : "npc") + " is already in combat.");
 					return false;
@@ -2868,8 +2867,8 @@ public class PlayerCombat extends Action {
 		}
 		int isRanging = isRanging(player);
 		int targetSize = target.getSize();
-		if (player.getFreezeDelay() >= Utils.currentTimeMillis()) {
-			if (Utils.colides(player.getX(), player.getY(), size, target.getX(), target.getY(), targetSize))// under
+		if (player.getFreezeDelay() >= Utility.currentTimeMillis()) {
+			if (Utility.colides(player.getX(), player.getY(), size, target.getX(), target.getY(), targetSize))// under
 				// target
 				return false;
 			if (isRanging == 0 && target.getSize() == 1 && player.getCombatDefinitions().getSpellId() <= 0
@@ -2878,7 +2877,7 @@ public class PlayerCombat extends Action {
 				return false;
 			return true;
 		}
-		if (Utils.colides(player.getX(), player.getY(), size, target.getX(), target.getY(), targetSize)
+		if (Utility.colides(player.getX(), player.getY(), size, target.getX(), target.getY(), targetSize)
 				&& !target.hasWalkSteps()) {
 			player.resetWalkSteps();
 			if (!player.addWalkSteps(target.getX() + targetSize, player.getY())) {
@@ -2904,7 +2903,7 @@ public class PlayerCombat extends Action {
 		maxDistance = isRanging != 0 || player.getCombatDefinitions().getSpellId() > 0 || hasPolyporeStaff(player) ? 7
 				: 0;
 		boolean needCalc = !player.hasWalkSteps() || target.hasWalkSteps();
-		if ((!player.clipedProjectile(target, maxDistance == 0)) || !Utils.isOnRange(player.getX(), player.getY(), size,
+		if ((!player.clipedProjectile(target, maxDistance == 0)) || !Utility.isOnRange(player.getX(), player.getY(), size,
 				target.getX(), target.getY(), target.getSize(), maxDistance)) {
 			// if (!player.hasWalkSteps()) {
 			if (needCalc) {

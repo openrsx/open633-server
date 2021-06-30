@@ -1,6 +1,6 @@
 package com.rs.plugin.impl.objects;
 
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.player.Player;
 import com.rs.plugin.listener.ObjectType;
 import com.rs.plugin.wrapper.ObjectSignature;
@@ -9,7 +9,7 @@ import com.rs.plugin.wrapper.ObjectSignature;
 public class DepositBox implements ObjectType {
 
 	@Override
-	public void execute(Player player, WorldObject object, int optionId) throws Exception {
+	public void execute(Player player, GameObject object, int optionId) throws Exception {
 		System.out.println("General response");
 		
 		if (optionId == 1)

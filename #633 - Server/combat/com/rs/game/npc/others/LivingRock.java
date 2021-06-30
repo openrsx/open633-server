@@ -1,6 +1,6 @@
 package com.rs.game.npc.others;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
 import com.rs.cores.CoresManager;
 import com.rs.game.Animation;
@@ -11,9 +11,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
-
-import lombok.SneakyThrows;
+import com.rs.utilities.Utility;
 
 public class LivingRock extends NPC {
 
@@ -25,7 +23,7 @@ public class LivingRock extends NPC {
 	}
 
 	@Override
-	public void sendDeath(final Entity source) {
+	public void sendDeath(Optional<Entity> source) {
 		final NPCCombatDefinitions defs = getCombatDefinitions();
 		resetWalkSteps();
 		getCombat().removeTarget();
@@ -39,7 +37,7 @@ public class LivingRock extends NPC {
 				} else if (loop >= defs.getDeathDelay()) {
 					drop();
 					reset();
-					transformIntoRemains(source);
+					transformIntoRemains(source.get());
 					this.cancel();
 				}
 				loop++;
@@ -50,23 +48,19 @@ public class LivingRock extends NPC {
 
 	public void transformIntoRemains(Entity source) {
 		this.source = source;
-		deathTime = Utils.currentTimeMillis();
+		deathTime = Utility.currentTimeMillis();
 		final short remainsId = (short) (getId() + 5);
 		setNextNPCTransformation(remainsId);
 		setWalkType((byte) 0);
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			@SneakyThrows(Throwable.class)
-			public void run() {
-				if (remainsId == getId())
-					takeRemains();
-			}
-		}, 3, TimeUnit.MINUTES);
+		CoresManager.schedule(() -> {
+			if (remainsId == getId())
+				takeRemains();
+		}, 3 * 60);
 
 	}
 
 	public boolean canMine(Player player) {
-		return Utils.currentTimeMillis() - deathTime > 60000 || player == source;
+		return Utility.currentTimeMillis() - deathTime > 60000 || player == source;
 	}
 
 	public void takeRemains() {

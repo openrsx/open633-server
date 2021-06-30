@@ -1,7 +1,5 @@
 package com.rs.game.player.content;
 
-import java.util.List;
-
 import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
@@ -16,8 +14,9 @@ import com.rs.game.player.Player;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import skills.Skills;
 
 /*
@@ -383,7 +382,7 @@ public class Magic {
 
 	public static final void processNormalSpell(Player player, int spellId, byte slot) {
 		final Item target = player.getInventory().getItem(slot);
-		player.stopAll();
+		player.getMovement().stopAll(player);
 		switch (spellId) {
 //	    case 29:
 //	    case 41:
@@ -445,7 +444,7 @@ public class Magic {
 				return;
 			}
 			Long lastVeng = (Long) player.getTemporaryAttributes().get("LAST_VENG");
-			if (lastVeng != null && lastVeng + 30000 > Utils.currentTimeMillis()) {
+			if (lastVeng != null && lastVeng + 30000 > Utility.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
 			}
@@ -456,7 +455,7 @@ public class Magic {
 			if (!checkRunes(player, true, ASTRAL_RUNE, 3, DEATH_RUNE, 2, EARTH_RUNE, 10))
 				return;
 			player.setNextAnimation(new Animation(4411));
-			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
+			player.getTemporaryAttributes().put("LAST_VENG", Utility.currentTimeMillis());
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			((Player) target).setNextGraphics(new Graphics(725, 0, 100));
 //			((Player) target).setCastVeng(true);
@@ -476,7 +475,7 @@ public class Magic {
 				return;
 			}
 			Long lastVeng = (Long) player.getTemporaryAttributes().get("LAST_VENG");
-			if (lastVeng != null && lastVeng + 30000 > Utils.currentTimeMillis()) {
+			if (lastVeng != null && lastVeng + 30000 > Utility.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
 			}
@@ -485,7 +484,7 @@ public class Magic {
 			player.setNextGraphics(new Graphics(726, 0, 100));
 			player.setNextAnimation(new Animation(4410));
 //			player.setCastVeng(true);
-			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
+			player.getTemporaryAttributes().put("LAST_VENG", Utility.currentTimeMillis());
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			break;
 		case 38:
@@ -497,7 +496,7 @@ public class Magic {
 				return;
 			}
 			lastVeng = (Long) player.getTemporaryAttributes().get("LAST_VENG");
-			if (lastVeng != null && lastVeng + 30000 > Utils.currentTimeMillis()) {
+			if (lastVeng != null && lastVeng + 30000 > Utility.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
 			}
@@ -505,7 +504,7 @@ public class Magic {
 				return;
 			int affectedPeopleCount = 0;
 			for (int regionId : player.getMapRegionsIds()) {
-				List<Integer> playerIndexes = World.getRegion(regionId).getPlayerIndexes();
+				ObjectArrayList<Short> playerIndexes = World.getRegion(regionId).getPlayersIndexes();
 				if (playerIndexes == null)
 					continue;
 				for (int playerIndex : playerIndexes) {
@@ -524,7 +523,7 @@ public class Magic {
 				}
 			}
 			player.setNextAnimation(new Animation(4411));
-			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
+			player.getTemporaryAttributes().put("LAST_VENG", Utility.currentTimeMillis());
 			player.getPackets().sendGameMessage("The spell affected " + affectedPeopleCount + " nearby people.");
 			break;
 		case 43: // moonclan teleport
@@ -657,7 +656,7 @@ public class Magic {
 				player.getPackets().sendGameMessage("Your Magic level is not high enough for this spell.");
 				return;
 			}
-			player.stopAll();
+			player.getMovement().stopAll(player);
 			player.getInterfaceManager().sendInterface(432);
 			break;
 		case 24:
@@ -834,7 +833,7 @@ public class Magic {
 				return false;
 		}
 		checkRunes(player, true, runes);
-		player.stopAll();
+		player.getMovement().stopAll(player);
 		if (upEmoteId != -1)
 			player.setNextAnimation(new Animation(upEmoteId));
 		if (upGraphicId != -1)

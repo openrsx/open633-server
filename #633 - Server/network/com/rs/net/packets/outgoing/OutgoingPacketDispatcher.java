@@ -12,7 +12,7 @@ import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.plugin.RSInterfaceDispatcher;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.SneakyThrows;
@@ -79,7 +79,7 @@ public class OutgoingPacketDispatcher {
 	 * <b>Method should only be called once on start-up.</b>
 	 */
 	public static void load() {
-		List<OutgoingPacket> packets = Utils.getClassesInDirectory("com.rs.net.packets.outgoing.impl").stream()
+		List<OutgoingPacket> packets = Utility.getClassesInDirectory("com.rs.net.packets.outgoing.impl").stream()
 				.map(clazz -> (OutgoingPacket) clazz).collect(Collectors.toList());
 
 		for (OutgoingPacket outgoingPacket : packets) {

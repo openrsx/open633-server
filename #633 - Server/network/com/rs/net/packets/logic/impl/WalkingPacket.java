@@ -7,7 +7,7 @@ import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 @LogicPacketSignature(packetId = 36, packetSize = 5, description = "Basic Walking packet")
 public class WalkingPacket implements LogicPacket {
@@ -18,7 +18,7 @@ public class WalkingPacket implements LogicPacket {
 			return;
 		if (player.getMovement().isLocked())
 			return;
-		if (player.getFreezeDelay() >= Utils.currentTimeMillis()) {
+		if (player.getFreezeDelay() >= Utility.currentTimeMillis()) {
 			player.getPackets().sendGameMessage("A magical force prevents you from moving.");
 			return;
 		}
@@ -26,7 +26,7 @@ public class WalkingPacket implements LogicPacket {
 		int baseY = stream.readUnsignedShortLE128();
 		int baseX = stream.readUnsignedShortLE();
 
-		player.stopAll();
+		player.getMovement().stopAll(player);
 		if (forceRun)
 			player.setRun(forceRun);
 

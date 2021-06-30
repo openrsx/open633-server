@@ -6,7 +6,7 @@ import com.rs.game.Animation;
 import com.rs.game.Graphics;
 import com.rs.game.player.Player;
 import com.rs.game.task.LinkedTaskSequence;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import lombok.Getter;
 
@@ -144,11 +144,11 @@ public class Emotes {
 	    }
 
 	    public void setNextEmoteEnd(Player player, long delay) {
-	    	player.setNextEmoteEnd(Utils.currentTimeMillis() + delay);
+	    	player.setNextEmoteEnd(Utility.currentTimeMillis() + delay);
 	    }
 
 	    public static boolean isDoingEmote(Player player) {
-	    	return player.getNextEmoteEnd() >= Utils.currentTimeMillis();
+	    	return player.getNextEmoteEnd() >= Utility.currentTimeMillis();
 	    }
 	}
 	

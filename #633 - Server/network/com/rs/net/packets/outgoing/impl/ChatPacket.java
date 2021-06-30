@@ -9,7 +9,7 @@ import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
 import com.rs.plugin.CommandDispatcher;
 import com.rs.utilities.Logger;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 @OutgoingPacketSignature(packetId = 54, description = "Represents a public message being sent by the Player")
 public class ChatPacket implements OutgoingPacket {
@@ -20,9 +20,9 @@ public class ChatPacket implements OutgoingPacket {
 	public void execute(Player player, InputStream stream) {
 		if (!player.isStarted())
 			return;
-		if (player.getLastPublicMessage() > Utils.currentTimeMillis())
+		if (player.getLastPublicMessage() > Utility.currentTimeMillis())
 			return;
-		player.setLastPublicMessage(Utils.currentTimeMillis() + 300);
+		player.setLastPublicMessage(Utility.currentTimeMillis() + 300);
 		int colorEffect = stream.readUnsignedByte();
 		int moveEffect = stream.readUnsignedByte();
 		String message = Huffman.readEncryptedMessage(200, stream);
@@ -35,7 +35,7 @@ public class ChatPacket implements OutgoingPacket {
 					.replace(";;", ""), false, false);
 			return;
 		}
-		if (player.getDetails().getMuted() > Utils.currentTimeMillis()) {
+		if (player.getDetails().getMuted() > Utility.currentTimeMillis()) {
 			player.getPackets().sendGameMessage(
 					"You temporary muted. Recheck in 48 hours.");
 			return;

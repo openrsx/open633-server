@@ -1,7 +1,5 @@
 package com.rs.game.npc.godwars.saradomin;
 
-import java.util.ArrayList;
-
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.World;
@@ -14,6 +12,8 @@ import com.rs.game.player.controllers.Controller;
 import com.rs.game.player.controllers.GodWars;
 import com.rs.game.task.Task;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 public class GodwarsSaradominFaction extends NPC {
 
 	public GodwarsSaradominFaction(int id, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea,
@@ -22,12 +22,12 @@ public class GodwarsSaradominFaction extends NPC {
 	}
 
 	@Override
-	public ArrayList<Entity> getPossibleTargets() {
+	public ObjectArrayList<Entity> getPossibleTargets() {
 		if (!withinDistance(new WorldTile(2881, 5306, 0), 200))
 			return super.getPossibleTargets();
 		else {
-			ArrayList<Entity> targets = getPossibleTargets(true, true);
-			ArrayList<Entity> targetsCleaned = new ArrayList<Entity>();
+			ObjectArrayList<Entity> targets = getPossibleTargets(true, true);
+			ObjectArrayList<Entity> targetsCleaned = new ObjectArrayList<Entity>();
 			for (Entity t : targets) {
 				if (t instanceof GodwarsSaradominFaction || (t.isPlayer() && hasGodItem((Player) t)))
 					continue;

@@ -1,7 +1,6 @@
 package com.rs.game.npc;
 
 import java.util.HashMap;
-import java.util.List;
 
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
@@ -10,6 +9,7 @@ import com.rs.game.player.Player;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
 
 /**
@@ -44,7 +44,7 @@ public final class DropManager {
 		}
 		WorldTile pos = victim.getLastWorldTile();
 		final WorldTile lastMobLocation = pos;
-		List<Item> dropItems = table.toItems(killer, victim);
+		ObjectArrayList<Item> dropItems = (ObjectArrayList<Item>) table.toItems(killer, victim);
 		for (Item drop : dropItems) {
 			if (drop == null)
 				continue;

@@ -9,7 +9,7 @@ import com.rs.game.Entity;
 import com.rs.game.Graphics;
 import com.rs.game.HintIcon;
 import com.rs.game.World;
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
@@ -27,7 +27,7 @@ import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.PublicChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
 import com.rs.utilities.RandomUtils;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 import com.rs.utilities.loaders.MapArchiveKeys;
 
 public class WorldPacketsEncoder extends Encoder {
@@ -342,7 +342,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeInt(player.getTileHash()); // junk, not used by client
 		stream.writeByte(maskData);
 		if ((maskData & 0x1) != 0) {
-			stream.writeString(Utils.formatPlayerNameForDisplay(p.getUsername()));
+			stream.writeString(Utility.formatPlayerNameForDisplay(p.getUsername()));
 			if (p.getDisplayName() != null)
 				stream.writeString(p.getDisplayName());
 		}
@@ -688,7 +688,7 @@ public class WorldPacketsEncoder extends Encoder {
 			int startHeight, int endHeight, int speed, int delay, int curve, int startDistanceOffset, int creatorSize) {
 		sendProjectileProper(startTile, creatorSize, creatorSize, endTile, receiver != null ? receiver.getSize() : 1,
 				receiver != null ? receiver.getSize() : 1, receiver, gfxId, startHeight, endHeight, delay,
-				(Utils.getDistance(startTile.getX(), startTile.getY(), endTile.getX(), endTile.getY()) * 30
+				(Utility.getDistance(startTile.getX(), startTile.getY(), endTile.getX(), endTile.getY()) * 30
 						/ ((speed / 10) < 1 ? 1 : (speed / 10))),
 				startDistanceOffset, curve);
 
@@ -756,7 +756,7 @@ public class WorldPacketsEncoder extends Encoder {
 		return this;
 	}
 
-	public WorldPacketsEncoder sendSpawnedObject(WorldObject object) {
+	public WorldPacketsEncoder sendSpawnedObject(GameObject object) {
 		OutputStream stream = createWorldTileStream(object);
 		int localX = object.getLocalX(player.getLastLoadedMapRegionTile(), player.getMapSize());
 		int localY = object.getLocalY(player.getLastLoadedMapRegionTile(), player.getMapSize());
@@ -771,7 +771,7 @@ public class WorldPacketsEncoder extends Encoder {
 		return this;
 	}
 
-	public WorldPacketsEncoder sendDestroyObject(WorldObject object) {
+	public WorldPacketsEncoder sendDestroyObject(GameObject object) {
 		OutputStream stream = createWorldTileStream(object);
 		int localX = object.getLocalX(player.getLastLoadedMapRegionTile(), player.getMapSize());
 		int localY = object.getLocalY(player.getLastLoadedMapRegionTile(), player.getMapSize());
@@ -871,7 +871,7 @@ public class WorldPacketsEncoder extends Encoder {
 		return this;
 	}
 
-	public WorldPacketsEncoder sendObjectAnimation(WorldObject object, Animation animation) {
+	public WorldPacketsEncoder sendObjectAnimation(GameObject object, Animation animation) {
 		OutputStream stream = new OutputStream(10);
 		stream.writePacket(player, 20);
 		stream.writeIntV2(object.getTileHash());
@@ -901,8 +901,8 @@ public class WorldPacketsEncoder extends Encoder {
 			if (p2 != null)
 				displayName = p2.getDisplayName();
 			else
-				displayName = Utils.formatPlayerNameForDisplay(username);
-			player.getPackets().sendFriend(Utils.formatPlayerNameForDisplay(username), displayName, 1,
+				displayName = Utility.formatPlayerNameForDisplay(username);
+			player.getPackets().sendFriend(Utility.formatPlayerNameForDisplay(username), displayName, 1,
 					p2 != null && player.getFriendsIgnores().isOnline(p2), false, stream);
 		}
 		stream.endPacketVarShort();
@@ -926,7 +926,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeString(displayName);
 		stream.writeString(displayName.equals(username) ? "" : username);
 		stream.writeShort(putOnline ? world : 0);
-		stream.writeByte(player.getFriendsIgnores().getRank(Utils.formatPlayerNameForProtocol(username)));
+		stream.writeByte(player.getFriendsIgnores().getRank(Utility.formatPlayerNameForProtocol(username)));
 		stream.writeByte(0);
 		if (putOnline) {
 			stream.writeString(GameConstants.SERVER_NAME);
@@ -1172,8 +1172,8 @@ public class WorldPacketsEncoder extends Encoder {
 			if (p2 != null)
 				display = p2.getDisplayName();
 			else
-				display = Utils.formatPlayerNameForDisplay(username);
-			String name = Utils.formatPlayerNameForDisplay(username);
+				display = Utility.formatPlayerNameForDisplay(username);
+			String name = Utility.formatPlayerNameForDisplay(username);
 			stream.writeString(display.equals(name) ? name : display);
 			stream.writeString("");
 			stream.writeString(display.equals(name) ? "" : name);
@@ -1295,7 +1295,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeString(display);
 		if (!name.equals(display))
 			stream.writeString(name);
-		stream.writeLong(Utils.stringToLong(chatName));
+		stream.writeLong(Utility.stringToLong(chatName));
 		for (int i = 0; i < 5; i++)
 			stream.writeByte(RandomUtils.random(255));
 		stream.writeByte(rights);
@@ -1313,7 +1313,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeString(display);
 		if (!name.equals(display))
 			stream.writeString(name);
-		stream.writeLong(Utils.stringToLong(chatName));
+		stream.writeLong(Utility.stringToLong(chatName));
 		for (int i = 0; i < 5; i++)
 			stream.writeByte(RandomUtils.random(255));
 		stream.writeByte(rights);
@@ -1444,7 +1444,7 @@ public class WorldPacketsEncoder extends Encoder {
 		return this;
 	}
 
-	public WorldPacketsEncoder sendObjectInterface(WorldObject object, boolean nocliped, int windowId,
+	public WorldPacketsEncoder sendObjectInterface(GameObject object, boolean nocliped, int windowId,
 			int windowComponentId, int interfaceId) {
 		int[] xteas = new int[4];
 		OutputStream stream = new OutputStream(33);
@@ -1476,7 +1476,7 @@ public class WorldPacketsEncoder extends Encoder {
 		return this;
 	}
 
-	public WorldPacketsEncoder sendObjectMessage(int border, int color, WorldObject object, String message) {
+	public WorldPacketsEncoder sendObjectMessage(int border, int color, GameObject object, String message) {
 		sendGameMessage(message);
 		sendGlobalString(306, message);
 		sendGlobalConfig(1699, color);

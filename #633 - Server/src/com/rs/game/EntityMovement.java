@@ -3,7 +3,7 @@ package com.rs.game;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
-import com.rs.cores.WorldThread;
+import com.rs.GameConstants;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.TeleportType;
 import com.rs.game.task.LinkedTaskSequence;
@@ -39,7 +39,7 @@ public class EntityMovement {
 	 * @return state
 	 */
 	public boolean isLocked() {
-		return getLockDelay() > WorldThread.WORLD_CYCLE;// Utils.currentTimeMillis();
+		return getLockDelay() > GameConstants.WORLD_CYCLE_MS;// Utils.currentTimeMillis();
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class EntityMovement {
 	 * @param time
 	 */
 	public void lock(long time) {
-		setLockDelay(time == -1 ? Long.MAX_VALUE : WorldThread.WORLD_CYCLE + time);
+		setLockDelay(time == -1 ? Long.MAX_VALUE : GameConstants.WORLD_CYCLE_MS + time);
 	}
 
 	/**
@@ -119,5 +119,53 @@ public class EntityMovement {
 		if (player.getTemporaryMovementType() != -1)
 			return player.getTemporaryMovementType();
 		return player.isRun() ? RUN_MOVE_TYPE : WALK_MOVE_TYPE;
+	}
+	
+	/**
+	 * Stops a Player with additional specified attributes.
+	 * @param player
+	 */
+	public void stopAll(Player player) {
+		stopAll(player, true);
+	}
+
+	/**
+	 * Stops a Player with additional specified attributes.
+	 * @param player
+	 * @param stopWalk
+	 */
+	public void stopAll(Player player, boolean stopWalk) {
+		stopAll(player, stopWalk, true);
+	}
+
+	/**
+	 * Stops a Player with additional specified attributes.
+	 * @param player
+	 * @param stopWalk
+	 * @param stopInterface
+	 */
+	public void stopAll(Player player, boolean stopWalk, boolean stopInterface) {
+		stopAll(player, stopWalk, stopInterface, true);
+	}
+
+	/**
+	 * Stops a Player with additional specified attributes.
+	 * @param player
+	 * @param stopWalk
+	 * @param stopInterfaces
+	 * @param stopActions
+	 */
+	public void stopAll(Player player, boolean stopWalk, boolean stopInterfaces,
+			boolean stopActions) {
+		player.setRouteEvent(null);
+		if (stopInterfaces)
+			player.getInterfaceManager().closeInterfaces();
+		if (stopWalk) {
+			player.setCoordsEvent(null);
+			player.resetWalkSteps();
+		}
+		if (stopActions)
+			player.getActionManager().forceStop();
+		player.getCombatDefinitions().resetSpells(false);
 	}
 }

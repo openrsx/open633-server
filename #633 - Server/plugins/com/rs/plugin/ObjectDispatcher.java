@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 
 import com.rs.GameConstants;
 import com.rs.cache.loaders.ObjectDefinitions;
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.route.RouteEvent;
 import com.rs.plugin.listener.ObjectType;
 import com.rs.plugin.wrapper.ObjectSignature;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.SneakyThrows;
@@ -38,7 +38,7 @@ public final class ObjectDispatcher {
 	 * @param parts  the string which represents a Objects.
 	 */
 	@SneakyThrows(Exception.class)
-	public static void execute(Player player, WorldObject object, int optionId) {
+	public static void execute(Player player, GameObject object, int optionId) {
 		Optional<ObjectType> objects = getObject(object, object.getId());
 
 		if (!objects.isPresent()) {
@@ -54,7 +54,7 @@ public final class ObjectDispatcher {
 	 * @param identifier the identifier to check for matches.
 	 * @return an Optional with the found value, {@link Optional#empty} otherwise.
 	 */
-	private static Optional<ObjectType> getObject(WorldObject object, int objectId) {
+	private static Optional<ObjectType> getObject(GameObject object, int objectId) {
 		for (Entry<ObjectSignature, ObjectType> objects : OBJECTS.entrySet()) {
 			if (isObjetId(objects.getValue(), objectId) || isObjectNamed(objects.getValue(), object)) {
 				return Optional.of(objects.getValue());
@@ -83,7 +83,7 @@ public final class ObjectDispatcher {
 	 * @param objectId
 	 * @return
 	 */
-	private static boolean isObjectNamed(ObjectType object, WorldObject worldObject) {
+	private static boolean isObjectNamed(ObjectType object, GameObject worldObject) {
 		Annotation annotation = object.getClass().getAnnotation(ObjectSignature.class);
 		ObjectSignature signature = (ObjectSignature) annotation;
 		return Arrays.stream(signature.name())
@@ -97,7 +97,7 @@ public final class ObjectDispatcher {
 	 * <b>Method should only be called once on start-up.</b>
 	 */
 	public static void load() {
-		List<ObjectType> objectTypes = Utils.getClassesInDirectory("com.rs.plugin.impl.objects").stream()
+		List<ObjectType> objectTypes = Utility.getClassesInDirectory("com.rs.plugin.impl.objects").stream()
 				.map(clazz -> (ObjectType) clazz).collect(Collectors.toList());
 
 		for (ObjectType object : objectTypes) {
@@ -122,19 +122,14 @@ public final class ObjectDispatcher {
 	}
 
 	@SuppressWarnings("unused")
-	public static void handleItemOnObject(final Player player, final WorldObject object, final int interfaceId,
+	public static void handleItemOnObject(final Player player, final GameObject object, final int interfaceId,
 			final Item item) {
 		final int itemId = item.getId();
 		final ObjectDefinitions objectDef = object.getDefinitions();
-		player.setRouteEvent(new RouteEvent(object, new Runnable() {
-			@Override
-			public void run() {
-				player.faceObject(object);
-
-				if (GameConstants.DEBUG)
-					System.out.println("Item on object: " + object.getId());
-			}
-
+		player.setRouteEvent(new RouteEvent(object, () ->  {
+			player.faceObject(object);
+			if (GameConstants.DEBUG)
+				System.out.println("Item on object: " + object.getId());
 		}, false));
 	}
 }

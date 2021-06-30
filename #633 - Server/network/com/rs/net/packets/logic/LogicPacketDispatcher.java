@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.SneakyThrows;
@@ -72,7 +72,7 @@ public class LogicPacketDispatcher {
 	 * <b>Method should only be called once on start-up.</b>
 	 */
 	public static void load() {
-		List<LogicPacket> packets = Utils.getClassesInDirectory("com.rs.net.packets.logic.impl").stream()
+		List<LogicPacket> packets = Utility.getClassesInDirectory("com.rs.net.packets.logic.impl").stream()
 				.map(clazz -> (LogicPacket) clazz).collect(Collectors.toList());
 
 		for (LogicPacket outgoingPacket : packets) {

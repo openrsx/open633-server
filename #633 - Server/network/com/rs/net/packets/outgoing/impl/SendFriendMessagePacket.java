@@ -7,7 +7,7 @@ import com.rs.net.Huffman;
 import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 @OutgoingPacketSignature(packetId = 40, description = "Represents sending a Message to another Player (Privately)")
 public class SendFriendMessagePacket implements OutgoingPacket {
@@ -16,7 +16,7 @@ public class SendFriendMessagePacket implements OutgoingPacket {
 	public void execute(Player player, InputStream stream) {
 		if (!player.isStarted())
 			return;
-		if (player.getDetails().getMuted() > Utils.currentTimeMillis()) {
+		if (player.getDetails().getMuted() > Utility.currentTimeMillis()) {
 			player.getPackets().sendGameMessage(
 					"You temporary muted. Recheck in 48 hours.");
 			return;

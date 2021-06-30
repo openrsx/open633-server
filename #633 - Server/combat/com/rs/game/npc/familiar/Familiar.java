@@ -1,6 +1,7 @@
 package com.rs.game.npc.familiar;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
@@ -16,7 +17,7 @@ import com.rs.game.player.content.Summoning;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 public abstract class Familiar extends NPC implements Serializable {
 
@@ -74,7 +75,7 @@ public abstract class Familiar extends NPC implements Serializable {
 			return;
 		int size = getSize();
 		int targetSize = owner.getSize();
-		if (Utils.colides(getX(), getY(), size, owner.getX(), owner.getY(), targetSize) && !owner.hasWalkSteps()) {
+		if (Utility.colides(getX(), getY(), size, owner.getX(), owner.getY(), targetSize) && !owner.hasWalkSteps()) {
 			resetWalkSteps();
 			if (!addWalkSteps(owner.getX() + targetSize, getY())) {
 				resetWalkSteps();
@@ -92,7 +93,7 @@ public abstract class Familiar extends NPC implements Serializable {
 		}
 		resetWalkSteps();
 		if (!clipedProjectile(owner, true)
-				|| !Utils.isOnRange(getX(), getY(), size, owner.getX(), owner.getY(), targetSize, 0))
+				|| !Utility.isOnRange(getX(), getY(), size, owner.getX(), owner.getY(), targetSize, 0))
 			calcFollow(owner, 2, true, false);
 	}
 
@@ -134,7 +135,7 @@ public abstract class Familiar extends NPC implements Serializable {
 			return;
 		}
 		if (!getCombat().process()) {
-			if (isAgressive() && owner.getAttackedBy() != null && owner.getAttackedByDelay() > Utils.currentTimeMillis()
+			if (isAgressive() && owner.getAttackedBy() != null && owner.getAttackedByDelay() > Utility.currentTimeMillis()
 					&& canAttack(owner.getAttackedBy()) && RandomUtils.random(25) == 0)
 				getCombat().setTarget(owner.getAttackedBy());
 			else
@@ -284,7 +285,7 @@ public abstract class Familiar extends NPC implements Serializable {
 	public void call() {
 		if (isDead())
 			return;
-		if (getAttackedBy() != null && getAttackedByDelay() > Utils.currentTimeMillis()) {
+		if (getAttackedBy() != null && getAttackedByDelay() > Utility.currentTimeMillis()) {
 			// TODO or something as this
 			owner.getPackets().sendGameMessage("You cant call your familiar while it under combat.");
 			return;
@@ -297,7 +298,7 @@ public abstract class Familiar extends NPC implements Serializable {
 		if (login) {
 			if (bob != null)
 				bob.setEntitys(owner, this);
-			checkNearDirs = Utils.getCoordOffsetsNear(size);
+			checkNearDirs = Utility.getCoordOffsetsNear(size);
 			sendMainConfigs();
 		} else
 			getCombat().removeTarget();
@@ -356,7 +357,7 @@ public abstract class Familiar extends NPC implements Serializable {
 	}
 
 	@Override
-	public void sendDeath(Entity source) {
+	public void sendDeath(Optional<Entity> source) {
 		if (dead)
 			return;
 		dead = true;

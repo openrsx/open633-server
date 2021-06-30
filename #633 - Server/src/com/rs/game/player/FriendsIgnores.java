@@ -1,16 +1,14 @@
 package com.rs.game.player;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.rs.game.World;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class FriendsIgnores {
 
@@ -26,9 +24,9 @@ public class FriendsIgnores {
 	private byte friendsChatStatus;
 
 	// friends list
-	private List<String> friends;
-	private List<String> ignores;
-	private List<String> tillLogoutIgnores;
+	private ObjectArrayList<String> friends;
+	private ObjectArrayList<String> ignores;
+	private ObjectArrayList<String> tillLogoutIgnores;
 
 	private byte privateStatus;
 
@@ -71,11 +69,11 @@ public class FriendsIgnores {
 		return chatName == null ? "" : chatName;
 	}
 
-	public List<String> getIgnores() {
+	public ObjectArrayList<String> getIgnores() {
 		return ignores;
 	}
 
-	public List<String> getFriends() {
+	public ObjectArrayList<String> getFriends() {
 		return friends;
 	}
 
@@ -84,8 +82,8 @@ public class FriendsIgnores {
 	}
 
 	public FriendsIgnores() {
-		friends = new ArrayList<String>(200);
-		ignores = new ArrayList<String>(100);
+		friends = new ObjectArrayList<String>(200);
+		ignores = new ObjectArrayList<String>(100);
 		friendsChatRanks = new Object2ObjectArrayMap<String, Integer>(200);
 		whoCanKickOnChat = 7;
 		whoCanShareloot = -1;
@@ -109,7 +107,7 @@ public class FriendsIgnores {
 			return;
 		if (online && !isOnline(p2))
 			online = false;
-		player.getPackets().sendFriend(Utils.formatPlayerNameForDisplay(p2.getUsername()), p2.getDisplayName(), 1,
+		player.getPackets().sendFriend(Utility.formatPlayerNameForDisplay(p2.getUsername()), p2.getDisplayName(), 1,
 				online, true);
 	}
 
@@ -128,13 +126,13 @@ public class FriendsIgnores {
 			player.getPackets().sendPrivateGameBarStage();
 		}
 		player.getPackets().sendPrivateMessage(p2.getDisplayName(), message);
-		p2.getPackets().receivePrivateMessage(Utils.formatPlayerNameForDisplay(player.getUsername()),
+		p2.getPackets().receivePrivateMessage(Utility.formatPlayerNameForDisplay(player.getUsername()),
 				player.getDisplayName(), player.getMessageIcon(), message);
 	}
 
 	public void sendQuickChatMessage(Player p2, QuickChatMessage quickChatMessage) {
 		player.getPackets().sendPrivateQuickMessageMessage(p2.getDisplayName(), quickChatMessage);
-		p2.getPackets().receivePrivateChatQuickMessage(Utils.formatPlayerNameForDisplay(player.getUsername()),
+		p2.getPackets().receivePrivateChatQuickMessage(Utility.formatPlayerNameForDisplay(player.getUsername()),
 				player.getDisplayName(), player.getMessageIcon(), quickChatMessage);
 
 	}
@@ -142,7 +140,7 @@ public class FriendsIgnores {
 	public void changeRank(String username, int rank) {
 		if (rank < 0 || rank > 6)
 			return;
-		String formatedUsername = Utils.formatPlayerNameForProtocol(username);
+		String formatedUsername = Utility.formatPlayerNameForProtocol(username);
 		if (!friends.contains(formatedUsername))
 			return;
 		getFriendsChatRanks().put(formatedUsername, rank);
@@ -151,9 +149,9 @@ public class FriendsIgnores {
 		if (p2 != null)
 			displayName = p2.getDisplayName();
 		else
-			displayName = Utils.formatPlayerNameForDisplay(username);
+			displayName = Utility.formatPlayerNameForDisplay(username);
 		boolean online = p2 != null && isOnline(p2);
-		player.getPackets().sendFriend(Utils.formatPlayerNameForDisplay(username), displayName, 1, online, true);
+		player.getPackets().sendFriend(Utility.formatPlayerNameForDisplay(username), displayName, 1, online, true);
 		FriendChatsManager.refreshChat(player);
 	}
 
@@ -170,7 +168,7 @@ public class FriendsIgnores {
 							"Please close the interface you have opened before using Friends Chat setup.");
 					return;
 				}
-				player.stopAll();
+				player.getMovement().stopAll(player);
 				openFriendChatSetup();
 			}
 		} else if (interfaceId == 1108) {
@@ -392,7 +390,7 @@ public class FriendsIgnores {
 			return;
 		}
 		Player p2 = World.getPlayerByDisplayName(username);
-		String formatedUsername = p2 != null ? p2.getUsername() : Utils.formatPlayerNameForProtocol(username);
+		String formatedUsername = p2 != null ? p2.getUsername() : Utility.formatPlayerNameForProtocol(username);
 		if (friends.contains(formatedUsername)) {
 			player.getPackets().sendGameMessage("Please remove " + formatedUsername + " from your friends list first.");
 			return;
@@ -405,17 +403,17 @@ public class FriendsIgnores {
 			tillLogoutIgnores.add(formatedUsername);
 		else
 			ignores.add(formatedUsername);
-		player.getPackets().sendIgnore(Utils.formatPlayerNameForDisplay(p2 != null ? p2.getUsername() : username),
-				p2 != null ? p2.getDisplayName() : Utils.formatPlayerNameForDisplay(username), false);
+		player.getPackets().sendIgnore(Utility.formatPlayerNameForDisplay(p2 != null ? p2.getUsername() : username),
+				p2 != null ? p2.getDisplayName() : Utility.formatPlayerNameForDisplay(username), false);
 	}
 
 	public boolean containsIgnore(String username) {
-		String formatedUsername = Utils.formatPlayerNameForProtocol(username);
+		String formatedUsername = Utility.formatPlayerNameForProtocol(username);
 		return ignores.contains(formatedUsername) || tillLogoutIgnores.contains(formatedUsername);
 	}
 
 	public void removeIgnore(String username) {
-		String formatedUsername = Utils.formatPlayerNameForProtocol(username);
+		String formatedUsername = Utility.formatPlayerNameForProtocol(username);
 		Player p2 = World.getPlayerByDisplayName(username);
 		if (!ignores.remove(formatedUsername) && !tillLogoutIgnores.remove(formatedUsername)) {
 			if (p2 == null)
@@ -430,14 +428,14 @@ public class FriendsIgnores {
 			player.getPackets().sendGameMessage("Your friends list is full.");
 			return;
 		}
-		username = Utils.formatPlayerNameForProtocol(username);
+		username = Utility.formatPlayerNameForProtocol(username);
 		String displayName;
 		Player p2 = World.getPlayerByDisplayName(username);
 		if (p2 != null) {
 			displayName = p2.getDisplayName();
 			username = p2.getUsername();
 		} else
-			displayName = Utils.formatPlayerNameForDisplay(username);
+			displayName = Utility.formatPlayerNameForDisplay(username);
 		if (username.equals(player.getUsername())) {
 			player.getPackets().sendGameMessage("You can't add yourself.");
 			return;
@@ -454,13 +452,13 @@ public class FriendsIgnores {
 		getFriendsChatRanks().put(username, 0);
 		FriendChatsManager.refreshChat(player);
 		boolean online = p2 != null && isOnline(p2);
-		player.getPackets().sendFriend(Utils.formatPlayerNameForDisplay(username), displayName, 1, online, online);
+		player.getPackets().sendFriend(Utility.formatPlayerNameForDisplay(username), displayName, 1, online, online);
 		if (privateStatus == 1 && p2 != null)
 			p2.getFriendsIgnores().changeFriendStatus(player, true);
 	}
 
 	public void removeFriend(String username) {
-		username = Utils.formatPlayerNameForProtocol(username);
+		username = Utility.formatPlayerNameForProtocol(username);
 		Player p2 = World.getPlayerByDisplayName(username);
 		if (!friends.remove(username)) {
 			if (p2 == null)
@@ -485,7 +483,7 @@ public class FriendsIgnores {
 	}
 
 	public void init() {
-		tillLogoutIgnores = new ArrayList<String>(100);
+		tillLogoutIgnores = new ObjectArrayList<String>(100);
 		player.getPackets().sendFriends();
 		player.getPackets().sendIgnores();
 		if (privateStatus != 2)

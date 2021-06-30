@@ -22,43 +22,40 @@ public class PlayerOptionFourPacket implements LogicPacket {
 			return;
 		if (forceRun)
 			player.setRun(forceRun);
-		player.setRouteEvent(new RouteEvent(p2, new Runnable() {
-			@Override
-			public void run() {
-				if (!player.getControllerManager().canPlayerOption4(p2))
-					return;
-				player.stopAll();
-//				if (player.isStarter()) {
-//					player.getPackets()
-//							.sendGameMessage(
-//									"You can't trade for the first half hour after creating account.");
-//					return;
-//				}
-				if (player.isCantTrade() || player.getControllerManager().getController() != null) {
-					player.getPackets().sendGameMessage("You are busy.");
-					return;
-				}
-				if (p2.getInterfaceManager().containsScreenInter() || p2.isCantTrade()
-						|| p2.getControllerManager().getController() != null
-
-						|| p2.getMovement().isLocked()) {
-					player.getPackets().sendGameMessage("The other player is busy.");
-					return;
-				}
-				if (!p2.withinDistance(player, 14)) {
-					player.getPackets().sendGameMessage("Unable to find target " + p2.getDisplayName());
-					return;
-				}
-				if (p2.getTemporaryAttributes().get("TradeTarget") == player) {
-					p2.getTemporaryAttributes().remove("TradeTarget");
-					player.getTrade().openTrade(p2);
-					p2.getTrade().openTrade(player);
-					return;
-				}
-				player.getTemporaryAttributes().put("TradeTarget", p2);
-				player.getPackets().sendGameMessage("Sending " + p2.getDisplayName() + " a request...");
-				p2.getPackets().sendTradeRequestMessage(player);
+		player.setRouteEvent(new RouteEvent(p2, () -> {
+			if (!player.getControllerManager().canPlayerOption4(p2))
+				return;
+			player.getMovement().stopAll(player);
+//			if (player.isStarter()) {
+//				player.getPackets()
+//						.sendGameMessage(
+//								"You can't trade for the first half hour after creating account.");
+//				return;
+//			}
+			if (player.isCantTrade() || player.getControllerManager().getController() != null) {
+				player.getPackets().sendGameMessage("You are busy.");
+				return;
 			}
+			if (p2.getInterfaceManager().containsScreenInter() || p2.isCantTrade()
+					|| p2.getControllerManager().getController() != null
+
+					|| p2.getMovement().isLocked()) {
+				player.getPackets().sendGameMessage("The other player is busy.");
+				return;
+			}
+			if (!p2.withinDistance(player, 14)) {
+				player.getPackets().sendGameMessage("Unable to find target " + p2.getDisplayName());
+				return;
+			}
+			if (p2.getTemporaryAttributes().get("TradeTarget") == player) {
+				p2.getTemporaryAttributes().remove("TradeTarget");
+				player.getTrade().openTrade(p2);
+				p2.getTrade().openTrade(player);
+				return;
+			}
+			player.getTemporaryAttributes().put("TradeTarget", p2);
+			player.getPackets().sendGameMessage("Sending " + p2.getDisplayName() + " a request...");
+			p2.getPackets().sendTradeRequestMessage(player);
 		}));
 	}
 }

@@ -2,7 +2,7 @@ package com.rs.plugin.impl.objects;
 
 import com.rs.game.Animation;
 import com.rs.game.ForceMovement;
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.plugin.listener.ObjectType;
@@ -11,18 +11,18 @@ import com.rs.plugin.wrapper.ObjectSignature;
 @ObjectSignature(objectId = {}, name = { "Wilderness wall" })
 public class WildernessDitch implements ObjectType {
 	private Player player;
-	private WorldObject ditch;
+	private GameObject ditch;
 	private WorldTile destination;
 
 	@Override
-	public void execute(Player player, WorldObject object, int optionId) throws Exception {
+	public void execute(Player player, GameObject object, int optionId) throws Exception {
 		this.player = player;
 		ditch = object;
 		if (optionId == 1) {
 			int playerY = player.getY();
 			int ditchY = object.getY();
 
-			player.stopAll();
+			player.getMovement().stopAll(player);
 			player.getMovement().lock(4);
 			player.setNextAnimation(new Animation(6132));
 

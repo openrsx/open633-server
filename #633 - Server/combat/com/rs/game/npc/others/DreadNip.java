@@ -3,7 +3,7 @@ package com.rs.game.npc.others;
 import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 public class DreadNip extends NPC {
 
@@ -27,7 +27,7 @@ public class DreadNip extends NPC {
 		} else if (getCombat().getTarget() == null || getCombat().getTarget().isDead()) {
 			finish(0);
 			return;
-		} else if (Utils.getDistance(owner, this) >= 10) {
+		} else if (Utility.getDistance(owner, this) >= 10) {
 			finish(1);
 			return;
 		} else if (ticks++ == 33) {

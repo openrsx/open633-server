@@ -9,7 +9,7 @@ import com.rs.game.World;
 import com.rs.game.item.Item;
 import com.rs.game.task.Task;
 import com.rs.net.encoders.other.ForceTalk;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import lombok.Data;
 import skills.Skills;
@@ -642,7 +642,7 @@ public final class CombatDefinitions {
 			}
 			PlayerCombat combat = (PlayerCombat) player.getActionManager().getAction();
 			Entity target = combat.getTarget();
-			if (!Utils.isOnRange(player.getX(), player.getY(), player.getSize(), target.getX(),
+			if (!Utility.isOnRange(player.getX(), player.getY(), player.getSize(), target.getX(),
 					target.getY(), target.getSize(), 5)) {
 				player.getCombatDefinitions().switchUsingSpecialAttack();
 				return;
@@ -706,7 +706,7 @@ public final class CombatDefinitions {
 	}
 
 	public boolean isUnderCombat() {
-		return player.getAttackedByDelay() + 10000 >= Utils.currentTimeMillis();
+		return player.getAttackedByDelay() + 10000 >= Utility.currentTimeMillis();
 	}
 	
 	public void setCanPvp(boolean canPvp) {

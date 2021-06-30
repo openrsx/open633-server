@@ -1,6 +1,6 @@
 package com.rs.game.player.controllers;
 
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.SneakyThrows;
@@ -12,7 +12,7 @@ public class ControllerHandler {
 	@SneakyThrows(Throwable.class)
 	public static final void init() {
 		@SuppressWarnings("unchecked")
-		Class<Controller>[] regular = Utils.getClasses("com.rs.game.player.controllers");
+		Class<Controller>[] regular = Utility.getClasses("com.rs.game.player.controllers");
 		for (Class<Controller> c : regular) {
 			if (c.isAnonymousClass()) // next
 				continue;

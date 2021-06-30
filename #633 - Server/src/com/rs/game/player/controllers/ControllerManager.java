@@ -1,7 +1,7 @@
 package com.rs.game.player.controllers;
 
 import com.rs.game.Entity;
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
@@ -222,7 +222,7 @@ public final class ControllerManager {
 		return controller.processObjectTeleport(toTile);
 	}
 
-	public boolean processObjectClick1(WorldObject object) {
+	public boolean processObjectClick1(GameObject object) {
 		if (controller == null || !inited)
 			return true;
 		return controller.processObjectClick1(object);
@@ -264,13 +264,13 @@ public final class ControllerManager {
 		return controller.processNPCClick4(npc);
 	}
 
-	public boolean processObjectClick2(WorldObject object) {
+	public boolean processObjectClick2(GameObject object) {
 		if (controller == null || !inited)
 			return true;
 		return controller.processObjectClick2(object);
 	}
 
-	public boolean processObjectClick3(WorldObject object) {
+	public boolean processObjectClick3(GameObject object) {
 		if (controller == null || !inited)
 			return true;
 		return controller.processObjectClick3(object);
@@ -314,19 +314,19 @@ public final class ControllerManager {
 		lastControlerArguments = args;
 	}
 
-	public boolean processObjectClick4(WorldObject object) {
+	public boolean processObjectClick4(GameObject object) {
 		if (controller == null || !inited)
 			return true;
 		return controller.processObjectClick4(object);
 	}
 
-	public boolean processObjectClick5(WorldObject object) {
+	public boolean processObjectClick5(GameObject object) {
 		if (controller == null || !inited)
 			return true;
 		return controller.processObjectClick5(object);
 	}
 
-	public boolean handleItemOnObject(WorldObject object, Item item) {
+	public boolean handleItemOnObject(GameObject object, Item item) {
 		if (controller == null || !inited)
 			return true;
 		return controller.handleItemOnObject(object, item);

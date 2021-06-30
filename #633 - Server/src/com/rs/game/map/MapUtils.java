@@ -1,6 +1,6 @@
 package com.rs.game.map;
 
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 /*
  * @author Dragonkk/Alex
@@ -97,7 +97,7 @@ public class MapUtils {
 		
 		@Override
 		public String toString() {
-			return Utils.formatPlayerNameForDisplay(name());
+			return Utility.formatPlayerNameForDisplay(name());
 		}
 	}
 

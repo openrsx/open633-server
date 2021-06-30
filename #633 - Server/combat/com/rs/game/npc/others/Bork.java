@@ -1,6 +1,6 @@
 package com.rs.game.npc.others;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
 import com.rs.cores.CoresManager;
 import com.rs.game.Animation;
@@ -9,8 +9,6 @@ import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.task.Task;
-
-import lombok.SneakyThrows;
 
 public class Bork extends NPC {
 
@@ -23,7 +21,7 @@ public class Bork extends NPC {
 	}
 
 	@Override
-	public void sendDeath(Entity source) {
+	public void sendDeath(Optional<Entity> source) {
 		deadTime = System.currentTimeMillis() + (1000 * 60 * 60);
 		resetWalkSteps();
 		for (Entity e : getPossibleTargets()) {
@@ -34,7 +32,7 @@ public class Bork extends NPC {
 				World.get().submit(new Task(8) {
 					@Override
 					protected void execute() {
-						player.stopAll();
+						player.getMovement().stopAll(player);
 						this.cancel();
 					}
 				});
@@ -63,13 +61,9 @@ public class Bork extends NPC {
 			setLocation(getRespawnTile());
 			finish();
 		}
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			@SneakyThrows(Exception.class)
-			public void run() {
-				spawn();
-			}
-		}, 1, TimeUnit.HOURS);
+		CoresManager.schedule(() -> {
+			spawn();
+		},1);
 	}
 
 	public static String convertToTime() {

@@ -12,7 +12,7 @@ import com.rs.game.player.Player;
 import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import skills.Skills;
 
@@ -454,7 +454,7 @@ public final class Pots {
 					return false;
 				}
 				Long time = (Long) player.getTemporaryAttributes().get("Recover_Special_Pot");
-				if (time != null && Utils.currentTimeMillis() - time < 30000) {
+				if (time != null && Utility.currentTimeMillis() - time < 30000) {
 					player.getPackets().sendGameMessage("You may only use this pot every 30 seconds.");
 					return false;
 				}
@@ -463,7 +463,7 @@ public final class Pots {
 
 			@Override
 			public void extra(Player player) {
-				player.getTemporaryAttributes().put("Recover_Special_Pot", Utils.currentTimeMillis());
+				player.getTemporaryAttributes().put("Recover_Special_Pot", Utility.currentTimeMillis());
 				player.getCombatDefinitions().restoreSpecialAttack(25);
 			}
 		},

@@ -24,13 +24,10 @@ public class PriceCheckManager {
 		player.getPackets().sendGlobalConfig(728, 0);
 		for (int i = 0; i < pcInv.getSize(); i++)
 			player.getPackets().sendGlobalConfig(700 + i, 0);
-		player.setCloseInterfacesEvent(new Runnable() {
-			@Override
-			public void run() {
-				player.getInventory().getItems().addAll(pcInv);
-				player.getInventory().init();
-				pcInv.clear();
-			}
+		player.setCloseInterfacesEvent(() -> {
+			player.getInventory().getItems().addAll(pcInv);
+			player.getInventory().init();
+			pcInv.clear();
 		});
 	}
 

@@ -1,6 +1,6 @@
 package com.rs.game;
 
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import lombok.Data;
 
@@ -18,14 +18,14 @@ public class ForceMovement {
 	public int getDirection() {
 		switch (direction) {
 		case NORTH:
-			return Utils.getFaceDirection(0, 1);
+			return Utility.getFaceDirection(0, 1);
 		case EAST:
-			return Utils.getFaceDirection(1, 0);
+			return Utility.getFaceDirection(1, 0);
 		case SOUTH:
-			return Utils.getFaceDirection(0, -1);
+			return Utility.getFaceDirection(0, -1);
 		case WEST:
 		default:
-			return Utils.getFaceDirection(-1, 0);
+			return Utility.getFaceDirection(-1, 0);
 		}
 	}
 }

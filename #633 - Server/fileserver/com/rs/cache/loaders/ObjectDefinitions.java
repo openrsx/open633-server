@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Data;
@@ -144,7 +144,7 @@ public class ObjectDefinitions {
 		int[] pairs = new int[100];
 		int count = 0;
 
-		main: for (int x = 0; x < Utils.getObjectDefinitionsSize(); x++) {
+		main: for (int x = 0; x < Utility.getObjectDefinitionsSize(); x++) {
 			ObjectDefinitions other = getObjectDefinitions(x);
 			if (other == null || other == open || other.modelIds == null)
 				continue;

@@ -3,7 +3,7 @@ package com.rs.game.player;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import skills.Skills;
 
@@ -484,7 +484,7 @@ public class Prayer {
 							+ " to use this prayer.");
 			return false;
 		}
-		if (player.getDetails().getPrayerDelay().get() >= Utils.currentTimeMillis()) {
+		if (player.getDetails().getPrayerDelay().get() >= Utility.currentTimeMillis()) {
 			if (ancientcurses && prayerId >= 6 && prayerId <= 9
 					|| prayerId >= 16 && prayerId <= 19) {
 				player.getPackets()
@@ -687,7 +687,7 @@ public class Prayer {
 		if (!hasPrayersOn())
 			return;
 		int prayerBook = getPrayerBook();
-		long currentTime = Utils.currentTimeMillis();
+		long currentTime = Utility.currentTimeMillis();
 		int drain = 0;
 		int prayerPoints = player.getCombatDefinitions().getBonuses()[CombatDefinitions.PRAYER_BONUS];
 		for (int index = 0; index < onPrayers[prayerBook].length; index++) {
@@ -714,7 +714,7 @@ public class Prayer {
 	}
 
 	public void resetDrainPrayer(int index) {
-		nextDrain[index] = (long) (Utils.currentTimeMillis()
+		nextDrain[index] = (long) (Utility.currentTimeMillis()
 				+ (prayerDrainRate[getPrayerBook()][index] * 1000) + (player
 				.getCombatDefinitions().getBonuses()[CombatDefinitions.PRAYER_BONUS] * 50));
 	}

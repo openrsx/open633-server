@@ -1,6 +1,6 @@
 package com.rs.game.npc.godwars.zammorak;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
 import com.rs.cores.CoresManager;
 import com.rs.game.Animation;
@@ -24,13 +24,14 @@ public class KrilTstsaroth extends NPC {
 	 * gotta override else setRespawnTask override doesnt work
 	 */
 	@Override
-	public void sendDeath(Entity source) {
+	public void sendDeath(Optional<Entity> source) {
 		final NPCCombatDefinitions defs = getCombatDefinitions();
 		resetWalkSteps();
 		getCombat().removeTarget();
 		setNextAnimation(null);
 		World.get().submit(new Task(1) {
 			int loop;
+
 			@Override
 			protected void execute() {
 				if (loop == 0) {
@@ -57,18 +58,14 @@ public class KrilTstsaroth extends NPC {
 			finish();
 		}
 		final NPC npc = this;
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				setFinished(false);
-				World.addNPC(npc);
-				npc.setLastRegionId((short) 0);
-				updateEntityRegion(npc);
-				loadMapRegions();
-				checkMultiArea();
-				GodWarsBosses.respawnZammyMinions();
-			}
-		}, getCombatDefinitions().getRespawnDelay() * 600, TimeUnit.MILLISECONDS);
+		CoresManager.schedule(() -> {
+			setFinished(false);
+			World.addNPC(npc);
+			npc.setLastRegionId((short) 0);
+			updateEntityRegion(npc);
+			loadMapRegions();
+			checkMultiArea();
+			GodWarsBosses.respawnZammyMinions();
+		}, 3 * 60);
 	}
-
 }

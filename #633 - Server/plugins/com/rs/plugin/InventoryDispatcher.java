@@ -12,7 +12,7 @@ import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.plugin.listener.InventoryType;
 import com.rs.plugin.wrapper.InventoryWrapper;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
@@ -70,7 +70,7 @@ public final class InventoryDispatcher {
 	 * <b>Method should only be called once on start-up.</b>
 	 */
 	public static void load() {
-		List<InventoryType> interfaces = Utils.getClassesInDirectory("com.rs.plugin.impl.inventory").stream().map(clazz -> (InventoryType) clazz).collect(Collectors.toList());
+		List<InventoryType> interfaces = Utility.getClassesInDirectory("com.rs.plugin.impl.inventory").stream().map(clazz -> (InventoryType) clazz).collect(Collectors.toList());
 		
 		for(InventoryType InventoryType : interfaces) {
 			if(InventoryType.getClass().getAnnotation(InventoryWrapper.class) == null) {

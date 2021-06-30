@@ -39,17 +39,13 @@ public class Shop {
 	public void addPlayer(final Player player) {
 		viewingPlayers.add(player);
 		player.getTemporaryAttributes().put("Shop", this);
-		player.setCloseInterfacesEvent(new Runnable() {
-			@Override
-			public void run() {
-				viewingPlayers.remove(player);
-				player.getTemporaryAttributes().remove("Shop");
-				player.getTemporaryAttributes().remove("shop_transaction");
-				player.getTemporaryAttributes().remove("isShopBuying");
-				player.getTemporaryAttributes().remove("ShopSelectedSlot");
-				player.getTemporaryAttributes()
-						.remove("ShopSelectedInventory");
-			}
+		player.setCloseInterfacesEvent(() -> {
+			viewingPlayers.remove(player);
+			player.getTemporaryAttributes().remove("Shop");
+			player.getTemporaryAttributes().remove("shop_transaction");
+			player.getTemporaryAttributes().remove("isShopBuying");
+			player.getTemporaryAttributes().remove("ShopSelectedSlot");
+			player.getTemporaryAttributes().remove("ShopSelectedInventory");
 		});
 //		player.getVarsManager().sendVar(118,
 //				generalStock != null ? 139 : MAIN_STOCK_ITEMS_KEY);

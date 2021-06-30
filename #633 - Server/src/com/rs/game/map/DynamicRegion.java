@@ -6,7 +6,7 @@ import java.util.List;
 import com.rs.GameConstants;
 import com.rs.cache.Cache;
 import com.rs.cache.loaders.ObjectDefinitions;
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.io.InputStream;
 import com.rs.utilities.Logger;
 import com.rs.utilities.loaders.MapArchiveKeys;
@@ -166,7 +166,7 @@ public class DynamicRegion extends Region {
 									int[] coords = translate(x & 0x7, y & 0x7, rotation, definition.sizeX,
 											definition.sizeY, rot);
 									spawnObject(
-											new WorldObject(objectId, type, (rotation + rot) & 0x3,
+											new GameObject(objectId, type, (rotation + rot) & 0x3,
 													(dynX << 3) + coords[0] + ((getRegionId() >> 8) << 6),
 													(dynY << 3) + coords[1] + ((getRegionId() & 0xFF) << 6), dynZ),
 											dynZ, (dynX << 3) + coords[0], (dynY << 3) + coords[1], true);
@@ -198,10 +198,10 @@ public class DynamicRegion extends Region {
 				if (clipedOnlyMap != null)
 					clipedOnlyMap.setMask(chunkZ, fullX, fullY, 0);
 
-				List<WorldObject> ro = new ArrayList<WorldObject>(removedOriginalObjects);
+				List<GameObject> ro = new ArrayList<GameObject>(removedOriginalObjects);
 				// List<WorldObject> ao = new
 				// ArrayList<WorldObject>(spawnedObjects);
-				for (WorldObject removed : ro)
+				for (GameObject removed : ro)
 					if (removed.getPlane() == chunkZ && removed.getChunkX() == chunkX && removed.getChunkY() == chunkY)
 						removedOriginalObjects.remove(removed);
 				/*

@@ -18,7 +18,7 @@ import com.rs.io.InputStream;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
 import com.rs.utilities.Logger;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import skills.Skills;
@@ -82,7 +82,7 @@ public final class RSInterfaceDispatcher {
 	 * <b>Method should only be called once on start-up.</b>
 	 */
 	public static void load() {
-		List<RSInterface> interfaces = Utils.getClassesInDirectory("com.rs.plugin.impl.interfaces").stream()
+		List<RSInterface> interfaces = Utility.getClassesInDirectory("com.rs.plugin.impl.interfaces").stream()
 				.map(clazz -> (RSInterface) clazz).collect(Collectors.toList());
 
 		for (RSInterface rsInterface : interfaces) {
@@ -109,7 +109,7 @@ public final class RSInterfaceDispatcher {
 	public static void handleButtons(final Player player, InputStream stream, int packetId) {
 		int interfaceHash = stream.readInt();
 		int interfaceId = interfaceHash >> 16;
-		if (Utils.getInterfaceDefinitionsSize() <= interfaceId) {
+		if (Utility.getInterfaceDefinitionsSize() <= interfaceId) {
 			return;
 		}
 		if (player.isDead() || player.getMovement().isLocked()) {
@@ -119,7 +119,7 @@ public final class RSInterfaceDispatcher {
 			return;
 		}
 		final int componentId = interfaceHash - (interfaceId << 16);
-		if (componentId != 65535 && Utils.getInterfaceDefinitionsComponentsSize(interfaceId) <= componentId) {
+		if (componentId != 65535 && Utility.getInterfaceDefinitionsComponentsSize(interfaceId) <= componentId) {
 			return;
 		}
 		final int slotId2 = stream.readUnsignedShortLE128();// item slot?
@@ -137,7 +137,7 @@ public final class RSInterfaceDispatcher {
 	public static void sendRemove(Player player, int slotId) {
 		if (slotId >= 15)
 			return;
-		player.stopAll(false, false);
+		player.getMovement().stopAll(player, false, false);
 		Item item = player.getEquipment().getItem(slotId);
 		if (item == null || !player.getInventory().addItem(item.getId(), item.getAmount()))
 			return;
@@ -153,7 +153,7 @@ public final class RSInterfaceDispatcher {
 	}
 
 	public static boolean sendWear(Player player, int slotId, int itemId) {
-		player.stopAll(false, false);
+		player.getMovement().stopAll(player, false, false);
 		Item item = player.getInventory().getItem(slotId);
 		if (item == null || item.getId() != itemId)
 			return false;
@@ -198,7 +198,7 @@ public final class RSInterfaceDispatcher {
 			return true;
 		if (!player.getControllerManager().canEquip(targetSlot, itemId))
 			return false;
-		player.stopAll(false, false);
+		player.getMovement().stopAll(player, false, false);
 		player.getInventory().deleteItem(slotId, item);
 		if (targetSlot == 3) {
 			if (isTwoHandedWeapon && player.getEquipment().getItem(5) != null) {
@@ -253,7 +253,7 @@ public final class RSInterfaceDispatcher {
 	public static boolean sendWear2(Player player, int slotId, int itemId) {
 		if (player.isFinished() || player.isDead())
 			return false;
-		player.stopAll(false, false);
+		player.getMovement().stopAll(player, false, false);
 		Item item = player.getInventory().getItem(slotId);
 		if (item == null || item.getId() != itemId)
 			return false;
@@ -440,7 +440,7 @@ public final class RSInterfaceDispatcher {
 	}
 
 	public static void openEquipmentBonuses(final Player player, boolean banking) {
-		player.stopAll();
+		player.getMovement().stopAll(player);
 		player.getInterfaceManager().closeInterface(11, 0);
 		player.getInterfaceManager().sendInventoryInterface(670);
 		player.getInterfaceManager().sendInterface(667);
@@ -453,12 +453,9 @@ public final class RSInterfaceDispatcher {
 		refreshEquipBonuses(player);
 		if (banking) {
 			player.getTemporaryAttributes().put("Banking", Boolean.TRUE);
-			player.setCloseInterfacesEvent(new Runnable() {
-				@Override
-				public void run() {
-					player.getTemporaryAttributes().remove("Banking");
-					player.getVarsManager().sendVarBit(4894, 0);
-				}
+			player.setCloseInterfacesEvent(() -> {
+				player.getTemporaryAttributes().remove("Banking");
+				player.getVarsManager().sendVarBit(4894, 0);
 			});
 		}
 	}

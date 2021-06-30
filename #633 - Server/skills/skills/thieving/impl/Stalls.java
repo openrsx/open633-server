@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.rs.game.Animation;
 import com.rs.game.World;
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
@@ -28,7 +28,7 @@ public final class Stalls extends Thieving {
 	/**
 	 * The object node this player is interacting with.
 	 */
-	private final WorldObject object;
+	private final GameObject object;
 
 	/**
 	 * The possible loot stealing the stall.
@@ -41,7 +41,7 @@ public final class Stalls extends Thieving {
 	 * @param stall the stall this player is stealing from.
 	 * @param object the object this player is interacting with.
 	 */
-	public Stalls(Player player, StallData stall, WorldObject object) {
+	public Stalls(Player player, StallData stall, GameObject object) {
 		super(player, object);
 		this.stall = stall;
 		this.object = object;
@@ -216,7 +216,7 @@ public final class Stalls extends Thieving {
 		/**
 		 * The main stall object.
 		 */
-		private final WorldObject object;
+		private final GameObject object;
 
 		/**
 		 * The saved stall id.
@@ -228,7 +228,7 @@ public final class Stalls extends Thieving {
 		 * @param stall the stall being used.
 		 * @param object the stall's object node.
 		 */
-		StallTask(Stalls stall, WorldObject object) {
+		StallTask(Stalls stall, GameObject object) {
 			super(stall.stall.respawnTime, false);
 			this.stall = stall;
 			this.object = object;

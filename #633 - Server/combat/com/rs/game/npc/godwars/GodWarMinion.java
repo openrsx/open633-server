@@ -1,5 +1,7 @@
 package com.rs.game.npc.godwars;
 
+import java.util.Optional;
+
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.World;
@@ -32,7 +34,7 @@ public class GodWarMinion extends NPC {
 	 * gotta override else setRespawnTask override doesnt work
 	 */
 	@Override
-	public void sendDeath(Entity source) {
+	public void sendDeath(Optional<Entity> source) {
 		final NPCCombatDefinitions defs = getCombatDefinitions();
 		resetWalkSteps();
 		getCombat().removeTarget();

@@ -167,11 +167,7 @@ public class WorldTile {
 	public int getCoordFaceY(int sizeX, int sizeY, int rotation) {
 		return y + ((rotation == 1 || rotation == 3 ? sizeX : sizeY) - 1) / 2;
 	}
-
-	public WorldTile transform(int x, int y, int plane) {
-		return new WorldTile(this.x + x, this.y + y, this.plane + plane);
-	}
-
+	
 	/**
 	 * Checks if this world tile's coordinates match the other world tile.
 	 * 
@@ -184,5 +180,23 @@ public class WorldTile {
 
 	public boolean withinArea(int a, int b, int c, int d) {
 		return getX() >= a && getY() >= b && getX() <= c && getY() <= d;
+	}
+	
+	public WorldTile transform(int x, int y) {
+		return transform(x, y, 0);
+	}
+
+	public WorldTile transform(int x, int y, int plane) {
+		return new WorldTile(this.x + x, this.y + y, this.plane + plane);
+	}
+
+	public static boolean collides(Entity entity, Entity target) {
+		return entity.getPlane() == target.getPlane() && collides(entity.getX(), entity.getY(), entity.getSize(), target.getX(), target.getY(), target.getSize());
+	}
+	
+	public static boolean collides(int x1, int y1, int size1, int x2, int y2, int size2) {
+		int distanceX = x1 - x2;
+		int distanceY = y1 - y2;
+		return distanceX < size2 && distanceX > -size1 && distanceY < size2 && distanceY > -size1;
 	}
 }

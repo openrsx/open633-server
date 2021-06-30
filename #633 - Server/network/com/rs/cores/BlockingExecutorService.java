@@ -1,7 +1,6 @@
 package com.rs.cores;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -11,6 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
 
 /**
@@ -73,16 +73,16 @@ public class BlockingExecutorService implements ExecutorService {
 	}
 
 	@Override
-	public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
-		List<Future<T>> futures = service.invokeAll(tasks);
+	public <T> ObjectArrayList<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
+		ObjectArrayList<Future<T>> futures = (ObjectArrayList<Future<T>>) service.invokeAll(tasks);
 		futures.forEach((future) -> pendingTasks.add(future));
 		return futures;
 	}
 
 	@Override
-	public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+	public <T> ObjectArrayList<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
 			throws InterruptedException {
-		List<Future<T>> futures = service.invokeAll(tasks, timeout, unit);
+		ObjectArrayList<Future<T>> futures = (ObjectArrayList<Future<T>>) service.invokeAll(tasks, timeout, unit);
 		futures.forEach((future) -> pendingTasks.add(future));
 		return futures;
 	}
@@ -114,8 +114,8 @@ public class BlockingExecutorService implements ExecutorService {
 	}
 
 	@Override
-	public List<Runnable> shutdownNow() {
-		return service.shutdownNow();
+	public ObjectArrayList<Runnable> shutdownNow() {
+		return (ObjectArrayList<Runnable>) service.shutdownNow();
 	}
 
 	@Override

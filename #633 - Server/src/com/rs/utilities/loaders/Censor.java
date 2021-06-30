@@ -11,17 +11,16 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.rs.utilities.Logger;
 import com.rs.utilities.TextUtils;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
 
 public class Censor {
 
-	private final static List<String> censoredWords = new ArrayList<String>();
+	private final static ObjectArrayList<String> censoredWords = new ObjectArrayList<String>();
 	private final static String PACKED_PATH = "data/packedCensoredWords.e";
 	private final static String UNPACKED_PATH = "data/unpackedCensoredWords.txt";
 

@@ -2,11 +2,11 @@ package com.rs.game.player.controllers;
 
 import com.rs.game.Animation;
 import com.rs.game.World;
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import skills.Skills;
 
@@ -49,15 +49,15 @@ public class GodWars extends Controller {
 	}
 
 	@Override
-	public boolean processObjectClick1(final WorldObject object) {
+	public boolean processObjectClick1(final GameObject object) {
 		if (object.getId() == 26287 || object.getId() == 26286
 				|| object.getId() == 26288 || object.getId() == 26289) {
-			if (lastPrayerRecharge >= Utils.currentTimeMillis()) {
+			if (lastPrayerRecharge >= Utility.currentTimeMillis()) {
 				player.getPackets()
 						.sendGameMessage(
 								"You must wait a total of 10 minutes before being able to recharge your prayer points.");
 				return false;
-			} else if (player.getAttackedByDelay() >= Utils.currentTimeMillis()) {
+			} else if (player.getAttackedByDelay() >= Utility.currentTimeMillis()) {
 				player.getPackets()
 						.sendGameMessage(
 								"You cannot recharge your prayer while engaged in combat.");
@@ -68,7 +68,7 @@ public class GodWars extends Controller {
 			player.setNextAnimation(new Animation(645));
 			player.getPackets().sendGameMessage(
 					"Your prayer points feel rejuvinated.");
-			lastPrayerRecharge = 600000 + Utils.currentTimeMillis();
+			lastPrayerRecharge = 600000 + Utility.currentTimeMillis();
 		} else if (object.getId() == 26293) {
 //			player.useStairs(828, new WorldTile(2913, 3741, 0), 1, 2);
 			player.getControllerManager().forceStop();
@@ -177,7 +177,7 @@ public class GodWars extends Controller {
 
 	@SuppressWarnings("unused")
 	@Override
-	public boolean processObjectClick2(WorldObject object) {
+	public boolean processObjectClick2(GameObject object) {
 		if (object.getId() == 26287 || object.getId() == 26286
 				|| object.getId() == 26288 || object.getId() == 26289) {
 			int index = object.getId() == 26289 ? 0
@@ -211,7 +211,7 @@ public class GodWars extends Controller {
 	}
 
 	public static void useAgilityStones(final Player player,
-			final WorldObject object, final WorldTile tile, int levelRequired,
+			final GameObject object, final WorldTile tile, int levelRequired,
 			final int emote, final int delay) {
 //		if (!Agility.hasLevel(player, levelRequired))
 //			return;
@@ -267,7 +267,7 @@ public class GodWars extends Controller {
 	}
 
 	@SuppressWarnings("unused")
-	public static void passGiantBoulder(Player player, WorldObject object,
+	public static void passGiantBoulder(Player player, GameObject object,
 			boolean liftBoulder) {
 		if (player.getSkills().getLevel(
 				liftBoulder ? Skills.STRENGTH : Skills.AGILITY) < 60) {
@@ -279,7 +279,7 @@ public class GodWars extends Controller {
 			return;
 		}
 		if (liftBoulder)
-			WorldObject.sendObjectAnimation(object, new Animation(318));
+			GameObject.sendObjectAnimation(object, new Animation(318));
 		boolean isReturning = player.getY() >= 3709;
 		int baseAnimation = liftBoulder ? 3725 : 3466;
 //		player.useStairs(isReturning ? baseAnimation-- : baseAnimation,

@@ -1,7 +1,7 @@
 package com.rs.game.player.controllers;
 
 import com.rs.game.Entity;
-import com.rs.game.WorldObject;
+import com.rs.game.GameObject;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
@@ -162,7 +162,7 @@ public abstract class Controller {
 	/**
 	 * return process normaly
 	 */
-	public boolean processObjectClick1(WorldObject object) {
+	public boolean processObjectClick1(GameObject object) {
 		return true;
 	}
 
@@ -206,26 +206,26 @@ public abstract class Controller {
 	/**
 	 * return process normaly
 	 */
-	public boolean processObjectClick2(WorldObject object) {
+	public boolean processObjectClick2(GameObject object) {
 		return true;
 	}
 
 	/**
 	 * return process normaly
 	 */
-	public boolean processObjectClick3(WorldObject object) {
+	public boolean processObjectClick3(GameObject object) {
 		return true;
 	}
 
-	public boolean processObjectClick4(WorldObject object) {
+	public boolean processObjectClick4(GameObject object) {
 		return true;
 	}
 
-	public boolean processObjectClick5(WorldObject object) {
+	public boolean processObjectClick5(GameObject object) {
 		return true;
 	}
 
-	public boolean handleItemOnObject(WorldObject object, Item item) {
+	public boolean handleItemOnObject(GameObject object, Item item) {
 		return true;
 	}
 

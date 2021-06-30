@@ -6,7 +6,7 @@ import com.rs.io.InputStream;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
 import com.rs.utilities.Logger;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 @OutgoingPacketSignature(packetId = 69, description = "Represents sending a Public Quick-Chat based message")
 public class SendPublicQuickChatMessagePacket implements OutgoingPacket {
@@ -17,22 +17,22 @@ public class SendPublicQuickChatMessagePacket implements OutgoingPacket {
 	public void execute(Player player, InputStream stream) {
 		if (!player.isStarted())
 			return;
-		if (player.getLastPublicMessage() > Utils.currentTimeMillis())
+		if (player.getLastPublicMessage() > Utility.currentTimeMillis())
 			return;
-		player.setLastPublicMessage(Utils.currentTimeMillis() + 300);
+		player.setLastPublicMessage(Utility.currentTimeMillis() + 300);
 		// just tells you which client script created packet
 		@SuppressWarnings("unused")
 		boolean secondClientScript = stream.readByte() == 1;// script 5059
 		// or 5061
 		int fileId = stream.readUnsignedShort();
-		if (!Utils.isQCValid(fileId))
+		if (!Utility.isQCValid(fileId))
 			return;
 		byte[] data = null;
 		if (stream.getLength() > 3) {
 			data = new byte[stream.getLength() - 3];
 			stream.readBytes(data);
 		}
-		data = Utils.completeQuickMessage(player, fileId, data);
+		data = Utility.completeQuickMessage(player, fileId, data);
 //		if (chatType == 0)
 //			player.sendPublicChatMessage(new QuickChatMessage(fileId, data));
 //		else if (chatType == 1)

@@ -8,7 +8,7 @@ import com.rs.game.player.PlayerCombat;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 @LogicPacketSignature(packetId = 21, packetSize = 3, description = "Attack an NPC")
 public class AttackNPCPacket implements LogicPacket {
@@ -30,7 +30,7 @@ public class AttackNPCPacket implements LogicPacket {
 			return;
 		if (forceRun) // you scrwed up cutscenes
 			player.setRun(forceRun);
-		player.stopAll();
+		player.getMovement().stopAll(player);
 		if (npc instanceof Familiar) {
 			Familiar familiar = (Familiar) npc;
 			if (familiar == player.getFamiliar()) {
@@ -43,16 +43,17 @@ public class AttackNPCPacket implements LogicPacket {
 			}
 		} else if (!npc.isForceMultiAttacked()) {
 			if (!npc.isMultiArea() || !player.isMultiArea()) {
-				if (player.getAttackedBy() != npc && player.getAttackedByDelay() > Utils.currentTimeMillis()) {
+				if (player.getAttackedBy() != npc && player.getAttackedByDelay() > Utility.currentTimeMillis()) {
 					player.getPackets().sendGameMessage("You are already in combat.");
 					return;
 				}
-				if (npc.getAttackedBy() != player && npc.getAttackedByDelay() > Utils.currentTimeMillis()) {
+				if (npc.getAttackedBy() != player && npc.getAttackedByDelay() > Utility.currentTimeMillis()) {
 					player.getPackets().sendGameMessage("This npc is already in combat.");
 					return;
 				}
 			}
 		}
+		System.out.println(npc.getId());
 		player.getActionManager().setAction(new PlayerCombat(npc));
 	}
 }

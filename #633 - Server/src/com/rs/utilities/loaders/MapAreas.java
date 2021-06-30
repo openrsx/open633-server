@@ -15,7 +15,7 @@ import java.nio.channels.FileChannel.MapMode;
 import com.rs.game.WorldTile;
 import com.rs.utilities.Logger;
 import com.rs.utilities.RandomUtils;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.SneakyThrows;
@@ -35,7 +35,7 @@ public final class MapAreas {
 	}
 
 	public static final boolean isAtArea(String areaName, WorldTile tile) {
-		return isAtArea(Utils.getNameHash(areaName), tile);
+		return isAtArea(Utility.getNameHash(areaName), tile);
 	}
 
 	public static final boolean isAtArea(int areaNameHash, WorldTile tile) {
@@ -93,7 +93,7 @@ public final class MapAreas {
 			}
 			for (int i = 0; i < coordsList.length; i++)
 				coordsList[i] = Integer.parseInt(splitedCoords[i]);
-			int areaNameHash = Utils.getNameHash(areaName);
+			int areaNameHash = Utility.getNameHash(areaName);
 			if (mapAreas.containsKey(areaNameHash))
 				continue;
 			out.writeInt(areaNameHash);

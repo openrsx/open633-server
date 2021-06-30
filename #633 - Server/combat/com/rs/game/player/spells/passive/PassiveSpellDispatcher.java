@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Getter;
@@ -88,7 +88,7 @@ public final class PassiveSpellDispatcher {
 	}
 
 	public static void load() {
-		List<PassiveSpell> spellLoader = Utils.getClassesInDirectory("com.rs.game.player.spells.passive.impl").stream()
+		List<PassiveSpell> spellLoader = Utility.getClassesInDirectory("com.rs.game.player.spells.passive.impl").stream()
 				.map(clazz -> (PassiveSpell) clazz).collect(Collectors.toList());
 		spellLoader.forEach(spell -> SPELLS.put(spell.getClass().getAnnotation(PassiveSpellSignature.class), spell));
 	}

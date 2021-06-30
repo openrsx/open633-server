@@ -12,7 +12,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
@@ -103,7 +103,7 @@ public final class CommandDispatcher {
 	 */
 	public static void load() {
 		
-		List<Command> commands = Utils.getClassesInDirectory("com.rs.plugin.impl.commands").stream().map(clazz -> (Command) clazz).collect(Collectors.toList());
+		List<Command> commands = Utility.getClassesInDirectory("com.rs.plugin.impl.commands").stream().map(clazz -> (Command) clazz).collect(Collectors.toList());
 		
 		for(Command command : commands) {
 			if(command.getClass().getAnnotation(CommandSignature.class) == null) {

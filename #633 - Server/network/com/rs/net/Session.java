@@ -8,7 +8,12 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 
+import com.rs.GameConstants;
+import com.rs.cores.CoresManager;
+import com.rs.game.World;
 import com.rs.game.player.Player;
+import com.rs.game.player.PlayerCombat;
+import com.rs.game.player.content.Emotes.Emote;
 import com.rs.io.InputStream;
 import com.rs.io.OutputStream;
 import com.rs.net.decoders.ClientPacketsDecoder;
@@ -21,7 +26,8 @@ import com.rs.net.encoders.GrabPacketsEncoder;
 import com.rs.net.encoders.LoginPacketsEncoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
 import com.rs.net.packets.logic.LogicPacketDispatcher;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utility;
 
 import lombok.SneakyThrows;
 import lombok.Synchronized;
@@ -163,7 +169,7 @@ public class Session {
 	public void logout(Player player, boolean lobby) {
 		if (!player.isRunning())
 			return;
-		long currentTime = Utils.currentTimeMillis();
+		long currentTime = Utility.currentTimeMillis();
 		if (player.getAttackedByDelay() + 10000 > currentTime) {
 			player.getPackets().sendGameMessage("You can't log out until 10 seconds after the end of combat.");
 			return;
@@ -183,7 +189,7 @@ public class Session {
 	public void forceLogout(Player player) {
 		player.getPackets().sendLogout(false);
 		player.setRunning(false);
-		player.realFinish(false);
+		realFinish(player, false);
 	}
 
 	public void processLogicPackets(Player player) {
@@ -192,5 +198,46 @@ public class Session {
 			InputStream stream = new InputStream(packet.getData());
 			LogicPacketDispatcher.execute(player, stream, packet.getId());
 		}
+	}
+	
+	@SneakyThrows(Throwable.class)
+	public void finish(Player player, final int tryCount) {
+		if (player.isFinishing() || player.isFinished())
+			return;
+		player.setFinishing(true);
+		player.getMovement().stopAll(player, false, true, !(player.getActionManager().getAction() instanceof PlayerCombat));
+		if (player.isDead() || (player.getCombatDefinitions().isUnderCombat() && tryCount < 6) || player.getMovement().isLocked()
+		 || Emote.isDoingEmote(player)) {
+			CoresManager.schedule(() -> {
+				player.setFinishing(false);
+				finish(player, tryCount + 1);
+			}, 10);
+			return;
+		}
+		realFinish(player, false);
+	}
+	
+	public void realFinish(Player player, boolean shutdown) {
+		if (player.isFinished())
+			return;
+		Logger.globalLog(player.getUsername(), getIP(), new String(" has logged out."));
+		player.getMovement().stopAll(player);
+		player.getControllerManager().logout();
+		player.setRunning(false);
+		player.getFriendsIgnores().sendFriendsMyStatus(false);
+		if (player.getCurrentFriendChat() != null)
+			player.getCurrentFriendChat().leaveChat(player, true);
+		if (player.getFamiliar() != null && !player.getFamiliar().isFinished())
+			player.getFamiliar().dissmissFamiliar(true);
+		else if (player.getPet() != null)
+			player.getPet().finish();
+		player.setFinished(true);
+		player.getSession().setDecoder(-1);
+		AccountCreation.savePlayer(player);
+		player.updateEntityRegion(player);
+		World.removePlayer(player);
+		if (GameConstants.DEBUG)
+			Logger.log(this, "Finished Player: " + player.getUsername() + ", pass: "
+					+ player.getDetails().getPassword());
 	}
 }

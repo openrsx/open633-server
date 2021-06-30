@@ -5,7 +5,7 @@ import com.rs.game.player.content.FriendChatsManager;
 import com.rs.io.InputStream;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 @OutgoingPacketSignature(packetId = 64, description = "Represents an event where a Player is being kicked from a Friend's Chat")
 public class KickFriendsChatPacket implements OutgoingPacket {
@@ -14,7 +14,7 @@ public class KickFriendsChatPacket implements OutgoingPacket {
 	public void execute(Player player, InputStream stream) {
 		if (!player.isStarted())
 			return;
-		player.setLastPublicMessage(Utils.currentTimeMillis() + 1000);
+		player.setLastPublicMessage(Utility.currentTimeMillis() + 1000);
 		FriendChatsManager fcManager = new FriendChatsManager(player);
 		fcManager.kickPlayerFromFriendsChannel(player, stream.readString());
 	}

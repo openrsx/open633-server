@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
@@ -273,7 +273,7 @@ public class RenderAnimDefinitions {
 	// int animId = 1467;
 	File file = new File("./r2anims.txt");
 	BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-	for (int i = 0; i < Utils.getNPCDefinitionsSize(); i++) {
+	for (int i = 0; i < Utility.getNPCDefinitionsSize(); i++) {
 	    RenderAnimDefinitions defs = RenderAnimDefinitions.getRenderAnimDefinitions(NPCDefinitions.getNPCDefinitions(i).renderEmote);
 	    if (defs != null) {
 		writer.write(i + ", run: " + defs.runAnimation + ", walk: " + defs.walkAnimation + ", stand: " + Arrays.toString(defs.anIntArray967));

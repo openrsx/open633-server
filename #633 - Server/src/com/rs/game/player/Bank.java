@@ -4,7 +4,7 @@ import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.npc.familiar.Familiar;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 @SuppressWarnings("all")
 public class Bank {
@@ -34,7 +34,7 @@ public class Bank {
 	}
 
 	private void checkPinStatus() {
-		if (recoveryDelay < Utils.currentTimeMillis()) {
+		if (recoveryDelay < Utility.currentTimeMillis()) {
 			if (requestedPin != null) {
 				actualPin = requestedPin;
 				requestedPin = null;
@@ -43,13 +43,9 @@ public class Bank {
 		} else {
 			player.getInterfaceManager().sendInterface(14); // TODO this
 															// interface.
-			player.setCloseInterfacesEvent(new Runnable() {
-
-				@Override
-				public void run() {
-					if (actualPin != null)
-						openPin();
-				}
+			player.setCloseInterfacesEvent(() -> {
+				if (actualPin != null)
+					openPin();
 			});
 		}
 	}
@@ -67,7 +63,7 @@ public class Bank {
 			player.getPackets().sendUnlockIComponentOptionSlots(759, i, 0, 100,
 					true, 0, 1, 2);
 		}
-		if (recoveryDelay >= Utils.currentTimeMillis()) {
+		if (recoveryDelay >= Utility.currentTimeMillis()) {
 			int days = (int) (recoveryDelay / 86400000);
 			int hours = days / 24;
 			player.getPackets().sendIComponentText(
@@ -329,14 +325,11 @@ public class Bank {
 		sendBoxInterItems();
 		player.getPackets().sendIComponentText(11, 13,
 				"Bank Of " + GameConstants.SERVER_NAME + " - Deposit Box");
-		player.setCloseInterfacesEvent(new Runnable() {
-			@Override
-			public void run() {
-				player.getInterfaceManager().sendInventory();
-				player.getInventory().unlockInventoryOptions();
-				player.getInterfaceManager().sendEquipment();
-				player.getInterfaceManager().openGameTab(lastGameTab);
-			}
+		player.setCloseInterfacesEvent(() -> {
+			player.getInterfaceManager().sendInventory();
+			player.getInventory().unlockInventoryOptions();
+			player.getInterfaceManager().sendEquipment();
+			player.getInterfaceManager().openGameTab(lastGameTab);
 		});
 	}
 

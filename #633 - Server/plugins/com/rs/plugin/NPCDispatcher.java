@@ -16,7 +16,7 @@ import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
 import com.rs.plugin.listener.NPCType;
 import com.rs.plugin.wrapper.NPCSignature;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.SneakyThrows;
@@ -25,7 +25,7 @@ import lombok.SneakyThrows;
  * @author Dennis
  */
 public class NPCDispatcher {
-	
+
 	/**
 	 * The NPCS map which contains all the NPCS on the world.
 	 */
@@ -93,7 +93,7 @@ public class NPCDispatcher {
 	 * <b>Method should only be called once on start-up.</b>
 	 */
 	public static void load() {
-		List<NPCType> NPCTypes = Utils.getClassesInDirectory("com.rs.plugin.impl.npcs").stream().map(clazz -> (NPCType) clazz).collect(Collectors.toList());
+		List<NPCType> NPCTypes = Utility.getClassesInDirectory("com.rs.plugin.impl.npcs").stream().map(clazz -> (NPCType) clazz).collect(Collectors.toList());
 		
 		for(NPCType mobTypes : NPCTypes) {
 			if(mobTypes.getClass().getAnnotation(NPCSignature.class) == null) {
@@ -138,15 +138,12 @@ public class NPCDispatcher {
 		if (npc == null || npc.isCantInteract() || npc.isDead() || npc.isFinished()
 				|| !player.getMapRegionsIds().contains(npc.getRegionId()) || player.getMovement().isLocked())
 			return;
-		player.setRouteEvent(new RouteEvent(npc, new Runnable() {
-			@Override
-			public void run() {
-				if (npc != null && Utils.getDistance(player, npc) < 3) {
-					player.faceEntity(npc);
-					npc.faceEntity(player);
-				}
-				NPCDispatcher.execute(player, npc, optionId);
+		player.setRouteEvent(new RouteEvent(npc, () -> {
+			if (npc != null && Utility.getDistance(player, npc) < 3) {
+				player.faceEntity(npc);
+				npc.faceEntity(player);
 			}
+			NPCDispatcher.execute(player, npc, optionId);
 		}, npc.getDefinitions().name.contains("Banker") || npc.getDefinitions().name.contains("banker")));
 
 	}

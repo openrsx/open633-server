@@ -1,7 +1,7 @@
 package com.rs.game.dialogue;
 
 import com.rs.game.player.Player;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.SneakyThrows;
@@ -17,7 +17,7 @@ public class DialogueEventRepository {
 	@SneakyThrows(Exception.class)
 	public static final void init() {
 		@SuppressWarnings("unchecked")
-		Class<DialogueEventListener>[] regular = Utils.getClasses("com.rs.game.dialogue.impl");
+		Class<DialogueEventListener>[] regular = Utility.getClasses("com.rs.game.dialogue.impl");
 		for (Class<DialogueEventListener> c : regular) {
 			if (c.isAnonymousClass()) // next
 				continue;

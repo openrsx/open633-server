@@ -6,7 +6,7 @@ import com.rs.io.InputStream;
 import com.rs.net.Encrypt;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 //TODO: Convert this packet
 @OutgoingPacketSignature(packetId = -1, description = "Represents a Longer string of text used for input handling")
@@ -32,7 +32,7 @@ public class EnterLongTextPacket implements OutgoingPacket {
 			player.getPackets()
 					.sendGameMessage("You have changed your password! Your new password is \"" + value + "\".");
 		} else if (player.getTemporaryAttributes().remove("change_troll_name") == Boolean.TRUE) {
-			value = Utils.formatPlayerNameForDisplay(value);
+			value = Utility.formatPlayerNameForDisplay(value);
 			if (value.length() < 3 || value.length() > 14) {
 				player.getPackets()
 						.sendGameMessage("You can't use a name shorter than 3 or longer than 14 characters.");

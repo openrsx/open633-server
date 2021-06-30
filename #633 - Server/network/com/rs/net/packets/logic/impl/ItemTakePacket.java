@@ -32,20 +32,13 @@ public class ItemTakePacket implements LogicPacket {
 			return;
 		if (forceRun)
 			player.setRun(forceRun);
-		player.stopAll();
-		player.setRouteEvent(new RouteEvent(item, new Runnable() {
-			@Override
-			public void run() {
-				final FloorItem item = World.getRegion(regionId).getGroundItem(id, tile, player);
-				if (item == null)
-					return;
-				// player.setNextFaceWorldTile(tile);
-				if (FloorItem.removeGroundItem(player, item))
-					Logger.globalLog(player.getUsername(), player.getSession().getIP(),
-							new String(" has picked up item [ id: " + item.getId() + ", amount: " + item.getAmount()
-									+ " ] originally owned to "
-									+ (item.getOwner() == null ? "no owner" : item.getOwner()) + "."));
-			}
+		player.getMovement().stopAll(player);
+		player.setRouteEvent(new RouteEvent(item, () -> {
+			if (FloorItem.removeGroundItem(player, item))
+				Logger.globalLog(player.getUsername(), player.getSession().getIP(),
+						new String(" has picked up item [ id: " + item.getId() + ", amount: " + item.getAmount()
+								+ " ] originally owned to " + (item.getOwner() == null ? "no owner" : item.getOwner())
+								+ "."));
 		}));
 	}
 }

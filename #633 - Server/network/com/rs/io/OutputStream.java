@@ -1,7 +1,7 @@
 package com.rs.io;
 
 import com.rs.game.player.Player;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 public final class OutputStream extends Stream {
 
@@ -221,7 +221,7 @@ public final class OutputStream extends Stream {
 
 	public void writeGJString2(String string) {
 		byte[] packed = new byte[256];
-		int length = Utils.packGJString2(0, packed, string);
+		int length = Utility.packGJString2(0, packed, string);
 		writeByte(0);
 		writeBytes(packed, 0, length);
 		writeByte(0);

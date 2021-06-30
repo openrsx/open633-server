@@ -6,7 +6,7 @@ import com.rs.game.player.PlayerCombat;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 @LogicPacketSignature(packetId = 25, packetSize = 3, description = "The First menu option for a Player")
 public class PlayerOptionOnePacket implements LogicPacket {
@@ -20,7 +20,7 @@ public class PlayerOptionOnePacket implements LogicPacket {
 		Player p2 = World.getPlayers().get(playerIndex);
 		if (forceRun)
 			player.setRun(forceRun);
-		player.stopAll();
+		player.getMovement().stopAll(player);
 
 		if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 				|| !player.getMapRegionsIds().contains(p2.getRegionId()))
@@ -37,11 +37,11 @@ public class PlayerOptionOnePacket implements LogicPacket {
 			return;
 		}
 		if (!p2.isMultiArea() || !player.isMultiArea()) {
-			if (player.getAttackedBy() != p2 && player.getAttackedByDelay() > Utils.currentTimeMillis()) {
+			if (player.getAttackedBy() != p2 && player.getAttackedByDelay() > Utility.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("You are already in combat.");
 				return;
 			}
-			if (p2.getAttackedBy() != player && p2.getAttackedByDelay() > Utils.currentTimeMillis()) {
+			if (p2.getAttackedBy() != player && p2.getAttackedByDelay() > Utility.currentTimeMillis()) {
 				if (p2.getAttackedBy().isNPC()) {
 					p2.setAttackedBy(player); // changes enemy to player,
 					// player has priority over
