@@ -178,7 +178,6 @@ public final class Skills {
 	}
 
 	public double addXpNormal(int skill, double exp) {
-		player.getControllerManager().trackXP(skill, (int) exp);
 		if (player.getDetails().isXpLocked())
 			return 0;
 		int oldLevel = getLevelForXp(skill);
@@ -207,7 +206,6 @@ public final class Skills {
 	}
 
 	public double addXpLamp(int skill, double exp) {
-		player.getControllerManager().trackXP(skill, (int) exp);
 		if (player.getDetails().isXpLocked())
 			return 0;
 		exp *= GameConstants.LAMP_XP_RATE;

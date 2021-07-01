@@ -11,7 +11,7 @@ import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
-import com.rs.game.player.controllers.Wilderness;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utility;
@@ -502,29 +502,24 @@ public class Magic {
 			}
 			if (!checkRunes(player, true, ASTRAL_RUNE, 4, DEATH_RUNE, 3, EARTH_RUNE, 11))
 				return;
-			int affectedPeopleCount = 0;
-			for (int regionId : player.getMapRegionsIds()) {
-				ObjectArrayList<Short> playerIndexes = World.getRegion(regionId).getPlayersIndexes();
-				if (playerIndexes == null)
-					continue;
-				for (int playerIndex : playerIndexes) {
-					Player p2 = World.getPlayers().get(playerIndex);
-					if (p2 == null || p2 == player || p2.isDead() || !p2.isStarted() || p2.isFinished()
-							|| !p2.withinDistance(player, 4) || !player.getControllerManager().canHit(p2))
-						continue;
-					if (!p2.getDetails().isAcceptAid()) {
-						player.getPackets().sendGameMessage(p2.getDisplayName() + " is not accepting aid");
-						continue;
-					}
-					p2.setNextGraphics(new Graphics(725, 0, 100));
-//					p2.setCastVeng(true);
-					p2.getPackets().sendGameMessage("You have the power of vengeance!");
-					affectedPeopleCount++;
-				}
-			}
+			player.getMapRegionsIds().parallelStream().filter(regionalPlayer -> regionalPlayer != null).forEach(regionalPlayer -> {
+				ObjectArrayList<Short> playersIndexes = World.getRegion(regionalPlayer).getPlayersIndexes();
+				playersIndexes.iterator().forEachRemaining(p -> {
+					World.players().filter(
+							playerIndex -> playerIndex.withinDistance(player, 4) || ControllerHandler.execute(player, controller -> controller.canHit(playerIndex)))
+							.forEach(worldPlayer -> {
+								if (!worldPlayer.getDetails().isAcceptAid()) {
+									player.getPackets().sendGameMessage(worldPlayer.getDisplayName() + " is not accepting aid");
+									return;
+								}
+								worldPlayer.setNextGraphics(new Graphics(725, 0, 100));
+//								p2.setCastVeng(true);
+								worldPlayer.getPackets().sendGameMessage("You have the power of vengeance!");
+							});
+				});
+			});
 			player.setNextAnimation(new Animation(4411));
 			player.getTemporaryAttributes().put("LAST_VENG", Utility.currentTimeMillis());
-			player.getPackets().sendGameMessage("The spell affected " + affectedPeopleCount + " nearby people.");
 			break;
 		case 43: // moonclan teleport
 			sendLunarTeleportSpell(player, 69, 66, new WorldTile(2114, 3914, 0), ASTRAL_RUNE, 2, LAW_RUNE, 1,
@@ -784,7 +779,7 @@ public class Magic {
 
 	public static void pushLeverTeleport(final Player player, final WorldTile tile, int emote, String startMessage,
 			final String endMessage) {
-		if (!player.getControllerManager().processObjectTeleport(tile))
+		if (!ControllerHandler.execute(player, controller -> controller.processObjectTeleport(tile)))
 			return;
 		player.setNextAnimation(new Animation(emote));
 		if (startMessage != null)
@@ -823,13 +818,13 @@ public class Magic {
 		if (!checkRunes(player, false, runes))
 			return false;
 		if (teleType == MAGIC_TELEPORT) {
-			if (!player.getControllerManager().processMagicTeleport(tile))
+			if (!ControllerHandler.execute(player, controller -> controller.processMagicTeleport(tile)))
 				return false;
 		} else if (teleType == ITEM_TELEPORT) {
-			if (!player.getControllerManager().processItemTeleport(tile))
+			if (!ControllerHandler.execute(player, controller -> controller.processItemTeleport(tile)))
 				return false;
 		} else if (teleType == OBJECT_TELEPORT) {
-			if (!player.getControllerManager().processObjectTeleport(tile))
+			if (!ControllerHandler.execute(player, controller -> controller.processObjectTeleport(tile)))
 				return false;
 		}
 		checkRunes(player, true, runes);
@@ -859,8 +854,8 @@ public class Magic {
 						}
 					}
 					player.safeForceMoveTile(teleTile);
-					player.getControllerManager().magicTeleported(teleType);
-					if (player.getControllerManager().getController() == null)
+					ControllerHandler.executeVoid(player, controller -> controller.magicTeleported(teleType));
+					if (!player.getCurrentController().isPresent())
 						teleControlersCheck(player, teleTile);
 					if (xp != 0)
 						player.getSkills().addXp(Skills.MAGIC, xp);
@@ -897,7 +892,7 @@ public class Magic {
 	}
 
 	public static boolean useTeleTab(final Player player, final WorldTile tile) {
-		if (!player.getControllerManager().processItemTeleport(tile))
+		if (!ControllerHandler.execute(player, controller -> controller.processItemTeleport(tile)))
 			return false;
 		player.getMovement().lock();
 		player.setNextAnimation(new Animation(9597));
@@ -919,8 +914,8 @@ public class Magic {
 						teleTile = tile;
 					}
 					player.safeForceMoveTile(teleTile);
-					player.getControllerManager().magicTeleported(ITEM_TELEPORT);
-					if (player.getControllerManager().getController() == null)
+					ControllerHandler.executeVoid(player, controller -> controller.magicTeleported(ITEM_TELEPORT));
+					if (player.getCurrentController().isPresent())
 						teleControlersCheck(player, teleTile);
 					player.setNextFaceWorldTile(
 							new WorldTile(teleTile.getX(), teleTile.getY() - 1, teleTile.getPlane()));
@@ -939,8 +934,8 @@ public class Magic {
 	}
 
 	public static void teleControlersCheck(Player player, WorldTile teleTile) {
-		if (Wilderness.isAtWild(teleTile))
-			player.getControllerManager().startControler("Wilderness");
+//		if (Wilderness.isAtWild(teleTile))
+//			player.getControllerManager().startControler("Wilderness");
 	}
 
 	private Magic() {

@@ -111,17 +111,7 @@ public final class World extends AbstractScheduledService {
 	public static final void removeNPC(NPC npc) {
 		npcs.remove(npc);
 	}
-
-	public static void checkControlersAtMove(Player player) {
-		if (player.getControllerManager().getController() == null) {
-//			String control = null;
-//			if (DuelControler.isAtDuelArena(player))
-//				control = "DuelControler";
-//			if (control != null)
-//				player.getControllerManager().startControler(control);
-		}
-	}
-
+	
 	/*
 	 * checks clip
 	 */
@@ -527,11 +517,7 @@ public final class World extends AbstractScheduledService {
 			return;
 		get().setExiting_start(Utility.currentTimeMillis());
 		get().setExiting_delay(delay);
-		for (Player player : World.getPlayers()) {
-			if (player == null || !player.isStarted() || player.isFinished())
-				continue;
-			player.getPackets().sendSystemUpdate(delay);
-		}
+		World.players().forEach(player -> player.getPackets().sendSystemUpdate(delay));
 		CoresManager.schedule(() -> {
 			World.players().forEach(player -> player.getSession().realFinish(player, true));
 			Launcher.shutdown();

@@ -17,6 +17,7 @@ import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Foods;
 import com.rs.game.player.content.Pots;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.task.Task;
 import com.rs.net.decoders.WorldPacketsDecoder;
@@ -96,7 +97,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				long dropTime = Utility.currentTimeMillis();
 				if (player.getMovement().getLockDelay() >= dropTime || player.getNextEmoteEnd() >= dropTime)
 					return;
-				if (!player.getControllerManager().canDropItem(item))
+				if (!ControllerHandler.execute(player, controller -> controller.canDropItem(item)))
 					return;
 				player.getMovement().stopAll(player, false);
 				
@@ -201,6 +202,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 		}
 	}
 	
+	static int finalSlot;
 	public static boolean sendWear2(Player player, int slotId, int itemId) {
 		if (player.isFinished() || player.isDead())
 			return false;
@@ -215,6 +217,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 			return false;
 		}
 		int targetSlot = Equipment.getItemSlot(itemId);
+		finalSlot = targetSlot;
 		if (itemId == 4084)
 			targetSlot = 3;
 		if (targetSlot == -1) {
@@ -258,8 +261,9 @@ public class InventoryInterfacePlugin implements RSInterface {
 		}
 		if (!hasRequiriments)
 			return false;
-		if (!player.getControllerManager().canEquip(targetSlot, itemId))
+		if (!ControllerHandler.execute(player, controller -> controller.canEquip(finalSlot, itemId))) {
 			return false;
+		}
 		player.getInventory().getItems().remove(slotId, item);
 		if (targetSlot == 3) {
 			if (isTwoHandedWeapon && player.getEquipment().getItem(5) != null) {

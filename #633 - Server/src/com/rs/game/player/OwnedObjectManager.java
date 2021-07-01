@@ -1,16 +1,15 @@
 package com.rs.game.player;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.rs.game.World;
 import com.rs.game.GameObject;
+import com.rs.game.World;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class OwnedObjectManager {
 
@@ -235,9 +234,9 @@ public class OwnedObjectManager {
 
 	}
 
-	public static List<String> getOwnedObjectManagerKeys(Player player) {
+	public static ObjectArrayList<String> getOwnedObjectManagerKeys(Player player) {
 		if (player.getDetails().getOwnedObjectsManagerKeys() == null) // temporary
-			player.getDetails().setOwnedObjectsManagerKeys(new LinkedList<String>());
+			player.getDetails().setOwnedObjectsManagerKeys(new ObjectArrayList<String>());
 		return player.getDetails().getOwnedObjectsManagerKeys();
 	}
 }

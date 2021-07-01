@@ -4,6 +4,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -48,8 +49,7 @@ public final class Inventory {
 		if (itemId < 0
 				|| amount < 0
 				|| !Utility.itemExists(itemId)
-				|| !player.getControllerManager().canAddInventoryItem(itemId,
-						amount))
+				|| !ControllerHandler.execute(player, controller -> controller.canAddInventoryItem(itemId, amount)))
 			return false;
 		Item[] itemsBefore = items.getItemsCopy();
 		if (!items.add(new Item(itemId, amount)))
@@ -68,8 +68,7 @@ public final class Inventory {
 		if (itemId < 0
 				|| amount < 0
 				|| !Utility.itemExists(itemId)
-				|| !player.getControllerManager().canAddInventoryItem(itemId,
-						amount))
+				|| !ControllerHandler.execute(player, controller -> controller.canAddInventoryItem(itemId, amount)))
 			return false;
 		Item[] itemsBefore = items.getItemsCopy();
 		if (!items.add(new Item(itemId, amount))) {
@@ -87,8 +86,7 @@ public final class Inventory {
 		if (item.getId() < 0
 				|| item.getAmount() < 0
 				|| !Utility.itemExists(item.getId())
-				|| !player.getControllerManager().canAddInventoryItem(
-						item.getId(), item.getAmount()))
+				|| !ControllerHandler.execute(player, controller -> controller.canAddInventoryItem(item.getId(), item.getAmount())))
 			return false;
 		Item[] itemsBefore = items.getItemsCopy();
 		if (!items.add(item)) {
@@ -103,9 +101,10 @@ public final class Inventory {
 	}
 
 	public void deleteItem(int slot, Item item) {
-		if (!player.getControllerManager().canDeleteInventoryItem(item.getId(),
-				item.getAmount()))
+		if (!ControllerHandler.execute(player, controller -> controller.canDeleteInventoryItem(item.getId(),
+				item.getAmount()))) {
 			return;
+		}
 		Item[] itemsBefore = items.getItemsCopy();
 		items.remove(slot, item);
 		refreshItems(itemsBefore);
@@ -130,18 +129,19 @@ public final class Inventory {
 	}
 
 	public void deleteItem(int itemId, int amount) {
-		if (!player.getControllerManager()
-				.canDeleteInventoryItem(itemId, amount))
+		if (!ControllerHandler.execute(player, controller -> controller.canDeleteInventoryItem(itemId, amount))) {
 			return;
+		}
 		Item[] itemsBefore = items.getItemsCopy();
 		items.remove(new Item(itemId, amount));
 		refreshItems(itemsBefore);
 	}
 
 	public void deleteItem(Item item) {
-		if (!player.getControllerManager().canDeleteInventoryItem(item.getId(),
-				item.getAmount()))
+		if (!ControllerHandler.execute(player, controller -> controller.canDeleteInventoryItem(item.getId(),
+				item.getAmount()))) {
 			return;
+		}
 		Item[] itemsBefore = items.getItemsCopy();
 		items.remove(item);
 		refreshItems(itemsBefore);

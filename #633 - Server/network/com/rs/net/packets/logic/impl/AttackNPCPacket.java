@@ -5,6 +5,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
@@ -24,10 +25,11 @@ public class AttackNPCPacket implements LogicPacket {
 		if (npc == null || npc.isDead() || npc.isFinished() || !player.getMapRegionsIds().contains(npc.getRegionId())
 				|| !npc.getDefinitions().hasAttackOption())
 			return;
-		if (player.getMovement().isLocked()/* || player.getEmotesManager().isDoingEmote() */)
+		if (player.getMovement().isLocked() || player.getNextEmoteEnd() >= Utility.currentTimeMillis())
 			return;
-		if (!player.getControllerManager().canAttack(npc))
+		if (!ControllerHandler.execute(player, controller -> controller.canAttack(npc))) {
 			return;
+		}
 		if (forceRun) // you scrwed up cutscenes
 			player.setRun(forceRun);
 		player.getMovement().stopAll(player);

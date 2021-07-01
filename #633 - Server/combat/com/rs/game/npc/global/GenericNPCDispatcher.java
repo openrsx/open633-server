@@ -15,57 +15,47 @@ import com.rs.utilities.Utility;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.SneakyThrows;
 
-public final class GenericNPCDispatcher {
+public class GenericNPCDispatcher {
 
 	private static final Object2ObjectArrayMap<GenericNPCSignature, GenericNPC> NPC = new Object2ObjectArrayMap<>();
 	
 	@SneakyThrows(Exception.class)
 	public NPC execute(NPC npc) {
-		Optional<GenericNPC> globalNPC = getVerifiedNPC(npc.getId());
-		globalNPC.ifPresent(mob -> {
+		getVerifiedNPC(npc.getId()).ifPresent(mob -> {
 			Annotation annotation = mob.getClass().getAnnotation(GenericNPCSignature.class);
 			GenericNPCSignature signature = (GenericNPCSignature) annotation;
-			new NPC(npc.getId(), npc.getLastWorldTile(), (byte) signature.mapAreaNameHash(), signature.canBeAttackFromOutOfArea(), signature.isSpawned());
+			Arrays.stream(signature.npcId()).parallel().filter(id -> npc.getId() == id).forEach(mobId -> new NPC((short) mobId, npc.getNextWorldTile(), (byte) signature.mapAreaNameHash(), signature.canBeAttackFromOutOfArea(), signature.isSpawned()) );
 		});
 		return npc;
 	}
 	
-	@SneakyThrows(Exception.class)
 	public void process(NPC npc) {
-		Optional<GenericNPC> globalNPC = getVerifiedNPC(npc.getId());
-		globalNPC.ifPresent(mob -> mob.process(npc));
+		getVerifiedNPC(npc.getId()).ifPresent(mob -> mob.process(npc));
 	}
 	
-	@SneakyThrows(Exception.class)
 	public void handleIngoingHit(NPC npc, final Hit hit) {
-		Optional<GenericNPC> globalNPC = getVerifiedNPC(npc.getId());
-		globalNPC.ifPresent(mob -> mob.handleIngoingHit(hit));
+		getVerifiedNPC(npc.getId()).ifPresent(mob -> mob.handleIngoingHit(hit));
 	}
 	
-	@SneakyThrows(Exception.class)
 	public void setRespawnTask(NPC npc) {
-		Optional<GenericNPC> globalNPC = getVerifiedNPC(npc.getId());
-		globalNPC.ifPresent(mob -> mob.setRespawnTask());
+		getVerifiedNPC(npc.getId()).ifPresent(mob -> mob.setRespawnTask());
 	}
 	
-	@SneakyThrows(Exception.class)
 	public void possibleTargets(NPC npc) {
-		Optional<GenericNPC> globalNPC = getVerifiedNPC(npc.getId());
-		globalNPC.ifPresent(mob -> mob.getPossibleTargets(npc));
+		getVerifiedNPC(npc.getId()).ifPresent(mob -> mob.getPossibleTargets(npc));
 	}
 	
-	@SneakyThrows(Exception.class)
 	public void sendDeath(Optional<Entity> source) {
-		Optional<GenericNPC> globalNPC = getVerifiedNPC(Optional.of(source.get().toNPC().getId()).get());
-		globalNPC.ifPresent(mob -> mob.sendDeath(source));
+		getVerifiedNPC(Optional.of(source.get().toNPC().getId()).get()).ifPresent(mob -> mob.sendDeath(source));
+	}
+	
+	public void setAttributes(NPC npc) {
+		getVerifiedNPC(npc.getId()).ifPresent(mob -> mob.setAttributes(npc));
 	}
 	
 	private Optional<GenericNPC> getVerifiedNPC(int id) {
 		for (Entry<GenericNPCSignature, GenericNPC> npc : NPC.entrySet()) {
-			if (isValidID(npc.getValue(), id)) {
-				return Optional.of(npc.getValue());
-				
-			}
+			return isValidID(npc.getValue(), id) ? Optional.of(npc.getValue()) : Optional.empty();
 		}
 		return Optional.empty();
 	}
@@ -77,13 +67,7 @@ public final class GenericNPCDispatcher {
 	}
 
 	public static void load() {
-		List<GenericNPC> mobLoader = Utility.getClassesInDirectory("com.rs.game.npc.global.impl").stream()
-				.map(clazz -> (GenericNPC) clazz).collect(Collectors.toList());
+		List<GenericNPC> mobLoader = Utility.getClassesInDirectory("com.rs.game.npc.global.impl").stream().map(clazz -> (GenericNPC) clazz).collect(Collectors.toList());
 		mobLoader.forEach(npcs -> NPC.put(npcs.getClass().getAnnotation(GenericNPCSignature.class), npcs));
-	}
-
-	public void reload() {
-		NPC.clear();
-		load();
 	}
 }

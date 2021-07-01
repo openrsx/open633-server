@@ -12,6 +12,7 @@ import com.rs.game.World;
 import com.rs.game.item.Item;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
 import com.rs.plugin.listener.NPCType;
@@ -143,7 +144,22 @@ public class NPCDispatcher {
 				player.faceEntity(npc);
 				npc.faceEntity(player);
 			}
-			NPCDispatcher.execute(player, npc, optionId);
+			switch(optionId) {
+			case 1:
+				ControllerHandler.execute(player, controller -> controller.processNPCClick1(npc));
+				break;
+			case 2:
+				ControllerHandler.execute(player, controller -> controller.processNPCClick2(npc));
+				break;
+			case 3:
+				ControllerHandler.execute(player, controller -> controller.processNPCClick3(npc));
+				break;
+			case 4:
+				ControllerHandler.execute(player, controller -> controller.processNPCClick4(npc));
+				break;
+			}
+			if (!ControllerHandler.getController(player).isPresent())
+				NPCDispatcher.execute(player, npc, optionId);
 		}, npc.getDefinitions().name.contains("Banker") || npc.getDefinitions().name.contains("banker")));
 
 	}

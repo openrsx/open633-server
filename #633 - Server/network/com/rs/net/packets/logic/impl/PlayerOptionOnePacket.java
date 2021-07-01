@@ -3,6 +3,7 @@ package com.rs.net.packets.logic.impl;
 import com.rs.game.World;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
@@ -25,13 +26,14 @@ public class PlayerOptionOnePacket implements LogicPacket {
 		if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 				|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 			return;
-		if (player.getMovement().isLocked() /* || player.getEmotesManager().isDoingEmote() */
-				|| !player.getControllerManager().canPlayerOption1(p2))
+		if (player.getMovement().isLocked() || player.getLastAnimationEnd() > Utility.currentTimeMillis()
+				|| !ControllerHandler.execute(player, controller -> controller.canPlayerOption1(p2)))
 			return;
 		if (!player.isCanPvp())
 			return;
-		if (!player.getControllerManager().canAttack(p2))
+		if (!ControllerHandler.execute(player, controller -> controller.canAttack(p2))) {
 			return;
+		}
 		if (!player.isCanPvp() || !p2.isCanPvp()) {
 			player.getPackets().sendGameMessage("You can only attack players in a player-vs-player area.");
 			return;

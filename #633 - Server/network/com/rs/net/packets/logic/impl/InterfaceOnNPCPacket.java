@@ -11,6 +11,7 @@ import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.content.Magic;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
@@ -58,7 +59,7 @@ public class InterfaceOnNPCPacket implements LogicPacket {
 		switch (interfaceId) {
 		case Inventory.INVENTORY_INTERFACE:
 			Item item = player.getInventory().getItem(interfaceSlot);
-			if (item == null || !player.getControllerManager().processItemOnNPC(npc, item))
+			if (item == null || !ControllerHandler.execute(player, controller -> controller.processItemOnNPC(npc, item)))
 				return;
 			else if (npc instanceof Familiar) {
 				Familiar familiar = (Familiar) npc;
@@ -123,8 +124,9 @@ public class InterfaceOnNPCPacket implements LogicPacket {
 				if (Magic.checkCombatSpell(player, componentId, 1, false)) {
 					player.setNextFaceWorldTile(new WorldTile(npc.getCoordFaceX(npc.getSize()),
 							npc.getCoordFaceY(npc.getSize()), npc.getPlane()));
-					if (!player.getControllerManager().canAttack(npc))
+					if (!ControllerHandler.execute(player, controller -> controller.canAttack(npc))) {
 						return;
+					}
 					if (npc instanceof Familiar) {
 						Familiar familiar = (Familiar) npc;
 						if (familiar == player.getFamiliar()) {
@@ -185,8 +187,9 @@ public class InterfaceOnNPCPacket implements LogicPacket {
 				if (Magic.checkCombatSpell(player, componentId, 1, false)) {
 					player.setNextFaceWorldTile(new WorldTile(npc.getCoordFaceX(npc.getSize()),
 							npc.getCoordFaceY(npc.getSize()), npc.getPlane()));
-					if (!player.getControllerManager().canAttack(npc))
+					if (!ControllerHandler.execute(player, controller -> controller.canAttack(npc))) {
 						return;
+					}
 					if (npc instanceof Familiar) {
 						Familiar familiar = (Familiar) npc;
 						if (familiar == player.getFamiliar()) {

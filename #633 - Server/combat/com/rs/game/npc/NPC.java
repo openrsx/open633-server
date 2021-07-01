@@ -39,7 +39,6 @@ import com.rs.game.npc.others.Strykewyrm;
 import com.rs.game.npc.others.TormentedDemon;
 import com.rs.game.npc.others.Werewolf;
 import com.rs.game.player.Player;
-import com.rs.game.player.controllers.Wilderness;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.game.task.Task;
@@ -119,6 +118,7 @@ public class NPC extends Entity {
 		loadMapRegions();
 		checkMultiArea();
 		setGenericNPC(new GenericNPCDispatcher());
+		getGenericNPC().setAttributes(this);
 	}
 	
 	@Override
@@ -143,11 +143,6 @@ public class NPC extends Entity {
 
 	public NPCCombatDefinitions getCombatDefinitions() {
 		return NPCCombatDefinitionsL.getNPCCombatDefinitions(getId());
-	}
-
-	@Override
-	public int getMaxHitpoints() {
-		return getCombatDefinitions().getHitpoints();
 	}
 	
 	public void processNPC() {
@@ -304,11 +299,6 @@ public class NPC extends Entity {
 			return;
 		DropManager.dropItems(killer, this);
 	}
-
-	@Override
-	public int getSize() {
-		return getDefinitions().getSize();
-	}
 	
 	@Override
 	public double getMagePrayerMultiplier() {
@@ -378,7 +368,8 @@ public class NPC extends Entity {
 										&& (player.getAttackedBy() != this
 												&& (player.getAttackedByDelay() > Utility.currentTimeMillis()
 														|| player.getFindTargetDelay() > Utility.currentTimeMillis())))
-								|| !clipedProjectile(player, false) || (!isForceAgressive() && !Wilderness.isAtWild(this)
+								|| !clipedProjectile(player, false)
+								|| (!isForceAgressive() /* && !Wilderness.isAtWild(this) */
 										&& player.getSkills().getCombatLevelWithSummoning() >= getDefinitions().getCombatLevel() * 2))
 							continue;
 						possibleTarget.add(player);
@@ -412,7 +403,7 @@ public class NPC extends Entity {
 	}
 
 	public boolean checkAgressivity() {
-		if (!(Wilderness.isAtWild(this) && getDefinitions().hasAttackOption())) {
+		if (getDefinitions().hasAttackOption()) {
 			if (!isForceAgressive()) {
 				NPCCombatDefinitions defs = getCombatDefinitions();
 				if (defs.getAgressivenessType() == NPCCombatDefinitions.PASSIVE)

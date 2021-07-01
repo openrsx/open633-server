@@ -58,14 +58,14 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeShortLE128(player.getChunkX());
 		stream.writeByte128(player.getDetails().isForceNextMapLoadRefresh() ? 1 : 0);
 		stream.writeByte128(player.getMapSize());
-		for (int regionId : player.getMapRegionsIds()) {
-			int[] xteas = MapArchiveKeys.getMapKeys(regionId);
+		player.getMapRegionsIds().forEach(region -> {
+			int[] xteas = MapArchiveKeys.getMapKeys(region);
 			if (xteas == null)
 				xteas = new int[4];
 			for (int index = 0; index < 4; index++) {
 				stream.writeInt(xteas[index]);
 			}
-		}
+		});
 		stream.endPacketVarShort();
 		session.write(stream);
 		return this;

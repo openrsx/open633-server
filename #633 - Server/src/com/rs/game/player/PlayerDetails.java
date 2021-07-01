@@ -1,7 +1,5 @@
 package com.rs.game.player;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 
 import com.rs.game.player.content.ChargesManager;
@@ -35,7 +33,7 @@ public final class PlayerDetails {
 		profanityFilter = true;
 		if (charges == null)
 			charges = new ChargesManager();
-		ownedObjectsManagerKeys = new LinkedList<String>();
+		ownedObjectsManagerKeys = new ObjectArrayList<String>();
 		passwordList = new ObjectArrayList<String>();
 		ipList = new ObjectArrayList<String>();
 		if (watchMap == null) 
@@ -186,7 +184,7 @@ public final class PlayerDetails {
 	/**
 	 * A list of Player owned Objects
 	 */
-	private List<String> ownedObjectsManagerKeys;
+	private ObjectArrayList<String> ownedObjectsManagerKeys;
 
 	/**
 	 * Mutable values stored for specified uses

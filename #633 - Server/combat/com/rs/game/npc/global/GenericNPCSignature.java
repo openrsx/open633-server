@@ -11,7 +11,7 @@ public @interface GenericNPCSignature {
 
 	public int[] npcId();
 	
-	public int mapAreaNameHash() default -1;
+	public byte mapAreaNameHash() default -1;
 	
 	public boolean canBeAttackFromOutOfArea();
 	

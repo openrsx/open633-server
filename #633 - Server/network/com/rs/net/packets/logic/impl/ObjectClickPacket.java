@@ -5,6 +5,7 @@ import com.rs.game.World;
 import com.rs.game.GameObject;
 import com.rs.game.WorldTile;
 import com.rs.game.player.Player;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
@@ -48,8 +49,9 @@ public class ObjectClickPacket implements LogicPacket {
 			player.setRun(forceRun);
 
 		player.setRouteEvent(new RouteEvent(worldObject, () -> {
-			player.getMovement().stopAll(player);
 			player.faceObject(worldObject);
+			if (ControllerHandler.execute(player, controller -> controller.processObjectClick1(worldObject)))
+				return;
 			ObjectDispatcher.execute(player, worldObject, 1);
 		}, false));
 	}

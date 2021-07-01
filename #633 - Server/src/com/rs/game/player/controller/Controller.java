@@ -1,4 +1,6 @@
-package com.rs.game.player.controllers;
+package com.rs.game.player.controller;
+
+import java.util.Optional;
 
 import com.rs.game.Entity;
 import com.rs.game.GameObject;
@@ -10,31 +12,31 @@ import com.rs.game.player.Player;
 import com.rs.game.player.content.Foods.Food;
 import com.rs.game.player.content.Pots.Pot;
 
+import lombok.Data;
+
+@Data
 public abstract class Controller {
 
-	protected Player player;
+	/**
+	 * The string which defines the current controller.
+	 */
+	private final String controller;
 
-	public final void setPlayer(Player player) {
-		this.player = player;
+	/**
+	 * The current name of this controller.
+	 */
+	private final ControllerSafety safety;
+
+	/**
+	 * The current type of this controller.
+	 */
+	private final ControllerType type;
+
+	public Optional<Controller> copy() {
+		return Optional.empty();
 	}
 
-	public Player getPlayer() {
-		return player;
-	}
-
-	public final Object[] getArguments() {
-		return player.getControllerManager().getLastControlerArguments();
-	}
-
-	public final void setArguments(Object[] objects) {
-		player.getControllerManager().setLastControlerArguments(objects);
-	}
-
-	public final void removeControler() {
-		player.getControllerManager().removeControlerWithoutCheck();
-	}
-
-	public abstract void start();
+	public abstract void start(Player player);
 
 	public boolean canEat(Food food) {
 		return true;
@@ -68,10 +70,6 @@ public abstract class Controller {
 	 */
 	public boolean canAttack(Entity target) {
 		return true;
-	}
-
-	public void trackXP(int skillId, int addedXp) {
-
 	}
 
 	public boolean canDeleteInventoryItem(int itemId, int amount) {
@@ -251,14 +249,14 @@ public abstract class Controller {
 	}
 
 	/**
-	 * return remove controler
+	 * return remove controller
 	 */
 	public boolean login() {
 		return true;
 	}
 
 	/**
-	 * return remove controler
+	 * return remove controller
 	 */
 	public boolean logout() {
 		return true;
@@ -279,11 +277,45 @@ public abstract class Controller {
 		return true;
 	}
 
-	public boolean processItemOnPlayer(Player p2, Item item) {
+	public boolean processItemOnPlayer(Player target, Item item) {
 		return true;
 	}
 
 	public void processNPCDeath(int id) {
 
+	}
+
+	/**
+	 * Determines if {@code player} is in this minigame.
+	 * 
+	 * @param player the player to determine this for.
+	 * @return <true> if this minigame contains the player, <false> otherwise.
+	 */
+	public abstract boolean contains(Player player);
+
+	/**
+	 * The enumerated type whose elements represent the minigame types.
+	 * 
+	 * @author lare96 <http://github.com/lare96>
+	 */
+	public enum ControllerType {
+		NORMAL, SEQUENCED
+	}
+
+	/**
+	 * The enumerated type whose elements represent the item safety of a player who
+	 * is playing the minigame.
+	 * 
+	 * @author <a href="http://www.rune-server.org/members/stand+up/">Stand Up</a>
+	 */
+	public enum ControllerSafety {
+		/**
+		 * This safety is similar to when a player dies while he is skulled.
+		 */
+		DANGEROUS,
+		/**
+		 * /** Indicates the minigame is fully safe and no items will be lost on death
+		 */
+		SAFE
 	}
 }

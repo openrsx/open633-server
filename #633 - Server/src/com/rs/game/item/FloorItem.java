@@ -6,14 +6,16 @@ import com.rs.game.WorldTile;
 import com.rs.game.map.Region;
 import com.rs.game.player.Player;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 
+@Data
+@EqualsAndHashCode(callSuper=false)
 public class FloorItem extends Item {
 
-	private static final long serialVersionUID = -2287633342490535089L;
-
 	private WorldTile tile;
-	private String ownerName;
+	private String owner;
 	// 0 visible, 1 invisible, 2 visible and reappears 30sec after taken
 	private int type;
 
@@ -21,16 +23,11 @@ public class FloorItem extends Item {
 		super(id);
 	}
 
-	@Override
-	public void setAmount(int amount) {
-		this.amount = amount;
-	}
-
 	public FloorItem(Item item, WorldTile tile, Player owner, boolean underGrave, boolean invisible) {
 		super(item.getId(), item.getAmount());
 		this.tile = tile;
 		if (owner != null)
-			this.ownerName = owner.getUsername();
+			this.owner = owner.getUsername();
 		this.type = invisible ? 1 : 0;
 	}
 
@@ -41,10 +38,6 @@ public class FloorItem extends Item {
 		this.type = appearforever ? 2 : 0;
 	}
 
-	public WorldTile getTile() {
-		return tile;
-	}
-
 	public boolean isInvisible() {
 		return type == 1;
 	}
@@ -53,12 +46,8 @@ public class FloorItem extends Item {
 		return type == 2;
 	}
 
-	public String getOwner() {
-		return ownerName;
-	}
-
 	public boolean hasOwner() {
-		return ownerName != null;
+		return owner != null;
 	}
 
 	public void setInvisible(boolean invisible) {

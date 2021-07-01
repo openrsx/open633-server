@@ -14,6 +14,7 @@ import com.rs.game.item.ItemConstants;
 import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.io.InputStream;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
@@ -196,8 +197,9 @@ public final class RSInterfaceDispatcher {
 		}
 		if (!hasRequiriments)
 			return true;
-		if (!player.getControllerManager().canEquip(targetSlot, itemId))
+		if (!ControllerHandler.execute(player, controller -> controller.canEquip(targetSlot, itemId))) {
 			return false;
+		}
 		player.getMovement().stopAll(player, false, false);
 		player.getInventory().deleteItem(slotId, item);
 		if (targetSlot == 3) {
@@ -250,6 +252,8 @@ public final class RSInterfaceDispatcher {
 		return true;
 	}
 
+	static int finalSlot;
+	
 	public static boolean sendWear2(Player player, int slotId, int itemId) {
 		if (player.isFinished() || player.isDead())
 			return false;
@@ -263,6 +267,7 @@ public final class RSInterfaceDispatcher {
 			return false;
 		}
 		int targetSlot = Equipment.getItemSlot(itemId);
+		finalSlot = targetSlot;
 		if (itemId == 4084)
 			targetSlot = 3;
 		if (targetSlot == -1) {
@@ -298,8 +303,9 @@ public final class RSInterfaceDispatcher {
 		}
 		if (!hasRequiriments)
 			return false;
-		if (!player.getControllerManager().canEquip(targetSlot, itemId))
+		if (!ControllerHandler.execute(player, controller -> controller.canEquip(finalSlot, itemId))) {
 			return false;
+		}
 		player.getInventory().getItems().remove(slotId, item);
 		if (targetSlot == 3) {
 			if (isTwoHandedWeapon && player.getEquipment().getItem(5) != null) {

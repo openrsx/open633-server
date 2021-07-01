@@ -18,6 +18,7 @@ import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.familiar.Steeltitan;
 import com.rs.game.player.actions.Action;
 import com.rs.game.player.content.Magic;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;
@@ -85,8 +86,9 @@ public class PlayerCombat extends Action {
 		if (!Utility.isOnRange(player.getX(), player.getY(), size, target.getX(), target.getY(), target.getSize(),
 				maxDistance))
 			return 0;
-		if (!player.getControllerManager().keepCombating(target))
+		if (!ControllerHandler.execute(player, controller -> controller.keepCombating(target))) {
 			return -1;
+		}
 		addAttackedByDelay(player);
 		if (spellId > 0) {
 			boolean manualCast = spellId != 65535 && spellId >= 256;
@@ -150,7 +152,8 @@ public class PlayerCombat extends Action {
 						Player p2 = World.getPlayers().get(playerIndex);
 						if (p2 == null || p2 == player || p2 == target || p2.isDead() || !p2.isStarted()
 								|| p2.isFinished() || !p2.isCanPvp() || !p2.isMultiArea()
-								|| !p2.withinDistance(target, maxDistance) || !player.getControllerManager().canHit(p2))
+								|| !p2.withinDistance(target, maxDistance)
+								|| !ControllerHandler.execute(player, controller -> controller.canHit(p2)))
 							continue;
 						possibleTargets.add(p2);
 						if (possibleTargets.size() == maxAmtTargets)
@@ -164,7 +167,7 @@ public class PlayerCombat extends Action {
 						NPC n = World.getNPCs().get(npcIndex);
 						if (n == null || n == target || n == player.getFamiliar() || n.isDead() || n.isFinished()
 								|| !n.isMultiArea() || !n.withinDistance(target, maxDistance)
-								|| !n.getDefinitions().hasAttackOption() || !player.getControllerManager().canHit(n))
+								|| !n.getDefinitions().hasAttackOption() || !ControllerHandler.execute(player, controller -> controller.canHit(n)))
 							continue;
 						possibleTargets.add(n);
 						if (possibleTargets.size() == maxAmtTargets)
@@ -3419,11 +3422,11 @@ public class PlayerCombat extends Action {
 		if (player.getPrayer().hasPrayersOn() && hit.getDamage() != 0) {
 			if (hit.getLook() == HitLook.MAGIC_DAMAGE) {
 				if (player.getPrayer().usingPrayer(0, 17))
-					hit.setDamage((int) (hit.getDamage() * source
+					hit.setDamage((int) (hit.getDamage() * source.toPlayer()
 							.getMagePrayerMultiplier()));
 				else if (player.getPrayer().usingPrayer(1, 7)) {
 					int deflectedDamage = (int) (hit.getDamage() * 0.1);
-					hit.setDamage((int) (hit.getDamage() * source
+					hit.setDamage((int) (hit.getDamage() * source.toPlayer()
 							.getMagePrayerMultiplier()));
 					if (deflectedDamage > 0) {
 						source.applyHit(new Hit(player, deflectedDamage,
@@ -3434,11 +3437,11 @@ public class PlayerCombat extends Action {
 				}
 			} else if (hit.getLook() == HitLook.RANGE_DAMAGE) {
 				if (player.getPrayer().usingPrayer(0, 18))
-					hit.setDamage((int) (hit.getDamage() * source
+					hit.setDamage((int) (hit.getDamage() * source.toPlayer()
 							.getRangePrayerMultiplier()));
 				else if (player.getPrayer().usingPrayer(1, 8)) {
 					int deflectedDamage = (int) (hit.getDamage() * 0.1);
-					hit.setDamage((int) (hit.getDamage() * source
+					hit.setDamage((int) (hit.getDamage() * source.toPlayer()
 							.getRangePrayerMultiplier()));
 					if (deflectedDamage > 0) {
 						source.applyHit(new Hit(player, deflectedDamage,
@@ -3449,11 +3452,11 @@ public class PlayerCombat extends Action {
 				}
 			} else if (hit.getLook() == HitLook.MELEE_DAMAGE) {
 				if (player.getPrayer().usingPrayer(0, 19))
-					hit.setDamage((int) (hit.getDamage() * source
+					hit.setDamage((int) (hit.getDamage() * source.toPlayer()
 							.getMeleePrayerMultiplier()));
 				else if (player.getPrayer().usingPrayer(1, 9)) {
 					int deflectedDamage = (int) (hit.getDamage() * 0.1);
-					hit.setDamage((int) (hit.getDamage() * source
+					hit.setDamage((int) (hit.getDamage() * source.toPlayer()
 							.getMeleePrayerMultiplier()));
 					if (deflectedDamage > 0) {
 						source.applyHit(new Hit(player, deflectedDamage,

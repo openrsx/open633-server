@@ -6,6 +6,7 @@ import com.rs.game.Hit;
 import com.rs.game.Hit.HitLook;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.utilities.RandomUtils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -534,8 +535,9 @@ public class Foods {
 		if (!player.getDetails().getWatchMap().get("FOOD").elapsed(1800)) {
 			return false;
 		}
-		if (!player.getControllerManager().canEat(food))
-			return true;
+		if (!ControllerHandler.execute(player, controller -> controller.canEat(food))) {
+			return false;
+		}
 		String name = ItemDefinitions.getItemDefinitions(food.getId()).getName().toLowerCase();
 		player.getPackets().sendGameMessage("You eat the " + name + ".");
 		player.setNextAnimationNoPriority(EAT_ANIM);

@@ -2,6 +2,7 @@ package com.rs.net.packets.logic.impl;
 
 import com.rs.game.World;
 import com.rs.game.player.Player;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
@@ -23,21 +24,16 @@ public class PlayerOptionFourPacket implements LogicPacket {
 		if (forceRun)
 			player.setRun(forceRun);
 		player.setRouteEvent(new RouteEvent(p2, () -> {
-			if (!player.getControllerManager().canPlayerOption4(p2))
+			if (!ControllerHandler.execute(player, controller -> controller.canPlayerOption4(p2))) {
 				return;
+			}
 			player.getMovement().stopAll(player);
-//			if (player.isStarter()) {
-//				player.getPackets()
-//						.sendGameMessage(
-//								"You can't trade for the first half hour after creating account.");
-//				return;
-//			}
-			if (player.isCantTrade() || player.getControllerManager().getController() != null) {
+			if (player.isCantTrade() || player.getCurrentController().isPresent()) {
 				player.getPackets().sendGameMessage("You are busy.");
 				return;
 			}
 			if (p2.getInterfaceManager().containsScreenInter() || p2.isCantTrade()
-					|| p2.getControllerManager().getController() != null
+					|| p2.getCurrentController().isPresent()
 
 					|| p2.getMovement().isLocked()) {
 				player.getPackets().sendGameMessage("The other player is busy.");

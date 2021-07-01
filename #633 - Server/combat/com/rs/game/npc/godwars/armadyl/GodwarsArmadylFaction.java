@@ -10,8 +10,6 @@ import com.rs.game.item.Item;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Player;
-import com.rs.game.player.controllers.Controller;
-import com.rs.game.player.controllers.GodWars;
 import com.rs.game.task.Task;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -89,11 +87,11 @@ public class GodwarsArmadylFaction extends NPC {
 					setNextAnimation(new Animation(defs.getDeathAnim()));
 				} else if (loop >= defs.getDeathDelay()) {
 					source.get().ifPlayer(player -> {
-						Controller controler = player.getControllerManager().getController();
-						if (controler != null && controler instanceof GodWars) {
-							GodWars godControler = (GodWars) controler;
-							godControler.incrementKillCount(1);
-						}
+//						Controller controler = player.getControllerManager().getController();
+//						if (controler != null && controler instanceof GodWars) {
+//							GodWars godControler = (GodWars) controler;
+//							godControler.incrementKillCount(1);
+//						}
 					});
 					drop();
 					reset();

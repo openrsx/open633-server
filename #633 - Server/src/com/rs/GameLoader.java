@@ -12,7 +12,6 @@ import com.rs.game.map.MapBuilder;
 import com.rs.game.npc.combat.NPCCombatDispatcher;
 import com.rs.game.npc.global.GenericNPCDispatcher;
 import com.rs.game.player.content.FriendChatsManager;
-import com.rs.game.player.controllers.ControllerHandler;
 import com.rs.game.player.spells.passive.PassiveSpellDispatcher;
 import com.rs.net.Huffman;
 import com.rs.net.ServerChannelHandler;
@@ -97,7 +96,6 @@ public class GameLoader {
 			new MobDropTableLoader().load();
 		});
 		getBackgroundLoader().submit(() -> {
-			ControllerHandler.init();
 			DialogueEventRepository.init();
 			FriendChatsManager.init();
 		});

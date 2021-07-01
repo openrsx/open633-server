@@ -1,6 +1,7 @@
 package com.rs.game.player;
 
 import com.rs.GameConstants;
+import com.rs.game.player.controller.ControllerHandler;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Data;
@@ -111,7 +112,7 @@ public class InterfaceManager {
 		player.getPrayer().unlockPrayerBookButtons();
 		if (player.getFamiliar() != null && player.isRunning())
 			player.getFamiliar().unlock();
-		player.getControllerManager().sendInterfaces();
+		ControllerHandler.executeVoid(player, controller -> controller.sendInterfaces());
 	}
 
 	public boolean containsReplacedChatBoxInter() {

@@ -14,6 +14,7 @@ import com.rs.game.World;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.content.Emotes.Emote;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.io.InputStream;
 import com.rs.io.OutputStream;
 import com.rs.net.decoders.ClientPacketsDecoder;
@@ -222,7 +223,7 @@ public class Session {
 			return;
 		Logger.globalLog(player.getUsername(), getIP(), new String(" has logged out."));
 		player.getMovement().stopAll(player);
-		player.getControllerManager().logout();
+		ControllerHandler.executeVoid(player, controller -> controller.logout());
 		player.setRunning(false);
 		player.getFriendsIgnores().sendFriendsMyStatus(false);
 		if (player.getCurrentFriendChat() != null)

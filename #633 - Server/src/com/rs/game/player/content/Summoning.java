@@ -9,6 +9,7 @@ import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
+import com.rs.game.player.controller.ControllerHandler;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -22,7 +23,7 @@ public class Summoning {
 			player.getPackets().sendGameMessage("You already have a follower.");
 			return;
 		}
-		if (!player.getControllerManager().canSummonFamiliar()
+		if (!ControllerHandler.execute(player, controller -> controller.canSummonFamiliar())
 				|| player.getSkills().getLevel(Skills.SUMMONING) < pouch.getSummoningCost())
 			return;
 		int levelReq = getRequiredLevel(pouch.getRealPouchId());

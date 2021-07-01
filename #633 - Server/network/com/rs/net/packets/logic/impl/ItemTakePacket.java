@@ -4,6 +4,7 @@ import com.rs.game.World;
 import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.player.Player;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
@@ -28,8 +29,11 @@ public class ItemTakePacket implements LogicPacket {
 		if (!player.getMapRegionsIds().contains(regionId))
 			return;
 		final FloorItem item = World.getRegion(regionId).getGroundItem(id, tile, player);
-		if (item == null || !player.getControllerManager().canTakeItem(item))
+		if (item == null)
 			return;
+		if (!ControllerHandler.execute(player, controller -> controller.canTakeItem(item))) {
+			return;
+		}
 		if (forceRun)
 			player.setRun(forceRun);
 		player.getMovement().stopAll(player);

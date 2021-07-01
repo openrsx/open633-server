@@ -4,7 +4,6 @@ import com.rs.game.Entity;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.global.GenericNPC;
 import com.rs.game.npc.global.GenericNPCSignature;
-import com.rs.utilities.RandomUtils;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
@@ -12,11 +11,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 public class Duck extends GenericNPC {
 	
 	@Override
-	public void process(NPC npc) {
-		if (RandomUtils.percentageChance(1))
-			System.out.println("YEAH BOI");
-	}
-
+	public void setAttributes(NPC npc) { }
+	
 	@Override
 	public ObjectArrayList<Entity> getPossibleTargets(NPC npc) {
 		return npc.getPossibleTargets();

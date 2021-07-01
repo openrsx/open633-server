@@ -23,7 +23,7 @@ import com.rs.game.player.LocalNPCUpdate;
 import com.rs.game.player.LocalPlayerUpdate;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.TeleportType;
-import com.rs.game.player.controllers.Wilderness;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.player.type.PoisonType;
 import com.rs.game.route.RouteFinder;
@@ -356,7 +356,7 @@ public abstract class Entity extends WorldTile {
 			}
 			int dir = (int) nextStep[0];
 			if (((boolean) nextStep[3] && !World.checkWalkStep(getPlane(), getX(), getY(), dir, getSize()))
-					|| (isPlayer() && !((Player) this).getControllerManager().canMove(dir))) {
+					|| (isPlayer() && !ControllerHandler.execute((Player) this, controller -> controller.canMove(dir)))) {
 				resetWalkSteps();
 				break;
 			}
@@ -720,7 +720,7 @@ public abstract class Entity extends WorldTile {
 																					// only check when we want
 			return false;
 		if (isPlayer()) {
-			if (!((Player) this).getControllerManager().addWalkStep(lastX, lastY, nextX, nextY))
+			if (!ControllerHandler.execute((Player) this, controller -> controller.checkWalkStep(lastX, lastY, nextX, nextY)))
 				return false;
 		}
 		getMovement().getWalkSteps().add(new Object[] { dir, nextX, nextY, check });
@@ -795,7 +795,9 @@ public abstract class Entity extends WorldTile {
 
 	public abstract void finish();
 
-	public abstract int getMaxHitpoints();
+	public int getMaxHitpoints() {
+		return isNPC() ? toNPC().getCombatDefinitions().getHitpoints() : toPlayer().getSkills().getLevel(Skills.HITPOINTS) * 10 + toPlayer().getEquipment().getEquipmentHpIncrease();
+	}
 
 	public void processEntityUpdate() {
 		processMovement();
@@ -894,7 +896,9 @@ public abstract class Entity extends WorldTile {
 			direction = (byte) ((byte) (Math.atan2((double) deltaX, (double) deltaY) * 2607.5945876176133) & 0x3FFF);
 	}
 
-	public abstract int getSize();
+	public int getSize() {
+		return isNPC() ? toNPC().getDefinitions().getSize() : toPlayer().getAppearance().getSize();
+	}
 
 	public void cancelFaceEntityNoCheck() {
 		nextFaceEntity = -2;
@@ -930,7 +934,7 @@ public abstract class Entity extends WorldTile {
 				Player p = (Player) this;
 				if (!entangleMessage)
 					p.getPackets().sendGameMessage("You have been frozen.");
-				if (p.getControllerManager().getController() != null)
+				if (p.getCurrentController().isPresent())
 					time /= 2;
 			}
 		}
@@ -938,11 +942,17 @@ public abstract class Entity extends WorldTile {
 		freezeDelay = time + currentTime;
 	}
 
-	public abstract double getMagePrayerMultiplier();
+	public double getMagePrayerMultiplier() {
+		return 0.6;
+	}
 
-	public abstract double getRangePrayerMultiplier();
+	public double getRangePrayerMultiplier() {
+		return 0.6;
+	}
 
-	public abstract double getMeleePrayerMultiplier();
+	public double getMeleePrayerMultiplier() {
+		return 0.6;
+	}
 
 	public void checkMultiArea() {
 		multiArea = forceMultiArea ? true : World.isMultiArea(this);
@@ -1157,9 +1167,7 @@ public abstract class Entity extends WorldTile {
 				int musicId = region.getRandomMusicId();
 				if (musicId != -1)
 					player.getMusicsManager().checkMusic(musicId);
-				player.getControllerManager().moved();
-				if (player.isStarted())
-					World.checkControlersAtMove(player);
+				ControllerHandler.executeVoid(player, controller -> controller.moved());
 			} else {
 				if (entity.getLastRegionId() > 0)
 					World.getRegion(entity.getLastRegionId()).removeNPCIndex(entity.getIndex());
@@ -1170,16 +1178,15 @@ public abstract class Entity extends WorldTile {
 		} else {
 			if (isPlayer()) {
 				Player player = (Player) entity;
-				player.getControllerManager().moved();
-				if (player.isStarted())
-					World.checkControlersAtMove(player);
+				ControllerHandler.executeVoid(player, controller -> controller.moved());
 			}
 			entity.checkMultiArea();
 		}
 	}
 
 	public final boolean isPvpArea(WorldTile tile) {
-		return Wilderness.isAtWild(tile);
+//		return Wilderness.isAtWild(tile);
+		return false;
 	}
 
 	public void sendSoulSplit(final Hit hit, final Entity user) {

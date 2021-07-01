@@ -15,6 +15,7 @@ import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning;
 import com.rs.game.player.content.Summoning.Pouch;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utility;
@@ -151,7 +152,7 @@ public abstract class Familiar extends NPC implements Serializable {
 		return !target.isDead()
 				&& ((owner.isMultiArea() && isMultiArea() && target.isMultiArea())
 						|| (owner.isForceMultiArea() && target.isForceMultiArea()))
-				&& owner.getControllerManager().canAttack(target);
+				&& ControllerHandler.execute(owner, controller -> controller.canAttack(target));
 	}
 
 	public boolean renewFamiliar() {

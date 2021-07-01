@@ -10,6 +10,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class GenericNPC  {
 	
+	public abstract void setAttributes(NPC npc);
+	
 	public void process(NPC npc) { }
 	
 	public void handleIngoingHit(final Hit hit) { }

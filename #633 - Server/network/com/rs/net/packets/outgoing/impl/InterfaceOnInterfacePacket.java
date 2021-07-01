@@ -5,6 +5,7 @@ import com.rs.game.item.Item;
 import com.rs.game.npc.familiar.Familiar.SpecialAttack;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.io.InputStream;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
@@ -44,9 +45,9 @@ public class InterfaceOnInterfacePacket implements OutgoingPacket {
 			if (player.getMovement().isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 				return;
 			player.getMovement().stopAll(player);
-			if (!player.getControllerManager().canUseItemOnItem(itemUsed, usedWith))
+			if (!ControllerHandler.execute(player, controller -> controller.canUseItemOnItem(itemUsed, usedWith))) {
 				return;
-
+			}
 		}
 		if (GameConstants.DEBUG)
 			Logger.log("ItemHandler", "ItemOnItem " + usedWithId + ", " + toSlot + ", " + interfaceId + ", "
