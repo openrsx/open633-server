@@ -45,7 +45,7 @@ public class InterfaceOnInterfacePacket implements OutgoingPacket {
 			if (player.getMovement().isLocked()/* || player.getEmotesManager().isDoingEmote() */)
 				return;
 			player.getMovement().stopAll(player);
-			if (!ControllerHandler.execute(player, controller -> controller.canUseItemOnItem(itemUsed, usedWith))) {
+			if (!ControllerHandler.execute(player, controller -> controller.canUseItemOnItem(player, itemUsed, usedWith))) {
 				return;
 			}
 		}

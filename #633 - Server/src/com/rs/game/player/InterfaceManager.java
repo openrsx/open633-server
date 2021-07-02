@@ -112,7 +112,7 @@ public class InterfaceManager {
 		player.getPrayer().unlockPrayerBookButtons();
 		if (player.getFamiliar() != null && player.isRunning())
 			player.getFamiliar().unlock();
-		ControllerHandler.executeVoid(player, controller -> controller.sendInterfaces());
+		ControllerHandler.executeVoid(player, controller -> controller.sendInterfaces(player));
 	}
 
 	public boolean containsReplacedChatBoxInter() {

@@ -24,6 +24,7 @@ import com.rs.game.player.LocalPlayerUpdate;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.TeleportType;
 import com.rs.game.player.controller.ControllerHandler;
+import com.rs.game.player.controller.impl.WildernessController;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.player.type.PoisonType;
 import com.rs.game.route.RouteFinder;
@@ -58,7 +59,7 @@ public abstract class Entity extends WorldTile {
 	private transient WorldTile nextWorldTile;
 	private transient byte nextWalkDirection;
 	private transient byte nextRunDirection;
-	private transient Rectangle nextFaceWorldTile;
+	private transient WorldTile nextFaceWorldTile;
 	private transient boolean teleported;
 	// than 1thread so concurent
 	private transient ObjectArrayFIFOQueue<Hit> receivedHits;
@@ -356,7 +357,7 @@ public abstract class Entity extends WorldTile {
 			}
 			int dir = (int) nextStep[0];
 			if (((boolean) nextStep[3] && !World.checkWalkStep(getPlane(), getX(), getY(), dir, getSize()))
-					|| (isPlayer() && !ControllerHandler.execute((Player) this, controller -> controller.canMove(dir)))) {
+					|| (isPlayer() && !ControllerHandler.execute((Player) this, controller -> controller.canMove((Player) this, dir)))) {
 				resetWalkSteps();
 				break;
 			}
@@ -713,16 +714,12 @@ public abstract class Entity extends WorldTile {
 		int dir = Utility.getMoveDirection(nextX - lastX, nextY - lastY);
 		if (dir == -1)
 			return false;
-		if (check && !World.checkWalkStep(getPlane(), lastX, lastY, dir, getSize()))// double check must be done sadly
-																					// cuz of npc
-																					// under check, can be improved
-																					// later to
-																					// only check when we want
+		if (check && !World.checkWalkStep(getPlane(), lastX, lastY, dir, getSize()))
 			return false;
-		if (isPlayer()) {
-			if (!ControllerHandler.execute((Player) this, controller -> controller.checkWalkStep(lastX, lastY, nextX, nextY)))
-				return false;
-		}
+		ifPlayer(player -> {
+			if (!ControllerHandler.execute((Player) this, controller -> controller.checkWalkStep((Player) this, lastX, lastY, nextX, nextY)))
+				return;
+		});
 		getMovement().getWalkSteps().add(new Object[] { dir, nextX, nextY, check });
 		return true;
 	}
@@ -869,31 +866,18 @@ public abstract class Entity extends WorldTile {
 		}
 	}
 
-	// @Deprecated used to face simply a tiel
-	// "use setNextFaceRectanglePrecise(tile, 1, 1)
 	public void setNextFaceWorldTile(WorldTile nextFaceWorldTile) {
-		// who the hell made setNextFaceworldTile() ??!!! fucking incorrect
-		// calcs.....
-		// also the thing you guys call direction is actually angle
-		setNextFaceRectanglePrecise(nextFaceWorldTile, 1, 1);
-	}
-
-	public void setNextFaceRectanglePrecise(WorldTile base, int sizeX, int sizeY) {
-		if (nextFaceWorldTile != null && nextFaceWorldTile.getX() == base.getX()
-				&& nextFaceWorldTile.getY() == base.getY() && nextFaceWorldTile.getSizeX() == sizeX
-				&& nextFaceWorldTile.getSizeY() == sizeY)
+		if (nextFaceWorldTile.getX() == getX()
+				&& nextFaceWorldTile.getY() == getY())
 			return;
-		nextFaceWorldTile = new Rectangle(base.getX(), base.getY(), sizeX, sizeY);
-		WorldTile from = nextWorldTile != null ? nextWorldTile : this;
-		int srcX = (from.getX() * 512) + (getSize() * 256);
-		int srcY = (from.getY() * 512) + (getSize() * 256);
-		int dstX = (base.getX() * 512) + (sizeX * 256);
-		int dstY = (base.getY() * 512) + (sizeY * 256);
-		int deltaX = srcX - dstX;
-		int deltaY = srcY - dstY;
-		direction = 0;
-		if (deltaX != 0 || deltaY != 0)
-			direction = (byte) ((byte) (Math.atan2((double) deltaX, (double) deltaY) * 2607.5945876176133) & 0x3FFF);
+		this.nextFaceWorldTile = nextFaceWorldTile;
+		if (nextWorldTile != null)
+			direction = (byte) Utility.getFaceDirection(nextFaceWorldTile.getX()
+					- nextWorldTile.getX(), nextFaceWorldTile.getY()
+					- nextWorldTile.getY());
+		else
+			direction = (byte) Utility.getFaceDirection(nextFaceWorldTile.getX()
+					- getX(), nextFaceWorldTile.getY() - getY());
 	}
 
 	public int getSize() {
@@ -957,96 +941,14 @@ public abstract class Entity extends WorldTile {
 	public void checkMultiArea() {
 		multiArea = forceMultiArea ? true : World.isMultiArea(this);
 	}
-
-	public void faceEntity(Entity target) {
-		// setNextFaceWorldTile(new
-		// WorldTile(target.getCoordFaceX(target.getSize()),
-		// target.getCoordFaceY(target.getSize()), target.getPlane()));
-		setNextFaceRectanglePrecise(new WorldTile(target.getX(), target.getY(), target.getPlane()), target.getSize(),
-				target.getSize());
-	}
-
+	
 	public void faceObject(GameObject object) {
-		ObjectDefinitions def = object.getDefinitions();
-		int x = -1, y = -1;
-		int sizeX = 1, sizeY = 1;
-		if (object.getType() == 0) { // wall
-			if (object.getRotation() == 0) { // west
-				x = object.getX() - 1;
-				y = object.getY();
-			} else if (object.getRotation() == 1) { // north
-				x = object.getX();
-				y = object.getY() + 1;
-			} else if (object.getRotation() == 2) { // east
-				x = object.getX() + 1;
-				y = object.getY();
-			} else if (object.getRotation() == 3) { // south
-				x = object.getX();
-				y = object.getY() - 1;
-			}
-		} else if (object.getType() == 1 || object.getType() == 2) { // corner
-																		// and
-																		// cornerwall
-			if (object.getRotation() == 0) { // nw
-				x = object.getX() - 1;
-				y = object.getY() + 1;
-			} else if (object.getRotation() == 1) { // ne
-				x = object.getX() + 1;
-				y = object.getY() + 1;
-			} else if (object.getRotation() == 2) { // se
-				x = object.getX() + 1;
-				y = object.getY() - 1;
-			} else if (object.getRotation() == 3) { // sw
-				x = object.getX() - 1;
-				y = object.getY() - 1;
-			}
-		} else if (object.getType() == 3) { // inverted corner
-			if (object.getRotation() == 0) { // se
-				x = object.getX() + 1;
-				y = object.getY() - 1;
-			} else if (object.getRotation() == 1) { // sw
-				x = object.getX() - 1;
-				y = object.getY() - 1;
-			} else if (object.getRotation() == 2) { // nw
-				x = object.getX() - 1;
-				y = object.getY() + 1;
-			} else if (object.getRotation() == 3) { // ne
-				x = object.getX() + 1;
-				y = object.getY() + 1;
-			}
-		} else if (object.getType() < 10) { // walldeco's
-			if (object.getRotation() == 0) { // west
-				x = object.getX() - 1;
-				y = object.getY();
-			} else if (object.getRotation() == 1) { // north
-				x = object.getX();
-				y = object.getY() + 1;
-			} else if (object.getRotation() == 2) { // east
-				x = object.getX() + 1;
-				y = object.getY();
-			} else if (object.getRotation() == 3) { // south
-				x = object.getX();
-				y = object.getY() - 1;
-			}
-		} else if (object.getType() == 10 || object.getType() == 11 || object.getType() == 22) { // multisized rect objs
-			if (object.getRotation() == 0 || object.getRotation() == 2) {
-				x = object.getX();
-				y = object.getY();
-				sizeX = def.getSizeX();
-				sizeY = def.getSizeY();
-			} else {
-				x = object.getX();
-				y = object.getY();
-				sizeX = def.getSizeY();
-				sizeY = def.getSizeX();
-			}
-		} else {
-			// rest
-			x = object.getX();
-			y = object.getY();
-		}
-
-		setNextFaceRectanglePrecise(new WorldTile(x, y, getPlane()), sizeX, sizeY);
+		ObjectDefinitions objectDef = object.getDefinitions();
+		setNextFaceWorldTile(new WorldTile(object.getCoordFaceX(
+				objectDef.getSizeX(), objectDef.getSizeY(),
+				object.getRotation()), object.getCoordFaceY(
+				objectDef.getSizeX(), objectDef.getSizeY(),
+				object.getRotation()), object.getPlane()));
 	}
 
 	public void setForceMultiArea(boolean forceMultiArea) {
@@ -1156,37 +1058,45 @@ public abstract class Entity extends WorldTile {
 			return;
 		}
 		short regionId = (short) entity.getRegionId();
-		if (entity.getLastRegionId() != regionId) { // map region entity at
-			// changed
-			if (isPlayer()) {
+		if (entity.getLastRegionId() != regionId) {
+			ifPlayer(player -> {
 				if (entity.getLastRegionId() > 0)
 					World.getRegion(entity.getLastRegionId()).removePlayerIndex((short) entity.getIndex());
 				Region region = World.getRegion(regionId);
 				region.addPlayerIndex((short) entity.getIndex());
-				Player player = (Player) entity;
 				int musicId = region.getRandomMusicId();
 				if (musicId != -1)
 					player.getMusicsManager().checkMusic(musicId);
-				ControllerHandler.executeVoid(player, controller -> controller.moved());
-			} else {
+				ControllerHandler.executeVoid(player, controller -> controller.moved(player));
+				if (player.isStarted())
+					checkControlersAtMove(player);
+			});
+			ifNpc(npc -> {
 				if (entity.getLastRegionId() > 0)
 					World.getRegion(entity.getLastRegionId()).removeNPCIndex(entity.getIndex());
 				World.getRegion(regionId).addNPCIndex((short) entity.getIndex());
-			}
+			});
 			entity.checkMultiArea();
 			entity.setLastRegionId(regionId);
 		} else {
-			if (isPlayer()) {
-				Player player = (Player) entity;
-				ControllerHandler.executeVoid(player, controller -> controller.moved());
-			}
+			ifPlayer(player -> {
+				ControllerHandler.executeVoid(player, controller -> controller.moved(player));
+				if (player.isStarted())
+					checkControlersAtMove(player);
+			});
 			entity.checkMultiArea();
 		}
 	}
+	
+	private static void checkControlersAtMove(Player player) {
+		if (WildernessController.isAtWild(player))
+			new WildernessController().start(player);
+		else
+			new WildernessController().moved(player);
+	}
 
 	public final boolean isPvpArea(WorldTile tile) {
-//		return Wilderness.isAtWild(tile);
-		return false;
+		return WildernessController.isAtWild(tile);
 	}
 
 	public void sendSoulSplit(final Hit hit, final Entity user) {

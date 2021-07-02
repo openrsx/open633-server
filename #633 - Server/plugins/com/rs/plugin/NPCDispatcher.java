@@ -140,22 +140,18 @@ public class NPCDispatcher {
 				|| !player.getMapRegionsIds().contains(npc.getRegionId()) || player.getMovement().isLocked())
 			return;
 		player.setRouteEvent(new RouteEvent(npc, () -> {
-			if (npc != null && Utility.getDistance(player, npc) < 3) {
-				player.faceEntity(npc);
-				npc.faceEntity(player);
-			}
 			switch(optionId) {
 			case 1:
-				ControllerHandler.execute(player, controller -> controller.processNPCClick1(npc));
+				ControllerHandler.execute(player, controller -> controller.processNPCClick1(player, npc));
 				break;
 			case 2:
-				ControllerHandler.execute(player, controller -> controller.processNPCClick2(npc));
+				ControllerHandler.execute(player, controller -> controller.processNPCClick2(player, npc));
 				break;
 			case 3:
-				ControllerHandler.execute(player, controller -> controller.processNPCClick3(npc));
+				ControllerHandler.execute(player, controller -> controller.processNPCClick3(player, npc));
 				break;
 			case 4:
-				ControllerHandler.execute(player, controller -> controller.processNPCClick4(npc));
+				ControllerHandler.execute(player, controller -> controller.processNPCClick4(player, npc));
 				break;
 			}
 			if (!ControllerHandler.getController(player).isPresent())

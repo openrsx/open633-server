@@ -535,7 +535,7 @@ public class Foods {
 		if (!player.getDetails().getWatchMap().get("FOOD").elapsed(1800)) {
 			return false;
 		}
-		if (!ControllerHandler.execute(player, controller -> controller.canEat(food))) {
+		if (!ControllerHandler.execute(player, controller -> controller.canEat(player, food))) {
 			return false;
 		}
 		String name = ItemDefinitions.getItemDefinitions(food.getId()).getName().toLowerCase();

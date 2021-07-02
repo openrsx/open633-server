@@ -70,7 +70,6 @@ public class GameLoader {
 	 */
 	@SneakyThrows(IOException.class)
 	public void load() {
-		/** Setting the server clock time */
 		Cache.init();
 		CoresManager.init();
 		World.init();
@@ -114,8 +113,6 @@ public class GameLoader {
 			LogicPacketDispatcher.load();
 			OutgoingPacketDispatcher.load();
 			GenericNPCDispatcher.load();
-		});
-		getBackgroundLoader().submit(() -> {
 			PassiveSpellDispatcher.load();
 		});
 	}

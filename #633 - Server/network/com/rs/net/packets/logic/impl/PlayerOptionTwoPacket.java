@@ -23,7 +23,7 @@ public class PlayerOptionTwoPacket implements LogicPacket {
 			return;
 		if (player.getMovement().isLocked())
 			return;
-		if (!ControllerHandler.execute(player, controller -> controller.canPlayerOption2(p2))) {
+		if (!ControllerHandler.execute(player, controller -> controller.canPlayerOption2(player, p2))) {
 			return;
 		}
 		if (forceRun)

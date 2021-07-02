@@ -286,10 +286,8 @@ public final class LocalNPCUpdate {
 	}
 
 	private void applyFaceWorldTileMask(NPC n, OutputStream data) {
-		data.writeShortLE((n.getNextFaceWorldTile().getX() * 2)
-				+ n.getNextFaceWorldTile().getSizeX());
-		data.writeShort128((n.getNextFaceWorldTile().getY() * 2)
-				+ n.getNextFaceWorldTile().getSizeY());
+		data.writeShortLE((n.getNextFaceWorldTile().getX() << 1) + 1);
+		data.writeShort128((n.getNextFaceWorldTile().getY() << 1) + 1);
 	}
 
 	private void applyHitMask(NPC n, OutputStream data) {

@@ -223,7 +223,7 @@ public class Session {
 			return;
 		Logger.globalLog(player.getUsername(), getIP(), new String(" has logged out."));
 		player.getMovement().stopAll(player);
-		ControllerHandler.executeVoid(player, controller -> controller.logout());
+		ControllerHandler.executeVoid(player, controller -> controller.logout(player));
 		player.setRunning(false);
 		player.getFriendsIgnores().sendFriendsMyStatus(false);
 		if (player.getCurrentFriendChat() != null)

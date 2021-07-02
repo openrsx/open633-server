@@ -7,6 +7,7 @@ import java.util.function.Function;
 import com.google.common.collect.ImmutableSet;
 import com.rs.game.player.Player;
 import com.rs.game.player.controller.impl.TestController;
+import com.rs.game.player.controller.impl.WildernessController;
 
 import lombok.Setter;
 
@@ -19,7 +20,7 @@ import lombok.Setter;
 public class ControllerHandler {
 
 	@Setter
-	private static ImmutableSet<Controller> CONTROLLERS = ImmutableSet.of(new TestController());
+	private static ImmutableSet<Controller> CONTROLLERS = ImmutableSet.of(new TestController(), new WildernessController());
 	
 	/**
 	 * The method that executes {@code action} for {@code player}.

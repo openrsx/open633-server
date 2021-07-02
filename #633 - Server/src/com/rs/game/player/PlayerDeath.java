@@ -24,7 +24,7 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 
 	@Override
 	public void preDeath() {
-		if (!ControllerHandler.execute(getActor(), controller -> controller.sendDeath()))
+		if (!ControllerHandler.execute(getActor(), controller -> controller.sendDeath(getActor())))
 			return;
 		getActor().getMovement().lock();
 		getActor().setNextAnimation(new Animation(836));

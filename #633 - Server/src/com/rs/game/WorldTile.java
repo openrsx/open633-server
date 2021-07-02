@@ -199,4 +199,16 @@ public class WorldTile {
 		int distanceY = y1 - y2;
 		return distanceX < size2 && distanceX > -size1 && distanceY < size2 && distanceY > -size1;
 	}
+	
+	public int getDistance(final WorldTile from) {
+		final int distanceX = Math.abs(from.getX() - getX());
+		final int distanceY = Math.abs(from.getY() - getY());
+		return (int) Math.ceil((distanceX + distanceY) / 2);
+	}
+
+	public int getFurthestDistance(final WorldTile from) {
+		final int distanceX = Math.abs(from.getX() - getX());
+		final int distanceY = Math.abs(from.getY() - getY());
+		return distanceX > distanceY ? distanceX : distanceY;
+	}
 }

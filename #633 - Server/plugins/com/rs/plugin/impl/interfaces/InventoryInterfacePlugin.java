@@ -97,7 +97,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				long dropTime = Utility.currentTimeMillis();
 				if (player.getMovement().getLockDelay() >= dropTime || player.getNextEmoteEnd() >= dropTime)
 					return;
-				if (!ControllerHandler.execute(player, controller -> controller.canDropItem(item)))
+				if (!ControllerHandler.execute(player, controller -> controller.canDropItem(player, item)))
 					return;
 				player.getMovement().stopAll(player, false);
 				
@@ -177,7 +177,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				return;
 			}
 			if (npc instanceof Pet) {
-				player.faceEntity(npc);
+				player.setNextFaceEntity(npc);
 				player.getPetManager().eat(item.getId(), (Pet) npc);
 				return;
 			}
@@ -261,7 +261,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 		}
 		if (!hasRequiriments)
 			return false;
-		if (!ControllerHandler.execute(player, controller -> controller.canEquip(finalSlot, itemId))) {
+		if (!ControllerHandler.execute(player, controller -> controller.canEquip(player, finalSlot, itemId))) {
 			return false;
 		}
 		player.getInventory().getItems().remove(slotId, item);

@@ -197,7 +197,7 @@ public final class RSInterfaceDispatcher {
 		}
 		if (!hasRequiriments)
 			return true;
-		if (!ControllerHandler.execute(player, controller -> controller.canEquip(targetSlot, itemId))) {
+		if (!ControllerHandler.execute(player, controller -> controller.canEquip(player, targetSlot, itemId))) {
 			return false;
 		}
 		player.getMovement().stopAll(player, false, false);
@@ -303,7 +303,7 @@ public final class RSInterfaceDispatcher {
 		}
 		if (!hasRequiriments)
 			return false;
-		if (!ControllerHandler.execute(player, controller -> controller.canEquip(finalSlot, itemId))) {
+		if (!ControllerHandler.execute(player, controller -> controller.canEquip(player, finalSlot, itemId))) {
 			return false;
 		}
 		player.getInventory().getItems().remove(slotId, item);

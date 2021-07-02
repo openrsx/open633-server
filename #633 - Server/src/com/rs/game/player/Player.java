@@ -456,7 +456,7 @@ public class Player extends Entity {
 			setRouteEvent(null);
 		getActionManager().process();
 		getPrayer().processPrayer();
-		ControllerHandler.executeVoid(this, controller -> controller.process());
+		ControllerHandler.executeVoid(this, controller -> controller.process(this));
 		getDetails().getCharges().process();
 		if (getMusicsManager().musicEnded())
 			getMusicsManager().replayMusic();
@@ -539,7 +539,7 @@ public class Player extends Entity {
 		setRunning(true);
 		setUpdateMovementType(true);
 		getAppearance().generateAppearenceData();
-		ControllerHandler.executeVoid(this, controller -> controller.login());
+		ControllerHandler.executeVoid(this, controller -> controller.login(this));
 		OwnedObjectManager.linkKeys(this);
 		
 		if (!HostManager.contains(getUsername(), HostListType.STARTER_RECEIVED)) {

@@ -2,6 +2,7 @@ package com.rs.plugin.impl.commands;
 
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
+import com.rs.game.player.controller.impl.WildernessController;
 import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
 
@@ -16,7 +17,6 @@ public final class TestCommand implements Command {
 	
 	@Override
 	public void execute(Player player, String[] cmd, String command) throws Exception {
-//		new TestController().start(player);
-		player.heal(200);
+		new WildernessController().start(player);
 	}
 }

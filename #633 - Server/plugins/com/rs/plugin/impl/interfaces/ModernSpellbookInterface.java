@@ -1,6 +1,7 @@
 package com.rs.plugin.impl.interfaces;
 
 import com.rs.game.player.Player;
+import com.rs.game.player.content.Magic;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
 
@@ -24,5 +25,7 @@ public class ModernSpellbookInterface implements RSInterface {
 		else if (componentId >= 15 & componentId <= 17)
 			player.getCombatDefinitions()
 					.setSortSpellBook(componentId - 15);
+		else
+			Magic.processNormalSpell(player, componentId, packetId);
 	}
 }

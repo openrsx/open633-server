@@ -24,8 +24,8 @@ public class ForceMovement {
 		case SOUTH:
 			return Utility.getFaceDirection(0, -1);
 		case WEST:
-		default:
 			return Utility.getFaceDirection(-1, 0);
 		}
+		return direction;
 	}
 }

@@ -23,7 +23,7 @@ public class Summoning {
 			player.getPackets().sendGameMessage("You already have a follower.");
 			return;
 		}
-		if (!ControllerHandler.execute(player, controller -> controller.canSummonFamiliar())
+		if (!ControllerHandler.execute(player, controller -> controller.canSummonFamiliar(player))
 				|| player.getSkills().getLevel(Skills.SUMMONING) < pouch.getSummoningCost())
 			return;
 		int levelReq = getRequiredLevel(pouch.getRealPouchId());

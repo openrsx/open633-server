@@ -712,7 +712,7 @@ public final class Pots {
 		if (!player.getDetails().getWatchMap().get("DRINKS").elapsed(1800)) {
 			return false;
 		}
-		if (!ControllerHandler.execute(player, controller -> controller.canPot(pot))) {
+		if (!ControllerHandler.execute(player, controller -> controller.canPot(player, pot))) {
 			return false;
 		}
 		if (!pot.effect.canDrink(player))

@@ -38,29 +38,29 @@ public abstract class Controller {
 
 	public abstract void start(Player player);
 
-	public boolean canEat(Food food) {
+	public boolean canEat(Player player, Food food) {
 		return true;
 	}
 
-	public boolean canPot(Pot pot) {
+	public boolean canPot(Player player, Pot pot) {
 		return true;
 	}
 
 	/**
 	 * return process normaly
 	 */
-	public boolean canTakeItem(FloorItem item) {
+	public boolean canTakeItem(Player player, FloorItem item) {
 		return true;
 	}
 
 	/**
 	 * after the normal checks, extra checks, only called when you attacking
 	 */
-	public boolean keepCombating(Entity target) {
+	public boolean keepCombating(Player player, Entity target) {
 		return true;
 	}
 
-	public boolean canEquip(int slotId, int itemId) {
+	public boolean canEquip(Player player, int slotId, int itemId) {
 		return true;
 	}
 
@@ -68,27 +68,27 @@ public abstract class Controller {
 	 * after the normal checks, extra checks, only called when you start trying to
 	 * attack
 	 */
-	public boolean canAttack(Entity target) {
+	public boolean canAttack(Player player, Entity target) {
 		return true;
 	}
 
-	public boolean canDeleteInventoryItem(int itemId, int amount) {
+	public boolean canDeleteInventoryItem(Player player, int itemId, int amount) {
 		return true;
 	}
 
-	public boolean canUseItemOnItem(Item itemUsed, Item usedWith) {
+	public boolean canUseItemOnItem(Player player, Item itemUsed, Item usedWith) {
 		return true;
 	}
 
-	public boolean canAddInventoryItem(int itemId, int amount) {
+	public boolean canAddInventoryItem(Player player, int itemId, int amount) {
 		return true;
 	}
 
-	public boolean canPlayerOption1(Player target) {
+	public boolean canPlayerOption1(Player player, Player target) {
 		return true;
 	}
 
-	public boolean canPlayerOption2(Player target) {
+	public boolean canPlayerOption2(Player player, Player target) {
 		return true;
 	}
 
@@ -103,64 +103,64 @@ public abstract class Controller {
 	/**
 	 * hits as ice barrage and that on multi areas
 	 */
-	public boolean canHit(Entity entity) {
+	public boolean canHit(Player player, Entity entity) {
 		return true;
 	}
 
 	/**
 	 * processes every game ticket, usualy not used
 	 */
-	public void process() {
+	public void process(Player player) {
 
 	}
 
-	public void moved() {
+	public void moved(Player player) {
 
 	}
 
 	/**
 	 * called once teleport is performed
 	 */
-	public void magicTeleported(int type) {
+	public void magicTeleported(Player player, int type) {
 
 	}
 
-	public void sendInterfaces() {
+	public void sendInterfaces(Player player) {
 
 	}
 
 	/**
 	 * return can use script
 	 */
-	public boolean useDialogueScript(Object key) {
+	public boolean useDialogueScript(Player player, Object key) {
 		return true;
 	}
 
 	/**
 	 * return can teleport
 	 */
-	public boolean processMagicTeleport(WorldTile toTile) {
+	public boolean processMagicTeleport(Player player, WorldTile toTile) {
 		return true;
 	}
 
 	/**
 	 * return can teleport
 	 */
-	public boolean processItemTeleport(WorldTile toTile) {
+	public boolean processItemTeleport(Player player, WorldTile toTile) {
 		return true;
 	}
 
 	/**
 	 * return can teleport
 	 */
-	public boolean processObjectTeleport(WorldTile toTile) {
+	public boolean processObjectTeleport(Player player, WorldTile toTile) {
 		return true;
 	}
 
 	/**
 	 * return process normaly
 	 */
-	public boolean processObjectClick1(GameObject object) {
+	public boolean processObjectClick1(Player player, GameObject object) {
 		return true;
 	}
 
@@ -169,119 +169,119 @@ public abstract class Controller {
 	 * 
 	 * @param slotId2 TODO
 	 */
-	public boolean processButtonClick(int interfaceId, int componentId, int slotId, int slotId2, int packetId) {
+	public boolean processButtonClick(Player player, int interfaceId, int componentId, int slotId, int slotId2, int packetId) {
 		return true;
 	}
 
 	/**
 	 * return process normaly
 	 */
-	public boolean processNPCClick1(NPC npc) {
+	public boolean processNPCClick1(Player player, NPC npc) {
 		return true;
 	}
 
 	/**
 	 * return process normaly
 	 */
-	public boolean processNPCClick2(NPC npc) {
+	public boolean processNPCClick2(Player player, NPC npc) {
 		return true;
 	}
 
 	/**
 	 * return process normaly
 	 */
-	public boolean processNPCClick3(NPC npc) {
+	public boolean processNPCClick3(Player player, NPC npc) {
 		return true;
 	}
 
 	/**
 	 * return process normaly
 	 */
-	public boolean processNPCClick4(NPC npc) {
+	public boolean processNPCClick4(Player player, NPC npc) {
 		return true;
 	}
 
 	/**
 	 * return process normaly
 	 */
-	public boolean processObjectClick2(GameObject object) {
+	public boolean processObjectClick2(Player player, GameObject object) {
 		return true;
 	}
 
 	/**
 	 * return process normaly
 	 */
-	public boolean processObjectClick3(GameObject object) {
+	public boolean processObjectClick3(Player player, GameObject object) {
 		return true;
 	}
 
-	public boolean processObjectClick4(GameObject object) {
+	public boolean processObjectClick4(Player player, GameObject object) {
 		return true;
 	}
 
-	public boolean processObjectClick5(GameObject object) {
+	public boolean processObjectClick5(Player player, GameObject object) {
 		return true;
 	}
 
-	public boolean handleItemOnObject(GameObject object, Item item) {
+	public boolean handleItemOnObject(Player player, GameObject object, Item item) {
 		return true;
 	}
 
 	/**
 	 * return let default death
 	 */
-	public boolean sendDeath() {
+	public boolean sendDeath(Player player) {
 		return true;
 	}
 
 	/**
 	 * return can move that step
 	 */
-	public boolean canMove(int dir) {
+	public boolean canMove(Player player, int dir) {
 		return true;
 	}
 
 	/**
 	 * return can set that step
 	 */
-	public boolean checkWalkStep(int lastX, int lastY, int nextX, int nextY) {
+	public boolean checkWalkStep(Player player, int lastX, int lastY, int nextX, int nextY) {
 		return true;
 	}
 
 	/**
 	 * return remove controller
 	 */
-	public boolean login() {
+	public boolean login(Player player) {
 		return true;
 	}
 
 	/**
 	 * return remove controller
 	 */
-	public boolean logout() {
+	public boolean logout(Player player) {
 		return true;
 	}
 
-	public void forceClose() {
+	public void forceClose(Player player) {
 	}
 
-	public boolean processItemOnNPC(NPC npc, Item item) {
+	public boolean processItemOnNPC(Player player, NPC npc, Item item) {
 		return true;
 	}
 
-	public boolean canDropItem(Item item) {
+	public boolean canDropItem(Player player, Item item) {
 		return true;
 	}
 
-	public boolean canSummonFamiliar() {
+	public boolean canSummonFamiliar(Player player) {
 		return true;
 	}
 
-	public boolean processItemOnPlayer(Player target, Item item) {
+	public boolean processItemOnPlayer(Player player, Player target, Item item) {
 		return true;
 	}
 
-	public void processNPCDeath(int id) {
+	public void processNPCDeath(Player player, int id) {
 
 	}
 

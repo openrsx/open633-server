@@ -39,6 +39,7 @@ import com.rs.game.npc.others.Strykewyrm;
 import com.rs.game.npc.others.TormentedDemon;
 import com.rs.game.npc.others.Werewolf;
 import com.rs.game.player.Player;
+import com.rs.game.player.controller.impl.WildernessController;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.game.task.Task;
@@ -369,7 +370,7 @@ public class NPC extends Entity {
 												&& (player.getAttackedByDelay() > Utility.currentTimeMillis()
 														|| player.getFindTargetDelay() > Utility.currentTimeMillis())))
 								|| !clipedProjectile(player, false)
-								|| (!isForceAgressive() /* && !Wilderness.isAtWild(this) */
+								|| (!isForceAgressive()  && !WildernessController.isAtWild(this) 
 										&& player.getSkills().getCombatLevelWithSummoning() >= getDefinitions().getCombatLevel() * 2))
 							continue;
 						possibleTarget.add(player);

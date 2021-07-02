@@ -31,7 +31,7 @@ public class ItemTakePacket implements LogicPacket {
 		final FloorItem item = World.getRegion(regionId).getGroundItem(id, tile, player);
 		if (item == null)
 			return;
-		if (!ControllerHandler.execute(player, controller -> controller.canTakeItem(item))) {
+		if (!ControllerHandler.execute(player, controller -> controller.canTakeItem(player, item))) {
 			return;
 		}
 		if (forceRun)
