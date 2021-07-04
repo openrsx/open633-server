@@ -8,7 +8,7 @@ import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
-import com.rs.plugin.ObjectDispatcher;
+import com.rs.plugin.ObjectPluginDispatcher;
 import com.rs.utilities.Utility;
 
 @LogicPacketSignature(packetId = 58, packetSize = 15, description = "An Interface that's used onto a Object (Magic, etc..)")
@@ -50,7 +50,7 @@ public class InterfaceOnObjectPacket implements LogicPacket {
 			player.setRun(forceRun);
 		switch (interfaceId) {
 		case Inventory.INVENTORY_INTERFACE: // inventory
-			ObjectDispatcher.handleItemOnObject(player, object, interfaceId, item);
+			ObjectPluginDispatcher.handleItemOnObject(player, object, interfaceId, item);
 			break;
 		}
 	}

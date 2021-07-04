@@ -10,7 +10,7 @@ import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
-import com.rs.plugin.ObjectDispatcher;
+import com.rs.plugin.ObjectPluginDispatcher;
 
 @LogicPacketSignature(packetId = 75, packetSize = 7, description = "First click packet")
 public class ObjectClickPacket implements LogicPacket {
@@ -52,7 +52,7 @@ public class ObjectClickPacket implements LogicPacket {
 			player.faceObject(mapObject);
 			if (!ControllerHandler.execute(player, controller -> controller.processObjectClick1(player, worldObject)))
 				return;
-			ObjectDispatcher.execute(player, worldObject, 1);
+			ObjectPluginDispatcher.execute(player, worldObject, 1);
 		}, false));
 	}
 }

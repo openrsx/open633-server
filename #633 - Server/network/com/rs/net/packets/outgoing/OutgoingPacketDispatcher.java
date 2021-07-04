@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.net.decoders.WorldPacketsDecoder;
-import com.rs.plugin.RSInterfaceDispatcher;
+import com.rs.plugin.RSInterfacePluginDispatcher;
 import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -48,7 +48,7 @@ public class OutgoingPacketDispatcher {
 				|| packetId == WorldPacketsDecoder.ACTION_BUTTON3_PACKET
 				|| packetId == WorldPacketsDecoder.ACTION_BUTTON9_PACKET
 				|| packetId == WorldPacketsDecoder.ACTION_BUTTON10_PACKET) 
-			RSInterfaceDispatcher.handleButtons(player, input, packetId);
+			RSInterfacePluginDispatcher.handleButtons(player, input, packetId);
 	}
 
 	/**

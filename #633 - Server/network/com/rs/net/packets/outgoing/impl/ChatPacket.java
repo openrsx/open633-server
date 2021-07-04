@@ -7,7 +7,7 @@ import com.rs.net.Huffman;
 import com.rs.net.encoders.other.PublicChatMessage;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
-import com.rs.plugin.CommandDispatcher;
+import com.rs.plugin.CommandPluginDispatcher;
 import com.rs.utilities.Logger;
 import com.rs.utilities.Utility;
 
@@ -31,7 +31,7 @@ public class ChatPacket implements OutgoingPacket {
 		if (message.startsWith("::") || message.startsWith(";;")) {
 			// if command exists and processed wont send message as public
 			// message
-			CommandDispatcher.processCommand(player, message.replace("::", "")
+			CommandPluginDispatcher.processCommand(player, message.replace("::", "")
 					.replace(";;", ""), false, false);
 			return;
 		}

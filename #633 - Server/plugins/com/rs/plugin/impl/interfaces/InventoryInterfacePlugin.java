@@ -21,8 +21,8 @@ import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.task.Task;
 import com.rs.net.decoders.WorldPacketsDecoder;
-import com.rs.plugin.InventoryDispatcher;
-import com.rs.plugin.RSInterfaceDispatcher;
+import com.rs.plugin.InventoryPluginDispatcher;
+import com.rs.plugin.RSInterfacePluginDispatcher;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
 import com.rs.utilities.Logger;
@@ -46,7 +46,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 			
 			switch(packetId) {
 			case WorldPacketsDecoder.ACTION_BUTTON1_PACKET:
-				InventoryDispatcher.execute(player, item, 1);
+				InventoryPluginDispatcher.execute(player, item, 1);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON2_PACKET:
 				long time = Utility.currentTimeMillis();
@@ -71,7 +71,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 							for (int i = 0; i < slot.length; i++)
 								slot[i] = slots.get(i);
 							player.getSwitchItemCache().clear();
-							RSInterfaceDispatcher.sendWear(player, slot);
+							RSInterfacePluginDispatcher.sendWear(player, slot);
 							player.getMovement().stopAll(player, false, true, false);
 							this.cancel();
 						}
@@ -79,19 +79,19 @@ public class InventoryInterfacePlugin implements RSInterface {
 				} else if (!player.getSwitchItemCache().contains(slotId)) {
 					player.getSwitchItemCache().add(slotId);
 				}
-				InventoryDispatcher.execute(player, item, 2);
+				InventoryPluginDispatcher.execute(player, item, 2);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON3_PACKET:
-				InventoryDispatcher.execute(player, item, 3);
+				InventoryPluginDispatcher.execute(player, item, 3);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON4_PACKET:
-				InventoryDispatcher.execute(player, item, 4);
+				InventoryPluginDispatcher.execute(player, item, 4);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON5_PACKET:
-				InventoryDispatcher.execute(player, item, 5);
+				InventoryPluginDispatcher.execute(player, item, 5);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON6_PACKET:
-				InventoryDispatcher.execute(player, item, 6);
+				InventoryPluginDispatcher.execute(player, item, 6);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON7_PACKET:
 				long dropTime = Utility.currentTimeMillis();
@@ -114,7 +114,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				if (player.getPetManager().spawnPet(item.getId(), true)) {
 					return;
 				}
-				InventoryDispatcher.execute(player, item, 7);
+				InventoryPluginDispatcher.execute(player, item, 7);
 				player.getInventory().deleteItem(slotId, item);
 				if (player.getDetails().getCharges().degradeCompletly(item))
 					return;
@@ -123,7 +123,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				break;
 			case 81:
 				player.getInventory().sendExamine(slotId);
-				InventoryDispatcher.execute(player, item, 8);
+				InventoryPluginDispatcher.execute(player, item, 8);
 				break;
 			}
 		}

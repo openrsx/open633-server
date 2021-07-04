@@ -5,7 +5,7 @@ import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
-import com.rs.plugin.CommandDispatcher;
+import com.rs.plugin.CommandPluginDispatcher;
 import com.rs.utilities.Logger;
 
 @OutgoingPacketSignature(packetId = 28, description = "A command that the Player is sending to the client")
@@ -18,7 +18,7 @@ public class CommandPacket implements OutgoingPacket {
 		boolean clientCommand = stream.readUnsignedByte() == 1;
 		boolean console = stream.readUnsignedByte() == 1;
 		String command = stream.readString();
-		if (!CommandDispatcher.processCommand(player, command, console, clientCommand)
+		if (!CommandPluginDispatcher.processCommand(player, command, console, clientCommand)
 				&& GameConstants.DEBUG)
 			Logger.log(this, "Command: " + command);
 	}

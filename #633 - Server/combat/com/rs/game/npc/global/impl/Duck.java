@@ -7,6 +7,11 @@ import com.rs.game.npc.global.GenericNPCSignature;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
+/**
+ * This is just a demo test, not completed.
+ * @author Dennis
+ *
+ */
 @GenericNPCSignature(npcId = 2693, canBeAttackFromOutOfArea = true, isSpawned = false)
 public class Duck extends GenericNPC {
 	

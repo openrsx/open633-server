@@ -15,7 +15,7 @@ import com.rs.game.player.controller.ControllerHandler;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
-import com.rs.plugin.NPCDispatcher;
+import com.rs.plugin.NPCPluginDispatcher;
 import com.rs.utilities.Utility;
 
 @LogicPacketSignature(packetId = 2, packetSize = 11, description = "An Interface that's used onto a NPC (Magic, etc..)")
@@ -68,7 +68,7 @@ public class InterfaceOnNPCPacket implements LogicPacket {
 					return;
 				}
 			}
-			NPCDispatcher.handleItemOnNPC(player, npc, item);
+			NPCPluginDispatcher.handleItemOnNPC(player, npc, item);
 			break;
 		case 662:
 		case 747:

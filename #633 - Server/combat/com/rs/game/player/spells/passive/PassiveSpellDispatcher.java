@@ -14,7 +14,6 @@ import com.rs.utilities.Utility;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import skills.Skills;
 
 /**
@@ -26,7 +25,6 @@ public final class PassiveSpellDispatcher {
 
 	private static final Object2ObjectArrayMap<PassiveSpellSignature, PassiveSpell> SPELLS = new Object2ObjectArrayMap<>();
 
-	@SneakyThrows(Exception.class)
 	public void execute(Player player, int spellButton) {
 		Optional<PassiveSpell> spell = getVerifiedSpell(spellButton);
 		spell.filter(caster -> canCast(player, spell, spellButton)).ifPresent(caster -> executeCast(player, spellButton));
