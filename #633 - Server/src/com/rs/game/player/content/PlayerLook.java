@@ -194,16 +194,6 @@ public final class PlayerLook {
 	}
 
 	public static void handleHairdresserSalonButtons(Player player, int buttonId, int slotId) {// Hair
-		// and
-		// color
-		// match
-		// button
-		// count
-		// so
-		// just
-		// loop
-		// and
-		// do ++, but cant find button ids
 		if (buttonId == 6)
 			player.getTemporaryAttributes().put("hairSaloon", true);
 		else if (buttonId == 7)
@@ -287,14 +277,7 @@ public final class PlayerLook {
 
 	public static void openThessaliasMakeOver(final Player player) {
 		if (player.getEquipment().wearingArmour()) {
-			player.dialog(new DialogueEventListener(player) {
-
-				@Override
-				public void start() {
-					npc(DialogueFaceExpression.sad,
-							"You're not able to try on my clothes with all that armour. Take it off and then speak to me again.");
-				}
-			}.begin());
+			player.getPackets().sendGameMessage("You're not able to try on my clothes with all that armour. Take it off and then speak to me again.");
 			return;
 		}
 		player.setNextAnimation(new Animation(11623));
@@ -313,25 +296,11 @@ public final class PlayerLook {
 
 	public static void openHairdresserSalon(final Player player) {
 		if (player.getEquipment().getHatId() != -1) {
-			player.dialog(new DialogueEventListener(player) {
-
-				@Override
-				public void start() {
-					npc(DialogueFaceExpression.sad,
-							"I'm afraid I can't see your head at the moment. Please remove your headgear first.");
-				}
-			}.begin());
+			player.getPackets().sendGameMessage("I'm afraid I can't see your head at the moment. Please remove your headgear first.");
 			return;
 		}
 		if (player.getEquipment().getWeaponId() != -1 || player.getEquipment().getShieldId() != -1) {
-			player.dialog(new DialogueEventListener(player) {
-
-				@Override
-				public void start() {
-					npc(DialogueFaceExpression.sad,
-							"I don't feel comfortable cutting hair when you are wielding something. Please remove what you are holding first.");
-				}
-			}.begin());
+			player.getPackets().sendGameMessage("I don't feel comfortable cutting hair when you are wielding something. Please remove what you are holding first.");
 			return;
 		}
 		player.setNextAnimation(new Animation(11623));
@@ -342,13 +311,7 @@ public final class PlayerLook {
 		player.getPackets().sendIComponentText(309, 20, "Free!");
 		player.getTemporaryAttributes().put("hairSaloon", true);
 		player.setCloseInterfacesEvent(() -> {
-			player.dialog(new DialogueEventListener(player) {
-				@Override
-				public void start() {
-					npc(DialogueFaceExpression.sad,
-							"An excellent choise, " + (player.getAppearance().isMale() ? "sir" : "lady") + ".");
-				}
-			}.begin());
+			player.getPackets().sendGameMessage("An excellent choise, " + (player.getAppearance().isMale() ? "sir" : "lady") + ".");
 			player.setNextAnimation(new Animation(-1));
 			player.getAppearance().getAppeareanceData();
 			player.getTemporaryAttributes().remove("hairSaloon");
@@ -357,13 +320,13 @@ public final class PlayerLook {
 
 	public static void openYrsaShop(final Player player) {
 		if (player.getEquipment().getBootsId() != -1) {
-			player.dialog(new DialogueEventListener(player) {
-				@Override
-				public void start() {
-					npc(happy, "I don't feel comfortable helping you try on new boots when you are wearing some already.",
-							"Please remove your boots first.");
-				}
-			});
+//			player.dialog(new DialogueEventListener(player) {
+//				@Override
+//				public void start() {
+//					npc(happy, "I don't feel comfortable helping you try on new boots when you are wearing some already.",
+//							"Please remove your boots first.");
+//				}
+//			});
 			return;
 		}
 		player.setNextAnimation(new Animation(11623));
