@@ -162,31 +162,35 @@ public final class PlayerLook {
 				skin = 0;
 			player.getTemporaryAttributes().put("MageMakeOverSkin", skin);
 		} 
-//		else if (buttonId == 33) {
-//			Boolean male = (Boolean) player.getTemporaryAttributes().remove("MageMakeOverGender");
-//			Integer skin = (Integer) player.getTemporaryAttributes().remove("MageMakeOverSkin");
-//			player.getInterfaceManager().closeInterfaces();
-//			if (male == null || skin == null)
-//				return;
+		else if (buttonId == 33) {
+			Boolean male = (Boolean) player.getTemporaryAttributes().remove("MageMakeOverGender");
+			Integer skin = (Integer) player.getTemporaryAttributes().remove("MageMakeOverSkin");
+			player.getInterfaceManager().closeInterfaces();
+			if (male == null || skin == null)
+				return;
 //			if (male == player.getAppearance().isMale() && skin == player.getAppearance().getSkinColor())
 //				player.getDialogueManager().startDialogue("MakeOverMage", 2676, 1);
-//			else {
+			else {
 //				player.getDialogueManager().startDialogue("MakeOverMage", 2676, 2);
-//				if (player.getAppearance().isMale() != male) {
-//					if (player.getEquipment().wearingArmour()) {
-//						player.getDialogueManager().startDialogue("SimpleMessage",
-//								"You cannot have armor on while changing your gender.");
-//						return;
-//					}
-//					if (male)
-//						player.getAppearance().resetAppearence();
-//					else
-//						player.getAppearance().female();
-//				}
-//				player.getAppearance().setSkinColor(skin);
-//				player.getAppearance().generateAppearenceData();
-//			}
-//		}
+				if (player.getAppearance().isMale() != male) {
+					if (player.getEquipment().wearingArmour()) {
+						player.dialog(new DialogueEventListener(player) {
+							@Override
+							public void start() {
+								player(sad, "You cannot have armor on while changing your gender.");
+							}
+						});
+						return;
+					}
+					if (male)
+						player.getAppearance().resetAppearence();
+					else
+						player.getAppearance().female();
+				}
+				player.getAppearance().setSkinColor(skin);
+				player.getAppearance().generateAppearenceData();
+			}
+		}
 	}
 
 	public static void handleHairdresserSalonButtons(Player player, int buttonId, int slotId) {// Hair
