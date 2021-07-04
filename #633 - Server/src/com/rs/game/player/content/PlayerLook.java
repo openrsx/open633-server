@@ -4,9 +4,13 @@ import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.GeneralRequirementMap;
 import com.rs.game.Animation;
 import com.rs.game.dialogue.DialogueEventListener;
-import com.rs.game.dialogue.DialogueFaceExpression;
 import com.rs.game.player.Player;
 
+/**
+ * TODO: Fix dialogue support for npc 
+ * @author Dennis
+ *
+ */
 public final class PlayerLook {
 
 	public static void openCharacterCustomizing(Player player) {
@@ -320,13 +324,7 @@ public final class PlayerLook {
 
 	public static void openYrsaShop(final Player player) {
 		if (player.getEquipment().getBootsId() != -1) {
-//			player.dialog(new DialogueEventListener(player) {
-//				@Override
-//				public void start() {
-//					npc(happy, "I don't feel comfortable helping you try on new boots when you are wearing some already.",
-//							"Please remove your boots first.");
-//				}
-//			});
+			player.getPackets().sendGameMessage("I don't feel comfortable helping you try on new boots when you are wearing some already Please remove your boots first.");
 			return;
 		}
 		player.setNextAnimation(new Animation(11623));
@@ -336,12 +334,7 @@ public final class PlayerLook {
 		player.getPackets().sendUnlockIComponentOptionSlots(728, 12, 0, 500, 0);
 		player.getPackets().sendUnlockIComponentOptionSlots(728, 7, 0, ClientScriptMap.getMap(3297).getSize() * 2, 0);
 		player.setCloseInterfacesEvent(() -> {
-			player.dialog(new DialogueEventListener(player) {
-				@Override
-				public void start() {
-					npc(happy, "Hey, They look great!");
-				}
-			});
+			player.getPackets().sendGameMessage("Hey, They look great!");
 			player.setNextAnimation(new Animation(-1));
 			player.getAppearance().getAppeareanceData();
 			player.getTemporaryAttributes().remove("YrsaBoot");
