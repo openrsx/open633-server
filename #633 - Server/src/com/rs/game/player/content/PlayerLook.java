@@ -304,12 +304,6 @@ public final class PlayerLook {
 		player.getPackets().sendUnlockIComponentOptionSlots(729, 12, 0, 100, 0);
 		player.getPackets().sendUnlockIComponentOptionSlots(729, 17, 0, ClientScriptMap.getMap(3282).getSize() * 2, 0);
 		player.setCloseInterfacesEvent(() -> {
-			player.dialog(new DialogueEventListener(player) {
-				@Override
-				public void start() {
-					npc(DialogueFaceExpression.happy, "A marvellous choise. You look splendid!");
-				}
-			}.begin());
 			player.setNextAnimation(new Animation(-1));
 			player.getAppearance().getAppeareanceData();
 			player.getTemporaryAttributes().remove("ThessaliasMakeOver");
