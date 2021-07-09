@@ -1,7 +1,9 @@
 package com.rs.game.npc;
 
+import java.util.Optional;
+
 import com.rs.game.Animation;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.task.Task;
 import com.rs.game.task.impl.ActorDeathTask;
@@ -21,6 +23,7 @@ public class NPCDeath extends ActorDeathTask<NPC> {
 		getActor().getPoisonDamage().set(0);
 		getActor().resetWalkSteps();
 		getActor().getCombat().removeTarget();
+		getActor().getGenericNPC().sendDeath(Optional.of(getActor()));
 	}
 
 	@Override

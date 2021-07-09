@@ -1,7 +1,9 @@
 package com.rs.game.npc.corp;
 
+import java.util.Optional;
+
 import com.rs.game.Entity;
-import com.rs.game.WorldTile;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 
 public class CorporealBeast extends NPC {
@@ -40,7 +42,7 @@ public class CorporealBeast extends NPC {
 	}
 
 	@Override
-	public void sendDeath(Entity source) {
+	public void sendDeath(Optional<Entity> source) {
 		super.sendDeath(source);
 		if (core != null)
 			core.sendDeath(source);

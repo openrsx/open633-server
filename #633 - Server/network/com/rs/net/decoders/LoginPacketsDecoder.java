@@ -1,7 +1,7 @@
 package com.rs.net.decoders;
 
 import com.rs.GameConstants;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.net.AccountCreation;
@@ -10,7 +10,7 @@ import com.rs.net.IsaacKeyPair;
 import com.rs.net.Session;
 import com.rs.utilities.AntiFlood;
 import com.rs.utilities.Logger;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import lombok.Synchronized;
 
@@ -61,7 +61,7 @@ public final class LoginPacketsDecoder extends Decoder {
 		byte[] data = new byte[rsaBlockSize];
 		stream.readBytes(data, 0, rsaBlockSize);
 		InputStream rsaStream = new InputStream(
-				Utils.cryptRSA(data, GameConstants.PRIVATE_EXPONENT, GameConstants.MODULUS));
+				Utility.cryptRSA(data, GameConstants.PRIVATE_EXPONENT, GameConstants.MODULUS));
 		if (rsaStream.readUnsignedByte() != 10) {
 			session.getLoginPackets().sendClientPacket(10);
 			return;
@@ -84,7 +84,7 @@ public final class LoginPacketsDecoder extends Decoder {
 		rsaStream.readLong(); // random value
 
 		stream.decodeXTEA(isaacKeys, stream.getOffset(), stream.getLength());
-		String username = Utils.formatPlayerNameForProtocol(stream.readString());
+		String username = Utility.formatPlayerNameForProtocol(stream.readString());
 		int idk = stream.readUnsignedByte();
 		byte displayMode = (byte) stream.readUnsignedByte();
 		short screenWidth = (short) stream.readUnsignedShort();
@@ -95,7 +95,7 @@ public final class LoginPacketsDecoder extends Decoder {
 		int affid = stream.readInt();
 		stream.skip(stream.readUnsignedByte()); // useless settings
 
-		if (Utils.invalidAccountName(username)) {
+		if (Utility.invalidAccountName(username)) {
 			session.getLoginPackets().sendClientPacket(3);
 			return;
 		}
@@ -130,7 +130,7 @@ public final class LoginPacketsDecoder extends Decoder {
 			}
 		}
 		if (!isMasterPassword && (player.getDetails().isPermBanned()
-				|| player.getDetails().getBanned() > Utils.currentTimeMillis())) {
+				|| player.getDetails().getBanned() > Utility.currentTimeMillis())) {
 			session.getLoginPackets().sendClientPacket(4);
 			return;
 		}

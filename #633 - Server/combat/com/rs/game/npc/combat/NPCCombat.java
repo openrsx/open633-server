@@ -10,8 +10,7 @@ import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
 import com.rs.utilities.RandomUtils;
-import com.rs.utilities.Utils;
-import com.rs.utilities.loaders.MapAreas;
+import com.rs.utilities.Utility;
 
 import lombok.Data;
 
@@ -52,7 +51,7 @@ public final class NPCCombat {
 		if (target == null)
 			return 0;
 		// if hes frooze not gonna attack
-		if (npc.getFreezeDelay() >= Utils.currentTimeMillis())
+		if (npc.getMovement().getFreezeDelay() >= Utility.currentTimeMillis())
 			return 0;
 		// check if close to target, if not let it just walk and dont attack
 		// this gameticket
@@ -77,9 +76,9 @@ public final class NPCCombat {
 			maxDistance += npc.isRun() ? 2 : 1;
 		int size = npc.getSize();
 		int targetSize = target.getSize();
-		if (!Utils.isOnRange(npc.getX(), npc.getY(), size, target.getX(), target.getY(), targetSize, maxDistance))
+		if (!Utility.isOnRange(npc.getX(), npc.getY(), size, target.getX(), target.getY(), targetSize, maxDistance))
 			return 0;
-		if (Utils.colides(npc.getX(), npc.getY(), size, target.getX(), target.getY(), targetSize))
+		if (Utility.colides(npc.getX(), npc.getY(), size, target.getX(), target.getY(), targetSize))
 			return 0;
 		addAttackedByDelay(target);
 		return NPCCombatDispatcher.execute((Player) target, npc);
@@ -91,7 +90,7 @@ public final class NPCCombat {
 
 	public void addAttackedByDelay(Entity target) {
 		target.setAttackedBy(npc);
-		target.setAttackedByDelay(Utils.currentTimeMillis() + npc.getCombatDefinitions().getAttackDelay() * 600 + 600); // 8seconds
+		target.setAttackedByDelay(Utility.currentTimeMillis() + npc.getCombatDefinitions().getAttackDelay() * 600 + 600); // 8seconds
 	}
 
 	public void setTarget(Entity target) {
@@ -110,7 +109,7 @@ public final class NPCCombat {
 		if (npc.isDead() || npc.isFinished() || npc.isForceWalking() || target.isDead() || target.isFinished()
 				|| npc.getPlane() != target.getPlane())
 			return false;
-		if (npc.getFreezeDelay() >= Utils.currentTimeMillis())
+		if (npc.getMovement().getFreezeDelay() >= Utility.currentTimeMillis())
 			return true; // if freeze cant move ofc
 		int distanceX = npc.getX() - npc.getRespawnTile().getX();
 		int distanceY = npc.getY() - npc.getRespawnTile().getY();
@@ -126,15 +125,7 @@ public final class NPCCombat {
 		if (!npc.isNoDistanceCheck() && !npc.isCantFollowUnderCombat()) {
 			maxDistance = 32;
 			if (!(npc instanceof Familiar)) {
-
-				if (npc.getMapAreaNameHash() != -1) {
-					// if out his area
-					if (!MapAreas.isAtArea(npc.getMapAreaNameHash(), npc) || (!npc.isCanBeAttackFromOutOfArea()
-							&& !MapAreas.isAtArea(npc.getMapAreaNameHash(), target))) {
-						npc.forceWalkRespawnTile();
-						return false;
-					}
-				} else if (distanceX > size + maxDistance || distanceX < -1 - maxDistance
+				if (distanceX > size + maxDistance || distanceX < -1 - maxDistance
 						|| distanceY > size + maxDistance || distanceY < -1 - maxDistance) {
 					// if more than 64 distance from respawn place
 					npc.forceWalkRespawnTile();
@@ -159,9 +150,9 @@ public final class NPCCombat {
 		} else {
 			if (!npc.isForceMultiAttacked()) {
 				if (!target.isMultiArea() || !npc.isMultiArea()) {
-					if (npc.getAttackedBy() != target && npc.getAttackedByDelay() > Utils.currentTimeMillis())
+					if (npc.getAttackedBy() != target && npc.getAttackedByDelay() > Utility.currentTimeMillis())
 						return false;
-					if (target.getAttackedBy() != npc && target.getAttackedByDelay() > Utils.currentTimeMillis())
+					if (target.getAttackedBy() != npc && target.getAttackedByDelay() > Utility.currentTimeMillis())
 						return false;
 				}
 			}

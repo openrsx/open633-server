@@ -2,21 +2,20 @@ package com.rs.cache.loaders;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Data;
 
 @Data
 public final class NPCDefinitions {
 
-	private static final ConcurrentHashMap<Integer, NPCDefinitions> npcDefinitions = new ConcurrentHashMap<Integer, NPCDefinitions>();
+	private static Object2ObjectArrayMap<Integer, NPCDefinitions> npcDefinitions = new Object2ObjectArrayMap<>();
 
 	private int id;
-	public HashMap<Integer, Object> clientScriptData;
+	public Object2ObjectArrayMap<Integer, Object> clientScriptData;
 	public int anInt833;
 	public int anInt836;
 	public int anInt837;
@@ -324,7 +323,7 @@ public final class NPCDefinitions {
 																						int i = stream
 																								.readUnsignedByte();
 																						if (clientScriptData == null) {
-																							clientScriptData = new HashMap<Integer, Object>(
+																							clientScriptData = new Object2ObjectArrayMap<Integer, Object>(
 																									i);
 																						}
 																						for (int i_60_ = 0; i > i_60_; i_60_++) {

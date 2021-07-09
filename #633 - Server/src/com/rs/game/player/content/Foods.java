@@ -1,16 +1,15 @@
 package com.rs.game.player.content;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
-import com.rs.game.Hit;
-import com.rs.game.Hit.HitLook;
 import com.rs.game.item.Item;
+import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
+import com.rs.game.player.Hit.HitLook;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.utilities.RandomUtils;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import skills.Skills;
 
 /**
@@ -295,7 +294,7 @@ public class Foods {
 		/**
 		 * A map of object ids to foods.
 		 */
-		private static Map<Integer, Food> foods = new HashMap<Integer, Food>();
+		private static Object2ObjectArrayMap<Integer, Food> foods = new Object2ObjectArrayMap<Integer, Food>();
 
 		/**
 		 * Gets a food by an object id.
@@ -536,8 +535,9 @@ public class Foods {
 		if (!player.getDetails().getWatchMap().get("FOOD").elapsed(1800)) {
 			return false;
 		}
-		if (!player.getControllerManager().canEat(food))
-			return true;
+		if (!ControllerHandler.execute(player, controller -> controller.canEat(player, food))) {
+			return false;
+		}
 		String name = ItemDefinitions.getItemDefinitions(food.getId()).getName().toLowerCase();
 		player.getPackets().sendGameMessage("You eat the " + name + ".");
 		player.setNextAnimationNoPriority(EAT_ANIM);

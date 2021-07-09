@@ -10,18 +10,19 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
-import java.util.HashMap;
 
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Shop;
 import com.rs.utilities.Logger;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Cleanup;
+import lombok.SneakyThrows;
 
 public class ShopsHandler {
 
-	private static final HashMap<Integer, Shop> handledShops = new HashMap<Integer, Shop>();
+	private static final Object2ObjectArrayMap<Integer, Shop> handledShops = new Object2ObjectArrayMap<Integer, Shop>();
 
 	private static final String PACKED_PATH = "data/items/packedShops.s";
 	private static final String UNPACKED_PATH = "data/items/unpackedShops.txt";
@@ -33,47 +34,44 @@ public class ShopsHandler {
 			loadUnpackedShops();
 	}
 
+	@SneakyThrows(Throwable.class)
 	private static void loadUnpackedShops() {
 		Logger.log("ShopsHandler", "Packing shops...");
-		try {
-			@Cleanup
-			BufferedReader in = new BufferedReader(new FileReader(UNPACKED_PATH));
-			@Cleanup
-			DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
-			while (true) {
-				String line = in.readLine();
-				if (line == null)
-					break;
-				if (line.startsWith("//"))
-					continue;
-				String[] splitedLine = line.split(" - ", 3);
-				if (splitedLine.length != 3)
-					throw new RuntimeException("Invalid list for shop line: " + line);
-				String[] splitedInform = splitedLine[0].split(" ", 3);
-				if (splitedInform.length != 3)
-					throw new RuntimeException("Invalid list for shop line: " + line);
-				String[] splitedItems = splitedLine[2].split(" ");
-				int key = Integer.valueOf(splitedInform[0]);
-				int money = Integer.valueOf(splitedInform[1]);
-				boolean generalStore = Boolean.valueOf(splitedInform[2]);
-				Item[] items = new Item[splitedItems.length / 2];
-				int count = 0;
-				for (int i = 0; i < items.length; i++)
-					items[i] = new Item(Integer.valueOf(splitedItems[count++]), Integer.valueOf(splitedItems[count++]),
-							true);
-				out.writeInt(key);
-				writeAlexString(out, splitedLine[1]);
-				out.writeShort(money);
-				out.writeBoolean(generalStore);
-				out.writeByte(items.length);
-				for (Item item : items) {
-					out.writeShort(item.getId());
-					out.writeInt(item.getAmount());
-				}
-				addShop(key, new Shop(splitedLine[1], money, items, generalStore));
+		@Cleanup
+		BufferedReader in = new BufferedReader(new FileReader(UNPACKED_PATH));
+		@Cleanup
+		DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
+		while (true) {
+			String line = in.readLine();
+			if (line == null)
+				break;
+			if (line.startsWith("//"))
+				continue;
+			String[] splitedLine = line.split(" - ", 3);
+			if (splitedLine.length != 3)
+				throw new RuntimeException("Invalid list for shop line: " + line);
+			String[] splitedInform = splitedLine[0].split(" ", 3);
+			if (splitedInform.length != 3)
+				throw new RuntimeException("Invalid list for shop line: " + line);
+			String[] splitedItems = splitedLine[2].split(" ");
+			int key = Integer.valueOf(splitedInform[0]);
+			int money = Integer.valueOf(splitedInform[1]);
+			boolean generalStore = Boolean.valueOf(splitedInform[2]);
+			Item[] items = new Item[splitedItems.length / 2];
+			int count = 0;
+			for (int i = 0; i < items.length; i++)
+				items[i] = new Item(Integer.valueOf(splitedItems[count++]), Integer.valueOf(splitedItems[count++]),
+						true);
+			out.writeInt(key);
+			writeAlexString(out, splitedLine[1]);
+			out.writeShort(money);
+			out.writeBoolean(generalStore);
+			out.writeByte(items.length);
+			for (Item item : items) {
+				out.writeShort(item.getId());
+				out.writeInt(item.getAmount());
 			}
-		} catch (Throwable e) {
-			Logger.handle(e);
+			addShop(key, new Shop(splitedLine[1], money, items, generalStore));
 		}
 	}
 

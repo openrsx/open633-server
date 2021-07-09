@@ -1,13 +1,11 @@
 package com.rs.game.player;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.rs.GameConstants;
+import com.rs.game.player.controller.ControllerHandler;
 
-import lombok.Builder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Data;
 
-@Builder
 @Data
 public class InterfaceManager {
 
@@ -46,7 +44,8 @@ public class InterfaceManager {
 	}
 
 	// TODO CLOSE interface tab ids
-	private final ConcurrentHashMap<Integer, Integer> openedinterfaces = new ConcurrentHashMap<Integer, Integer>();
+	private Object2ObjectArrayMap<Integer, Integer> openedinterfaces = new Object2ObjectArrayMap<>();
+	
 
 	private boolean resizableScreen;
 	private int rootInterface;
@@ -113,7 +112,7 @@ public class InterfaceManager {
 		player.getPrayer().unlockPrayerBookButtons();
 		if (player.getFamiliar() != null && player.isRunning())
 			player.getFamiliar().unlock();
-		player.getControllerManager().sendInterfaces();
+		ControllerHandler.executeVoid(player, controller -> controller.sendInterfaces(player));
 	}
 
 	public boolean containsReplacedChatBoxInter() {
@@ -404,12 +403,9 @@ public class InterfaceManager {
 		setWindowInterface(isResizableScreen() ? 40 : 200, backgroundInterface);
 		setWindowInterface(isResizableScreen() ? 41 : 201, interfaceId);
 
-		player.setCloseInterfacesEvent(new Runnable() {
-			@Override
-			public void run() {
-				removeWindowInterface(isResizableScreen() ? 40 : 200);
-				removeWindowInterface(isResizableScreen() ? 41 : 201);
-			}
+		player.setCloseInterfacesEvent(() -> {
+			removeWindowInterface(isResizableScreen() ? 40 : 200);
+			removeWindowInterface(isResizableScreen() ? 41 : 201);
 		});
 	}
 
@@ -417,12 +413,9 @@ public class InterfaceManager {
 		setRootInterface(475, false);
 		setInterface(true, 475, 57, 751);
 		setInterface(true, 475, 55, 752);
-		player.setCloseInterfacesEvent(new Runnable() {
-			@Override
-			public void run() {
-				setDefaultRootInterface();
-				player.getPackets().sendResetCamera();
-			}
+		player.setCloseInterfacesEvent(() -> {
+			setDefaultRootInterface();
+			player.getPackets().sendResetCamera();
 		});
 	}
 

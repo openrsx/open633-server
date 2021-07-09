@@ -1,20 +1,19 @@
 package com.rs.game.player.content;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.rs.GameConstants;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.FriendsIgnores;
 import com.rs.game.player.Player;
 import com.rs.io.OutputStream;
 import com.rs.net.AccountCreation;
 import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 public class FriendChatsManager {
 
@@ -22,7 +21,7 @@ public class FriendChatsManager {
 	private String ownerDisplayName;
 	private FriendsIgnores settings;
 	private CopyOnWriteArrayList<Player> players;
-	private ConcurrentHashMap<String, Long> bannedPlayers;
+	private Object2ObjectArrayMap<String, Long> bannedPlayers;
 	private byte[] dataBlock;
 
 	/**
@@ -30,10 +29,10 @@ public class FriendChatsManager {
 	 */
 //    private ClanWars clanWars;
 
-	private static HashMap<String, FriendChatsManager> cachedFriendChats;
+	private static Object2ObjectArrayMap<String, FriendChatsManager> cachedFriendChats;
 
 	public static void init() {
-		cachedFriendChats = new HashMap<String, FriendChatsManager>();
+		cachedFriendChats = new Object2ObjectArrayMap<String, FriendChatsManager>();
 	}
 
 	public int getRank(int rights, String username) {
@@ -77,7 +76,7 @@ public class FriendChatsManager {
 			}
 			Long bannedSince = bannedPlayers.get(player.getUsername());
 			if (bannedSince != null) {
-				if (bannedSince + 3600000 > Utils.currentTimeMillis()) {
+				if (bannedSince + 3600000 > Utility.currentTimeMillis()) {
 					player.getPackets().sendGameMessage("You have been banned from this channel.");
 					return;
 				}
@@ -111,7 +110,7 @@ public class FriendChatsManager {
 	}
 
 	public Player getPlayerByDisplayName(String username) {
-		String formatedUsername = Utils.formatPlayerNameForProtocol(username);
+		String formatedUsername = Utility.formatPlayerNameForProtocol(username);
 		for (Player player : players) {
 			if (player.getUsername().equals(formatedUsername) || player.getDisplayName().equals(username))
 				return player;
@@ -122,7 +121,7 @@ public class FriendChatsManager {
 	public void kickPlayerFromChat(Player player, String username) {
 		String name = "";
 		for (char character : username.toCharArray()) {
-			name += Utils.containsInvalidCharacter(character) ? " " : character;
+			name += Utility.containsInvalidCharacter(character) ? " " : character;
 		}
 		synchronized (this) {
 			int rank = getRank(player.getDetails().getRights().getValue(), player.getUsername());
@@ -138,7 +137,7 @@ public class FriendChatsManager {
 			kicked.setCurrentFriendChat(null);
 			kicked.getDetails().setCurrentFriendChatOwner(null);
 			players.remove(kicked);
-			bannedPlayers.put(kicked.getUsername(), Utils.currentTimeMillis());
+			bannedPlayers.put(kicked.getUsername(), Utility.currentTimeMillis());
 			kicked.getPackets().sendFriendsChatChannel();
 			kicked.getPackets().sendGameMessage("You have been kicked from the friends chat channel.");
 			player.getPackets()
@@ -182,7 +181,7 @@ public class FriendChatsManager {
 						.sendGameMessage("You do not have a enough rank to talk on this friends chat channel.");
 				return;
 			}
-			String formatedName = Utils.formatPlayerNameForDisplay(player.getUsername());
+			String formatedName = Utility.formatPlayerNameForDisplay(player.getUsername());
 			String displayName = player.getDisplayName();
 			int rights = player.getMessageIcon();
 			for (Player p2 : players)
@@ -198,7 +197,7 @@ public class FriendChatsManager {
 						.sendGameMessage("You do not have a enough rank to talk on this friends chat channel.");
 				return;
 			}
-			String formatedName = Utils.formatPlayerNameForDisplay(player.getUsername());
+			String formatedName = Utility.formatPlayerNameForDisplay(player.getUsername());
 			String displayName = player.getDisplayName();
 			int rights = player.getMessageIcon();
 			for (Player p2 : players)
@@ -224,17 +223,17 @@ public class FriendChatsManager {
 		synchronized (this) {
 			OutputStream stream = new OutputStream();
 			stream.writeString(ownerDisplayName);
-			String ownerName = Utils.formatPlayerNameForDisplay(owner);
+			String ownerName = Utility.formatPlayerNameForDisplay(owner);
 			stream.writeByte(getOwnerDisplayName().equals(ownerName) ? 0 : 1);
 			if (!getOwnerDisplayName().equals(ownerName))
 				stream.writeString(ownerName);
-			stream.writeLong(Utils.stringToLong(getChannelName()));
+			stream.writeLong(Utility.stringToLong(getChannelName()));
 			int kickOffset = stream.getOffset();
 			stream.writeByte(0);
 			stream.writeByte(getPlayers().size());
 			for (Player player : getPlayers()) {
 				String displayName = player.getDisplayName();
-				String name = Utils.formatPlayerNameForDisplay(player.getUsername());
+				String name = Utility.formatPlayerNameForDisplay(player.getUsername());
 				stream.writeString(displayName);
 				stream.writeByte(displayName.equals(name) ? 0 : 1);
 				if (!displayName.equals(name))
@@ -263,7 +262,7 @@ public class FriendChatsManager {
 		ownerDisplayName = player.getDisplayName();
 		settings = player.getFriendsIgnores();
 		players = new CopyOnWriteArrayList<Player>();
-		bannedPlayers = new ConcurrentHashMap<String, Long>();
+		bannedPlayers = new Object2ObjectArrayMap<String, Long>();
 	}
 
 	public static void destroyChat(Player player) {
@@ -295,18 +294,18 @@ public class FriendChatsManager {
 	}
 
 	public static List<Player> getLootSharingPeople(Player player) {
-		if (!player.isToogleLootShare())
-			return null;
-		FriendChatsManager chat = player.getCurrentFriendChat();
-		if (chat == null)
-			return null;
-		List<Player> players = new ArrayList<Player>();
-		for (Player p2 : player.getCurrentFriendChat().getPlayers()) {
-			if (p2.isToogleLootShare() && p2.withinDistance(player))
-				players.add(p2);
-		}
-		return players;
-
+//		if (!player.isToogleLootShare())
+//			return null;
+//		FriendChatsManager chat = player.getCurrentFriendChat();
+//		if (chat == null)
+//			return null;
+//		List<Player> players = new ArrayList<Player>();
+//		for (Player p2 : player.getCurrentFriendChat().getPlayers()) {
+//			if (p2.isToogleLootShare() && p2.withinDistance(player))
+//				players.add(p2);
+//		}
+//		return players;
+		return null;
 	}
 
 	public static void toogleLootShare(Player player) {
@@ -323,8 +322,8 @@ public class FriendChatsManager {
 			return;
 		}
 //		player.toogleLootShare();
-		if (player.isToogleLootShare())
-			player.getPackets().sendGameMessage("LootShare is now active.");
+//		if (player.isToogleLootShare())
+//			player.getPackets().sendGameMessage("LootShare is now active.");
 	}
 
 	public static void joinChat(String ownerName, Player player) {
@@ -332,7 +331,7 @@ public class FriendChatsManager {
 			if (player.getCurrentFriendChat() != null)
 				return;
 			player.getPackets().sendGameMessage("Attempting to join channel...");
-			String formatedName = Utils.formatPlayerNameForProtocol(ownerName);
+			String formatedName = Utility.formatPlayerNameForProtocol(ownerName);
 			FriendChatsManager chat = cachedFriendChats.get(formatedName);
 			if (chat == null) {
 				Player owner = World.getPlayerByDisplayName(ownerName);

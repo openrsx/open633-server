@@ -1,21 +1,21 @@
 package com.rs.game.player.content;
 
-import java.util.HashMap;
-
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Player;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 public class ChargesManager {
 
 	private transient Player player;
-
-	private HashMap<Integer, Integer> charges;
+	
+	private Object2ObjectArrayMap<Integer, Integer> charges = new Object2ObjectArrayMap<>();
 
 	public ChargesManager() {
-		charges = new HashMap<Integer, Integer>();
+		charges = new Object2ObjectArrayMap<Integer, Integer>();
 	}
 
 	public void setPlayer(Player player) {
@@ -28,7 +28,7 @@ public class ChargesManager {
 			Item item = items[slot];
 			if (item == null)
 				continue;
-			if (player.getAttackedByDelay() > Utils.currentTimeMillis()) {
+			if (player.getAttackedByDelay() > Utility.currentTimeMillis()) {
 				int newId = ItemConstants.getDegradeItemWhenCombating(item
 						.getId());
 				if (newId != -1) {
@@ -46,7 +46,7 @@ public class ChargesManager {
 				continue;
 			if (ItemConstants.itemDegradesWhileWearing(item.getId()))
 				degrade(item.getId(), defaultCharges, slot);
-			else if (player.getAttackedByDelay() > Utils.currentTimeMillis()
+			else if (player.getAttackedByDelay() > Utility.currentTimeMillis()
 					&& ItemConstants.itemDegradesWhileCombating(item.getId()))
 				degrade(item.getId(), defaultCharges, slot);
 		}

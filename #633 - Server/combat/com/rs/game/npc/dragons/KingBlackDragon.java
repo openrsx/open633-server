@@ -1,6 +1,6 @@
 package com.rs.game.npc.dragons;
 
-import com.rs.game.WorldTile;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 
 public class KingBlackDragon extends NPC {
@@ -9,7 +9,6 @@ public class KingBlackDragon extends NPC {
 			boolean spawned) {
 		super((short) id, tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
 		setLureDelay((short) 0);
-		setDropRateFactor(1); // double chance
 	}
 
 	public static boolean atKBD(WorldTile tile) {

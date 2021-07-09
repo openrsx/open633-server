@@ -1,16 +1,14 @@
 package com.rs.plugin.impl.interfaces;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.rs.GameConstants;
 import com.rs.cache.io.InputStream;
-import com.rs.cores.WorldThread;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar.SpecialAttack;
 import com.rs.game.npc.others.Pet;
@@ -19,24 +17,26 @@ import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Foods;
 import com.rs.game.player.content.Pots;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.task.Task;
 import com.rs.net.decoders.WorldPacketsDecoder;
-import com.rs.plugin.InventoryDispatcher;
-import com.rs.plugin.RSInterfaceDispatcher;
+import com.rs.plugin.InventoryPluginDispatcher;
+import com.rs.plugin.RSInterfacePluginDispatcher;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
 import com.rs.utilities.Logger;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import skills.Skills;
 
 @RSInterfaceSignature(interfaceId = {149})
 public class InventoryInterfacePlugin implements RSInterface {
 
-	@SuppressWarnings("unused")
 	@Override
 	public void execute(Player player, int interfaceId, int componentId, int packetId, byte slotId, int slotId2) throws Exception {
+		System.out.println(packetId);
 		if (componentId == 0) {
 			if (slotId > 27 || player.getInterfaceManager().containsInventoryInter())
 				return;
@@ -46,20 +46,20 @@ public class InventoryInterfacePlugin implements RSInterface {
 			
 			switch(packetId) {
 			case WorldPacketsDecoder.ACTION_BUTTON1_PACKET:
-				long time = Utils.currentTimeMillis();
-//				if ( player.getLockDelay() >= time || player.getEmotesManager().getNextEmoteEnd() >= time)
-//					return;
-				player.stopAll(false);
+				InventoryPluginDispatcher.execute(player, item, 1);
+				break;
+			case WorldPacketsDecoder.ACTION_BUTTON2_PACKET:
+				long time = Utility.currentTimeMillis();
+				if (player.getMovement().getLockDelay() >= time || player.getNextEmoteEnd() >= time)
+					return;
+				player.getMovement().stopAll(false);
 				if (Foods.eat(player, item, slotId))
 					return;
 				if (Pots.pot(player, item, slotId))
 					return;
-				InventoryDispatcher.execute(player, item, 1);
-				break;
-			case WorldPacketsDecoder.ACTION_BUTTON2_PACKET:
 				if (player.isDisableEquip())
 					return;
-				long passedTime = Utils.currentTimeMillis() - WorldThread.WORLD_CYCLE;
+				long passedTime = Utility.currentTimeMillis() - 600 /*WorldThread.WORLD_CYCLE*/;
 				if (player.getSwitchItemCache().isEmpty()) {
 					player.getSwitchItemCache().add(slotId);
 					World.get().submit(new Task(passedTime >= 600 ? 0 : passedTime > 330 ? 1 : 0) {
@@ -71,35 +71,35 @@ public class InventoryInterfacePlugin implements RSInterface {
 							for (int i = 0; i < slot.length; i++)
 								slot[i] = slots.get(i);
 							player.getSwitchItemCache().clear();
-							RSInterfaceDispatcher.sendWear(player, slot);
-							player.stopAll(false, true, false);
+							RSInterfacePluginDispatcher.sendWear(player, slot);
+							player.getMovement().stopAll(false, true, false);
 							this.cancel();
 						}
 					});
 				} else if (!player.getSwitchItemCache().contains(slotId)) {
 					player.getSwitchItemCache().add(slotId);
 				}
-				InventoryDispatcher.execute(player, item, 2);
+				InventoryPluginDispatcher.execute(player, item, 2);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON3_PACKET:
-				InventoryDispatcher.execute(player, item, 3);
+				InventoryPluginDispatcher.execute(player, item, 3);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON4_PACKET:
-				InventoryDispatcher.execute(player, item, 4);
+				InventoryPluginDispatcher.execute(player, item, 4);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON5_PACKET:
-				InventoryDispatcher.execute(player, item, 5);
+				InventoryPluginDispatcher.execute(player, item, 5);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON6_PACKET:
-				InventoryDispatcher.execute(player, item, 6);
+				InventoryPluginDispatcher.execute(player, item, 6);
 				break;
 			case WorldPacketsDecoder.ACTION_BUTTON7_PACKET:
-				long dropTime = Utils.currentTimeMillis();
-//				if (player.getLockDelay() >= dropTime || player.getEmotesManager().getNextEmoteEnd() >= dropTime)
-//					return;
-				if (!player.getControllerManager().canDropItem(item))
+				long dropTime = Utility.currentTimeMillis();
+				if (player.getMovement().getLockDelay() >= dropTime || player.getNextEmoteEnd() >= dropTime)
 					return;
-				player.stopAll(false);
+				if (!ControllerHandler.execute(player, controller -> controller.canDropItem(player, item)))
+					return;
+				player.getMovement().stopAll(false);
 				
 				if (item.getDefinitions().isOverSized()) {
 					player.getPackets().sendGameMessage("The item appears to be oversized.");
@@ -114,7 +114,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				if (player.getPetManager().spawnPet(item.getId(), true)) {
 					return;
 				}
-				InventoryDispatcher.execute(player, item, 7);
+				InventoryPluginDispatcher.execute(player, item, 7);
 				player.getInventory().deleteItem(slotId, item);
 				if (player.getDetails().getCharges().degradeCompletly(item))
 					return;
@@ -123,7 +123,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				break;
 			case 81:
 				player.getInventory().sendExamine(slotId);
-				InventoryDispatcher.execute(player, item, 8);
+				InventoryPluginDispatcher.execute(player, item, 8);
 				break;
 			}
 		}
@@ -161,7 +161,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 			if (itemUsed == null || usedWith == null || itemUsed.getId() != itemUsedId
 					|| usedWith.getId() != itemUsedWithId)
 				return;
-			player.stopAll();
+			player.getMovement().stopAll();
 			
 			if (GameConstants.DEBUG)
 				Logger.log("ItemHandler", "Used:" + itemUsed.getId() + ", With:" + usedWith.getId());
@@ -172,17 +172,14 @@ public class InventoryInterfacePlugin implements RSInterface {
 		if (item == null) {
 			return;
 		}
-		player.setCoordsEvent(new CoordsEvent(npc, new Runnable() {
-			@Override
-			public void run() {
-				if (!player.getInventory().containsItem(item.getId(), item.getAmount())) {
-					return;
-				}
-				if (npc instanceof Pet) {
-					player.faceEntity(npc);
-					player.getPetManager().eat(item.getId(), (Pet) npc);
-					return;
-				}
+		player.setCoordsEvent(new CoordsEvent(npc, () -> {
+			if (!player.getInventory().containsItem(item.getId(), item.getAmount())) {
+				return;
+			}
+			if (npc instanceof Pet) {
+				player.setNextFaceEntity(npc);
+				player.getPetManager().eat(item.getId(), (Pet) npc);
+				return;
 			}
 		}, npc.getSize()));
 	}
@@ -205,10 +202,11 @@ public class InventoryInterfacePlugin implements RSInterface {
 		}
 	}
 	
+	static int finalSlot;
 	public static boolean sendWear2(Player player, int slotId, int itemId) {
 		if (player.isFinished() || player.isDead())
 			return false;
-		player.stopAll(false, false);
+		player.getMovement().stopAll(false, false);
 		Item item = player.getInventory().getItem(slotId);
 		if (item == null || item.getId() != itemId)
 			return false;
@@ -219,6 +217,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 			return false;
 		}
 		int targetSlot = Equipment.getItemSlot(itemId);
+		finalSlot = targetSlot;
 		if (itemId == 4084)
 			targetSlot = 3;
 		if (targetSlot == -1) {
@@ -235,7 +234,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 					"Not enough free space in your inventory.");
 			return false;
 		}
-		HashMap<Integer, Integer> requiriments = item.getDefinitions()
+		Object2ObjectArrayMap<Integer, Integer> requiriments = item.getDefinitions()
 				.getWearingSkillRequiriments();
 		boolean hasRequiriments = true;
 		if (requiriments != null) {
@@ -262,8 +261,9 @@ public class InventoryInterfacePlugin implements RSInterface {
 		}
 		if (!hasRequiriments)
 			return false;
-		if (!player.getControllerManager().canEquip(targetSlot, itemId))
+		if (!ControllerHandler.execute(player, controller -> controller.canEquip(player, finalSlot, itemId))) {
 			return false;
+		}
 		player.getInventory().getItems().remove(slotId, item);
 		if (targetSlot == 3) {
 			if (isTwoHandedWeapon && player.getEquipment().getItem(5) != null) {

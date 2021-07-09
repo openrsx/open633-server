@@ -1,14 +1,14 @@
 package com.rs.game.player.content;
 
-import java.util.ArrayList;
-
 import com.rs.cache.loaders.ClientScriptMap;
-import com.rs.game.World;
 import com.rs.game.map.Region;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.utilities.RandomUtils;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 import com.rs.utilities.loaders.MusicHints;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public final class MusicsManager {
 
@@ -23,16 +23,16 @@ public final class MusicsManager {
 	private transient int playingMusic;
 	private transient long playingMusicDelay;
 	private transient boolean settedMusic;
-	private ArrayList<Integer> unlockedMusics;
-	private ArrayList<Integer> playList;
+	private ObjectArrayList<Integer> unlockedMusics;
+	private ObjectArrayList<Integer> playList;
 
 	private transient boolean playListOn;
 	private transient int nextPlayListMusic;
 	private transient boolean shuffleOn;
 
 	public MusicsManager() {
-		unlockedMusics = new ArrayList<Integer>();
-		playList = new ArrayList<Integer>(12);
+		unlockedMusics = new ObjectArrayList<Integer>();
+		playList = new ObjectArrayList<Integer>(12);
 		// auto unlocked musics
 		unlockedMusics.add(62);
 		unlockedMusics.add(400);
@@ -207,7 +207,7 @@ public final class MusicsManager {
 
 	public boolean musicEnded() {
 		return playingMusic != -2
-				&& playingMusicDelay + (180000) < Utils.currentTimeMillis();
+				&& playingMusicDelay + (180000) < Utility.currentTimeMillis();
 	}
 
 	public void replayMusic() {
@@ -228,7 +228,7 @@ public final class MusicsManager {
 
 	public void checkMusic(int requestMusicId) {
 		if (playListOn || settedMusic
-				&& playingMusicDelay + (180000) >= Utils.currentTimeMillis())
+				&& playingMusicDelay + (180000) >= Utility.currentTimeMillis())
 			return;
 		settedMusic = false;
 		if (playingMusic != requestMusicId)
@@ -289,7 +289,7 @@ public final class MusicsManager {
 	public void playMusic(int musicId) {
 		if (!player.isStarted())
 			return;
-		playingMusicDelay = Utils.currentTimeMillis();
+		playingMusicDelay = Utility.currentTimeMillis();
 		if (musicId == -2) {
 			playingMusic = musicId;
 			player.getPackets().sendMusic(-1);

@@ -4,10 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gson.reflect.TypeToken;
 import com.rs.cache.Cache;
@@ -16,6 +13,10 @@ import com.rs.utilities.json.GsonHandler;
 import com.rs.utilities.json.GsonLoader;
 import com.rs.utilities.loaders.NPCSpawning;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.SneakyThrows;
+
 public class NPCAutoSpawn extends GsonLoader<NPCSpawning> {
 
 	public static void main(String... args) throws IOException {
@@ -23,7 +24,7 @@ public class NPCAutoSpawn extends GsonLoader<NPCSpawning> {
 		GsonHandler.initialize();
 		NPCAutoSpawn loader = GsonHandler.getJsonLoader(NPCAutoSpawn.class);
 
-		List<NPCSpawning> spawns = loader.load();
+		ObjectArrayList<NPCSpawning> spawns = loader.load();
 
 		BufferedReader reader = new BufferedReader(new FileReader("drops.txt"));
 		String line;
@@ -35,7 +36,7 @@ public class NPCAutoSpawn extends GsonLoader<NPCSpawning> {
 			int z = Integer.parseInt(data[3]);
 			spawns.add(new NPCSpawning(x, y, z, id, Direction.NORTH));
 		}
-		loader.save(spawns);
+		loader.save((ObjectArrayList<NPCSpawning>) spawns);
 		reader.close();
 		 
 		/*
@@ -54,18 +55,18 @@ public class NPCAutoSpawn extends GsonLoader<NPCSpawning> {
 
 	@Override
 	public void initialize() {
-		List<NPCSpawning> spawns = load();
+		ObjectArrayList<NPCSpawning> spawns = load();
 		for (NPCSpawning spawn : spawns) {
-			List<NPCSpawning> regionSpawns = null;
+			ObjectArrayList<NPCSpawning> regionSpawns = null;
 
 			/*
 			 * Populating the region spawns or generating a new one if it doesnt
 			 * exist
 			 */
 			if (map.get(spawn.getTile().getRegionId()) == null) {
-				regionSpawns = new ArrayList<>();
+				regionSpawns = new ObjectArrayList<>();
 			} else {
-				regionSpawns = map.get(spawn.getTile().getRegionId());
+				regionSpawns = (ObjectArrayList<NPCSpawning>) map.get(spawn.getTile().getRegionId());
 			}
 
 			regionSpawns.add(spawn);
@@ -79,29 +80,27 @@ public class NPCAutoSpawn extends GsonLoader<NPCSpawning> {
 	}
 
 	@Override
-	public List<NPCSpawning> load() {
-		List<NPCSpawning> autospawns = null;
+	@SneakyThrows(Exception.class)
+	public ObjectArrayList<NPCSpawning> load() {
+		ObjectArrayList<NPCSpawning> autospawns = null;
 		String json = null;
-		try {
-			File file = new File(getFileLocation());
-			if (!file.exists()) {
-				return null;
-			}
-			FileReader reader = new FileReader(file);
-			char[] chars = new char[(int) file.length()];
-			reader.read(chars);
-			json = new String(chars);
-			reader.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		File file = new File(getFileLocation());
+		if (!file.exists()) {
+			return null;
 		}
-		autospawns = gson.fromJson(json, new TypeToken<List<NPCSpawning>>() {
+		FileReader reader = new FileReader(file);
+		char[] chars = new char[(int) file.length()];
+		reader.read(chars);
+		json = new String(chars);
+		reader.close();
+		
+		autospawns = gson.fromJson(json, new TypeToken<ObjectArrayList<NPCSpawning>>() {
 		}.getType());
 		return autospawns;
 	}
 
 	public Direction getDirection(NPC npc) {
-		List<NPCSpawning> spawns = getSpawns(npc.getRegionId());
+		ObjectArrayList<NPCSpawning> spawns = getSpawns(npc.getRegionId());
 		if (spawns == null) {
 			return Direction.NORTH;
 		}
@@ -113,11 +112,11 @@ public class NPCAutoSpawn extends GsonLoader<NPCSpawning> {
 		return Direction.NORTH;
 	}
 
-	public List<NPCSpawning> getSpawns(int regionId) {
-		return map.get(regionId);
+	public ObjectArrayList<NPCSpawning> getSpawns(int regionId) {
+		return (ObjectArrayList<NPCSpawning>) map.get(regionId);
 	}
 
-	private final Map<Integer, List<NPCSpawning>> map = new HashMap<>();
+	private final Object2ObjectArrayMap<Integer, List<NPCSpawning>> map = new Object2ObjectArrayMap<>();
 
 	public enum Direction {
 

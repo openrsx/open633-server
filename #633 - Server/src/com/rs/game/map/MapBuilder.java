@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.rs.cache.Cache;
-import com.rs.game.World;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
@@ -308,8 +307,8 @@ public final class MapBuilder {
 	public static void destroyRegion(int regionId) {
 		Region region = World.getRegions().get(regionId);
 		if (region != null) {
-			List<Integer> playerIndexes = region.getPlayerIndexes();
-			List<Integer> npcIndexes = region.getNPCsIndexes();
+			List<Short> playerIndexes = region.getPlayersIndexes();
+			List<Short> npcIndexes = region.getNpcsIndexes();
 			if (region.getGroundItems() != null)
 				region.getGroundItems().clear();
 			region.getSpawnedObjects().clear();

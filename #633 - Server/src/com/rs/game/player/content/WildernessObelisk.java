@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.rs.game.Animation;
 import com.rs.game.Graphics;
-import com.rs.game.World;
-import com.rs.game.WorldObject;
-import com.rs.game.WorldTile;
+import com.rs.game.map.GameObject;
 import com.rs.game.map.Region;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;
@@ -27,13 +27,13 @@ public class WildernessObelisk {
 			return;
 		}
 		IS_ACTIVE[index] = true;
-		WorldObject object = WorldObject.getObjectWithId(center, id);
+		GameObject object = GameObject.getObjectWithId(center, id);
 		if (object == null) // still loading objects i guess
 			return;
-		WorldObject.sendObjectAnimation(object, new Animation(2226));
-		WorldObject.sendObjectAnimation(WorldObject.getObjectWithId(center.transform(4, 0, 0), id), new Animation(2226));
-		WorldObject.sendObjectAnimation(WorldObject.getObjectWithId(center.transform(0, 4, 0), id), new Animation(2226));
-		WorldObject.sendObjectAnimation(WorldObject.getObjectWithId(center.transform(4, 4, 0), id), new Animation(2226));
+		GameObject.sendObjectAnimation(object, new Animation(2226));
+		GameObject.sendObjectAnimation(GameObject.getObjectWithId(center.transform(4, 0, 0), id), new Animation(2226));
+		GameObject.sendObjectAnimation(GameObject.getObjectWithId(center.transform(0, 4, 0), id), new Animation(2226));
+		GameObject.sendObjectAnimation(GameObject.getObjectWithId(center.transform(4, 4, 0), id), new Animation(2226));
 		
 		World.get().submit(new Task(8) {
 			@Override
@@ -42,10 +42,10 @@ public class WildernessObelisk {
 					for (int y = 1; y < 4; y++)
 						World.sendGraphics(player, new Graphics(661), center.transform(x, y, 0));
 				Region region = World.getRegion(center.getRegionId());
-				List<Integer> playerIndexes = region.getPlayerIndexes();
+				List<Short> playerIndexes = region.getPlayersIndexes();
 				WorldTile newCenter = OBELISK_CENTER_TILES[RandomUtils.random(OBELISK_CENTER_TILES.length)];
 				if (playerIndexes != null) {
-					for (Integer i : playerIndexes) {
+					for (Short i : playerIndexes) {
 						Player p = World.getPlayers().get(i);
 						if (p == null || (p.getX() < center.getX() + 1 || p.getX() > center.getX() + 3
 								|| p.getY() < center.getY() + 1 || p.getY() > center.getY() + 3))

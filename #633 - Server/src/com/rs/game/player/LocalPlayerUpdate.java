@@ -3,10 +3,9 @@ package com.rs.game.player;
 import java.security.MessageDigest;
 
 import com.rs.GameConstants;
-import com.rs.game.Hit;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.io.OutputStream;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 public final class LocalPlayerUpdate {
 
@@ -262,22 +261,22 @@ public final class LocalPlayerUpdate {
 								+ ((planeOffset & 0x3) << 28));
 					}
 				} else if (p.getNextWalkDirection() != -1) {
-					int dx = Utils.DIRECTION_DELTA_X[p.getNextWalkDirection()];
-					int dy = Utils.DIRECTION_DELTA_Y[p.getNextWalkDirection()];
+					int dx = Utility.DIRECTION_DELTA_X[p.getNextWalkDirection()];
+					int dy = Utility.DIRECTION_DELTA_Y[p.getNextWalkDirection()];
 					boolean running;
 					int opcode;
 					if (p.getNextRunDirection() != -1) {
-						dx += Utils.DIRECTION_DELTA_X[p.getNextRunDirection()];
-						dy += Utils.DIRECTION_DELTA_Y[p.getNextRunDirection()];
-						opcode = Utils.getPlayerRunningDirection(dx, dy);
+						dx += Utility.DIRECTION_DELTA_X[p.getNextRunDirection()];
+						dy += Utility.DIRECTION_DELTA_Y[p.getNextRunDirection()];
+						opcode = Utility.getPlayerRunningDirection(dx, dy);
 						if (opcode == -1) {
 							running = false;
-							opcode = Utils.getPlayerWalkingDirection(dx, dy);
+							opcode = Utility.getPlayerWalkingDirection(dx, dy);
 						} else
 							running = true;
 					} else {
 						running = false;
-						opcode = Utils.getPlayerWalkingDirection(dx, dy);
+						opcode = Utility.getPlayerWalkingDirection(dx, dy);
 					}
 					stream.writeBits(1, 1);
 					if ((dx == 0 && dy == 0)) {

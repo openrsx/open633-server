@@ -5,10 +5,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.rs.GameConstants;
 import com.rs.game.Animation;
-import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
-import com.rs.game.player.controllers.Wilderness;
+import com.rs.game.map.WorldTile;
+import com.rs.game.player.controller.Controller;
+import com.rs.game.player.controller.ControllerHandler;
+import com.rs.game.player.controller.Controller.ControllerSafety;
 import com.rs.game.task.impl.ActorDeathTask;
 import com.rs.net.host.HostManager;
 
@@ -22,9 +24,9 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 
 	@Override
 	public void preDeath() {
-		if (!getActor().getControllerManager().sendDeath())
+		if (!ControllerHandler.execute(getActor(), controller -> controller.sendDeath(getActor())))
 			return;
-		getActor().lock();
+		getActor().getMovement().lock();
 		getActor().setNextAnimation(new Animation(836));
 	}
 
@@ -37,38 +39,44 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 		getActor().getDetails().setAntifireDetails(Optional.empty());	
 		getActor().getDetails().getSkullTimer().set(0);
 		getActor().getDetails().getWatchMap().get("TOLERANCE").reset();
-		getActor().stopAll();
+		getActor().getMovement().stopAll();
 		if (getActor().getFamiliar() != null)
-			getActor().getFamiliar().sendDeath(getActor());
+			getActor().getFamiliar().sendDeath(Optional.of(getActor()));
 	}
 
 	@Override
 	public void postDeath() {
 		getActor().getInterfaceManager().sendInterface(153);
-		getActor().getPackets().sendMusicEffect(90);
-		getActor().getPackets().sendGameMessage("Oh dear, you have died.");
-		getActor().safeForceMoveTile(new WorldTile(GameConstants.START_PLAYER_LOCATION));
+		getActor().getPackets().sendMusicEffect(90).sendGameMessage("Oh dear, you have died.");
 		getActor().setNextAnimation(new Animation(-1));
 		getActor().heal(getActor().getMaxHitpoints());
 		final int maxPrayer = getActor().getSkills().getLevelForXp(Skills.PRAYER) * 10;
 		getActor().getPrayer().restorePrayer(maxPrayer);
 		getActor().setNextAnimation(new Animation(-1));
-		getActor().unlock();
+		getActor().getMovement().unlock();
 		getActor().getCombatDefinitions().resetSpecialAttack();
 		getActor().getPrayer().closeAllPrayers();
 		getActor().setRunEnergy(100);
+		getActor().safeForceMoveTile(new WorldTile(GameConstants.START_PLAYER_LOCATION));
 		
-		if (getActor().isPlayer()) {
-			Player killer = (Player) getActor();
-			killer.setAttackedByDelay(4);
-			if(HostManager.same(getActor(), killer)) {
-				killer.getPackets().sendGameMessage("You don't receive any points because you and " + getActor().getDisplayName() + " are connected from the same network.");
+		Optional<Controller> controller = ControllerHandler.getController(getActor());
+		if (controller.isPresent()) {
+			if (controller.get().getSafety() == ControllerSafety.SAFE)
 				return;
-			}
-			if (getActor().getControllerManager().getController() instanceof Wilderness) {
-				if (getActor().getControllerManager().getController() != null) {
-					sendItemsOnDeath(killer);
+		} else {
+			if (getActor().isPlayer()) {
+				Player killer = (Player) getActor();
+				killer.setAttackedByDelay(4);
+				if(HostManager.same(getActor(), killer)) {
+					killer.getPackets().sendGameMessage("You don't receive any points because you and " + getActor().getDisplayName() + " are connected from the same network.");
+					return;
 				}
+				//TODO: This
+//				if (getActor().getControllerManager().getController() instanceof Wilderness) {
+//					if (getActor().getControllerManager().getController() != null) {
+//						sendItemsOnDeath(killer);
+//					}
+//				}
 			}
 		}
 	}

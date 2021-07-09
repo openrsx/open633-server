@@ -8,7 +8,14 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 
+import com.rs.GameConstants;
+import com.rs.cores.CoresManager;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
+import com.rs.game.player.PlayerCombat;
+import com.rs.game.player.content.Emotes.Emote;
+import com.rs.game.player.controller.ControllerHandler;
+import com.rs.io.InputStream;
 import com.rs.io.OutputStream;
 import com.rs.net.decoders.ClientPacketsDecoder;
 import com.rs.net.decoders.Decoder;
@@ -19,6 +26,9 @@ import com.rs.net.encoders.Encoder;
 import com.rs.net.encoders.GrabPacketsEncoder;
 import com.rs.net.encoders.LoginPacketsEncoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
+import com.rs.net.packets.logic.LogicPacketDispatcher;
+import com.rs.utilities.Logger;
+import com.rs.utilities.Utility;
 
 import lombok.SneakyThrows;
 import lombok.Synchronized;
@@ -150,5 +160,85 @@ public class Session {
 		if (!player.getDetails().getIpList().contains(player.getDetails().getLastIP()))
 			player.getDetails().getIpList().add(player.getDetails().getLastIP());
 		return;
+	}
+
+	/**
+	 * Logs the player out.
+	 * 
+	 * @param lobby If we're logging out to the lobby.
+	 */
+	public void logout(Player player, boolean lobby) {
+		if (!player.isRunning())
+			return;
+		long currentTime = Utility.currentTimeMillis();
+		if (player.getAttackedByDelay() + 10000 > currentTime) {
+			player.getPackets().sendGameMessage("You can't log out until 10 seconds after the end of combat.");
+			return;
+		}
+		if (player.getNextEmoteEnd() >= currentTime) {
+			player.getPackets().sendGameMessage("You can't log out while performing an emote.");
+			return;
+		}
+		if (player.getMovement().isLocked()) {
+			player.getPackets().sendGameMessage("You can't log out while performing an action.");
+			return;
+		}
+		player.getPackets().sendLogout(lobby);
+		player.setRunning(false);
+	}
+
+	public void forceLogout(Player player) {
+		player.getPackets().sendLogout(false);
+		player.setRunning(false);
+		realFinish(player, false);
+	}
+
+	public void processLogicPackets(Player player) {
+		LogicPacket packet;
+		while ((packet = player.getLogicPackets().poll()) != null) {
+			InputStream stream = new InputStream(packet.getData());
+			LogicPacketDispatcher.execute(player, stream, packet.getId());
+		}
+	}
+	
+	@SneakyThrows(Throwable.class)
+	public void finish(Player player, final int tryCount) {
+		if (player.isFinishing() || player.isFinished())
+			return;
+		player.setFinishing(true);
+		player.getMovement().stopAll(false, true, !(player.getActionManager().getAction() instanceof PlayerCombat));
+		if (player.isDead() || (player.getCombatDefinitions().isUnderCombat() && tryCount < 6) || player.getMovement().isLocked()
+		 || Emote.isDoingEmote(player)) {
+			CoresManager.schedule(() -> {
+				player.setFinishing(false);
+				finish(player, tryCount + 1);
+			}, 10);
+			return;
+		}
+		realFinish(player, false);
+	}
+	
+	public void realFinish(Player player, boolean shutdown) {
+		if (player.isFinished())
+			return;
+		Logger.globalLog(player.getUsername(), getIP(), new String(" has logged out."));
+		player.getMovement().stopAll();
+		ControllerHandler.executeVoid(player, controller -> controller.logout(player));
+		player.setRunning(false);
+		player.getFriendsIgnores().sendFriendsMyStatus(false);
+		if (player.getCurrentFriendChat() != null)
+			player.getCurrentFriendChat().leaveChat(player, true);
+		if (player.getFamiliar() != null && !player.getFamiliar().isFinished())
+			player.getFamiliar().dissmissFamiliar(true);
+		else if (player.getPet() != null)
+			player.getPet().finish();
+		player.setFinished(true);
+		player.getSession().setDecoder(-1);
+		AccountCreation.savePlayer(player);
+		player.updateEntityRegion(player);
+		World.removePlayer(player);
+		if (GameConstants.DEBUG)
+			Logger.log(this, "Finished Player: " + player.getUsername() + ", pass: "
+					+ player.getDetails().getPassword());
 	}
 }

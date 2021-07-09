@@ -1,6 +1,6 @@
 package com.rs.plugin.listener;
 
-import com.rs.game.WorldObject;
+import com.rs.game.map.GameObject;
 import com.rs.game.player.Player;
 
 /**
@@ -15,5 +15,5 @@ public interface ObjectType {
 	 * @param player the player we are executing this command for.
 	 * @param cmd the command that we are executing for this player.
 	 */
-	void execute(Player player, WorldObject object, int optionId) throws Exception;
+	void execute(Player player, GameObject object, int optionId) throws Exception;
 }

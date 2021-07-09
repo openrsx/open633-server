@@ -1,9 +1,9 @@
 package com.rs.game.npc.others;
 
-import com.rs.game.WorldTile;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 public class DreadNip extends NPC {
 
@@ -27,7 +27,7 @@ public class DreadNip extends NPC {
 		} else if (getCombat().getTarget() == null || getCombat().getTarget().isDead()) {
 			finish(0);
 			return;
-		} else if (Utils.getDistance(owner, this) >= 10) {
+		} else if (Utility.getDistance(owner, this) >= 10) {
 			finish(1);
 			return;
 		} else if (ticks++ == 33) {
@@ -39,7 +39,7 @@ public class DreadNip extends NPC {
 	private void finish(int index) {
 		if (index != -1) {
 			owner.getPackets().sendGameMessage(DREADNIP_MESSAGES[index]);
-			owner.getTemporaryAttributes().remove("hasDN");
+			owner.getAttributes().getAttributes().remove("hasDN");
 		}
 		this.finish();
 	}

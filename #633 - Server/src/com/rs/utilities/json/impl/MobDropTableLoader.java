@@ -15,6 +15,8 @@ import com.rs.game.npc.DropManager;
 import com.rs.game.npc.DropTable;
 import com.rs.utilities.json.JsonLoader;
 
+import lombok.SneakyThrows;
+
 /**
  * The {@link JsonLoader} implementation that loads all npc drops.
  * @author lare96 <http://github.com/lare96>
@@ -53,32 +55,26 @@ public final class MobDropTableLoader extends JsonLoader {
 			int id = array[i];
 			if(id != first)
 				DropManager.REDIRECTS.put(array[i], first);
-			DropManager.getTables().put(array[i], new DropTable(common, rare));
+			DropManager.getTABLES().put(array[i], new DropTable(common, rare));
 		}
 		
 	}
 	
 	@Override
+	@SneakyThrows(IOException.class)
 	public void start() {
 		if(OUTPUT) {
-			try {
-				File out = new File("./mob_drops.dat");
-				this.out = new DataOutputStream(new FileOutputStream(out));
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
+			File out = new File("./mob_drops.dat");
+			this.out = new DataOutputStream(new FileOutputStream(out));
 		}
 	}
 	
 	@Override
+	@SneakyThrows(IOException.class)
 	public void end() {
 		if(out != null) {
-			try {
-				out.flush();
-				out.close();
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
+			out.flush();
+			out.close();
 		}
 		written.clear();
 	}

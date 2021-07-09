@@ -6,7 +6,7 @@ import java.util.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.rs.game.player.Player;
-import com.rs.game.player.controllers.Wilderness;
+import com.rs.game.player.controller.impl.WildernessController;
 
 public enum Catchable {
 	// TODO: Some way of catching Manta ray?
@@ -26,7 +26,7 @@ public enum Catchable {
 	SLIMY_EEL(3379, 28, 0.15, 65) {
 		@Override
 		public boolean catchable(Player player) {
-			return Wilderness.isAtWild(player);
+			return WildernessController.isAtWild(player);
 		}
 	},
 	SALMON(331, 30, 0.18, 70),
@@ -34,7 +34,7 @@ public enum Catchable {
 	CAVE_EEL(5001, 38, 0.13, 80) {
 		@Override
 		public boolean catchable(Player player) {
-			return Wilderness.isAtWild(player);
+			return WildernessController.isAtWild(player);
 		}
 	},
 	LOBSTER(377, 40, 0.20, 90),
@@ -43,7 +43,7 @@ public enum Catchable {
 	LAVA_EEL(2148, 53, 0.15, 60) {
 		@Override
 		public boolean catchable(Player player) {
-			return Wilderness.isAtWild(player);
+			return WildernessController.isAtWild(player);
 		}
 	},
 	MONKFISH(7944, 62, 0.12, 120),

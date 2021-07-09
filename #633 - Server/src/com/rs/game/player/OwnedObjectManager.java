@@ -1,25 +1,24 @@
 package com.rs.game.player;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.rs.game.World;
-import com.rs.game.WorldObject;
+import com.rs.game.map.GameObject;
+import com.rs.game.map.World;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class OwnedObjectManager {
 
 	public static final AtomicLong keyMaker = new AtomicLong();
 
-	private static final Map<String, OwnedObjectManager> ownedObjects = new ConcurrentHashMap<String, OwnedObjectManager>();
+	static Object2ObjectArrayMap<String, OwnedObjectManager> ownedObjects = new Object2ObjectArrayMap<>();
 
 	private Player player;
-	private WorldObject[] objects;
+	private GameObject[] objects;
 	private int count;
 	private long[] cycleTimes;
 	private long lifeTime;
@@ -30,7 +29,7 @@ public class OwnedObjectManager {
 		ownedObjects.values().forEach(object -> object.process());
 	}
 
-	public static boolean isPlayerObject(Player player, WorldObject object) {
+	public static boolean isPlayerObject(Player player, GameObject object) {
 		for (Iterator<String> it = getOwnedObjectManagerKeys(player)
 				.iterator(); it.hasNext();) {
 			OwnedObjectManager manager = ownedObjects.get(it.next());
@@ -54,8 +53,8 @@ public class OwnedObjectManager {
 
 	}
 
-	public static boolean convertIntoObject(WorldObject object,
-			WorldObject toObject, ConvertEvent event) {
+	public static boolean convertIntoObject(GameObject object,
+			GameObject toObject, ConvertEvent event) {
 		for (OwnedObjectManager manager : ownedObjects.values()) {
 			if (manager.getCurrentObject().getX() == toObject.getX()
 					&& manager.getCurrentObject().getY() == toObject.getY()
@@ -71,7 +70,7 @@ public class OwnedObjectManager {
 		return false;
 	}
 
-	public static boolean removeObject(Player player, WorldObject object) {
+	public static boolean removeObject(Player player, GameObject object) {
 		for (Iterator<String> it = getOwnedObjectManagerKeys(player)
 				.iterator(); it.hasNext();) {
 			final OwnedObjectManager manager = ownedObjects.get(it.next());
@@ -109,23 +108,23 @@ public class OwnedObjectManager {
 		}
 	}
 
-	public static void addOwnedObjectManager(Player player, WorldObject object,
+	public static void addOwnedObjectManager(Player player, GameObject object,
 			long cycleTime) {
-		addOwnedObjectManager(player, new WorldObject[] { object },
+		addOwnedObjectManager(player, new GameObject[] { object },
 				new long[] { cycleTime });
 	}
 
 	public static void addOwnedObjectManager(Player player,
-			WorldObject[] object, long[] cycleTimes) {
+			GameObject[] object, long[] cycleTimes) {
 		addOwnedObjectManager(player, object, cycleTimes, null);
 	}
 
 	public static void addOwnedObjectManager(Player player,
-			WorldObject[] object, long[] cycleTimes, ProcessEvent event) {
+			GameObject[] object, long[] cycleTimes, ProcessEvent event) {
 		new OwnedObjectManager(player, object, cycleTimes, event);
 	}
 
-	private OwnedObjectManager(Player player, WorldObject[] objects,
+	private OwnedObjectManager(Player player, GameObject[] objects,
 			long[] cycleTimes, ProcessEvent event) {
 		managerKey = player.getUsername() + "_" + keyMaker.getAndIncrement();
 		this.cycleTimes = cycleTimes;
@@ -173,7 +172,7 @@ public class OwnedObjectManager {
 	}
 
 	public void resetLifeTime() {
-		this.lifeTime = Utils.currentTimeMillis() + cycleTimes[count];
+		this.lifeTime = Utility.currentTimeMillis() + cycleTimes[count];
 	}
 
 	public boolean forceMoveNextStage() {
@@ -189,13 +188,13 @@ public class OwnedObjectManager {
 	}
 
 	private void spawnObject() {
-		WorldObject.spawnObject(objects[count]);
+		GameObject.spawnObject(objects[count]);
 		if (event != null)
 			event.spawnObject(player, getCurrentObject());
 		resetLifeTime();
 	}
 
-	public void convertIntoObject(WorldObject object) {
+	public void convertIntoObject(GameObject object) {
 		destroyObject(objects[count]);
 		objects[count] = object;
 		spawnObject();
@@ -213,31 +212,31 @@ public class OwnedObjectManager {
 	}
 
 	public void process() {
-		if (Utils.currentTimeMillis() > lifeTime)
+		if (Utility.currentTimeMillis() > lifeTime)
 			forceMoveNextStage();
 		else if (event != null)
 			event.process(player, getCurrentObject());
 	}
 
-	public WorldObject getCurrentObject() {
+	public GameObject getCurrentObject() {
 		return objects[count];
 	}
 
-	public void destroyObject(WorldObject object) {
-		WorldObject.removeObject(object);
+	public void destroyObject(GameObject object) {
+		GameObject.removeObject(object);
 	}
 
 	public static interface ProcessEvent {
 
-		public void spawnObject(Player player, WorldObject object);
+		public void spawnObject(Player player, GameObject object);
 
-		public void process(Player player, WorldObject currentObject);
+		public void process(Player player, GameObject currentObject);
 
 	}
 
-	public static List<String> getOwnedObjectManagerKeys(Player player) {
+	public static ObjectArrayList<String> getOwnedObjectManagerKeys(Player player) {
 		if (player.getDetails().getOwnedObjectsManagerKeys() == null) // temporary
-			player.getDetails().setOwnedObjectsManagerKeys(new LinkedList<String>());
+			player.getDetails().setOwnedObjectsManagerKeys(new ObjectArrayList<String>());
 		return player.getDetails().getOwnedObjectsManagerKeys();
 	}
 }

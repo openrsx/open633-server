@@ -1,17 +1,15 @@
 package com.rs.game.player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 
 import com.rs.game.player.content.ChargesManager;
 import com.rs.game.player.type.impl.AntifireDetails;
 import com.rs.utilities.MutableNumber;
 import com.rs.utilities.Stopwatch;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Data;
 
 /**
@@ -28,18 +26,18 @@ public final class PlayerDetails {
 	 */
 	public PlayerDetails() {
 		pouches = new byte[4];
-		creationDate = Utils.currentTimeMillis();
+		creationDate = Utility.currentTimeMillis();
 		runEnergy = 100;
 		allowChatEffects = true;
 		mouseButtons = true;
 		profanityFilter = true;
 		if (charges == null)
 			charges = new ChargesManager();
-		ownedObjectsManagerKeys = new LinkedList<String>();
-		passwordList = new ArrayList<String>();
-		ipList = new ArrayList<String>();
-		if (watchMap == null)
-			watchMap = new HashMap<>();
+		ownedObjectsManagerKeys = new ObjectArrayList<String>();
+		passwordList = new ObjectArrayList<String>();
+		ipList = new ObjectArrayList<String>();
+		if (watchMap == null) 
+			watchMap = new Object2ObjectArrayMap<>();
 	}
 
 	/**
@@ -113,7 +111,8 @@ public final class PlayerDetails {
 	/**
 	 * A collection of Stopwatches
 	 */
-	private HashMap<String, Stopwatch> watchMap = new HashMap<>();
+	
+	private Object2ObjectArrayMap<String, Stopwatch> watchMap = new Object2ObjectArrayMap<>();
 
 	/**
 	 * Should the Player use Chat effects for overhead text
@@ -164,8 +163,8 @@ public final class PlayerDetails {
 	private byte summoningLeftClickOption;
 	
 	// Used for storing recent ips and password
-	private ArrayList<String> passwordList = new ArrayList<String>();
-	private ArrayList<String> ipList = new ArrayList<String>();
+	private ObjectArrayList<String> passwordList = new ObjectArrayList<String>();
+	private ObjectArrayList<String> ipList = new ObjectArrayList<String>();
 
 	/**
 	 * Represents an instance of the Players Charge handler
@@ -185,7 +184,7 @@ public final class PlayerDetails {
 	/**
 	 * A list of Player owned Objects
 	 */
-	private List<String> ownedObjectsManagerKeys;
+	private ObjectArrayList<String> ownedObjectsManagerKeys;
 
 	/**
 	 * Mutable values stored for specified uses

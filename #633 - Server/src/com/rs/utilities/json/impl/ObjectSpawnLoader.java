@@ -2,16 +2,17 @@ package com.rs.utilities.json.impl;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import com.google.gson.reflect.TypeToken;
-import com.rs.game.WorldObject;
-import com.rs.game.WorldTile;
+import com.rs.game.map.GameObject;
+import com.rs.game.map.WorldTile;
 import com.rs.utilities.json.GsonHandler;
 import com.rs.utilities.json.GsonLoader;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.Data;
+import lombok.SneakyThrows;
 
 /**
  * @author Tyluur <itstyluur@gmail.com>
@@ -21,15 +22,15 @@ public class ObjectSpawnLoader extends GsonLoader<ObjectSpawnLoader.ObjectSpawn>
 
 	@Override
 	public void initialize() {
-		List<ObjectSpawn> spawns = load();
+		ObjectArrayList<ObjectSpawn> spawns = load();
 		for (ObjectSpawn spawn : spawns) {
-			List<ObjectSpawn> regionSpawns = null;
+			ObjectArrayList<ObjectSpawn> regionSpawns = null;
 
 			/* Populating the region spawns or generating a new one if it doesnt exist */
 			if (map.get(spawn.getTile().getRegionId()) == null) {
-				regionSpawns = new ArrayList<>();
+				regionSpawns = new ObjectArrayList<>();
 			} else {
-				regionSpawns = map.get(spawn.getTile().getRegionId());
+				regionSpawns = (ObjectArrayList<ObjectSpawn>) map.get(spawn.getTile().getRegionId());
 			}
 
 			regionSpawns.add(spawn);
@@ -43,45 +44,45 @@ public class ObjectSpawnLoader extends GsonLoader<ObjectSpawnLoader.ObjectSpawn>
 	}
 
 	@Override
-	public List<ObjectSpawn> load() {
-		List<ObjectSpawn> autospawns = null;
+	@SneakyThrows(Exception.class)
+	public ObjectArrayList<ObjectSpawn> load() {
+		ObjectArrayList<ObjectSpawn> autospawns = null;
 		String json = null;
-		try {
-			File file = new File(getFileLocation());
-			if (!file.exists()) {
-				return null;
-			}
-			FileReader reader = new FileReader(file);
-			char[] chars = new char[(int) file.length()];
-			reader.read(chars);
-			json = new String(chars);
-			reader.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		File file = new File(getFileLocation());
+		if (!file.exists()) {
+			return null;
 		}
-		autospawns = gson.fromJson(json, new TypeToken<List<ObjectSpawn>>() {
+		FileReader reader = new FileReader(file);
+		char[] chars = new char[(int) file.length()];
+		reader.read(chars);
+		json = new String(chars);
+		reader.close();
+
+		autospawns = gson.fromJson(json, new TypeToken<ObjectArrayList<ObjectSpawn>>() {
 		}.getType());
 		return autospawns;
 	}
 
-	public List<ObjectSpawn> getSpawns(int regionId) {
+	public ObjectArrayList<ObjectSpawn> getSpawns(int regionId) {
 		return map.get(regionId);
 	}
 
-	private Map<Integer, List<ObjectSpawn>> map = new HashMap<>();
+	private Object2ObjectArrayMap<Integer, ObjectArrayList<ObjectSpawn>> map = new Object2ObjectArrayMap<>();
 
 	public static final void loadObjectSpawns(int regionId) {
 		GsonHandler.waitForLoad();
 		ObjectSpawnLoader loader = GsonHandler.getJsonLoader(ObjectSpawnLoader.class);
-		List<ObjectSpawn> spawns = loader.getSpawns(regionId);
+		ObjectArrayList<ObjectSpawn> spawns = loader.getSpawns(regionId);
 		if (spawns == null) {
 			return;
 		}
 		for (ObjectSpawn spawn : spawns) {
-			WorldObject.spawnObject(new WorldObject(spawn.getId(), (short) spawn.getType(), (short) spawn.getRotation(), spawn.getX(), spawn.getY(), spawn.getPlane()));
+			GameObject.spawnObject(new GameObject(spawn.getId(), (short) spawn.getType(), (short) spawn.getRotation(),
+					spawn.getX(), spawn.getY(), spawn.getPlane()));
 		}
 	}
 
+	@Data
 	public static class ObjectSpawn {
 
 		public ObjectSpawn(int id, int type, int rotation, int x, int y, int plane, boolean clip) {
@@ -106,55 +107,5 @@ public class ObjectSpawnLoader extends GsonLoader<ObjectSpawnLoader.ObjectSpawn>
 		public WorldTile getTile() {
 			return new WorldTile(getX(), getY(), getPlane());
 		}
-
-		/**
-		 * @return the id
-		 */
-		public int getId() {
-			return id;
-		}
-
-		/**
-		 * @return the type
-		 */
-		public int getType() {
-			return type;
-		}
-
-		/**
-		 * @return the rotation
-		 */
-		public int getRotation() {
-			return rotation;
-		}
-
-		/**
-		 * @return the x
-		 */
-		public int getX() {
-			return x;
-		}
-
-		/**
-		 * @return the y
-		 */
-		public int getY() {
-			return y;
-		}
-
-		/**
-		 * @return the plane
-		 */
-		public int getPlane() {
-			return plane;
-		}
-
-		/**
-		 * @return the clip
-		 */
-		public boolean isClip() {
-			return clip;
-		}
 	}
-
 }

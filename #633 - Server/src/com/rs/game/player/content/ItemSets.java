@@ -154,7 +154,7 @@ public class ItemSets {
 			player.getPackets().sendGameMessage("Can't open pack, amount too big.");
 			return;
 		}
-		player.lock(1);
+		player.getMovement().lock(1);
 		player.getInventory().deleteItem(packItem, requestCount);
 		player.getInventory().addItem(new Item(openedItem, (int) totalAmount));
 		player.getPackets().sendGameMessage("You open the spirit shard pack and receive " + totalAmount + " "

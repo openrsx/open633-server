@@ -1,12 +1,12 @@
 package com.rs.game.npc.others;
 
 import com.rs.game.Animation;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 public class Strykewyrm extends NPC {
 
@@ -56,11 +56,11 @@ public class Strykewyrm extends NPC {
 		if (npc.isCantInteract())
 			return;
 		if (!npc.isMultiArea() || !player.isMultiArea()) {
-			if (player.getAttackedBy() != npc && player.getAttackedByDelay() > Utils.currentTimeMillis()) {
+			if (player.getAttackedBy() != npc && player.getAttackedByDelay() > Utility.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("You are already in combat.");
 				return;
 			}
-			if (npc.getAttackedBy() != player && npc.getAttackedByDelay() > Utils.currentTimeMillis()) {
+			if (npc.getAttackedBy() != player && npc.getAttackedByDelay() > Utility.currentTimeMillis()) {
 				if (npc.getAttackedBy().isNPC()) {
 					npc.setAttackedBy(player); // changes enemy to player,
 					// player has priority over
@@ -94,7 +94,7 @@ public class Strykewyrm extends NPC {
 			return;
 		}
 		player.setNextAnimation(new Animation(4278));
-		player.lock(2);
+		player.getMovement().lock(2);
 		npc.setCantInteract(true);
 		World.get().submit(new Task(1) {
 			@Override

@@ -3,15 +3,15 @@ package com.rs.game.npc.familiar;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
-import com.rs.game.Hit;
-import com.rs.game.Hit.HitLook;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
+import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
+import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
-import com.rs.plugin.RSInterfaceDispatcher;
+import com.rs.plugin.RSInterfacePluginDispatcher;
 import com.rs.utilities.RandomUtils;
 
 public class Forgeregent extends Familiar {
@@ -62,12 +62,12 @@ public class Forgeregent extends Familiar {
 					int weaponId = player.getEquipment().getWeaponId();
 					if (weaponId != -1) {
 						if (PlayerCombat.getWeaponAttackEmote(weaponId, 1) != 423) {
-							RSInterfaceDispatcher.sendRemove(player, 3);
+							RSInterfacePluginDispatcher.sendRemove(player, 3);
 						}
 					}
 					int shieldId = player.getEquipment().getShieldId();
 					if (shieldId != -1) {
-						RSInterfaceDispatcher.sendRemove(player, 5);
+						RSInterfacePluginDispatcher.sendRemove(player, 5);
 					}
 					target.setNextGraphics(new Graphics(1393));
 					target.applyHit(new Hit(getOwner(), RandomUtils.random(200), HitLook.MELEE_DAMAGE));

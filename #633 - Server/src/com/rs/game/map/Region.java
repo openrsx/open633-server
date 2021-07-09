@@ -2,16 +2,12 @@ package com.rs.game.map;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.rs.GameConstants;
 import com.rs.cache.Cache;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.cores.CoresManager;
-import com.rs.game.World;
-import com.rs.game.WorldObject;
-import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
@@ -24,6 +20,13 @@ import com.rs.utilities.json.impl.ObjectSpawnLoader;
 import com.rs.utilities.loaders.MapArchiveKeys;
 import com.rs.utilities.loaders.NPCSpawning;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
+
+@Getter
+@Setter
 public class Region {
 	public static final int[] OBJECT_SLOTS = new int[] { 0, 0, 0, 0, 1, 1, 1,
 			1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3 };
@@ -36,48 +39,43 @@ public class Region {
 	protected RegionMap map;
 	protected RegionMap clipedOnlyMap;
 
-	protected List<Integer> playersIndexes;
-	protected List<Integer> npcsIndexes;
-	protected List<WorldObject> spawnedObjects;
-	protected List<WorldObject> removedOriginalObjects;
-	private List<FloorItem> groundItems;
-	protected WorldObject[][][][] objects;
+	protected ObjectArrayList<Short> playersIndexes;
+	protected ObjectArrayList<Short> npcsIndexes;
+	protected ObjectArrayList<GameObject> spawnedObjects;
+	protected ObjectArrayList<GameObject> removedOriginalObjects;
+	private ObjectArrayList<FloorItem> groundItems;
+	protected GameObject[][][][] objects;
 	private volatile int loadMapStage;
 	private boolean loadedNPCSpawns;
 	private boolean loadedObjectSpawns;
 	private int[] musicIds;
+	private boolean[][][] npcClipping;
 
 	public Region(int regionId) {
 		this.regionId = regionId;
-		this.spawnedObjects = new CopyOnWriteArrayList<WorldObject>();
-		this.removedOriginalObjects = new CopyOnWriteArrayList<WorldObject>();
+		this.spawnedObjects = new ObjectArrayList<GameObject>();
+		this.removedOriginalObjects = new ObjectArrayList<GameObject>();
 		loadMusicIds();
 		// indexes null by default cuz we dont want them on mem for regions that
 		// players cant go in
 	}
 
+	@SneakyThrows(Throwable.class)
 	public void checkLoadMap() {
 		if (getLoadMapStage() == 0) {
 			setLoadMapStage(1);
-			CoresManager.slowExecutor.execute(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						loadRegionMap();
-						setLoadMapStage(2);
-						if (!isLoadedObjectSpawns()) {
-							loadObjectSpawns();
-							setLoadedObjectSpawns(true);
-						}
-						if (!isLoadedNPCSpawns()) {
-							loadNPCSpawns(regionId);
-							setLoadedNPCSpawns(true);
-						}
-					} catch (Throwable e) {
-						Logger.handle(e);
-					}
+			CoresManager.schedule(() -> {
+				loadRegionMap();
+				setLoadMapStage(2);
+				if (!isLoadedObjectSpawns()) {
+					loadObjectSpawns();
+					setLoadedObjectSpawns(true);
 				}
-			});
+				if (!isLoadedNPCSpawns()) {
+					loadNPCSpawns(regionId);
+					setLoadedNPCSpawns(true);
+				}
+			}, 1);
 		}
 	}
 
@@ -105,6 +103,7 @@ public class Region {
 				&& (npcsIndexes == null || npcsIndexes.isEmpty())) {
 			objects = null;
 			map = null;
+			npcClipping = null;
 			setLoadMapStage(0);
 		}
 	}
@@ -120,11 +119,7 @@ public class Region {
 			map = new RegionMap(regionId, false);
 		return map;
 	}
-
-	public RegionMap getRegionMap() {
-		return map;
-	}
-
+	
 	public int getMask(int plane, int localX, int localY) {
 		if (map == null || getLoadMapStage() != 2)
 			return -1; // cliped tile
@@ -155,7 +150,7 @@ public class Region {
 		map.setMask(plane, localX, localY, mask);
 	}
 
-	public void clip(WorldObject object, int x, int y) {
+	public void clip(GameObject object, int x, int y) {
 		if (map == null)
 			map = new RegionMap(regionId, false);
 		if (clipedOnlyMap == null)
@@ -219,7 +214,7 @@ public class Region {
 		map.setMask(plane, x, y, 0);
 	}
 
-	public void unclip(WorldObject object, int x, int y) {
+	public void unclip(GameObject object, int x, int y) {
 		if (map == null)
 			map = new RegionMap(regionId, false);
 		if (clipedOnlyMap == null)
@@ -266,16 +261,16 @@ public class Region {
 		}
 	}
 
-	public void spawnObject(WorldObject object, int plane, int localX,
+	public void spawnObject(GameObject object, int plane, int localX,
 			int localY, boolean original) {
 		if (objects == null)
-			objects = new WorldObject[4][64][64][4];
+			objects = new GameObject[4][64][64][4];
 		int slot = OBJECT_SLOTS[object.getType()];
 		if (original) {
 			objects[plane][localX][localY][slot] = object;
 			clip(object, localX, localY);
 		} else {
-			WorldObject spawned = getSpawnedObjectWithSlot(plane, localX,
+			GameObject spawned = getSpawnedObjectWithSlot(plane, localX,
 					localY, slot);
 			// found non original object on this slot. removing it since we
 			// replacing with a new non original
@@ -285,7 +280,7 @@ public class Region {
 				// clip the new non original
 				unclip(spawned, localX, localY);
 			}
-			WorldObject removed = getRemovedObjectWithSlot(plane, localX,
+			GameObject removed = getRemovedObjectWithSlot(plane, localX,
 					localY, slot);
 			// there was a original object removed. lets readd it
 			if (removed != null) {
@@ -315,21 +310,21 @@ public class Region {
 		}
 	}
 
-	public void removeObject(WorldObject object, int plane, int localX,
+	public void removeObject(GameObject object, int plane, int localX,
 			int localY) {
 		if (objects == null)
-			objects = new WorldObject[4][64][64][4];
+			objects = new GameObject[4][64][64][4];
 		int slot = OBJECT_SLOTS[object.getType()];
-		WorldObject removed = getRemovedObjectWithSlot(plane, localX, localY,
+		GameObject removed = getRemovedObjectWithSlot(plane, localX, localY,
 				slot);
 		if (removed != null) {
 			removedOriginalObjects.remove(object);
 			clip(removed, localX, localY);
 		}
-		WorldObject original = null;
+		GameObject original = null;
 		// found non original object on this slot. removing it since we
 		// replacing with real one or none if none
-		WorldObject spawned = getSpawnedObjectWithSlot(plane, localX, localY,
+		GameObject spawned = getSpawnedObjectWithSlot(plane, localX, localY,
 				slot);
 		if (spawned != null) {
 			object = spawned;
@@ -363,19 +358,19 @@ public class Region {
 
 	}
 
-	public WorldObject getStandartObject(int plane, int x, int y) {
+	public GameObject getStandartObject(int plane, int x, int y) {
 		return getObjectWithSlot(plane, x, y, OBJECT_SLOT_FLOOR);
 	}
 
-	public WorldObject getObjectWithType(int plane, int x, int y, int type) {
-		WorldObject object = getObjectWithSlot(plane, x, y, OBJECT_SLOTS[type]);
+	public GameObject getObjectWithType(int plane, int x, int y, int type) {
+		GameObject object = getObjectWithSlot(plane, x, y, OBJECT_SLOTS[type]);
 		return object != null && object.getType() == type ? object : null;
 	}
 
-	public WorldObject getObjectWithSlot(int plane, int x, int y, int slot) {
+	public GameObject getObjectWithSlot(int plane, int x, int y, int slot) {
 		if (objects == null)
 			return null;
-		WorldObject o = getSpawnedObjectWithSlot(plane, x, y, slot);
+		GameObject o = getSpawnedObjectWithSlot(plane, x, y, slot);
 		if (o == null) {
 			if (getRemovedObjectWithSlot(plane, x, y, slot) != null)
 				return null;
@@ -384,9 +379,9 @@ public class Region {
 		return o;
 	}
 
-	public WorldObject getSpawnedObjectWithSlot(int plane, int x, int y,
+	public GameObject getSpawnedObjectWithSlot(int plane, int x, int y,
 			int slot) {
-		for (WorldObject object : spawnedObjects) {
+		for (GameObject object : spawnedObjects) {
 			if (object.getXInRegion() == x && object.getYInRegion() == y
 					&& object.getPlane() == plane
 					&& OBJECT_SLOTS[object.getType()] == slot)
@@ -395,9 +390,9 @@ public class Region {
 		return null;
 	}
 
-	public WorldObject getRemovedObjectWithSlot(int plane, int x, int y,
+	public GameObject getRemovedObjectWithSlot(int plane, int x, int y,
 			int slot) {
-		for (WorldObject object : removedOriginalObjects) {
+		for (GameObject object : removedOriginalObjects) {
 			if (object.getXInRegion() == x && object.getYInRegion() == y
 					&& object.getPlane() == plane
 					&& OBJECT_SLOTS[object.getType()] == slot)
@@ -406,22 +401,34 @@ public class Region {
 		return null;
 	}
 
-	public WorldObject[] getAllObjects(int plane, int x, int y) {
+	public GameObject[] getAllObjects(int plane, int x, int y) {
 		if (objects == null)
 			return null;
 		return objects[plane][x][y];
 	}
 
-	public List<WorldObject> getAllObjects() {
+	public boolean getClipNPC(int plane, int x, int y) {
+		if (npcClipping == null)
+			return false;
+		return npcClipping[plane][x][y];
+	}
+
+	public void setClipNPC(int plane, int x, int y, boolean clip) {
+		if (npcClipping == null)
+			npcClipping = new boolean[4][64][64];
+		npcClipping[plane][x][y] = clip;
+	}
+	
+	public List<GameObject> getAllObjects() {
 		if (objects == null)
 			return null;
-		List<WorldObject> list = new ArrayList<WorldObject>();
+		List<GameObject> list = new ArrayList<GameObject>();
 		for (int z = 0; z < 4; z++)
 			for (int x = 0; x < 64; x++)
 				for (int y = 0; y < 64; y++) {
 					if (objects[z][x][y] == null)
 						continue;
-					for (WorldObject o : objects[z][x][y])
+					for (GameObject o : objects[z][x][y])
 						if (o != null)
 							list.add(o);
 				}
@@ -429,27 +436,27 @@ public class Region {
 	}
 
 	public boolean containsObjectWithId(int plane, int x, int y, int id) {
-		WorldObject object = getObjectWithId(plane, x, y, id);
+		GameObject object = getObjectWithId(plane, x, y, id);
 		return object != null && object.getId() == id;
 	}
 
-	public WorldObject getObjectWithId(int plane, int x, int y, int id) {
+	public GameObject getObjectWithId(int plane, int x, int y, int id) {
 		if (objects == null)
 			return null;
-		for (WorldObject object : removedOriginalObjects) {
+		for (GameObject object : removedOriginalObjects) {
 			if (object.getId() == id && object.getXInRegion() == x
 					&& object.getYInRegion() == y && object.getPlane() == plane)
 				return null;
 		}
 		for (int i = 0; i < 4; i++) {
-			WorldObject object = objects[plane][x][y][i];
+			GameObject object = objects[plane][x][y][i];
 			if (object != null && object.getId() == id) {
-				WorldObject spawned = getSpawnedObjectWithSlot(plane, x, y,
+				GameObject spawned = getSpawnedObjectWithSlot(plane, x, y,
 						OBJECT_SLOTS[object.getType()]);
 				return spawned == null ? object : null;
 			}
 		}
-		for (WorldObject object : spawnedObjects) {
+		for (GameObject object : spawnedObjects) {
 			if (object.getXInRegion() == x && object.getYInRegion() == y
 					&& object.getPlane() == plane && object.getId() == id)
 				return object;
@@ -457,31 +464,23 @@ public class Region {
 		return null;
 	}
 
-	public WorldObject getObjectWithId(int id, int plane) {
+	public GameObject getObjectWithId(int id, int plane) {
 		if (objects == null)
 			return null;
-		for (WorldObject object : spawnedObjects) {
+		for (GameObject object : spawnedObjects) {
 			if (object.getId() == id && object.getPlane() == plane)
 				return object;
 		}
 		for (int x = 0; x < 64; x++) {
 			for (int y = 0; y < 64; y++) {
 				for (int slot = 0; slot < objects[plane][x][y].length; slot++) {
-					WorldObject object = objects[plane][x][y][slot];
+					GameObject object = objects[plane][x][y][slot];
 					if (object != null && object.getId() == id)
 						return object;
 				}
 			}
 		}
 		return null;
-	}
-
-	public List<WorldObject> getSpawnedObjects() {
-		return spawnedObjects;
-	}
-
-	public List<WorldObject> getRemovedOriginalObjects() {
-		return removedOriginalObjects;
 	}
 
 	public void loadRegionMap() {
@@ -576,7 +575,7 @@ public class Region {
 							|| plane >= 4)
 						continue;
 					
-					spawnObject(new WorldObject(objectId, type, rotation,
+					spawnObject(new GameObject(objectId, type, rotation,
 							localX + regionX, localY + regionY, objectPlane),
 							objectPlane, localX, localY, true);
 				}
@@ -613,19 +612,9 @@ public class Region {
 		return null;
 	}
 	
-	public List<FloorItem> forceGetFloorItems() {
+	public ObjectArrayList<FloorItem> forceGetFloorItems() {
 		if (groundItems == null)
-			groundItems = new CopyOnWriteArrayList<FloorItem>();
-		return groundItems;
-	}
-
-	/**
-	 * Return's list of ground items that are currently loaded. List may be null
-	 * if there's no ground items. Modifying given list is prohibited.
-	 * 
-	 * @return
-	 */
-	public List<FloorItem> getGroundItems() {
+			groundItems = new ObjectArrayList<FloorItem>();
 		return groundItems;
 	}
 
@@ -636,39 +625,31 @@ public class Region {
 	 * 
 	 * @return
 	 */
-	public List<FloorItem> getGroundItemsSafe() {
+	public ObjectArrayList<FloorItem> getGroundItemsSafe() {
 		if (groundItems == null)
-			groundItems = new CopyOnWriteArrayList<FloorItem>();
+			groundItems = new ObjectArrayList<FloorItem>();
 		return groundItems;
-	}
-
-	public List<Integer> getPlayerIndexes() {
-		return playersIndexes;
 	}
 
 	public int getPlayerCount() {
 		return playersIndexes == null ? 0 : playersIndexes.size();
 	}
 
-	public List<Integer> getNPCsIndexes() {
-		return npcsIndexes;
-	}
-
-	public void addPlayerIndex(int index) {
+	public void addPlayerIndex(Short index) {
 		// creates list if doesnt exist
 		if (playersIndexes == null)
-			playersIndexes = new CopyOnWriteArrayList<Integer>();
+			playersIndexes = new ObjectArrayList<Short>();
 		playersIndexes.add(index);
 	}
 
-	public void addNPCIndex(int index) {
+	public void addNPCIndex(Short index) {
 		// creates list if doesnt exist
 		if (npcsIndexes == null)
-			npcsIndexes = new CopyOnWriteArrayList<Integer>();
+			npcsIndexes = new ObjectArrayList<Short>();
 		npcsIndexes.add(index);
 	}
 
-	public void removePlayerIndex(Integer index) {
+	public void removePlayerIndex(Short index) {
 		if (playersIndexes == null) // removed region example cons or dung
 			return;
 		playersIndexes.remove(index);
@@ -701,34 +682,6 @@ public class Region {
 		if (musicIds.length == 1)
 			return musicIds[0];
 		return musicIds[RandomUtils.random(musicIds.length - 1)];
-	}
-
-	public int getLoadMapStage() {
-		return loadMapStage;
-	}
-
-	public void setLoadMapStage(int loadMapStage) {
-		this.loadMapStage = loadMapStage;
-	}
-
-	public boolean isLoadedObjectSpawns() {
-		return loadedObjectSpawns;
-	}
-
-	public void setLoadedObjectSpawns(boolean loadedObjectSpawns) {
-		this.loadedObjectSpawns = loadedObjectSpawns;
-	}
-
-	public boolean isLoadedNPCSpawns() {
-		return loadedNPCSpawns;
-	}
-
-	public void setLoadedNPCSpawns(boolean loadedNPCSpawns) {
-		this.loadedNPCSpawns = loadedNPCSpawns;
-	}
-
-	public int getRegionId() {
-		return regionId;
 	}
 
 	public static final String getMusicName3(int regionId) {
@@ -1280,7 +1233,7 @@ public class Region {
 	
 	public void refreshSpawnedItems(Player player) {
 		for (int regionId : player.getMapRegionsIds()) {
-			List<FloorItem> floorItems = World.getRegion(regionId)
+			ObjectArrayList<FloorItem> floorItems = (ObjectArrayList<FloorItem>) World.getRegion(regionId)
 					.getGroundItems();
 			if (floorItems == null)
 				continue;
@@ -1294,7 +1247,7 @@ public class Region {
 			}
 		}
 		for (int regionId : player.getMapRegionsIds()) {
-			List<FloorItem> floorItems = World.getRegion(regionId)
+			ObjectArrayList<FloorItem> floorItems = World.getRegion(regionId)
 					.getGroundItems();
 			if (floorItems == null)
 				continue;
@@ -1311,13 +1264,13 @@ public class Region {
 
 	public void refreshSpawnedObjects(Player player) {
 		for (int regionId : player.getMapRegionsIds()) {
-			List<WorldObject> removedObjects = World.getRegion(regionId)
+			ObjectArrayList<GameObject> removedObjects = (ObjectArrayList<GameObject>) World.getRegion(regionId)
 					.getRemovedOriginalObjects();
-			for (WorldObject object : removedObjects)
+			for (GameObject object : removedObjects)
 				player.getPackets().sendDestroyObject(object);
-			List<WorldObject> spawnedObjects = World.getRegion(regionId)
+			List<GameObject> spawnedObjects = World.getRegion(regionId)
 					.getSpawnedObjects();
-			for (WorldObject object : spawnedObjects)
+			for (GameObject object : spawnedObjects)
 				player.getPackets().sendSpawnedObject(object);
 		}
 	}

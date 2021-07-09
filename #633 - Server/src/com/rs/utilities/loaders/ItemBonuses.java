@@ -5,15 +5,15 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
-import java.util.HashMap;
 
-import com.rs.utilities.Logger;
-
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Cleanup;
+import lombok.SneakyThrows;
 
 public final class ItemBonuses {
 
-	private static HashMap<Integer, int[]> itemBonuses;
+
+	static Object2ObjectArrayMap<Integer, int[]> itemBonuses = new Object2ObjectArrayMap<>();
 	private final static String PACKED_PATH = "data/items/bonuses.ib";
 
 	public static final void init() {
@@ -27,27 +27,23 @@ public final class ItemBonuses {
 		return itemBonuses.get(itemId);
 	}
 
+	@SneakyThrows(Throwable.class)
 	private static final void loadItemBonuses() {
-		try {
-			@Cleanup
-			RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
-			FileChannel channel = in.getChannel();
-			ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0,
-					channel.size());
-			itemBonuses = new HashMap<Integer, int[]>(buffer.remaining() / 38);
-			while (buffer.hasRemaining()) {
-				int itemId = buffer.getShort() & 0xffff;
-				int[] bonuses = new int[18];
-				for (int index = 0; index < bonuses.length; index++) {
-					bonuses[index] = buffer.getShort();
+		@Cleanup
+		RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
+		FileChannel channel = in.getChannel();
+		ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0,
+				channel.size());
+		itemBonuses = new Object2ObjectArrayMap<Integer, int[]>(buffer.remaining() / 38);
+		while (buffer.hasRemaining()) {
+			int itemId = buffer.getShort() & 0xffff;
+			int[] bonuses = new int[18];
+			for (int index = 0; index < bonuses.length; index++) {
+				bonuses[index] = buffer.getShort();
 
-				}
-				itemBonuses.put(itemId, bonuses);
 			}
-		} catch (Throwable e) {
-			Logger.handle(e);
+			itemBonuses.put(itemId, bonuses);
 		}
-
 	}
 
 	private ItemBonuses() {

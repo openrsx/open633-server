@@ -3,8 +3,8 @@ package skills.fishing;
 import java.util.Optional;
 
 import com.rs.game.Animation;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
 

@@ -4,9 +4,9 @@ import java.math.BigInteger;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemNames;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
 
@@ -73,7 +73,8 @@ public final class GameConstants {
 	/**
 	 * World settings
 	 */
-	public static final int WORLD_CYCLE_TIME = 600; // the speed of world in ms
+	public static final long WORLD_CYCLE_NS = 600000000L;
+	public static final long WORLD_CYCLE_MS = WORLD_CYCLE_NS / 1000000L;
 	
 	/**
 	 * Memory settings

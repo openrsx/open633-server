@@ -74,6 +74,14 @@ public final class Equipment {
 		}
 		return false;
 	}
+	
+	public boolean contains(Item[] itemList) {
+		for (Item item : itemList) {
+			if (items.contains(item))
+				return true;
+		}
+		return false;
+	}
 
 	public static boolean hideArms(Item item) {
 		/*

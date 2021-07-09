@@ -10,15 +10,16 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
-import java.util.HashMap;
 
 import com.rs.utilities.Logger;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Cleanup;
+import lombok.SneakyThrows;
 
 public final class MapArchiveKeys {
 
-	private final static HashMap<Integer, int[]> keys = new HashMap<Integer, int[]>();
+	private final static Object2ObjectArrayMap<Integer, int[]> keys = new Object2ObjectArrayMap<Integer, int[]>();
 	private final static String PACKED_PATH = "data/map/archiveKeys/packed.mcx";
 
 	public static final int[] getMapKeys(int regionId) {
@@ -32,21 +33,18 @@ public final class MapArchiveKeys {
 			loadUnpackedKeys();
 	}
 
+	@SneakyThrows(Throwable.class)
 	private static final void loadPackedKeys() {
-		try {
-			@Cleanup
-			RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
-			FileChannel channel = in.getChannel();
-			ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
-			while (buffer.hasRemaining()) {
-				int regionId = buffer.getShort() & 0xffff;
-				int[] xteas = new int[4];
-				for (int index = 0; index < 4; index++)
-					xteas[index] = buffer.getInt();
-				keys.put(regionId, xteas);
-			}
-		} catch (Throwable e) {
-			Logger.handle(e);
+		@Cleanup
+		RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
+		FileChannel channel = in.getChannel();
+		ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
+		while (buffer.hasRemaining()) {
+			int regionId = buffer.getShort() & 0xffff;
+			int[] xteas = new int[4];
+			for (int index = 0; index < 4; index++)
+				xteas[index] = buffer.getInt();
+			keys.put(regionId, xteas);
 		}
 	}
 

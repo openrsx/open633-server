@@ -3,12 +3,13 @@ package com.rs.utilities.json;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.SneakyThrows;
 
 /**
  * @author Tyluur <itstyluur@gmail.com>
@@ -33,19 +34,19 @@ public abstract class GsonLoader<T> {
 	 *
 	 * @return The list with data
 	 */
-	protected abstract List<T> load();
+	protected abstract ObjectArrayList<T> load();
 
 	/**
 	 * Generates a list, if there are no elements in {@link #load()}, it will be
 	 * null, so this will make sure there is no null return type from
 	 * {@link #load()}
 	 */
-	public synchronized List<T> generateList() {
-		List<T> list = load();
+	public synchronized ObjectArrayList<T> generateList() {
+		ObjectArrayList<T> list = load();
 		if (list == null) {
-			list = new ArrayList<>();
+			list = new ObjectArrayList<>();
 		}
-		return Collections.synchronizedList(list);
+		return (ObjectArrayList<T>) Collections.synchronizedList(list);
 	}
 
 	/**
@@ -54,19 +55,16 @@ public abstract class GsonLoader<T> {
 	 * @param data
 	 *            The list to save
 	 */
-	public void save(List<T> data) {
-		try {
-			File file = new File(getFileLocation());
-			if (!file.getParentFile().exists()) {
-				file.getParentFile().mkdirs();
-			}
-			FileWriter fw = new FileWriter(getFileLocation());
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(gson.toJson(data));
-			bw.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+	@SneakyThrows(Exception.class)
+	public void save(ObjectArrayList<T> data) {
+		File file = new File(getFileLocation());
+		if (!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
 		}
+		FileWriter fw = new FileWriter(getFileLocation());
+		BufferedWriter bw = new BufferedWriter(fw);
+		bw.write(gson.toJson(data));
+		bw.close();
 	}
 
 	/**

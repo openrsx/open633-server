@@ -1,13 +1,13 @@
 package com.rs.game.npc.others;
 
-import com.rs.game.World;
-import com.rs.game.WorldTile;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.pet.PetDetails;
 import com.rs.game.player.content.pet.Pets;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 /**
  * Represents a pet.
@@ -59,12 +59,12 @@ public final class Pet extends NPC {
 		super(id, tile, (byte) -1, false);
 		this.owner = owner;
 		this.itemId = itemId;
-		this.checkNearDirs = Utils.getCoordOffsetsNear(super.getSize());
+		this.checkNearDirs = Utility.getCoordOffsetsNear(super.getSize());
 		this.details = details;
 		this.pet = Pets.forId(itemId);
 		setRun(true);
 		if (pet == Pets.TROLL_BABY && owner.getPetManager().getTrollBabyName() != null) {
-			setName(owner.getPetManager().getTrollBabyName());
+			getDefinitions().setName(owner.getPetManager().getTrollBabyName());
 		}
 		sendMainConfigurations();
 	}
@@ -170,11 +170,11 @@ public final class Pet extends NPC {
 	private void sendFollow() {
 		if (getLastFaceEntity() != owner.getClientIndex())
 			setNextFaceEntity(owner);
-		if (isFrozen())
+		if (getMovement().isFrozen())
 			return;
 		int size = getSize();
 		int targetSize = owner.getSize();
-		if (Utils.colides(getX(), getY(), size, owner.getX(), owner.getY(), targetSize) && !owner.hasWalkSteps()) {
+		if (Utility.colides(getX(), getY(), size, owner.getX(), owner.getY(), targetSize) && !owner.hasWalkSteps()) {
 			resetWalkSteps();
 			if (!addWalkSteps(owner.getX() + targetSize, getY())) {
 				resetWalkSteps();
@@ -192,7 +192,7 @@ public final class Pet extends NPC {
 		}
 		resetWalkSteps();
 		if (!clipedProjectile(owner, true)
-				|| !Utils.isOnRange(getX(), getY(), size, owner.getX(), owner.getY(), targetSize, 0))
+				|| !Utility.isOnRange(getX(), getY(), size, owner.getX(), owner.getY(), targetSize, 0))
 			calcFollow(owner, 2, true, false);
 	}
 

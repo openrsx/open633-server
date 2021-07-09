@@ -2,13 +2,9 @@ package com.rs.game;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -17,15 +13,23 @@ import com.google.common.base.Preconditions;
 import com.rs.GameConstants;
 import com.rs.cache.loaders.AnimationDefinitions;
 import com.rs.cache.loaders.ObjectDefinitions;
-import com.rs.game.Hit.HitLook;
 import com.rs.game.map.DynamicRegion;
+import com.rs.game.map.GameObject;
 import com.rs.game.map.Region;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
+import com.rs.game.player.Attributes;
 import com.rs.game.player.Combat;
+import com.rs.game.player.Hit;
+import com.rs.game.player.LocalNPCUpdate;
+import com.rs.game.player.LocalPlayerUpdate;
 import com.rs.game.player.Player;
+import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.content.TeleportType;
-import com.rs.game.player.controllers.Wilderness;
+import com.rs.game.player.controller.ControllerHandler;
+import com.rs.game.player.controller.impl.WildernessController;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.player.type.PoisonType;
 import com.rs.game.route.RouteFinder;
@@ -35,11 +39,13 @@ import com.rs.game.task.Task;
 import com.rs.net.encoders.other.ForceTalk;
 import com.rs.utilities.MutableNumber;
 import com.rs.utilities.RandomUtils;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayFIFOQueue;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.var;
 import skills.Skills;
 
 @Getter
@@ -50,55 +56,46 @@ public abstract class Entity extends WorldTile {
 
 	// transient stuff
 	private transient int index;
-	private transient short lastRegionId; // the last region the entity was at
+	private transient short lastRegionId;
 	private transient WorldTile lastLoadedMapRegionTile;
-	private transient CopyOnWriteArrayList<Integer> mapRegionsIds; // called by
-	// more than
-	// 1thread
-	// so
-	// concurent
+	private transient CopyOnWriteArrayList<Integer> mapRegionsIds;
 	private transient byte direction;
 	private transient WorldTile lastWorldTile;
 	private transient WorldTile nextWorldTile;
 	private transient byte nextWalkDirection;
 	private transient byte nextRunDirection;
-	private transient Rectangle nextFaceWorldTile;
+	private transient WorldTile nextFaceWorldTile;
 	private transient boolean teleported;
-	private transient ConcurrentLinkedQueue<Object[]> walkSteps;// called by
-																// more
-	// than 1thread
-	// so concurent
-	private transient ConcurrentLinkedQueue<Hit> receivedHits;
-	private transient Map<Entity, Integer> receivedDamage;
-	private transient boolean finished; // if removed
-	private transient long freezeDelay;
+	// than 1thread so concurent
+	private transient ObjectArrayFIFOQueue<Hit> receivedHits;
+	private transient Object2ObjectArrayMap<Entity, Integer> receivedDamage;
+	private transient boolean finished;
+	
 	// entity masks
 	private transient Animation nextAnimation;
 	private transient Graphics nextGraphics1;
 	private transient Graphics nextGraphics2;
 	private transient Graphics nextGraphics3;
 	private transient Graphics nextGraphics4;
-	private transient ArrayList<Hit> nextHits;
+	private transient ObjectArrayList<Hit> nextHits;
 	private transient ForceMovement nextForceMovement;
 	private transient ForceTalk nextForceTalk;
 	private transient int nextFaceEntity;
 	private transient int lastFaceEntity;
-	private transient Entity attackedBy; // whos attacking you, used for single
-	private transient long attackedByDelay; // delay till someone else can
-	// attack you
+	private transient Entity attackedBy;
+	private transient long attackedByDelay; 
+	
 	private transient boolean multiArea;
 	private transient boolean isAtDynamicRegion;
 	private transient long lastAnimationEnd;
 	private transient boolean forceMultiArea;
-	private transient long frozenBlocked;
 	private transient long findTargetDelay;
-	private transient ConcurrentHashMap<Object, Object> temporaryAttributes;
 	private transient short hashCode;
+	private transient EntityMovement movement;
+	private transient Attributes attributes;
 
-	// saving stuff
 	private int hitpoints;
-	private int mapSize; // default 0, can be setted other value usefull on
-	// static maps
+	private int mapSize;
 	private boolean run;
 
 	// creates Entity and saved classes
@@ -109,43 +106,30 @@ public abstract class Entity extends WorldTile {
 
 	@Override
 	public int hashCode() {
-		return hashCode;
+		return getHashCode();
 	}
 
 	public final void initEntity() {
-		hashCode = (short) hashCodeGenerator.getAndIncrement();
-		mapRegionsIds = new CopyOnWriteArrayList<Integer>();
-		walkSteps = new ConcurrentLinkedQueue<Object[]>();
-		receivedHits = new ConcurrentLinkedQueue<Hit>();
-		receivedDamage = new ConcurrentHashMap<Entity, Integer>();
-		temporaryAttributes = new ConcurrentHashMap<Object, Object>();
-		nextHits = new ArrayList<Hit>();
-		nextWalkDirection = (byte) (nextRunDirection - 1);
-		lastFaceEntity = -1;
+		setHashCode((short) hashCodeGenerator.getAndIncrement());
+		setMapRegionsIds(new CopyOnWriteArrayList<Integer>());
+		setReceivedHits(new ObjectArrayFIFOQueue<Hit>());
+		setReceivedDamage(new Object2ObjectArrayMap<Entity, Integer>());
+		setNextHits(new ObjectArrayList<Hit>());
+		setNextWalkDirection((byte) (nextRunDirection - 1));
+		setLastFaceEntity(-1);
 		nextFaceEntity = -2;
-	}
-
-	public int getReceivedDamage(Entity source) {
-		int receivedDamage = 0;
-		for (Hit hit : receivedHits) {
-			if (hit.getSource() != source)
-				continue;
-			receivedDamage += hit.getDamage();
-		}
-		return receivedDamage;
+		setMovement(new EntityMovement(this));
+		setAttributes(new Attributes());
 	}
 
 	public int getClientIndex() {
-		return index + (isPlayer() ? 32768 : 0);
+		return getIndex() + (isPlayer() ? 32768 : 0);
 	}
 
 	public void applyHit(Hit hit) {
 		if (isDead())
 			return;
-		// todo damage for who gets drop
-		receivedHits.add(hit); // added hit first because, soaking added after,
-		// if applyhit used right there shouldnt be any
-		// problem
+		getReceivedHits().enqueue(hit);
 		handleIngoingHit(hit);
 	}
 
@@ -153,14 +137,14 @@ public abstract class Entity extends WorldTile {
 
 	public void reset(boolean attributes) {
 		setHitpoints(getMaxHitpoints());
-		receivedHits.clear();
+		getReceivedHits().trim();
 		resetCombat();
-		walkSteps.clear();
+		getMovement().getWalkSteps().clear();
 		resetReceivedDamage();
 		setAttackedBy(null);
 		setAttackedByDelay(0);
 		if (attributes)
-			temporaryAttributes.clear();
+			getAttributes().getAttributes().clear();
 	}
 
 	public void reset() {
@@ -168,93 +152,89 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void resetCombat() {
-		attackedBy = null;
-		attackedByDelay = 0;
-		freezeDelay = 0;
+		setAttackedBy(null);
+		setAttackedByDelay(0);
+		getMovement().setFreezeDelay(0);
 	}
 
 	public void processReceivedHits() {
 		ifPlayer(player -> {
-			if (player.getNextEmoteEnd() >= Utils.currentTimeMillis())
+			if (player.getNextEmoteEnd() >= Utility.currentTimeMillis())
 				return;
 		});
-		Hit hit;
+		ObjectArrayFIFOQueue<Hit> hit;
 		int count = 0;
-		while ((hit = receivedHits.poll()) != null && count++ < 10)
+		while (!getReceivedHits().isEmpty() && (hit = getReceivedHits()) != null && count++ < 10)
 			processHit(hit);
 	}
 
-	private void processHit(Hit hit) {
+	private void processHit(ObjectArrayFIFOQueue<Hit> hit) {
 		if (isDead())
 			return;
-		removeHitpoints(hit);
-		nextHits.add(hit);
+		while (!getReceivedHits().isEmpty()) {
+			removeHitpoints(hit);
+			getNextHits().add(hit.first());
+			hit.dequeue();
+		}
 	}
 
 	public void resetReceivedHits() {
-		nextHits.clear();
-		receivedHits.clear();
+		getNextHits().clear();
+		getReceivedHits().clear();
 	}
 
-	public void removeHitpoints(Hit hit) {
-		if (isDead() || hit.getLook() == HitLook.ABSORB_DAMAGE)
+	public void removeHitpoints(ObjectArrayFIFOQueue<Hit> hit) {
+		if (isDead())
 			return;
-		if (hit.getLook() == HitLook.HEALED_DAMAGE) {
-			heal(hit.getDamage());
+		if (hit.first().getLook() == HitLook.HEALED_DAMAGE) {
+			heal(hit.first().getDamage());
 			return;
 		}
-		if (hit.getDamage() > hitpoints)
-			hit.setDamage(hitpoints);
-		addReceivedDamage(hit.getSource(), hit.getDamage());
-		setHitpoints(hitpoints - hit.getDamage());
-		if (hitpoints <= 0)
-			sendDeath(hit.getSource());
-		else if (isPlayer()) {
-			Player player = (Player) this;
-			if (player.getEquipment().getRingId() == 2550) {
-				if (hit.getSource() != null && hit.getSource() != player && hit.getDamage() > 10)
-					hit.getSource().applyHit(new Hit(player, (int) (hit.getDamage() * 0.1), HitLook.REGULAR_DAMAGE));
-			}
+		if (hit.first().getDamage() > getHitpoints())
+			hit.first().setDamage(getHitpoints());
+		addReceivedDamage(hit.first().getSource(), hit.first().getDamage());
+		setHitpoints(getHitpoints() - hit.first().getDamage());
+		if (getHitpoints() <= 0)
+			sendDeath(Optional.of(hit.first().getSource()));
+
+		ifPlayer(player -> {
 			if (player.getPrayer().hasPrayersOn()) {
-				if ((hitpoints < player.getMaxHitpoints() * 0.1) && player.getPrayer().usingPrayer(0, 23)) {
+				if ((getHitpoints() < player.getMaxHitpoints() * 0.1) && player.getPrayer().usingPrayer(0, 23)) {
 					setNextGraphics(new Graphics(436));
-					setHitpoints((int) (hitpoints + player.getSkills().getLevelForXp(Skills.PRAYER) * 2.5));
+					setHitpoints((int) (getHitpoints() + player.getSkills().getLevelForXp(Skills.PRAYER) * 2.5));
 					player.getSkills().set(Skills.PRAYER, 0);
 					player.getPrayer().setPrayerpoints(0);
 				} else if (player.getEquipment().getAmuletId() != 11090 && player.getEquipment().getRingId() == 11090
 						&& player.getHitpoints() <= player.getMaxHitpoints() * 0.1) {
-					player.move(true, GameConstants.START_PLAYER_LOCATION, TeleportType.BLANK);
+					player.getMovement().move(true, GameConstants.START_PLAYER_LOCATION, TeleportType.BLANK);
 					player.getEquipment().deleteItem(11090, 1);
 					player.getPackets()
 							.sendGameMessage("Your ring of life saves you, but is destroyed in the process.");
 				}
 			}
 			if (player.getEquipment().getAmuletId() == 11090
-					&& player.getHitpoints() <= player.getMaxHitpoints() * 0.2) {// priority
-				// over
-				// ring
-				// of
-				// life
+					&& player.getHitpoints() <= player.getMaxHitpoints() * 0.2) {
 				player.heal((int) (player.getMaxHitpoints() * 0.3));
 				player.getEquipment().deleteItem(11090, 1);
 				player.getPackets()
 						.sendGameMessage("Your pheonix necklace heals you, but is destroyed in the process.");
 			}
-		}
+			player.getInterfaceManager().refreshHitPoints();
+		});
 	}
 
 	public void resetReceivedDamage() {
-		receivedDamage.clear();
+		getReceivedDamage().clear();
 	}
 
 	public void removeDamage(Entity entity) {
-		receivedDamage.remove(entity);
+		getReceivedDamage().remove(entity);
 	}
 
 	public Player getMostDamageReceivedSourcePlayer() {
 		Player player = null;
 		int damage = -1;
-		Iterator<Entry<Entity, Integer>> it$ = receivedDamage.entrySet().iterator();
+		Iterator<Entry<Entity, Integer>> it$ = getReceivedDamage().entrySet().iterator();
 		while (it$.hasNext()) {
 			Entry<Entity, Integer> entry = it$.next();
 			Entity source = entry.getKey();
@@ -263,7 +243,7 @@ public abstract class Entity extends WorldTile {
 			}
 			Integer d = entry.getValue();
 			if (d == null || source.isFinished()) {
-				receivedDamage.remove(source);
+				getReceivedDamage().remove(source);
 				continue;
 			}
 			if (d > damage) {
@@ -274,79 +254,79 @@ public abstract class Entity extends WorldTile {
 		return player;
 	}
 
-
 	public int getDamageReceived(Player source) {
-		Integer d = receivedDamage.get(source);
+		Integer d = getReceivedDamage().get(source);
 		if (d == null || source.isFinished()) {
-			receivedDamage.remove(source);
+			getReceivedDamage().remove(source);
 			return -1;
 		}
 		return d;
 	}
 
 	public void processReceivedDamage() {
-		for (Entity source : receivedDamage.keySet()) {
-			Integer damage = receivedDamage.get(source);
+		for (Entity source : getReceivedDamage().keySet()) {
+			Integer damage = getReceivedDamage().get(source);
 			if (damage == null || source.isFinished()) {
-				receivedDamage.remove(source);
+				getReceivedDamage().remove(source);
 				continue;
 			}
 			damage--;
 			if (damage == 0) {
-				receivedDamage.remove(source);
+				getReceivedDamage().remove(source);
 				continue;
 			}
-			receivedDamage.put(source, damage);
+			getReceivedDamage().put(source, damage);
 		}
 	}
 
 	public void addReceivedDamage(Entity source, int amount) {
 		if (source == null)
 			return;
-		Integer damage = receivedDamage.get(source);
+		Integer damage = getReceivedDamage().get(source);
 		damage = damage == null ? amount : damage + amount;
 		if (damage < 0)
-			receivedDamage.remove(source);
+			getReceivedDamage().remove(source);
 		else
-			receivedDamage.put(source, damage);
+			getReceivedDamage().put(source, damage);
 	}
 
 	public void heal(int ammount) {
 		heal(ammount, 0);
+		ifPlayer(player -> player.getInterfaceManager().refreshHitPoints());
 	}
 
 	public void heal(int ammount, int extra) {
-		int hp = (hitpoints + ammount) >= (getMaxHitpoints() + extra) ? (getMaxHitpoints() + extra)
-				: (hitpoints + ammount);
-		if (hitpoints > hp)
+		int hp = (getHitpoints() + ammount) >= (getMaxHitpoints() + extra) ? (getMaxHitpoints() + extra)
+				: (getHitpoints() + ammount);
+		if (getHitpoints() > hp)
 			return;
-		setHitpoints((hitpoints + ammount) >= (getMaxHitpoints() + extra) ? (getMaxHitpoints() + extra)
-				: (hitpoints + ammount));
+		setHitpoints((getHitpoints() + ammount) >= (getMaxHitpoints() + extra) ? (getMaxHitpoints() + extra)
+				: (getHitpoints() + ammount));
 	}
 
 	public boolean hasWalkSteps() {
-		return !walkSteps.isEmpty();
+		return !getMovement().getWalkSteps().isEmpty();
 	}
 
-	public abstract void sendDeath(Entity source);
+	public abstract void sendDeath(Optional<Entity> source);
 
 	public void processMovement() {
-		lastWorldTile = new WorldTile(this);
-		if (lastFaceEntity >= 0) {
-			Entity target = lastFaceEntity >= 32768 ? World.getPlayers().get(lastFaceEntity - 32768)
-					: World.getNPCs().get(lastFaceEntity);
+		setLastWorldTile(new WorldTile(this));
+		if (getLastFaceEntity() >= 0) {
+			Entity target = getLastFaceEntity() >= 32768 ? World.getPlayers().get(getLastFaceEntity() - 32768)
+					: World.getNPCs().get(getLastFaceEntity());
 			if (target != null)
-				direction = (byte) Utils.getFaceDirection(target.getCoordFaceX(target.getSize()) - getX(),
-						target.getCoordFaceY(target.getSize()) - getY());
+				setDirection((byte) Utility.getFaceDirection(target.getCoordFaceX(target.getSize()) - getX(),
+						target.getCoordFaceY(target.getSize()) - getY()));
 		}
-		nextWalkDirection = nextRunDirection = -1;
-		if (nextWorldTile != null) {
+		setNextWalkDirection(nextRunDirection = -1);
+		if (getNextWorldTile() != null) {
 			int lastPlane = getPlane();
-			setLocation(nextWorldTile);
-			nextWorldTile = null;
-			teleported = true;
+			setLocation(getNextWorldTile());
+			setNextWorldTile(null);
+			setTeleported(true);
 			if (isPlayer() && ((Player) this).getTemporaryMovementType() == -1)
-				((Player) this).setTemporaryMovementType(Player.TELE_MOVE_TYPE);
+				((Player) this).setTemporaryMovementType(getMovement().getTELE_MOVE_TYPE());
 			updateEntityRegion(this);
 			if (needMapUpdate())
 				loadMapRegions();
@@ -355,36 +335,35 @@ public abstract class Entity extends WorldTile {
 			resetWalkSteps();
 			return;
 		}
-		teleported = false;
-		if (walkSteps.isEmpty())
+		setTeleported(false);
+		if (getMovement().getWalkSteps().isEmpty())
 			return;
 		ifPlayer(player -> {
-			if (player.getNextEmoteEnd() >= Utils.currentTimeMillis())
+			if (player.getNextEmoteEnd() >= Utility.currentTimeMillis())
 				return;
+			if (player.getDetails().getRunEnergy() <= 0)
+				setRun(false);
 		});
-		if (isPlayer() && ((Player) this).getDetails().getRunEnergy() <= 0)
-			setRun(false);
-		for (int stepCount = 0; stepCount < (run ? 2 : 1); stepCount++) {
+		for (int stepCount = 0; stepCount < (isRun() ? 2 : 1); stepCount++) {
 			Object[] nextStep = getNextWalkStep();
 			if (nextStep == null) {
 				if (stepCount == 1 && isPlayer())
-					((Player) this).setTemporaryMovementType(Player.WALK_MOVE_TYPE);
+					((Player) this).setTemporaryMovementType(getMovement().getWALK_MOVE_TYPE());
 				break;
 			}
 			int dir = (int) nextStep[0];
 			if (((boolean) nextStep[3] && !World.checkWalkStep(getPlane(), getX(), getY(), dir, getSize()))
-					|| (isPlayer() && !((Player) this).getControllerManager().canMove(dir))) {
+					|| (isPlayer() && !ControllerHandler.execute((Player) this, controller -> controller.canMove((Player) this, dir)))) {
 				resetWalkSteps();
 				break;
 			}
 			if (stepCount == 0) {
-				nextWalkDirection = (byte) dir;
+				setNextWalkDirection((byte) dir);
 			} else {
-				nextRunDirection = (byte) dir;
-				if (isPlayer())
-					((Player) this).drainRunEnergy();
+				setNextRunDirection((byte) dir);
+				ifPlayer(player -> player.drainRunEnergy());
 			}
-			moveLocation(Utils.DIRECTION_DELTA_X[dir], Utils.DIRECTION_DELTA_Y[dir], 0);
+			moveLocation(Utility.DIRECTION_DELTA_X[dir], Utility.DIRECTION_DELTA_Y[dir], 0);
 		}
 		updateEntityRegion(this);
 		if (needMapUpdate())
@@ -394,11 +373,11 @@ public abstract class Entity extends WorldTile {
 	@Override
 	public void moveLocation(int xOffset, int yOffset, int planeOffset) {
 		super.moveLocation(xOffset, yOffset, planeOffset);
-		direction = (byte) Utils.getFaceDirection(xOffset, yOffset);
+		setDirection((byte) Utility.getFaceDirection(xOffset, yOffset));
 	}
 
 	private boolean needMapUpdate() {
-		return needMapUpdate(lastLoadedMapRegionTile);
+		return needMapUpdate(getLastLoadedMapRegionTile());
 	}
 
 	public boolean needMapUpdate(WorldTile tile) {
@@ -406,11 +385,10 @@ public abstract class Entity extends WorldTile {
 		int lastMapRegionY = tile.getChunkY();
 		int regionX = getChunkX();
 		int regionY = getChunkY();
-		int size = ((GameConstants.MAP_SIZES[mapSize] >> 3) / 2) - 1;
+		int size = ((GameConstants.MAP_SIZES[getMapSize()] >> 3) / 2) - 1;
 		return Math.abs(lastMapRegionX - regionX) >= size || Math.abs(lastMapRegionY - regionY) >= size;
 	}
 
-	// normal walk steps method
 	public boolean addWalkSteps(int destX, int destY) {
 		return addWalkSteps(destX, destY, -1);
 	}
@@ -453,7 +431,7 @@ public abstract class Entity extends WorldTile {
 				myY++;
 			else if (myY > destY)
 				myY--;
-			int dir = Utils.getMoveDirection(myX - lastTileX, myY - lastTileY);
+			int dir = Utility.getMoveDirection(myX - lastTileX, myY - lastTileY);
 			if (dir == -1)
 				return false;
 			if (checkClose) {
@@ -479,7 +457,7 @@ public abstract class Entity extends WorldTile {
 	}
 
 	private int getPreviewNextWalkStep() {
-		Object[] step = walkSteps.poll();
+		Object[] step = getMovement().getWalkSteps().poll();
 		if (step == null)
 			return -1;
 		return (int) step[0];
@@ -493,7 +471,7 @@ public abstract class Entity extends WorldTile {
 			return true;
 		int size = getSize();
 		for (int regionId : getMapRegionsIds()) {
-			List<Integer> npcIndexes = World.getRegion(regionId).getNPCsIndexes();
+			ObjectArrayList<Short> npcIndexes = World.getRegion(regionId).getNpcsIndexes();
 			if (npcIndexes != null && npcIndexes.size() < 50) {
 				for (int npcIndex : npcIndexes) {
 					NPC target = World.getNPCs().get(npcIndex);
@@ -511,18 +489,18 @@ public abstract class Entity extends WorldTile {
 						// yet
 						int previewDir = getPreviewNextWalkStep();
 						if (previewDir != -1) {
-							WorldTile tile = target.transform(Utils.DIRECTION_DELTA_X[previewDir],
-									Utils.DIRECTION_DELTA_Y[previewDir], 0);
-							if (Utils.colides(tile.getX(), tile.getY(), targetSize, getX(), getY(), size))
+							WorldTile tile = target.transform(Utility.DIRECTION_DELTA_X[previewDir],
+									Utility.DIRECTION_DELTA_Y[previewDir], 0);
+							if (Utility.colides(tile.getX(), tile.getY(), targetSize, getX(), getY(), size))
 								continue;
 
-							if (Utils.colides(tile.getX(), tile.getY(), targetSize, toX, toY, size))
+							if (Utility.colides(tile.getX(), tile.getY(), targetSize, toX, toY, size))
 								return false;
 						}
 					}
-					if (Utils.colides(target.getX(), target.getY(), targetSize, getX(), getY(), size))
+					if (Utility.colides(target.getX(), target.getY(), targetSize, getX(), getY(), size))
 						continue;
-					if (Utils.colides(target.getX(), target.getY(), targetSize, toX, toY, size))
+					if (Utility.colides(target.getX(), target.getY(), targetSize, toX, toY, size))
 						return false;
 				}
 			}
@@ -558,7 +536,7 @@ public abstract class Entity extends WorldTile {
 																						// srcSize, srcSize, -1),
 																						// WorldTile.getCoordFaceY(srcPos[1],
 																						// srcSize, srcSize, -1)};
-			if (!Utils.isOnRange(srcPos[0], srcPos[1], srcSize, destPos[0], destPos[1], destSize, 0)) {
+			if (!Utility.isOnRange(srcPos[0], srcPos[1], srcSize, destPos[0], destPos[1], destSize, 0)) {
 				if (srcScenePos[0] < destScenePos[0] && srcScenePos[1] < destScenePos[1]
 						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0] + 1, srcPos[1] + 1))
 						&& src.addWalkStep(srcPos[0] + 1, srcPos[1] + 1, srcPos[0], srcPos[1], true)) {
@@ -587,26 +565,22 @@ public abstract class Entity extends WorldTile {
 					srcPos[1]++;
 					continue;
 				}
-				if (srcScenePos[0] < destScenePos[0]
-						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0] + 1, srcPos[1]))
+				if (srcScenePos[0] < destScenePos[0] && (!(src.isNPC()) || src.canWalkNPC(srcPos[0] + 1, srcPos[1]))
 						&& src.addWalkStep(srcPos[0] + 1, srcPos[1], srcPos[0], srcPos[1], true)) {
 					srcPos[0]++;
 					continue;
 				}
-				if (srcScenePos[0] > destScenePos[0]
-						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0] - 1, srcPos[1]))
+				if (srcScenePos[0] > destScenePos[0] && (!(src.isNPC()) || src.canWalkNPC(srcPos[0] - 1, srcPos[1]))
 						&& src.addWalkStep(srcPos[0] - 1, srcPos[1], srcPos[0], srcPos[1], true)) {
 					srcPos[0]--;
 					continue;
 				}
-				if (srcScenePos[1] < destScenePos[1]
-						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0], srcPos[1] + 1))
+				if (srcScenePos[1] < destScenePos[1] && (!(src.isNPC()) || src.canWalkNPC(srcPos[0], srcPos[1] + 1))
 						&& src.addWalkStep(srcPos[0], srcPos[1] + 1, srcPos[0], srcPos[1], true)) {
 					srcPos[1]++;
 					continue;
 				}
-				if (srcScenePos[1] > destScenePos[1]
-						&& (!(src.isNPC()) || src.canWalkNPC(srcPos[0], srcPos[1] - 1))
+				if (srcScenePos[1] > destScenePos[1] && (!(src.isNPC()) || src.canWalkNPC(srcPos[0], srcPos[1] - 1))
 						&& src.addWalkStep(srcPos[0], srcPos[1] - 1, srcPos[0], srcPos[1], true)) {
 					srcPos[1]--;
 					continue;
@@ -623,7 +597,7 @@ public abstract class Entity extends WorldTile {
 	public boolean calcFollow(WorldTile target, int maxStepsCount, boolean calculate, boolean inteligent) {
 		if (inteligent) {
 			int steps = RouteFinder.findRoute(RouteFinder.WALK_ROUTEFINDER, getX(), getY(), getPlane(), getSize(),
-					target instanceof WorldObject ? new ObjectStrategy((WorldObject) target)
+					target instanceof GameObject ? new ObjectStrategy((GameObject) target)
 							: new EntityStrategy((Entity) target),
 					true);
 			if (steps == -1)
@@ -723,7 +697,7 @@ public abstract class Entity extends WorldTile {
 	}
 
 	private int[] getLastWalkTile() {
-		Object[] objects = walkSteps.toArray();
+		Object[] objects = getMovement().getWalkSteps().toArray();
 		if (objects.length == 0)
 			return new int[] { getX(), getY() };
 		Object step[] = (Object[]) objects[objects.length - 1];
@@ -731,29 +705,25 @@ public abstract class Entity extends WorldTile {
 	}
 
 	private boolean addWalkStep(int nextX, int nextY, int lastX, int lastY, boolean check) {
-		int dir = Utils.getMoveDirection(nextX - lastX, nextY - lastY);
+		int dir = Utility.getMoveDirection(nextX - lastX, nextY - lastY);
 		if (dir == -1)
 			return false;
-		if (check && !World.checkWalkStep(getPlane(), lastX, lastY, dir, getSize()))// double check must be done sadly
-																					// cuz of npc
-																					// under check, can be improved
-																					// later to
-																					// only check when we want
+		if (check && !World.checkWalkStep(getPlane(), lastX, lastY, dir, getSize()))
 			return false;
-		if (isPlayer()) {
-			if (!((Player) this).getControllerManager().addWalkStep(lastX, lastY, nextX, nextY))
-				return false;
-		}
-		walkSteps.add(new Object[] { dir, nextX, nextY, check });
+		ifPlayer(player -> {
+			if (!ControllerHandler.execute((Player) this, controller -> controller.checkWalkStep((Player) this, lastX, lastY, nextX, nextY)))
+				return;
+		});
+		getMovement().getWalkSteps().add(new Object[] { dir, nextX, nextY, check });
 		return true;
 	}
 
 	public void resetWalkSteps() {
-		walkSteps.clear();
+		getMovement().getWalkSteps().clear();
 	}
 
 	private Object[] getNextWalkStep() {
-		Object[] step = walkSteps.poll();
+		Object[] step = getMovement().getWalkSteps().poll();
 		if (step == null)
 			return null;
 		return step;
@@ -761,24 +731,28 @@ public abstract class Entity extends WorldTile {
 
 	public boolean restoreHitPoints() {
 		int maxHp = getMaxHitpoints();
-		if (hitpoints > maxHp) {
-			if (isPlayer()) {
-				Player player = (Player) this;
+		if (getHitpoints() > maxHp) {
+			ifPlayer(player -> {
 				if (player.getPrayer().usingPrayer(1, 5) && RandomUtils.random(100) <= 15)
-					return false;
-			}
-			setHitpoints(hitpoints - 1);
+					return;
+			});
+			setHitpoints(getHitpoints() - 1);
 			return true;
-		} else if (hitpoints < maxHp) {
-			setHitpoints(hitpoints + 1);
-			if (isPlayer()) {
-				Player player = (Player) this;
-				if (player.getPrayer().usingPrayer(0, 9) && hitpoints < maxHp)
-					setHitpoints(hitpoints + 1);
-				else if (player.getPrayer().usingPrayer(0, 26) && hitpoints < maxHp)
-					setHitpoints(hitpoints + (hitpoints + 4 > maxHp ? maxHp - hitpoints : 4));
-
-			}
+		} else if (getHitpoints() < maxHp) {
+			setHitpoints(getHitpoints() + 1);
+			ifPlayer(player -> {
+				if (true) {
+					if (player.getPrayer().usingPrayer(0, 9))
+						restoreHitPoints();
+					if (player.getResting() != 0)
+						restoreHitPoints();
+					player.getInterfaceManager().refreshHitPoints();
+				}
+				if (player.getPrayer().usingPrayer(0, 9) && getHitpoints() < maxHp)
+					setHitpoints(getHitpoints() + 1);
+				else if (player.getPrayer().usingPrayer(0, 26) && getHitpoints() < maxHp)
+					setHitpoints(getHitpoints() + (getHitpoints() + 4 > maxHp ? maxHp - getHitpoints() : 4));
+			});
 			return true;
 		}
 		return false;
@@ -808,11 +782,22 @@ public abstract class Entity extends WorldTile {
 		nextForceTalk = null;
 		nextFaceEntity = -2;
 		nextHits.clear();
+		ifPlayer(player -> {
+			player.setTemporaryMovementType((byte) -1);
+			player.setUpdateMovementType(false);
+			if (!player.isClientLoadedMapRegion()) {
+				player.setClientLoadedMapRegion(true);
+				World.getRegion(getRegionId()).refreshSpawnedObjects(player);
+				World.getRegion(getRegionId()).refreshSpawnedItems(player);
+			}
+		});
 	}
 
 	public abstract void finish();
 
-	public abstract int getMaxHitpoints();
+	public int getMaxHitpoints() {
+		return isNPC() ? toNPC().getCombatDefinitions().getHitpoints() : toPlayer().getSkills().getLevel(Skills.HITPOINTS) * 10 + toPlayer().getEquipment().getEquipmentHpIncrease();
+	}
 
 	public void processEntityUpdate() {
 		processMovement();
@@ -820,15 +805,14 @@ public abstract class Entity extends WorldTile {
 		processReceivedDamage();
 	}
 
-	public void processEntity() {
-	}
+	public void processEntity() { }
 
 	public void loadMapRegions() {
-		mapRegionsIds.clear();
+		getMapRegionsIds().clear();
 		isAtDynamicRegion = false;
 		int chunkX = getChunkX();
 		int chunkY = getChunkY();
-		int mapHash = GameConstants.MAP_SIZES[mapSize] >> 4;
+		int mapHash = GameConstants.MAP_SIZES[getMapSize()] >> 4;
 		int minRegionX = (chunkX - mapHash) / 8;
 		int minRegionY = (chunkY - mapHash) / 8;
 		for (int xCalc = minRegionX < 0 ? 0 : minRegionX; xCalc <= ((chunkX + mapHash) / 8); xCalc++)
@@ -836,235 +820,120 @@ public abstract class Entity extends WorldTile {
 				int regionId = yCalc + (xCalc << 8);
 				if (World.getRegion(regionId, isPlayer()) instanceof DynamicRegion)
 					isAtDynamicRegion = true;
-				mapRegionsIds.add(regionId);
+				getMapRegionsIds().add(regionId);
 			}
-		lastLoadedMapRegionTile = new WorldTile(this); // creates a immutable
-		// copy of this
+		setLastLoadedMapRegionTile(new WorldTile(this));
 	}
 
 	public void setMapSize(int size) {
-		this.mapSize = size;
+		setMapSize(size);
 		loadMapRegions();
 	}
 
 	public void setNextAnimation(Animation nextAnimation) {
 		if (nextAnimation != null && nextAnimation.getIds()[0] >= 0)
-			lastAnimationEnd = Utils.currentTimeMillis()
+			lastAnimationEnd = Utility.currentTimeMillis()
 					+ AnimationDefinitions.getAnimationDefinitions(nextAnimation.getIds()[0]).getEmoteTime();
 		this.nextAnimation = nextAnimation;
 	}
 
 	public void setNextAnimationNoPriority(Animation nextAnimation) {
-		if (lastAnimationEnd > Utils.currentTimeMillis())
+		if (getLastAnimationEnd() > Utility.currentTimeMillis())
 			return;
 		setNextAnimation(nextAnimation);
 	}
 
 	public void setNextGraphics(Graphics nextGraphics) {
 		if (nextGraphics == null) {
-			if (nextGraphics4 != null)
-				nextGraphics4 = null;
-			else if (nextGraphics3 != null)
-				nextGraphics3 = null;
-			else if (nextGraphics2 != null)
-				nextGraphics2 = null;
+			if (getNextGraphics4() != null)
+				setNextGraphics4(null);
+			else if (getNextGraphics3() != null)
+				setNextGraphics3(null);
+			else if (getNextGraphics2() != null)
+				setNextGraphics2(null);
 			else
-				nextGraphics1 = null;
+				setNextGraphics1(null);
 		} else {
-			if (nextGraphics.equals(nextGraphics1) || nextGraphics.equals(nextGraphics2)
-					|| nextGraphics.equals(nextGraphics3) || nextGraphics.equals(nextGraphics4))
+			if (nextGraphics.equals(getNextGraphics1()) || nextGraphics.equals(getNextGraphics2())
+					|| nextGraphics.equals(getNextGraphics3()) || nextGraphics.equals(getNextGraphics4()))
 				return;
-			if (nextGraphics1 == null)
-				nextGraphics1 = nextGraphics;
-			else if (nextGraphics2 == null)
-				nextGraphics2 = nextGraphics;
-			else if (nextGraphics3 == null)
-				nextGraphics3 = nextGraphics;
+			if (getNextGraphics1() == null)
+				setNextGraphics1(nextGraphics);
+			else if (getNextGraphics2() == null)
+				setNextGraphics2(nextGraphics);
+			else if (getNextGraphics3() == null)
+				setNextGraphics3(nextGraphics);
 			else
-				nextGraphics4 = nextGraphics;
+				setNextGraphics4(nextGraphics);
 		}
 	}
 
-	// @Deprecated used to face simply a tiel
-	// "use setNextFaceRectanglePrecise(tile, 1, 1)
 	public void setNextFaceWorldTile(WorldTile nextFaceWorldTile) {
-		// who the hell made setNextFaceworldTile() ??!!! fucking incorrect
-		// calcs.....
-		// also the thing you guys call direction is actually angle
-		setNextFaceRectanglePrecise(nextFaceWorldTile, 1, 1);
-	}
-
-	public void setNextFaceRectanglePrecise(WorldTile base, int sizeX, int sizeY) {
-		if (nextFaceWorldTile != null && nextFaceWorldTile.getX() == base.getX()
-				&& nextFaceWorldTile.getY() == base.getY() && nextFaceWorldTile.getSizeX() == sizeX
-				&& nextFaceWorldTile.getSizeY() == sizeY)
+		if (nextFaceWorldTile.getX() == getX()
+				&& nextFaceWorldTile.getY() == getY())
 			return;
-		nextFaceWorldTile = new Rectangle(base.getX(), base.getY(), sizeX, sizeY);
-		WorldTile from = nextWorldTile != null ? nextWorldTile : this;
-		int srcX = (from.getX() * 512) + (getSize() * 256);
-		int srcY = (from.getY() * 512) + (getSize() * 256);
-		int dstX = (base.getX() * 512) + (sizeX * 256);
-		int dstY = (base.getY() * 512) + (sizeY * 256);
-		int deltaX = srcX - dstX;
-		int deltaY = srcY - dstY;
-		direction = 0;
-		if (deltaX != 0 || deltaY != 0)
-			direction = (byte) ((byte) (Math.atan2((double) deltaX, (double) deltaY) * 2607.5945876176133) & 0x3FFF);
+		setNextFaceWorldTile(nextFaceWorldTile);
+		if (getNextWorldTile() != null)
+			setDirection((byte) Utility.getFaceDirection(nextFaceWorldTile.getX()
+					- getNextWorldTile().getX(), nextFaceWorldTile.getY()
+					- getNextWorldTile().getY()));
+		else
+			setDirection((byte) Utility.getFaceDirection(nextFaceWorldTile.getX()
+					- getX(), nextFaceWorldTile.getY() - getY()));
 	}
 
-	public abstract int getSize();
+	public int getSize() {
+		return isNPC() ? toNPC().getDefinitions().getSize() : toPlayer().getAppearance().getSize();
+	}
 
 	public void cancelFaceEntityNoCheck() {
+		setLastFaceEntity(-1);
 		nextFaceEntity = -2;
-		lastFaceEntity = -1;
 	}
 
 	public void setNextFaceEntity(Entity entity) {
 		if (entity == null) {
 			nextFaceEntity = -1;
-			lastFaceEntity = -1;
+			setLastFaceEntity(-1);
 		} else {
 			nextFaceEntity = entity.getClientIndex();
-			lastFaceEntity = nextFaceEntity;
+			setLastFaceEntity(getNextFaceEntity());
 		}
 	}
 
-	public boolean isFrozen() {
-		return freezeDelay >= Utils.currentTimeMillis();
+	public double getMagePrayerMultiplier() {
+		return 0.6;
 	}
 
-	public void addFrozenBlockedDelay(int time) {
-		frozenBlocked = time + Utils.currentTimeMillis();
+	public double getRangePrayerMultiplier() {
+		return 0.6;
 	}
 
-	public void addFreezeDelay(long time) {
-		addFreezeDelay(time, false);
+	public double getMeleePrayerMultiplier() {
+		return 0.6;
 	}
-
-	public void addFreezeDelay(long time, boolean entangleMessage) {
-		long currentTime = Utils.currentTimeMillis();
-		if (currentTime > freezeDelay) {
-			if (isPlayer()) {
-				Player p = (Player) this;
-				if (!entangleMessage)
-					p.getPackets().sendGameMessage("You have been frozen.");
-				if (p.getControllerManager().getController() != null)
-					time /= 2;
-			}
-		}
-		resetWalkSteps();
-		freezeDelay = time + currentTime;
-	}
-
-	public abstract double getMagePrayerMultiplier();
-
-	public abstract double getRangePrayerMultiplier();
-
-	public abstract double getMeleePrayerMultiplier();
 
 	public void checkMultiArea() {
-		multiArea = forceMultiArea ? true : World.isMultiArea(this);
+		setMultiArea(isForceMultiArea() ? true : World.isMultiArea(this));
 	}
-
-	public void faceEntity(Entity target) {
-		// setNextFaceWorldTile(new
-		// WorldTile(target.getCoordFaceX(target.getSize()),
-		// target.getCoordFaceY(target.getSize()), target.getPlane()));
-		setNextFaceRectanglePrecise(new WorldTile(target.getX(), target.getY(), target.getPlane()), target.getSize(),
-				target.getSize());
-	}
-
-	public void faceObject(WorldObject object) {
-		ObjectDefinitions def = object.getDefinitions();
-		int x = -1, y = -1;
-		int sizeX = 1, sizeY = 1;
-		if (object.getType() == 0) { // wall
-			if (object.getRotation() == 0) { // west
-				x = object.getX() - 1;
-				y = object.getY();
-			} else if (object.getRotation() == 1) { // north
-				x = object.getX();
-				y = object.getY() + 1;
-			} else if (object.getRotation() == 2) { // east
-				x = object.getX() + 1;
-				y = object.getY();
-			} else if (object.getRotation() == 3) { // south
-				x = object.getX();
-				y = object.getY() - 1;
-			}
-		} else if (object.getType() == 1 || object.getType() == 2) { // corner
-																		// and
-																		// cornerwall
-			if (object.getRotation() == 0) { // nw
-				x = object.getX() - 1;
-				y = object.getY() + 1;
-			} else if (object.getRotation() == 1) { // ne
-				x = object.getX() + 1;
-				y = object.getY() + 1;
-			} else if (object.getRotation() == 2) { // se
-				x = object.getX() + 1;
-				y = object.getY() - 1;
-			} else if (object.getRotation() == 3) { // sw
-				x = object.getX() - 1;
-				y = object.getY() - 1;
-			}
-		} else if (object.getType() == 3) { // inverted corner
-			if (object.getRotation() == 0) { // se
-				x = object.getX() + 1;
-				y = object.getY() - 1;
-			} else if (object.getRotation() == 1) { // sw
-				x = object.getX() - 1;
-				y = object.getY() - 1;
-			} else if (object.getRotation() == 2) { // nw
-				x = object.getX() - 1;
-				y = object.getY() + 1;
-			} else if (object.getRotation() == 3) { // ne
-				x = object.getX() + 1;
-				y = object.getY() + 1;
-			}
-		} else if (object.getType() < 10) { // walldeco's
-			if (object.getRotation() == 0) { // west
-				x = object.getX() - 1;
-				y = object.getY();
-			} else if (object.getRotation() == 1) { // north
-				x = object.getX();
-				y = object.getY() + 1;
-			} else if (object.getRotation() == 2) { // east
-				x = object.getX() + 1;
-				y = object.getY();
-			} else if (object.getRotation() == 3) { // south
-				x = object.getX();
-				y = object.getY() - 1;
-			}
-		} else if (object.getType() == 10 || object.getType() == 11 || object.getType() == 22) { // multisized rect objs
-			if (object.getRotation() == 0 || object.getRotation() == 2) {
-				x = object.getX();
-				y = object.getY();
-				sizeX = def.getSizeX();
-				sizeY = def.getSizeY();
-			} else {
-				x = object.getX();
-				y = object.getY();
-				sizeX = def.getSizeY();
-				sizeY = def.getSizeX();
-			}
-		} else {
-			// rest
-			x = object.getX();
-			y = object.getY();
-		}
-
-		setNextFaceRectanglePrecise(new WorldTile(x, y, getPlane()), sizeX, sizeY);
+	
+	public void faceObject(GameObject object) {
+		ObjectDefinitions objectDef = object.getDefinitions();
+		setNextFaceWorldTile(new WorldTile(object.getCoordFaceX(
+				objectDef.getSizeX(), objectDef.getSizeY(),
+				object.getRotation()), object.getCoordFaceY(
+				objectDef.getSizeX(), objectDef.getSizeY(),
+				object.getRotation()), object.getPlane()));
 	}
 
 	public void setForceMultiArea(boolean forceMultiArea) {
-		this.forceMultiArea = forceMultiArea;
+		setForceMultiArea(forceMultiArea);
 		checkMultiArea();
 	}
 
 	public void playSound(int soundId, int type) {
 		for (int regionId : getMapRegionsIds()) {
-			List<Integer> playerIndexes = World.getRegion(regionId).getPlayerIndexes();
+			ObjectArrayList<Short> playerIndexes = World.getRegion(regionId).getPlayersIndexes();
 			if (playerIndexes != null) {
 				World.players().filter(p -> !withinDistance(p))
 						.forEach(p -> p.getPackets().sendSound(soundId, 0, type));
@@ -1098,8 +967,7 @@ public abstract class Entity extends WorldTile {
 				myY++;
 			else if (myY > destY)
 				myY--;
-			if ((isNPC() && !canWalkNPC(myX, myY))
-					|| !addWalkStep(myX, myY, lastTile[0], lastTile[1], true)) {
+			if ((isNPC() && !canWalkNPC(myX, myY)) || !addWalkStep(myX, myY, lastTile[0], lastTile[1], true)) {
 				if (!calculate)
 					return false;
 				myX = myRealX;
@@ -1159,46 +1027,51 @@ public abstract class Entity extends WorldTile {
 	public final void updateEntityRegion(Entity entity) {
 		if (entity.isFinished()) {
 			if (isPlayer())
-				World.getRegion(entity.getLastRegionId()).removePlayerIndex(entity.getIndex());
+				World.getRegion(entity.getLastRegionId()).removePlayerIndex((short) entity.getIndex());
 			else
 				World.getRegion(entity.getLastRegionId()).removeNPCIndex(entity.getIndex());
 			return;
 		}
 		short regionId = (short) entity.getRegionId();
-		if (entity.getLastRegionId() != regionId) { // map region entity at
-			// changed
-			if (isPlayer()) {
+		if (entity.getLastRegionId() != regionId) {
+			ifPlayer(player -> {
 				if (entity.getLastRegionId() > 0)
-					World.getRegion(entity.getLastRegionId()).removePlayerIndex(entity.getIndex());
+					World.getRegion(entity.getLastRegionId()).removePlayerIndex((short) entity.getIndex());
 				Region region = World.getRegion(regionId);
-				region.addPlayerIndex(entity.getIndex());
-				Player player = (Player) entity;
+				region.addPlayerIndex((short) entity.getIndex());
 				int musicId = region.getRandomMusicId();
 				if (musicId != -1)
 					player.getMusicsManager().checkMusic(musicId);
-				player.getControllerManager().moved();
+				ControllerHandler.executeVoid(player, controller -> controller.moved(player));
 				if (player.isStarted())
-					World.checkControlersAtMove(player);
-			} else {
+					checkControlersAtMove(player);
+			});
+			ifNpc(npc -> {
 				if (entity.getLastRegionId() > 0)
 					World.getRegion(entity.getLastRegionId()).removeNPCIndex(entity.getIndex());
-				World.getRegion(regionId).addNPCIndex(entity.getIndex());
-			}
+				World.getRegion(regionId).addNPCIndex((short) entity.getIndex());
+			});
 			entity.checkMultiArea();
 			entity.setLastRegionId(regionId);
 		} else {
-			if (isPlayer()) {
-				Player player = (Player) entity;
-				player.getControllerManager().moved();
+			ifPlayer(player -> {
+				ControllerHandler.executeVoid(player, controller -> controller.moved(player));
 				if (player.isStarted())
-					World.checkControlersAtMove(player);
-			}
+					checkControlersAtMove(player);
+			});
 			entity.checkMultiArea();
 		}
 	}
+	
+	private static void checkControlersAtMove(Player player) {
+		if (WildernessController.isAtWild(player))
+			new WildernessController().start(player);
+		else
+			new WildernessController().moved(player);
+	}
 
 	public final boolean isPvpArea(WorldTile tile) {
-		return Wilderness.isAtWild(tile);
+		return WildernessController.isAtWild(tile);
 	}
 
 	public void sendSoulSplit(final Hit hit, final Entity user) {
@@ -1219,72 +1092,98 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void safeForceMoveTile(WorldTile desination) {
-		var dir = RandomUtils.random(Utils.DIRECTION_DELTA_X.length -1);
+		int dir = RandomUtils.random(Utility.DIRECTION_DELTA_X.length - 1);
 		if (World.checkWalkStep(desination.getPlane(), desination.getX(), desination.getY(), dir, 1)) {
-			setNextWorldTile(new WorldTile(desination.getX() + RandomUtils.random(Utils.DIRECTION_DELTA_X[dir]),
-					desination.getY() + RandomUtils.random(Utils.DIRECTION_DELTA_Y[dir]), desination.getPlane()));
+			setNextWorldTile(new WorldTile(desination.getX() + RandomUtils.random(3),
+					desination.getY() + RandomUtils.random(3), desination.getPlane()));
 		}
 	}
-	
+
 	/**
 	 * The type of node that this node is.
 	 */
 	private final EntityType type;
-	
+
 	/**
 	 * Determines if this entity is a {@link Player}.
+	 * 
 	 * @return {@code true} if this entity is a {@link Player}, {@code false}
-	 * otherwise.
+	 *         otherwise.
 	 */
 	public final boolean isPlayer() {
 		return getType() == EntityType.PLAYER;
 	}
-	
+
 	/**
 	 * Executes the specified action if the underlying node is a player.
+	 * 
 	 * @param action the action to execute.
 	 */
 	public final void ifPlayer(Consumer<Player> action) {
-		if(!this.isPlayer()) {
+		if (!this.isPlayer()) {
 			return;
 		}
 		action.accept(this.toPlayer());
 	}
-	
+
 	/**
 	 * Casts the {@link Actor} to a {@link Player}.
+	 * 
 	 * @return an instance of this {@link Actor} as a {@link Player}.
 	 */
 	public final Player toPlayer() {
 		Preconditions.checkArgument(isPlayer(), "Cannot cast this entity to player.");
 		return (Player) this;
 	}
-	
+
 	/**
 	 * Determines if this entity is a {@link Mob}.
+	 * 
 	 * @return {@code true} if this entity is a {@link Mob}, {@code false}
-	 * otherwise.
+	 *         otherwise.
 	 */
 	public final boolean isNPC() {
 		return getType() == EntityType.NPC;
 	}
-	
+
 	/**
 	 * Executes the specified action if the underlying node is a player.
+	 * 
 	 * @param action the action to execute.
 	 */
 	public final void ifNpc(Consumer<NPC> action) {
-		if(!this.isNPC())
+		if (!this.isNPC())
 			return;
 		action.accept(this.toNPC());
 	}
-	
+
 	/**
 	 * Casts the {@link Actor} to a {@link Mob}.
+	 * 
 	 * @return an instance of this {@link Actor} as a {@link Mob}.
 	 */
 	public final NPC toNPC() {
 		Preconditions.checkArgument(isNPC(), "Cannot cast this entity to npc.");
 		return (NPC) this;
+	}
+
+	// used for update
+	private transient LocalPlayerUpdate localPlayerUpdate;
+	private transient LocalNPCUpdate localNPCUpdate;
+	
+	/**
+	 * Sends a queued Task with Consumer action support
+	 * @param delay
+	 * @param entity
+	 */
+	public void task(int delay, Consumer<Entity> entity) {
+		Entity consumer = this;
+		new Task(delay, false) {
+			@Override
+			protected void execute() {
+				entity.accept(consumer);
+				cancel();
+			}
+		}.submit();
 	}
 }

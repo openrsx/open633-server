@@ -3,8 +3,8 @@ package skills;
 import java.util.Optional;
 
 import com.google.common.base.Preconditions;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;

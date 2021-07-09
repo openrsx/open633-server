@@ -2,7 +2,7 @@ package com.rs.game.task;
 
 import java.util.Optional;
 
-import com.rs.game.World;
+import com.rs.game.map.World;
 
 import lombok.Data;
 

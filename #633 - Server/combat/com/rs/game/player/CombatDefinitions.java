@@ -5,11 +5,11 @@ import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
-import com.rs.game.World;
 import com.rs.game.item.Item;
+import com.rs.game.map.World;
 import com.rs.game.task.Task;
 import com.rs.net.encoders.other.ForceTalk;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import lombok.Data;
 import skills.Skills;
@@ -48,14 +48,14 @@ public final class CombatDefinitions {
 	private byte autoCastSpell;
 
 	public int getSpellId() {
-		Integer tempCastSpell = (Integer) player.getTemporaryAttributes().get("tempCastSpell");
+		Integer tempCastSpell = (Integer) player.getAttributes().getAttributes().get("tempCastSpell");
 		if (tempCastSpell != null)
 			return tempCastSpell + 256;
 		return autoCastSpell;
 	}
 
 	public void resetSpells(boolean removeAutoSpell) {
-		player.getTemporaryAttributes().remove("tempCastSpell");
+		player.getAttributes().getAttributes().remove("tempCastSpell");
 		if (removeAutoSpell) {
 			setAutoCastSpell(0);
 			refreshAutoCastSpell();
@@ -642,7 +642,7 @@ public final class CombatDefinitions {
 			}
 			PlayerCombat combat = (PlayerCombat) player.getActionManager().getAction();
 			Entity target = combat.getTarget();
-			if (!Utils.isOnRange(player.getX(), player.getY(), player.getSize(), target.getX(),
+			if (!Utility.isOnRange(player.getX(), player.getY(), player.getSize(), target.getX(),
 					target.getY(), target.getSize(), 5)) {
 				player.getCombatDefinitions().switchUsingSpecialAttack();
 				return;
@@ -706,6 +706,13 @@ public final class CombatDefinitions {
 	}
 
 	public boolean isUnderCombat() {
-		return player.getAttackedByDelay() + 10000 >= Utils.currentTimeMillis();
+		return player.getAttackedByDelay() + 10000 >= Utility.currentTimeMillis();
+	}
+	
+	public void setCanPvp(boolean canPvp) {
+		player.setCanPvp(canPvp);
+		player.getAppearance().generateAppearenceData();
+		player.getPackets().sendPlayerOption(canPvp ? "Attack" : "null", 1, true);
+		player.getPackets().sendPlayerUnderNPCPriority(canPvp);
 	}
 }

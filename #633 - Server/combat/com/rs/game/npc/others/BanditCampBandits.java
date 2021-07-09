@@ -1,14 +1,14 @@
 package com.rs.game.npc.others;
 
-import java.util.ArrayList;
-
 import com.rs.game.Entity;
-import com.rs.game.WorldTile;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.godwars.saradomin.GodwarsSaradominFaction;
 import com.rs.game.npc.godwars.zammorak.GodwarsZammorakFaction;
 import com.rs.game.player.Player;
 import com.rs.net.encoders.other.ForceTalk;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class BanditCampBandits extends NPC {
 
@@ -19,9 +19,9 @@ public class BanditCampBandits extends NPC {
 	}
 
 	@Override
-	public ArrayList<Entity> getPossibleTargets() {
-		ArrayList<Entity> targets = super.getPossibleTargets();
-		ArrayList<Entity> targetsCleaned = new ArrayList<Entity>();
+	public ObjectArrayList<Entity> getPossibleTargets() {
+		ObjectArrayList<Entity> targets = super.getPossibleTargets();
+		ObjectArrayList<Entity> targetsCleaned = new ObjectArrayList<Entity>();
 		for (Entity t : targets) {
 			if (!(t.isPlayer()) || (!GodwarsZammorakFaction.hasGodItem((Player) t)
 					&& !GodwarsSaradominFaction.hasGodItem((Player) t)))

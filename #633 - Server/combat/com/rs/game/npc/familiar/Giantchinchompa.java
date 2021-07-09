@@ -1,17 +1,17 @@
 package com.rs.game.npc.familiar;
 
-import java.util.List;
-
 import com.rs.game.Animation;
 import com.rs.game.Graphics;
-import com.rs.game.Hit;
-import com.rs.game.Hit.HitLook;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
+import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
+import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.net.encoders.other.ForceTalk;
 import com.rs.utilities.RandomUtils;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Giantchinchompa extends Familiar {
 
@@ -56,7 +56,7 @@ public class Giantchinchompa extends Familiar {
 		setNextGraphics(new Graphics(1310));
 		setNextForceTalk(new ForceTalk("Squeek!"));
 		Player player = getOwner();
-		List<Integer> playerIndexes = World.getRegion(player.getRegionId()).getPlayerIndexes();
+		ObjectArrayList<Short> playerIndexes = World.getRegion(player.getRegionId()).getPlayersIndexes();
 		if (playerIndexes != null) {
 			for (int playerIndex : playerIndexes) {
 				Player p2 = World.getPlayers().get(playerIndex);

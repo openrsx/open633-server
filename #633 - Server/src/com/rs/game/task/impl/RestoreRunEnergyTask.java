@@ -1,6 +1,6 @@
 package com.rs.game.task.impl;
 
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.task.Task;
 
 import skills.Skills;
@@ -16,7 +16,7 @@ public final class RestoreRunEnergyTask extends Task {
 
 	@Override
 	public void execute() {
-		World.players().filter(p -> p.getDetails().getRunEnergy() < 100 && p.getWalkSteps().isEmpty()).forEach(p -> {
+		World.players().filter(p -> p.getDetails().getRunEnergy() < 100 && p.getMovement().getWalkSteps().isEmpty()).forEach(p -> {
 			double restoreRate = 0.45D;
 			double agilityFactor = 0.01 * p.getSkills().getLevel(Skills.AGILITY);
 			p.getDetails().setRunEnergy((byte) (p.getDetails().getRunEnergy() + (restoreRate + agilityFactor)));

@@ -2,17 +2,17 @@ package com.rs.game.player.content;
 
 import com.rs.game.Animation;
 import com.rs.game.Graphics;
-import com.rs.game.Hit;
-import com.rs.game.Hit.HitLook;
-import com.rs.game.World;
 import com.rs.game.item.Item;
+import com.rs.game.map.World;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
+import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
-import com.rs.game.player.controllers.Wilderness;
+import com.rs.game.player.Hit.HitLook;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.task.Task;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 import skills.Skills;
 
@@ -364,10 +364,10 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControllerManager().getController() instanceof Wilderness) {
-					player.getPackets().sendGameMessage("You cannot drink this potion here.");
-					return false;
-				}
+//				if (player.getControllerManager().getController() instanceof Wilderness) {
+//					player.getPackets().sendGameMessage("You cannot drink this potion here.");
+//					return false;
+//				}
 				return true;
 			}
 
@@ -381,10 +381,10 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControllerManager().getController() instanceof Wilderness) {
-					player.getPackets().sendGameMessage("You cannot drink this potion here.");
-					return false;
-				}
+//				if (player.getControllerManager().getController() instanceof Wilderness) {
+//					player.getPackets().sendGameMessage("You cannot drink this potion here.");
+//					return false;
+//				}
 				return true;
 			}
 
@@ -398,10 +398,10 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControllerManager().getController() instanceof Wilderness) {
-					player.getPackets().sendGameMessage("You cannot drink this potion here.");
-					return false;
-				}
+//				if (player.getControllerManager().getController() instanceof Wilderness) {
+//					player.getPackets().sendGameMessage("You cannot drink this potion here.");
+//					return false;
+//				}
 				return true;
 			}
 
@@ -415,10 +415,10 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControllerManager().getController() instanceof Wilderness) {
-					player.getPackets().sendGameMessage("You cannot drink this potion here.");
-					return false;
-				}
+//				if (player.getControllerManager().getController() instanceof Wilderness) {
+//					player.getPackets().sendGameMessage("You cannot drink this potion here.");
+//					return false;
+//				}
 				return true;
 			}
 
@@ -432,10 +432,10 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControllerManager().getController() instanceof Wilderness) {
-					player.getPackets().sendGameMessage("You cannot drink this potion here.");
-					return false;
-				}
+//				if (player.getControllerManager().getController() instanceof Wilderness) {
+//					player.getPackets().sendGameMessage("You cannot drink this potion here.");
+//					return false;
+//				}
 				return true;
 			}
 
@@ -449,12 +449,12 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControllerManager().getController() instanceof Wilderness) {
-					player.getPackets().sendGameMessage("You cannot drink this potion here.");
-					return false;
-				}
-				Long time = (Long) player.getTemporaryAttributes().get("Recover_Special_Pot");
-				if (time != null && Utils.currentTimeMillis() - time < 30000) {
+//				if (player.getControllerManager().getController() instanceof Wilderness) {
+//					player.getPackets().sendGameMessage("You cannot drink this potion here.");
+//					return false;
+//				}
+				Long time = (Long) player.getAttributes().getAttributes().get("Recover_Special_Pot");
+				if (time != null && Utility.currentTimeMillis() - time < 30000) {
 					player.getPackets().sendGameMessage("You may only use this pot every 30 seconds.");
 					return false;
 				}
@@ -463,7 +463,7 @@ public final class Pots {
 
 			@Override
 			public void extra(Player player) {
-				player.getTemporaryAttributes().put("Recover_Special_Pot", Utils.currentTimeMillis());
+				player.getAttributes().getAttributes().put("Recover_Special_Pot", Utility.currentTimeMillis());
 				player.getCombatDefinitions().restoreSpecialAttack(25);
 			}
 		},
@@ -497,10 +497,10 @@ public final class Pots {
 
 			@Override
 			public boolean canDrink(Player player) {
-				if (player.getControllerManager().getController() instanceof Wilderness) {
-					player.getPackets().sendGameMessage("You cannot drink this potion here.");
-					return false;
-				}
+//				if (player.getControllerManager().getController() instanceof Wilderness) {
+//					player.getPackets().sendGameMessage("You cannot drink this potion here.");
+//					return false;
+//				}
 				/*
 				 * if (player.getOverloadDelay() > 0) { player.getPackets().sendGameMessage(
 				 * "You may only use this potion every five minutes."); return false; }
@@ -712,8 +712,9 @@ public final class Pots {
 		if (!player.getDetails().getWatchMap().get("DRINKS").elapsed(1800)) {
 			return false;
 		}
-		if (!player.getControllerManager().canPot(pot))
-			return true;
+		if (!ControllerHandler.execute(player, controller -> controller.canPot(player, pot))) {
+			return false;
+		}
 		if (!pot.effect.canDrink(player))
 			return true;
 		player.getDetails().getWatchMap().get("DRINKS").reset();
@@ -788,32 +789,32 @@ public final class Pots {
 	}
 
 	public static void applyOverLoadEffect(Player player) {
-		if (player.getControllerManager().getController() instanceof Wilderness) {
-			int actualLevel = player.getSkills().getLevel(Skills.ATTACK);
-			int realLevel = player.getSkills().getLevelForXp(Skills.ATTACK);
-			int level = actualLevel > realLevel ? realLevel : actualLevel;
-			player.getSkills().set(Skills.ATTACK, (int) (level + 5 + (realLevel * 0.15)));
-
-			actualLevel = player.getSkills().getLevel(Skills.STRENGTH);
-			realLevel = player.getSkills().getLevelForXp(Skills.STRENGTH);
-			level = actualLevel > realLevel ? realLevel : actualLevel;
-			player.getSkills().set(Skills.STRENGTH, (int) (level + 5 + (realLevel * 0.15)));
-
-			actualLevel = player.getSkills().getLevel(Skills.DEFENCE);
-			realLevel = player.getSkills().getLevelForXp(Skills.DEFENCE);
-			level = actualLevel > realLevel ? realLevel : actualLevel;
-			player.getSkills().set(Skills.DEFENCE, (int) (level + 5 + (realLevel * 0.15)));
-
-			actualLevel = player.getSkills().getLevel(Skills.MAGIC);
-			realLevel = player.getSkills().getLevelForXp(Skills.MAGIC);
-			level = actualLevel > realLevel ? realLevel : actualLevel;
-			player.getSkills().set(Skills.MAGIC, level + 5);
-
-			actualLevel = player.getSkills().getLevel(Skills.RANGE);
-			realLevel = player.getSkills().getLevelForXp(Skills.RANGE);
-			level = actualLevel > realLevel ? realLevel : actualLevel;
-			player.getSkills().set(Skills.RANGE, (int) (level + 5 + (realLevel * 0.1)));
-		} else {
+//		if (player.getControllerManager().getController() instanceof Wilderness) {
+//			int actualLevel = player.getSkills().getLevel(Skills.ATTACK);
+//			int realLevel = player.getSkills().getLevelForXp(Skills.ATTACK);
+//			int level = actualLevel > realLevel ? realLevel : actualLevel;
+//			player.getSkills().set(Skills.ATTACK, (int) (level + 5 + (realLevel * 0.15)));
+//
+//			actualLevel = player.getSkills().getLevel(Skills.STRENGTH);
+//			realLevel = player.getSkills().getLevelForXp(Skills.STRENGTH);
+//			level = actualLevel > realLevel ? realLevel : actualLevel;
+//			player.getSkills().set(Skills.STRENGTH, (int) (level + 5 + (realLevel * 0.15)));
+//
+//			actualLevel = player.getSkills().getLevel(Skills.DEFENCE);
+//			realLevel = player.getSkills().getLevelForXp(Skills.DEFENCE);
+//			level = actualLevel > realLevel ? realLevel : actualLevel;
+//			player.getSkills().set(Skills.DEFENCE, (int) (level + 5 + (realLevel * 0.15)));
+//
+//			actualLevel = player.getSkills().getLevel(Skills.MAGIC);
+//			realLevel = player.getSkills().getLevelForXp(Skills.MAGIC);
+//			level = actualLevel > realLevel ? realLevel : actualLevel;
+//			player.getSkills().set(Skills.MAGIC, level + 5);
+//
+//			actualLevel = player.getSkills().getLevel(Skills.RANGE);
+//			realLevel = player.getSkills().getLevelForXp(Skills.RANGE);
+//			level = actualLevel > realLevel ? realLevel : actualLevel;
+//			player.getSkills().set(Skills.RANGE, (int) (level + 5 + (realLevel * 0.1)));
+//		} else {
 			int actualLevel = player.getSkills().getLevel(Skills.ATTACK);
 			int realLevel = player.getSkills().getLevelForXp(Skills.ATTACK);
 			int level = actualLevel > realLevel ? realLevel : actualLevel;
@@ -838,7 +839,7 @@ public final class Pots {
 			realLevel = player.getSkills().getLevelForXp(Skills.RANGE);
 			level = actualLevel > realLevel ? realLevel : actualLevel;
 			player.getSkills().set(Skills.RANGE, (int) (level + 4 + (Math.floor(realLevel / 5.2))));
-		}
+//		}
 	}
 	
 	/**

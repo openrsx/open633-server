@@ -1,18 +1,16 @@
 package com.rs.game.npc.godwars.bandos;
 
-import java.util.ArrayList;
-
 import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Player;
-import com.rs.game.player.controllers.Controller;
-import com.rs.game.player.controllers.GodWars;
 import com.rs.game.task.Task;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class GodwarsBandosFaction extends NPC {
 
@@ -22,12 +20,12 @@ public class GodwarsBandosFaction extends NPC {
 	}
 
 	@Override
-	public ArrayList<Entity> getPossibleTargets() {
+	public ObjectArrayList<Entity> getPossibleTargets() {
 		if (!withinDistance(new WorldTile(2881, 5306, 0), 200))
 			return super.getPossibleTargets();
 		else {
-			ArrayList<Entity> targets = getPossibleTargets(true, true);
-			ArrayList<Entity> targetsCleaned = new ArrayList<Entity>();
+			ObjectArrayList<Entity> targets = getPossibleTargets(true, true);
+			ObjectArrayList<Entity> targetsCleaned = new ObjectArrayList<Entity>();
 			for (Entity t : targets) {
 				if (t instanceof GodwarsBandosFaction || (t.isPlayer() && hasGodItem((Player) t)))
 					continue;
@@ -87,11 +85,11 @@ public class GodwarsBandosFaction extends NPC {
 					setNextAnimation(new Animation(defs.getDeathAnim()));
 				} else if (loop >= defs.getDeathDelay()) {
 					source.ifPlayer(player -> {
-						Controller controler = player.getControllerManager().getController();
-						if (controler != null && controler instanceof GodWars) {
-							GodWars godControler = (GodWars) controler;
-							godControler.incrementKillCount(0);
-						}
+//						Controller controler = player.getControllerManager().getController();
+//						if (controler != null && controler instanceof GodWars) {
+//							GodWars godControler = (GodWars) controler;
+//							godControler.incrementKillCount(0);
+//						}
 					});
 					drop();
 					reset();

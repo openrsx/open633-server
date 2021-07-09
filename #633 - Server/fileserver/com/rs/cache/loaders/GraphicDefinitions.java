@@ -1,11 +1,12 @@
 package com.rs.cache.loaders;
 
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 public class GraphicDefinitions {
 
@@ -29,7 +30,7 @@ public class GraphicDefinitions {
     // added
     public int intValue;
 
-    private static final ConcurrentHashMap<Integer, GraphicDefinitions> animDefs = new ConcurrentHashMap<Integer, GraphicDefinitions>();
+    static Object2ObjectArrayMap<Integer, GraphicDefinitions> animDefs = new Object2ObjectArrayMap<>();
 
     public static final GraphicDefinitions getAnimationDefinitions(int emoteId) {
 	GraphicDefinitions defs = animDefs.get(emoteId);
@@ -53,7 +54,7 @@ public class GraphicDefinitions {
 	int model = NPCDefinitions.getNPCDefinitions(1).modelIds[0];
 	System.out.println(model);
 	int offset = 300;
-	for (int i = 0; i < Utils.getGraphicDefinitionsSize(); i++) {
+	for (int i = 0; i < Utility.getGraphicDefinitionsSize(); i++) {
 	    GraphicDefinitions def = GraphicDefinitions.getAnimationDefinitions(i);
 	    if (def == null) 
 		continue;

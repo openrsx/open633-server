@@ -1,7 +1,7 @@
 package com.rs.game.task.impl;
 
 import com.rs.game.Entity;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
@@ -78,7 +78,7 @@ public abstract class ActorDeathTask<T extends Entity> extends Task {
 		e.printStackTrace();
 		if(getActor().isPlayer()) {
 			Player player = (Player) getActor();
-			player.logout(false);
+			player.getSession().logout(player, false);
 		} else {
 			World.removeNPC((NPC) getActor());
 		}

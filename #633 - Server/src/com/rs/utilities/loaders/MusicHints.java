@@ -11,15 +11,16 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
-import java.util.HashMap;
 
 import com.rs.utilities.Logger;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Cleanup;
+import lombok.SneakyThrows;
 
 public class MusicHints {
 
-	private final static HashMap<Integer, String> musicHints = new HashMap<Integer, String>();
+	private final static Object2ObjectArrayMap<Integer, String> musicHints = new Object2ObjectArrayMap<Integer, String>();
 	private final static String PACKED_PATH = "data/musics/packedMusicHints.mh";
 	private final static String UNPACKED_PATH = "data/musics/unpackedMusicHints.txt";
 
@@ -37,17 +38,14 @@ public class MusicHints {
 		return hint;
 	}
 
+	@SneakyThrows(Throwable.class)
 	private static void loadPackedItemExamines() {
-		try {
-			@Cleanup
-			RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
-			FileChannel channel = in.getChannel();
-			ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
-			while (buffer.hasRemaining())
-				musicHints.put(buffer.getShort() & 0xffff, readAlexString(buffer));
-		} catch (Throwable e) {
-			Logger.handle(e);
-		}
+		@Cleanup
+		RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
+		FileChannel channel = in.getChannel();
+		ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
+		while (buffer.hasRemaining())
+			musicHints.put(buffer.getShort() & 0xffff, readAlexString(buffer));
 	}
 
 	private static void loadUnpackedItemExamines() {

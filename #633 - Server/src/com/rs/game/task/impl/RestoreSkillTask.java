@@ -1,6 +1,6 @@
 package com.rs.game.task.impl;
 
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;
 

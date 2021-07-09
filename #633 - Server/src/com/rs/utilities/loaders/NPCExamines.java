@@ -11,16 +11,17 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
-import java.util.HashMap;
 
 import com.rs.game.npc.NPC;
 import com.rs.utilities.Logger;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Cleanup;
+import lombok.SneakyThrows;
 
 public class NPCExamines {
 
-	private final static HashMap<Integer, String> npcExamines = new HashMap<Integer, String>();
+	private final static Object2ObjectArrayMap<Integer, String> npcExamines = new Object2ObjectArrayMap<Integer, String>();
 	private final static String PACKED_PATH = "data/npcs/packedExamines.e";
 	private final static String UNPACKED_PATH = "data/npcs/unpackedExamines.txt";
 
@@ -32,25 +33,21 @@ public class NPCExamines {
 	}
 
 	public static final String getExamine(NPC npc) {
-		@SuppressWarnings("unlikely-arg-type")
 		String examine = npcExamines.get(npc.getId());
 		if (examine != null)
 			return examine;
 		return "It's a " + npc.getDefinitions().getName() + ".";
 	}
 
+	@SneakyThrows(Throwable.class)
 	private static void loadPackeddNPCExamines() {
-		try {
-			RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
-			FileChannel channel = in.getChannel();
-			ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
-			while (buffer.hasRemaining())
-				npcExamines.put(buffer.getShort() & 0xffff, readAlexString(buffer));
-			channel.close();
-			in.close();
-		} catch (Throwable e) {
-			Logger.handle(e);
-		}
+		@Cleanup
+		RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
+		@Cleanup
+		FileChannel channel = in.getChannel();
+		ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
+		while (buffer.hasRemaining())
+			npcExamines.put(buffer.getShort() & 0xffff, readAlexString(buffer));
 	}
 
 	private static void loadUnpackedNPCExamines() {

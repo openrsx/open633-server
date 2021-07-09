@@ -1,8 +1,8 @@
 package com.rs.game.item;
 
-import java.io.Serializable;
-
 import com.rs.cache.loaders.ItemDefinitions;
+
+import lombok.Data;
 
 /**
  * Represents a single item.
@@ -10,16 +10,11 @@ import com.rs.cache.loaders.ItemDefinitions;
  * 
  * @author Graham / edited by Dragonkk(Alex)
  */
-public class Item implements Serializable {
+@Data
+public class Item {
 
-	private static final long serialVersionUID = -6485003878697568087L;
-
-	private short id;
+	private int id;
 	protected int amount;
-
-	public int getId() {
-		return id;
-	}
 
 	@Override
 	public Item clone() {
@@ -51,24 +46,7 @@ public class Item implements Serializable {
 		return ItemDefinitions.getItemDefinitions(id);
 	}
 
-	public void setAmount(int amount) {
-		this.amount = amount;
-	}
-
-	public void setId(int id) {
-		this.id = (short) id;
-	}
-
-	public int getAmount() {
-		return amount;
-	}
-
 	public String getName() {
 		return getDefinitions().getName();
-	}
-
-	@Override
-	public String toString() {
-		return "Item (" + id + ", " + amount + ")";
 	}
 }

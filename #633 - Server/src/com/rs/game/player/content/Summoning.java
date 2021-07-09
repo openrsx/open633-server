@@ -1,20 +1,19 @@
 package com.rs.game.player.content;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.rs.GameConstants;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Graphics;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
+import com.rs.game.player.controller.ControllerHandler;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.SneakyThrows;
 import skills.Skills;
 
 public class Summoning {
@@ -24,7 +23,7 @@ public class Summoning {
 			player.getPackets().sendGameMessage("You already have a follower.");
 			return;
 		}
-		if (!player.getControllerManager().canSummonFamiliar()
+		if (!ControllerHandler.execute(player, controller -> controller.canSummonFamiliar(player))
 				|| player.getSkills().getLevel(Skills.SUMMONING) < pouch.getSummoningCost())
 			return;
 		int levelReq = getRequiredLevel(pouch.getRealPouchId());
@@ -52,19 +51,14 @@ public class Summoning {
 		player.setFamiliar(npc);
 	}
 
+	@SneakyThrows(Throwable.class)
 	public static Familiar createFamiliar(Player player, Pouch pouch) {
-		try {
-			return (Familiar) Class
-					.forName("com.rs.game.npc.familiar."
-							+ (NPCDefinitions.getNPCDefinitions(getNPCId(pouch.getRealPouchId()))).getName()
-									.replace(" ", "").replace("-", "").replace("(", "").replace(")", ""))
-					.getConstructor(Player.class, Pouch.class, WorldTile.class, int.class, boolean.class)
-					.newInstance(player, pouch, player, -1, true);
-		} catch (Throwable e) {
-			if (!GameConstants.HOSTED)
-				e.printStackTrace();
-			return null;
-		}
+		return (Familiar) Class
+				.forName("com.rs.game.npc.familiar."
+						+ (NPCDefinitions.getNPCDefinitions(getNPCId(pouch.getRealPouchId()))).getName()
+								.replace(" ", "").replace("-", "").replace("(", "").replace(")", ""))
+				.getConstructor(Player.class, Pouch.class, WorldTile.class, int.class, boolean.class)
+				.newInstance(player, pouch, player, -1, true);
 	}
 
 	public static boolean hasPouch(Player player) {
@@ -245,7 +239,7 @@ public class Summoning {
 
 		CLAY_BEAST5(-1, 14430, 0, 0, 1800000, 10);
 
-		private static final Map<Integer, Pouch> pouches = new HashMap<Integer, Pouch>();
+		private static final Object2ObjectArrayMap<Integer, Pouch> pouches = new Object2ObjectArrayMap<Integer, Pouch>();
 
 		static {
 			for (Pouch pouch : Pouch.values()) {
@@ -325,7 +319,7 @@ public class Summoning {
 				"Infuse-5<col=FF9040>", "Infuse-10<col=FF9040>", "Infuse-X<col=FF9040>", "Infuse-All<col=FF9040>",
 				"List<col=FF9040>");
 		player.getPackets().sendIComponentSettings(POUCHES_INTERFACE, 16, 0, 462, 190);
-		player.getTemporaryAttributes().put("infusing_scroll", false);
+		player.getAttributes().getAttributes().put("infusing_scroll", false);
 	}
 
 	public static void openScrollInfusionInterface(Player player) {
@@ -334,7 +328,7 @@ public class Summoning {
 				"Transform-5<col=FF9040>", "Transform-10<col=FF9040>", "Transform-X<col=FF9040>",
 				"Transform-All<col=FF9040>");
 		player.getPackets().sendIComponentSettings(SCROLLS_INTERFACE, 16, 0, 462, 126);
-		player.getTemporaryAttributes().put("infusing_scroll", true);
+		player.getAttributes().getAttributes().put("infusing_scroll", true);
 	}
 
 	public static void handlePouchInfusion(Player player, int slotId, int creationCount) {
@@ -342,10 +336,10 @@ public class Summoning {
 		Pouch pouch = Pouch.values()[slotValue];
 		if (pouch == null)
 			return;
-		boolean infusingScroll = (boolean) player.getTemporaryAttributes().remove("infusing_scroll"),
+		boolean infusingScroll = (boolean) player.getAttributes().getAttributes().remove("infusing_scroll"),
 				hasRequirements = false;
 		ItemDefinitions def = ItemDefinitions.getItemDefinitions(pouch.getRealPouchId());
-		List<Item> itemReq = def.getCreateItemRequirements(infusingScroll);
+		ObjectArrayList<Item> itemReq = def.getCreateItemRequirements(infusingScroll);
 		int level = getRequiredLevel(pouch.getRealPouchId());
 		if (itemReq != null) {
 			itemCount: for (int i = 0; i < creationCount; i++) {
@@ -370,7 +364,7 @@ public class Summoning {
 			}
 		}
 		if (!hasRequirements) {
-			player.getTemporaryAttributes().put("infusing_scroll", infusingScroll);
+			player.getAttributes().getAttributes().put("infusing_scroll", infusingScroll);
 			return;
 		}
 		player.getInterfaceManager().closeInterfaces();
@@ -379,7 +373,7 @@ public class Summoning {
 	}
 
 	public static void switchInfusionOption(Player player) {
-		boolean infusingScroll = (boolean) player.getTemporaryAttributes().get("infusing_scroll");
+		boolean infusingScroll = (boolean) player.getAttributes().getAttributes().get("infusing_scroll");
 		if (infusingScroll)
 			openInfusionInterface(player);
 		else

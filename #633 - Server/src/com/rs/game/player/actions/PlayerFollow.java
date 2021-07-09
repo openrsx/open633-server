@@ -3,7 +3,7 @@ package com.rs.game.player.actions;
 import com.rs.game.player.Player;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.EntityStrategy;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
 public class PlayerFollow extends Action {
 
@@ -27,7 +27,7 @@ public class PlayerFollow extends Action {
 			return false;
 		if (player.getPlane() != target.getPlane())
 			return false;
-		if (player.isFrozen())
+		if (player.getMovement().isFrozen())
 			return true;
 		int distanceX = player.getX() - target.getX();
 		int distanceY = player.getY() - target.getY();
@@ -39,7 +39,7 @@ public class PlayerFollow extends Action {
 		int lastFaceEntity = target.getLastFaceEntity();
 		if (lastFaceEntity == player.getClientIndex() && target.getActionManager().getAction() instanceof PlayerFollow)
 			player.addWalkSteps(target.getX(), target.getY());
-		else if (!player.clipedProjectile(target, true) || !Utils.isOnRange(player.getX(), player.getY(), size,
+		else if (!player.clipedProjectile(target, true) || !Utility.isOnRange(player.getX(), player.getY(), size,
 				target.getX(), target.getY(), target.getSize(), 0)) {
 			int steps = RouteFinder.findRoute(RouteFinder.WALK_ROUTEFINDER, player.getX(), player.getY(),
 					player.getPlane(), player.getSize(), new EntityStrategy(target), true);

@@ -1,31 +1,29 @@
 package com.rs.game.player;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
-import com.rs.game.Hit;
-import com.rs.game.Hit.HitLook;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.map.Region;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.familiar.Steeltitan;
+import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.actions.Action;
 import com.rs.game.player.content.Magic;
+import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;
-import com.rs.utilities.Utils;
-import com.rs.utilities.loaders.MapAreas;
+import com.rs.utilities.Utility;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import skills.Skills;
 
 public class PlayerCombat extends Action {
@@ -76,18 +74,19 @@ public class PlayerCombat extends Action {
 		}
 		int maxDistance = isRanging != 0 || spellId > 0 ? 7 : 0;
 		double multiplier = 1.0;
-		if (player.getTemporaryAttributes().get("miasmic_effect") == Boolean.TRUE)
+		if (player.getAttributes().getAttributes().get("miasmic_effect") == Boolean.TRUE)
 			multiplier = 1.5;
 		int size = player.getSize();
 		if (!player.clipedProjectile(target, maxDistance == 0))
 			return 0;
 		if (player.hasWalkSteps())
 			maxDistance += player.isRun() ? 2 : 1;
-		if (!Utils.isOnRange(player.getX(), player.getY(), size, target.getX(), target.getY(), target.getSize(),
+		if (!Utility.isOnRange(player.getX(), player.getY(), size, target.getX(), target.getY(), target.getSize(),
 				maxDistance))
 			return 0;
-		if (!player.getControllerManager().keepCombating(target))
+		if (!ControllerHandler.execute(player, controller -> controller.keepCombating(player, target))) {
 			return -1;
+		}
 		addAttackedByDelay(player);
 		if (spellId > 0) {
 			boolean manualCast = spellId != 65535 && spellId >= 256;
@@ -117,7 +116,7 @@ public class PlayerCombat extends Action {
 
 	private void addAttackedByDelay(Entity player) {
 		target.setAttackedBy(player);
-		target.setAttackedByDelay(Utils.currentTimeMillis() + 6000); // 8seconds
+		target.setAttackedByDelay(Utility.currentTimeMillis() + 6000); // 8seconds
 	}
 
 	public static int getMeleeCombatDelay(Player player, int weaponId) {
@@ -138,34 +137,35 @@ public class PlayerCombat extends Action {
 	}
 
 	public Entity[] getMultiAttackTargets(Player player, int maxDistance, int maxAmtTargets) {
-		List<Entity> possibleTargets = new ArrayList<Entity>();
+		ObjectArrayList<Entity> possibleTargets = new ObjectArrayList<Entity>();
 		possibleTargets.add(target);
 		if (target.isMultiArea()) {
 			y: for (int regionId : target.getMapRegionsIds()) {
 				Region region = World.getRegion(regionId);
 				if (target.isPlayer()) {
-					List<Integer> playerIndexes = region.getPlayerIndexes();
+					ObjectArrayList<Short> playerIndexes = region.getPlayersIndexes();
 					if (playerIndexes == null)
 						continue;
 					for (int playerIndex : playerIndexes) {
 						Player p2 = World.getPlayers().get(playerIndex);
 						if (p2 == null || p2 == player || p2 == target || p2.isDead() || !p2.isStarted()
 								|| p2.isFinished() || !p2.isCanPvp() || !p2.isMultiArea()
-								|| !p2.withinDistance(target, maxDistance) || !player.getControllerManager().canHit(p2))
+								|| !p2.withinDistance(target, maxDistance)
+								|| !ControllerHandler.execute(player, controller -> controller.canHit(player, p2)))
 							continue;
 						possibleTargets.add(p2);
 						if (possibleTargets.size() == maxAmtTargets)
 							break y;
 					}
 				} else {
-					List<Integer> npcIndexes = region.getNPCsIndexes();
+					ObjectArrayList<Short> npcIndexes = region.getNpcsIndexes();
 					if (npcIndexes == null)
 						continue;
 					for (int npcIndex : npcIndexes) {
 						NPC n = World.getNPCs().get(npcIndex);
 						if (n == null || n == target || n == player.getFamiliar() || n.isDead() || n.isFinished()
 								|| !n.isMultiArea() || !n.withinDistance(target, maxDistance)
-								|| !n.getDefinitions().hasAttackOption() || !player.getControllerManager().canHit(n))
+								|| !n.getDefinitions().hasAttackOption() || !ControllerHandler.execute(player, controller -> controller.canHit(player, n)))
 							continue;
 						possibleTargets.add(n);
 						if (possibleTargets.size() == maxAmtTargets)
@@ -230,9 +230,9 @@ public class PlayerCombat extends Action {
 				Hit magicHit = getMagicHit(player, getRandomMagicMaxHit(player, 20));
 				delayMagicHit(2, magicHit);
 				World.sendProjectile(player, target, 178, 18, 18, 50, 50, 0, 0);
-				long currentTime = Utils.currentTimeMillis();
-				if (magicHit.getDamage() > 0 && target.getFrozenBlocked() < currentTime)
-					target.addFreezeDelay(5000, true);
+				long currentTime = Utility.currentTimeMillis();
+				if (magicHit.getDamage() > 0 && target.getMovement().getFrozenBlocked() < currentTime)
+					target.getMovement().addFreezeDelay(5000, true);
 				return 5;
 			case 55:// snare
 				player.setNextGraphics(new Graphics(177));
@@ -241,8 +241,8 @@ public class PlayerCombat extends Action {
 				base_mage_xp = 91.1;
 				Hit snareHit = getMagicHit(player, getRandomMagicMaxHit(player, 30));
 				delayMagicHit(2, snareHit);
-				if (snareHit.getDamage() > 0 && target.getFrozenBlocked() < Utils.currentTimeMillis())
-					target.addFreezeDelay(10000, true);
+				if (snareHit.getDamage() > 0 && target.getMovement().getFrozenBlocked() < Utility.currentTimeMillis())
+					target.getMovement().addFreezeDelay(10000, true);
 				World.sendProjectile(player, target, 178, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 81:// entangle
@@ -252,8 +252,8 @@ public class PlayerCombat extends Action {
 				base_mage_xp = 91.1;
 				Hit entangleHit = getMagicHit(player, getRandomMagicMaxHit(player, 50));
 				delayMagicHit(2, entangleHit);
-				if (entangleHit.getDamage() > 0 && target.getFrozenBlocked() < Utils.currentTimeMillis())
-					target.addFreezeDelay(20000, true);
+				if (entangleHit.getDamage() > 0 && target.getMovement().getFrozenBlocked() < Utility.currentTimeMillis())
+					target.getMovement().addFreezeDelay(20000, true);
 				World.sendProjectile(player, target, 178, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 30: // earth strike
@@ -432,7 +432,7 @@ public class PlayerCombat extends Action {
 				World.sendProjectile(player, target, 2735, 18, 18, 50, 50, 0, 0);
 				return 5;
 			case 86: // teleblock
-				if (target.isPlayer() && ((Player) target).getDetails().getTeleBlockDelay().get() <= Utils.currentTimeMillis()) {
+				if (target.isPlayer() && ((Player) target).getDetails().getTeleBlockDelay().get() <= Utility.currentTimeMillis()) {
 					player.setNextGraphics(new Graphics(1841));
 					player.setNextAnimation(new Animation(10503));
 					mage_hit_gfx = 1843;
@@ -523,23 +523,23 @@ public class PlayerCombat extends Action {
 				base_mage_xp = 35;
 				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 200)));
 				World.sendProjectile(player, target, 1846, 43, 22, 51, 50, 16, 0);
-				if (target.getTemporaryAttributes().get("miasmic_immunity") == Boolean.TRUE) {
+				if (target.getAttributes().getAttributes().get("miasmic_immunity") == Boolean.TRUE) {
 					return 4;
 				}
 				if (target.isPlayer()) {
 					((Player) target).getPackets().sendGameMessage("You feel slowed down.");
 				}
-				target.getTemporaryAttributes().put("miasmic_immunity", Boolean.TRUE);
-				target.getTemporaryAttributes().put("miasmic_effect", Boolean.TRUE);
+				target.getAttributes().getAttributes().put("miasmic_immunity", Boolean.TRUE);
+				target.getAttributes().getAttributes().put("miasmic_effect", Boolean.TRUE);
 				final Entity t = target;
 				World.get().submit(new Task(20) {
 					@Override
 					protected void execute() {
-						t.getTemporaryAttributes().remove("miasmic_effect");
+						t.getAttributes().getAttributes().remove("miasmic_effect");
 						World.get().submit(new Task(15) {
 							@Override
 							protected void execute() {
-								t.getTemporaryAttributes().remove("miasmic_immunity");
+								t.getAttributes().getAttributes().remove("miasmic_immunity");
 								this.cancel();
 							}
 						});
@@ -554,23 +554,23 @@ public class PlayerCombat extends Action {
 				base_mage_xp = 48;
 				delayMagicHit(2, getMagicHit(player, getRandomMagicMaxHit(player, 280)));
 				World.sendProjectile(player, target, 1852, 43, 22, 51, 50, 16, 0);
-				if (target.getTemporaryAttributes().get("miasmic_immunity") == Boolean.TRUE) {
+				if (target.getAttributes().getAttributes().get("miasmic_immunity") == Boolean.TRUE) {
 					return 4;
 				}
 				if (target.isPlayer()) {
 					((Player) target).getPackets().sendGameMessage("You feel slowed down.");
 				}
-				target.getTemporaryAttributes().put("miasmic_immunity", Boolean.TRUE);
-				target.getTemporaryAttributes().put("miasmic_effect", Boolean.TRUE);
+				target.getAttributes().getAttributes().put("miasmic_immunity", Boolean.TRUE);
+				target.getAttributes().getAttributes().put("miasmic_effect", Boolean.TRUE);
 				final Entity t0 = target;
 				World.get().submit(new Task(60) {
 					@Override
 					protected void execute() {
-						t0.getTemporaryAttributes().remove("miasmic_effect");
+						t0.getAttributes().getAttributes().remove("miasmic_effect");
 						World.get().submit(new Task(15) {
 							@Override
 							protected void execute() {
-								t0.getTemporaryAttributes().remove("miasmic_immunity");
+								t0.getAttributes().getAttributes().remove("miasmic_immunity");
 								this.cancel();
 							}
 						});
@@ -590,21 +590,21 @@ public class PlayerCombat extends Action {
 						base_mage_xp = 42;
 						int damage = getRandomMagicMaxHit(player, 240);
 						delayMagicHit(2, getMagicHit(player, damage));
-						if (target.getTemporaryAttributes().get("miasmic_immunity") != Boolean.TRUE) {
+						if (target.getAttributes().getAttributes().get("miasmic_immunity") != Boolean.TRUE) {
 							if (target.isPlayer()) {
 								((Player) target).getPackets().sendGameMessage("You feel slowed down.");
 							}
-							target.getTemporaryAttributes().put("miasmic_immunity", Boolean.TRUE);
-							target.getTemporaryAttributes().put("miasmic_effect", Boolean.TRUE);
+							target.getAttributes().getAttributes().put("miasmic_immunity", Boolean.TRUE);
+							target.getAttributes().getAttributes().put("miasmic_effect", Boolean.TRUE);
 							final Entity t = target;
 							World.get().submit(new Task(40) {
 								@Override
 								protected void execute() {
-									t.getTemporaryAttributes().remove("miasmic_effect");
+									t.getAttributes().getAttributes().remove("miasmic_effect");
 									World.get().submit(new Task(15) {
 										@Override
 										protected void execute() {
-											t.getTemporaryAttributes().remove("miasmic_immunity");
+											t.getAttributes().getAttributes().remove("miasmic_immunity");
 											this.cancel();
 										}
 									});
@@ -635,20 +635,20 @@ public class PlayerCombat extends Action {
 						base_mage_xp = 54;
 						int damage = getRandomMagicMaxHit(player, 320);
 						delayMagicHit(2, getMagicHit(player, damage));
-						if (target.getTemporaryAttributes().get("miasmic_immunity") != Boolean.TRUE) {
+						if (target.getAttributes().getAttributes().get("miasmic_immunity") != Boolean.TRUE) {
 							if (target.isPlayer()) {
 								((Player) target).getPackets().sendGameMessage("You feel slowed down.");
 							}
-							target.getTemporaryAttributes().put("miasmic_immunity", Boolean.TRUE);
-							target.getTemporaryAttributes().put("miasmic_effect", Boolean.TRUE);
+							target.getAttributes().getAttributes().put("miasmic_immunity", Boolean.TRUE);
+							target.getAttributes().getAttributes().put("miasmic_effect", Boolean.TRUE);
 							final Entity t = target;
 							World.get().submit(new Task(80) {
 								@Override
 								protected void execute() {
-									t.getTemporaryAttributes().remove("miasmic_effect");
+									t.getAttributes().getAttributes().remove("miasmic_effect");
 									World.get().submit(new Task(15) {
 										protected void execute() {
-											t.getTemporaryAttributes().remove("miasmic_immunity");
+											t.getAttributes().getAttributes().remove("miasmic_immunity");
 											this.cancel();
 										}
 									});
@@ -894,9 +894,9 @@ public class PlayerCombat extends Action {
 					@Override
 					public boolean attack() {
 						magic_sound = 168;
-						long currentTime = Utils.currentTimeMillis();
-						if (target.getSize() >= 2 || target.getFreezeDelay() >= currentTime
-								|| target.getFrozenBlocked() >= currentTime) {
+						long currentTime = Utility.currentTimeMillis();
+						if (target.getSize() >= 2 || target.getMovement().getFreezeDelay() >= currentTime
+								|| target.getMovement().getFrozenBlocked() >= currentTime) {
 							mage_hit_gfx = 1677;
 						} else {
 							mage_hit_gfx = 369;
@@ -905,7 +905,7 @@ public class PlayerCombat extends Action {
 						base_mage_xp = 52;
 						int damage = getRandomMagicMaxHit(player, 300);
 						Hit hit = getMagicHit(player, damage);
-						delayMagicHit(Utils.getDistance(player, target) > 3 ? 4 : 2, hit);
+						delayMagicHit(Utility.getDistance(player, target) > 3 ? 4 : 2, hit);
 						World.sendProjectile(player, target, 368, 60, 32, 50, 50, 0, 0);
 						if (!nextTarget) {
 							if (damage == -1)
@@ -1267,7 +1267,7 @@ public class PlayerCombat extends Action {
 							target.setNextGraphics(new Graphics(755));
 							if (target.isPlayer()) {
 								Player p2 = (Player) target;
-								p2.stopAll();
+								p2.getMovement().stopAll();
 							} else {
 								NPC n = (NPC) target;
 								n.setTarget(null);
@@ -1365,10 +1365,10 @@ public class PlayerCombat extends Action {
 							delay = 5000;
 						}
 					}
-					long currentTime = Utils.currentTimeMillis();
+					long currentTime = Utility.currentTimeMillis();
 					if (getRandomMaxHit(player, weaponId, attackStyle, true) > 0
-							&& target.getFrozenBlocked() < currentTime) {
-						target.addFreezeDelay(delay, true);
+							&& target.getMovement().getFrozenBlocked() < currentTime) {
+						target.getMovement().addFreezeDelay(delay, true);
 						World.get().submit(new Task(2) {
 							@Override
 							protected void execute() {
@@ -1443,7 +1443,7 @@ public class PlayerCombat extends Action {
 		delayHit(hitDelay, weaponId, attackStyle,
 				getRangeHit(player, getRandomMaxHit(player, weaponId, attackStyle, true)));
 		if (hit > (max_hit - 10)) {
-			target.addFreezeDelay(10000, false);
+			target.getMovement().addFreezeDelay(10000, false);
 			target.setNextGraphics(new Graphics(181, 0, 96));
 		}
 
@@ -1579,7 +1579,7 @@ public class PlayerCombat extends Action {
 
 	@SuppressWarnings("unused")
 	private int getRangeHitDelay(Player player) {
-		return Utils.getDistance(player.getX(), player.getY(), target.getX(), target.getY()) >= 5 ? 2 : 1;
+		return Utility.getDistance(player.getX(), player.getY(), target.getX(), target.getY()) >= 5 ? 2 : 1;
 	}
 
 	private int meleeAttack(final Player player) {
@@ -1616,7 +1616,7 @@ public class PlayerCombat extends Action {
 			case 13774:
 			case 13776:
 				player.setNextAnimation(new Animation(12017));
-				player.stopAll();
+				player.getMovement().stopAll();
 				target.setNextGraphics(new Graphics(80, 5, 60));
 
 				if (!target.addWalkSteps(target.getX() - player.getX() + target.getX(),
@@ -1632,19 +1632,19 @@ public class PlayerCombat extends Action {
 				});
 				if (target.isPlayer()) {
 					final Player other = (Player) target;
-					other.lock();
+					other.getMovement().lock();
 //					other.getWatchMap().get("FOOD").reset();
 					other.setDisableEquip(true);
 					World.get().submit(new Task(5) {
 						@Override
 						protected void execute() {
 							other.setDisableEquip(false);
-							other.unlock();
+							other.getMovement().unlock();
 						}
 					});
 				} else {
 					NPC n = (NPC) target;
-					n.setFreezeDelay(3000);
+					n.getMovement().setFreezeDelay(3000);
 					n.resetCombat();
 //					n.setRandomWalk(false);
 				}
@@ -1727,7 +1727,7 @@ public class PlayerCombat extends Action {
 				if (zgsdamage != 0 && target.getSize() <= 1) { // freezes small
 					// npcs
 					target.setNextGraphics(new Graphics(2104));
-					target.addFreezeDelay(18000); // 18seconds
+					target.getMovement().addFreezeDelay(18000); // 18seconds
 				}
 				delayNormalHit(weaponId, attackStyle, getMeleeHit(player, zgsdamage));
 				break;
@@ -1834,7 +1834,7 @@ public class PlayerCombat extends Action {
 
 					@Override
 					public boolean attack() {
-						target.addFreezeDelay(10000, true);
+						target.getMovement().addFreezeDelay(10000, true);
 						target.setNextGraphics(new Graphics(181, 0, 96));
 						final Entity t = target;
 						World.get().submit(new Task(1) {
@@ -2386,12 +2386,12 @@ public class PlayerCombat extends Action {
 				}
 			} else if (hit.getLook() == HitLook.MAGIC_DAMAGE) {
 				if (mage_hit_gfx != 0 && damage > 0) {
-					if (target.getFrozenBlocked() < Utils.currentTimeMillis()) {
+					if (target.getMovement().getFrozenBlocked() < Utility.currentTimeMillis()) {
 						if (freeze_time > 0) {
-							target.addFreezeDelay(freeze_time, freeze_time == 0);
+							target.getMovement().addFreezeDelay(freeze_time, freeze_time == 0);
 							if (target.isPlayer())
-								((Player) target).stopAll(false);
-							target.addFrozenBlockedDelay(freeze_time + (4 * 1000));
+								((Player) target).getMovement().stopAll(false);
+							target.getMovement().addFrozenBlockedDelay(freeze_time + (4 * 1000));
 						}
 					}
 				} else if (damage < 0) {
@@ -2826,7 +2826,7 @@ public class PlayerCombat extends Action {
 				if (!familiar.canAttack(target))
 					return false;
 			} else {
-				if (!n.isCanBeAttackFromOutOfArea() && !MapAreas.isAtArea(n.getMapAreaNameHash(), player)) {
+				if (!n.isCanBeAttackFromOutOfArea()) {
 					return false;
 				}
 				if (n.getId() == 879) {
@@ -2855,11 +2855,11 @@ public class PlayerCombat extends Action {
 		if (!(target.isNPC() && ((NPC) target).isForceMultiAttacked())) {
 
 			if (!target.isMultiArea() || !player.isMultiArea()) {
-				if (player.getAttackedBy() != target && player.getAttackedByDelay() > Utils.currentTimeMillis()) {
+				if (player.getAttackedBy() != target && player.getAttackedByDelay() > Utility.currentTimeMillis()) {
 					player.getPackets().sendGameMessage("You are already in combat.");
 					return false;
 				}
-				if (target.getAttackedBy() != player && target.getAttackedByDelay() > Utils.currentTimeMillis()) {
+				if (target.getAttackedBy() != player && target.getAttackedByDelay() > Utility.currentTimeMillis()) {
 					player.getPackets().sendGameMessage("That "
 							+ (player.getAttackedBy().isPlayer() ? "player" : "npc") + " is already in combat.");
 					return false;
@@ -2868,8 +2868,8 @@ public class PlayerCombat extends Action {
 		}
 		int isRanging = isRanging(player);
 		int targetSize = target.getSize();
-		if (player.getFreezeDelay() >= Utils.currentTimeMillis()) {
-			if (Utils.colides(player.getX(), player.getY(), size, target.getX(), target.getY(), targetSize))// under
+		if (player.getMovement().getFreezeDelay() >= Utility.currentTimeMillis()) {
+			if (Utility.colides(player.getX(), player.getY(), size, target.getX(), target.getY(), targetSize))// under
 				// target
 				return false;
 			if (isRanging == 0 && target.getSize() == 1 && player.getCombatDefinitions().getSpellId() <= 0
@@ -2878,7 +2878,7 @@ public class PlayerCombat extends Action {
 				return false;
 			return true;
 		}
-		if (Utils.colides(player.getX(), player.getY(), size, target.getX(), target.getY(), targetSize)
+		if (Utility.colides(player.getX(), player.getY(), size, target.getX(), target.getY(), targetSize)
 				&& !target.hasWalkSteps()) {
 			player.resetWalkSteps();
 			if (!player.addWalkSteps(target.getX() + targetSize, player.getY())) {
@@ -2904,7 +2904,7 @@ public class PlayerCombat extends Action {
 		maxDistance = isRanging != 0 || player.getCombatDefinitions().getSpellId() > 0 || hasPolyporeStaff(player) ? 7
 				: 0;
 		boolean needCalc = !player.hasWalkSteps() || target.hasWalkSteps();
-		if ((!player.clipedProjectile(target, maxDistance == 0)) || !Utils.isOnRange(player.getX(), player.getY(), size,
+		if ((!player.clipedProjectile(target, maxDistance == 0)) || !Utility.isOnRange(player.getX(), player.getY(), size,
 				target.getX(), target.getY(), target.getSize(), maxDistance)) {
 			// if (!player.hasWalkSteps()) {
 			if (needCalc) {
@@ -3420,11 +3420,11 @@ public class PlayerCombat extends Action {
 		if (player.getPrayer().hasPrayersOn() && hit.getDamage() != 0) {
 			if (hit.getLook() == HitLook.MAGIC_DAMAGE) {
 				if (player.getPrayer().usingPrayer(0, 17))
-					hit.setDamage((int) (hit.getDamage() * source
+					hit.setDamage((int) (hit.getDamage() * source.toPlayer()
 							.getMagePrayerMultiplier()));
 				else if (player.getPrayer().usingPrayer(1, 7)) {
 					int deflectedDamage = (int) (hit.getDamage() * 0.1);
-					hit.setDamage((int) (hit.getDamage() * source
+					hit.setDamage((int) (hit.getDamage() * source.toPlayer()
 							.getMagePrayerMultiplier()));
 					if (deflectedDamage > 0) {
 						source.applyHit(new Hit(player, deflectedDamage,
@@ -3435,11 +3435,11 @@ public class PlayerCombat extends Action {
 				}
 			} else if (hit.getLook() == HitLook.RANGE_DAMAGE) {
 				if (player.getPrayer().usingPrayer(0, 18))
-					hit.setDamage((int) (hit.getDamage() * source
+					hit.setDamage((int) (hit.getDamage() * source.toPlayer()
 							.getRangePrayerMultiplier()));
 				else if (player.getPrayer().usingPrayer(1, 8)) {
 					int deflectedDamage = (int) (hit.getDamage() * 0.1);
-					hit.setDamage((int) (hit.getDamage() * source
+					hit.setDamage((int) (hit.getDamage() * source.toPlayer()
 							.getRangePrayerMultiplier()));
 					if (deflectedDamage > 0) {
 						source.applyHit(new Hit(player, deflectedDamage,
@@ -3450,11 +3450,11 @@ public class PlayerCombat extends Action {
 				}
 			} else if (hit.getLook() == HitLook.MELEE_DAMAGE) {
 				if (player.getPrayer().usingPrayer(0, 19))
-					hit.setDamage((int) (hit.getDamage() * source
+					hit.setDamage((int) (hit.getDamage() * source.toPlayer()
 							.getMeleePrayerMultiplier()));
 				else if (player.getPrayer().usingPrayer(1, 9)) {
 					int deflectedDamage = (int) (hit.getDamage() * 0.1);
-					hit.setDamage((int) (hit.getDamage() * source
+					hit.setDamage((int) (hit.getDamage() * source.toPlayer()
 							.getMeleePrayerMultiplier()));
 					if (deflectedDamage > 0) {
 						source.applyHit(new Hit(player, deflectedDamage,

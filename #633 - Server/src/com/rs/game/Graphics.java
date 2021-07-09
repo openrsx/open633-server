@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public final class Graphics {
 
-	private int id, height, speed, rotation;
+	private final int id, height, speed, rotation;
 
 	public Graphics(int id) {
 		this(id, 0, 0, 0);

@@ -1,19 +1,17 @@
 package com.rs.game.player.content;
 
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-
 import com.rs.cores.CoresManager;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
-import com.rs.utilities.Logger;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
+
+import lombok.SneakyThrows;
 
 public final class FadingScreen {
 	
 	public static void fade(final Player player, final Runnable event) {
-		player.lock();
+		player.getMovement().lock();
 		unfade(player, fade(player), event);
 	}
 
@@ -21,41 +19,28 @@ public final class FadingScreen {
 		unfade(player, 2500, startTime, event);
 	}
 
+	@SneakyThrows(Throwable.class)
 	public static void unfade(final Player player, long endTime, long startTime, final Runnable event) {
-		long leftTime = endTime - (Utils.currentTimeMillis() - startTime);
+		long leftTime = endTime - (Utility.currentTimeMillis() - startTime);
 		if (leftTime > 0) {
-			CoresManager.slowExecutor.schedule(new TimerTask() {
-				@Override
-				public void run() {
-					try {
-						unfade(player, event);
-					} catch (Throwable e) {
-						Logger.handle(e);
-					}
-				}
-
-			}, leftTime, TimeUnit.MILLISECONDS);
+			CoresManager.schedule(() -> {
+				unfade(player, event);
+			}, (int) leftTime);
 		} else
 			unfade(player, event);
 	}
 
+	@SneakyThrows(Throwable.class)
 	public static void unfade(final Player player, Runnable event) {
 		event.run();
 		World.get().submit(new Task(0) {
 			@Override
 			protected void execute() {
 				player.getInterfaceManager().sendInterface(false, 170);
-				CoresManager.slowExecutor.schedule(new TimerTask() {
-					@Override
-					public void run() {
-						try {
-							player.getInterfaceManager().closeFadingInterface();
-							player.unlock();
-						} catch (Throwable e) {
-							Logger.handle(e);
-						}
-					}
-				}, 2, TimeUnit.SECONDS);
+				CoresManager.schedule(() -> {
+					player.getInterfaceManager().closeFadingInterface();
+					player.getMovement().unlock();
+				}, 2);
 				this.cancel();
 			}
 		});
@@ -63,7 +48,7 @@ public final class FadingScreen {
 
 	public static long fade(Player player, long fadeTime) {
 		player.getInterfaceManager().sendInterface(false, 115);
-		return Utils.currentTimeMillis() + fadeTime;
+		return Utility.currentTimeMillis() + fadeTime;
 	}
 
 	public static long fade(Player player) {

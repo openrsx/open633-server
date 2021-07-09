@@ -1,6 +1,6 @@
 package com.rs.utilities.loaders;
 
-import com.rs.game.WorldTile;
+import com.rs.game.map.WorldTile;
 import com.rs.utilities.json.impl.NPCAutoSpawn.Direction;
 
 /**

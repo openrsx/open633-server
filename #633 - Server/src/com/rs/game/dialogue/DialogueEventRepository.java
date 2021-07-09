@@ -1,10 +1,9 @@
 package com.rs.game.dialogue;
 
-import java.util.HashMap;
-
 import com.rs.game.player.Player;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.SneakyThrows;
 
 public class DialogueEventRepository {
@@ -13,12 +12,12 @@ public class DialogueEventRepository {
 		return handledDialogues.get(key);
 	}
 
-	private static final HashMap<Object, Class<? extends DialogueEventListener>> handledDialogues = new HashMap<Object, Class<? extends DialogueEventListener>>();
-	
+	private static Object2ObjectArrayMap<Object, Class<? extends DialogueEventListener>> handledDialogues = new Object2ObjectArrayMap<>();
+
 	@SneakyThrows(Exception.class)
 	public static final void init() {
 		@SuppressWarnings("unchecked")
-		Class<DialogueEventListener>[] regular = Utils.getClasses("com.rs.game.dialogue.impl");
+		Class<DialogueEventListener>[] regular = Utility.getClasses("com.rs.game.dialogue.impl");
 		for (Class<DialogueEventListener> c : regular) {
 			if (c.isAnonymousClass()) // next
 				continue;

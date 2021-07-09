@@ -1,12 +1,12 @@
 package com.rs.game.npc.godwars.saradomin;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
 import com.rs.cores.CoresManager;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.npc.godwars.GodWarsBosses;
@@ -24,7 +24,7 @@ public class CommanderZilyana extends NPC {
 	 * gotta override else setRespawnTask override doesnt work
 	 */
 	@Override
-	public void sendDeath(Entity source) {
+	public void sendDeath(Optional<Entity> source) {
 		final NPCCombatDefinitions defs = getCombatDefinitions();
 		resetWalkSteps();
 		getCombat().removeTarget();
@@ -57,24 +57,14 @@ public class CommanderZilyana extends NPC {
 			finish();
 		}
 		final NPC npc = this;
-		CoresManager.slowExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					setFinished(false);
-					World.addNPC(npc);
-					npc.setLastRegionId((short) 0);
-					updateEntityRegion(npc);
-					loadMapRegions();
-					checkMultiArea();
-					GodWarsBosses.respawnSaradominMinions();
-				} catch (Exception e) {
-					e.printStackTrace();
-				} catch (Error e) {
-					e.printStackTrace();
-				}
-			}
-		}, getCombatDefinitions().getRespawnDelay() * 600, TimeUnit.MILLISECONDS);
+		CoresManager.schedule(() -> {
+			setFinished(false);
+			World.addNPC(npc);
+			npc.setLastRegionId((short) 0);
+			updateEntityRegion(npc);
+			loadMapRegions();
+			checkMultiArea();
+			GodWarsBosses.respawnSaradominMinions();
+		}, 3 * 60);
 	}
-
 }

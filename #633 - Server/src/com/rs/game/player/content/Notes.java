@@ -1,20 +1,18 @@
 package com.rs.game.player.content;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.rs.game.player.Player;
 
-public final class Notes implements Serializable {
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-	private static final long serialVersionUID = 5564620907978487391L;
+public final class Notes {
 
-	private List<Note> notes;
+	private ObjectArrayList<Note> notes;
 	private transient Player player;
 
 	public Notes() {
-		notes = new ArrayList<Note>(30);
+		notes = new ObjectArrayList<Note>(30);
 	}
 
 	public void setPlayer(Player player) {
@@ -39,7 +37,7 @@ public final class Notes implements Serializable {
 	}
 
 	public int getCurrentNote() {
-		Integer note = (Integer) player.getTemporaryAttributes().get(
+		Integer note = (Integer) player.getAttributes().getAttributes().get(
 				"CURRENT_NOTE");
 		if (note == null)
 			return -1;
@@ -49,12 +47,12 @@ public final class Notes implements Serializable {
 	public void setCurrentNote(int id) {
 		if (id >= 30)
 			return;
-		player.getTemporaryAttributes().put("CURRENT_NOTE", id);
+		player.getAttributes().getAttributes().put("CURRENT_NOTE", id);
 		player.getVarsManager().sendVar(1439, id);
 	}
 
 	public void removeCurrentNote() {
-		player.getTemporaryAttributes().remove("CURRENT_NOTE");
+		player.getAttributes().getAttributes().remove("CURRENT_NOTE");
 		player.getVarsManager().sendVar(1439, -1);
 	}
 
@@ -162,7 +160,7 @@ public final class Notes implements Serializable {
 		return (int) (Math.pow(4, noteId) * colour);
 	}
 
-	public List<Note> getNotes() {
+	public ObjectArrayList<Note> getNotes() {
 		return notes;
 	}
 

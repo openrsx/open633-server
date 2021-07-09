@@ -4,12 +4,14 @@ import java.util.Optional;
 import java.util.OptionalInt;
 
 import com.rs.game.Animation;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
 import com.rs.game.task.impl.SkillActionTask;
 import com.rs.net.encoders.WorldPacketsEncoder;
+
+import lombok.Getter;
 
 /**
  * Handler for Skills
@@ -18,6 +20,7 @@ import com.rs.net.encoders.WorldPacketsEncoder;
  */
 public abstract class SkillHandler {
 
+	@Getter
 	public transient Player player;
 	public transient WorldTile tile;
 	
@@ -134,13 +137,6 @@ public abstract class SkillHandler {
 	 */
 	public void onStop() {
 	
-	}
-	
-	/**
-	 * @return the player
-	 */
-	public Player getPlayer() {
-		return player;
 	}
 	
 	public WorldPacketsEncoder getPackets() {

@@ -1,24 +1,23 @@
 package com.rs.game.player.content;
 
-import java.util.List;
-
 import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
-import com.rs.game.minigames.duel.DuelArena;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Player;
-import com.rs.game.player.controllers.Wilderness;
+import com.rs.game.player.controller.ControllerHandler;
+import com.rs.game.player.controller.impl.WildernessController;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;
-import com.rs.utilities.Utils;
+import com.rs.utilities.Utility;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import skills.Skills;
 
 /*
@@ -370,7 +369,7 @@ public class Magic {
 			if (set == 0)
 				player.getCombatDefinitions().setAutoCastSpell(spellId);
 			else
-				player.getTemporaryAttributes().put("tempCastSpell", spellId);
+				player.getAttributes().getAttributes().put("tempCastSpell", spellId);
 		}
 		return true;
 	}
@@ -384,7 +383,7 @@ public class Magic {
 
 	public static final void processNormalSpell(Player player, int spellId, byte slot) {
 		final Item target = player.getInventory().getItem(slot);
-		player.stopAll();
+		player.getMovement().stopAll();
 		switch (spellId) {
 //	    case 29:
 //	    case 41:
@@ -415,7 +414,7 @@ public class Magic {
 			}
 			if (!checkRunes(player, true, FIRE_RUNE, highAlch ? 5 : 3, NATURE_RUNE, 1))
 				return;
-			player.lock(4);
+			player.getMovement().lock(4);
 			player.getInterfaceManager().openGameTab(7);
 			player.getInventory().deleteItem(target.getId(), 1);
 			player.getSkills().addXp(Skills.MAGIC, highAlch ? 65 : 31);
@@ -445,8 +444,8 @@ public class Magic {
 				player.getPackets().sendGameMessage("Your Magic level is not high enough for this spell.");
 				return;
 			}
-			Long lastVeng = (Long) player.getTemporaryAttributes().get("LAST_VENG");
-			if (lastVeng != null && lastVeng + 30000 > Utils.currentTimeMillis()) {
+			Long lastVeng = (Long) player.getAttributes().getAttributes().get("LAST_VENG");
+			if (lastVeng != null && lastVeng + 30000 > Utility.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
 			}
@@ -454,14 +453,10 @@ public class Magic {
 				player.getPackets().sendGameMessage(((Player) target).getDisplayName() + " is not accepting aid");
 				return;
 			}
-			if (((Player) target).getControllerManager().getController() != null
-					&& ((Player) target).getControllerManager().getController() instanceof DuelArena) {
-				return;
-			}
 			if (!checkRunes(player, true, ASTRAL_RUNE, 3, DEATH_RUNE, 2, EARTH_RUNE, 10))
 				return;
 			player.setNextAnimation(new Animation(4411));
-			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
+			player.getAttributes().getAttributes().put("LAST_VENG", Utility.currentTimeMillis());
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			((Player) target).setNextGraphics(new Graphics(725, 0, 100));
 //			((Player) target).setCastVeng(true);
@@ -480,8 +475,8 @@ public class Magic {
 				player.getPackets().sendGameMessage("You need a Defence level of 40 for this spell");
 				return;
 			}
-			Long lastVeng = (Long) player.getTemporaryAttributes().get("LAST_VENG");
-			if (lastVeng != null && lastVeng + 30000 > Utils.currentTimeMillis()) {
+			Long lastVeng = (Long) player.getAttributes().getAttributes().get("LAST_VENG");
+			if (lastVeng != null && lastVeng + 30000 > Utility.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
 			}
@@ -490,50 +485,42 @@ public class Magic {
 			player.setNextGraphics(new Graphics(726, 0, 100));
 			player.setNextAnimation(new Animation(4410));
 //			player.setCastVeng(true);
-			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
+			player.getAttributes().getAttributes().put("LAST_VENG", Utility.currentTimeMillis());
 			player.getPackets().sendGameMessage("You cast a vengeance.");
 			break;
 		case 38:
-			player.move(false, GameConstants.START_PLAYER_LOCATION, TeleportType.LUNAR);
+			player.getMovement().move(false, GameConstants.START_PLAYER_LOCATION, TeleportType.LUNAR);
 			break;
 		case 74: // vegeance group
 			if (player.getSkills().getLevel(Skills.MAGIC) < 95) {
 				player.getPackets().sendGameMessage("Your Magic level is not high enough for this spell.");
 				return;
 			}
-			lastVeng = (Long) player.getTemporaryAttributes().get("LAST_VENG");
-			if (lastVeng != null && lastVeng + 30000 > Utils.currentTimeMillis()) {
+			lastVeng = (Long) player.getAttributes().getAttributes().get("LAST_VENG");
+			if (lastVeng != null && lastVeng + 30000 > Utility.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Players may only cast vengeance once every 30 seconds.");
 				return;
 			}
 			if (!checkRunes(player, true, ASTRAL_RUNE, 4, DEATH_RUNE, 3, EARTH_RUNE, 11))
 				return;
-			int affectedPeopleCount = 0;
-			for (int regionId : player.getMapRegionsIds()) {
-				List<Integer> playerIndexes = World.getRegion(regionId).getPlayerIndexes();
-				if (playerIndexes == null)
-					continue;
-				for (int playerIndex : playerIndexes) {
-					Player p2 = World.getPlayers().get(playerIndex);
-					if (p2 == null || p2 == player || p2.isDead() || !p2.isStarted() || p2.isFinished()
-							|| !p2.withinDistance(player, 4) || !player.getControllerManager().canHit(p2))
-						continue;
-					if (!p2.getDetails().isAcceptAid()) {
-						player.getPackets().sendGameMessage(p2.getDisplayName() + " is not accepting aid");
-						continue;
-					} else if (p2.getControllerManager().getController() != null
-							&& p2.getControllerManager().getController() instanceof DuelArena) {
-						continue;
-					}
-					p2.setNextGraphics(new Graphics(725, 0, 100));
-//					p2.setCastVeng(true);
-					p2.getPackets().sendGameMessage("You have the power of vengeance!");
-					affectedPeopleCount++;
-				}
-			}
+			player.getMapRegionsIds().parallelStream().filter(regionalPlayer -> regionalPlayer != null).forEach(regionalPlayer -> {
+				ObjectArrayList<Short> playersIndexes = World.getRegion(regionalPlayer).getPlayersIndexes();
+				playersIndexes.iterator().forEachRemaining(p -> {
+					World.players().filter(
+							playerIndex -> playerIndex.withinDistance(player, 4) || ControllerHandler.execute(player, controller -> controller.canHit(player, playerIndex)))
+							.forEach(worldPlayer -> {
+								if (!worldPlayer.getDetails().isAcceptAid()) {
+									player.getPackets().sendGameMessage(worldPlayer.getDisplayName() + " is not accepting aid");
+									return;
+								}
+								worldPlayer.setNextGraphics(new Graphics(725, 0, 100));
+//								p2.setCastVeng(true);
+								worldPlayer.getPackets().sendGameMessage("You have the power of vengeance!");
+							});
+				});
+			});
 			player.setNextAnimation(new Animation(4411));
-			player.getTemporaryAttributes().put("LAST_VENG", Utils.currentTimeMillis());
-			player.getPackets().sendGameMessage("The spell affected " + affectedPeopleCount + " nearby people.");
+			player.getAttributes().getAttributes().put("LAST_VENG", Utility.currentTimeMillis());
 			break;
 		case 43: // moonclan teleport
 			sendLunarTeleportSpell(player, 69, 66, new WorldTile(2114, 3914, 0), ASTRAL_RUNE, 2, LAW_RUNE, 1,
@@ -624,7 +611,7 @@ public class Magic {
 			sendAncientTeleportSpell(player, 96, 106, new WorldTile(2977, 3873, 0), LAW_RUNE, 2, WATER_RUNE, 8);
 			break;
 		case 48:
-			player.move(false, GameConstants.START_PLAYER_LOCATION, TeleportType.ANCIENT);
+			player.getMovement().move(false, GameConstants.START_PLAYER_LOCATION, TeleportType.ANCIENT);
 			break;
 		}
 	}
@@ -665,11 +652,11 @@ public class Magic {
 				player.getPackets().sendGameMessage("Your Magic level is not high enough for this spell.");
 				return;
 			}
-			player.stopAll();
+			player.getMovement().stopAll();
 			player.getInterfaceManager().sendInterface(432);
 			break;
 		case 24:
-			player.move(false, GameConstants.START_PLAYER_LOCATION, TeleportType.NORMAL);
+			player.getMovement().move(false, GameConstants.START_PLAYER_LOCATION, TeleportType.NORMAL);
 			break;
 		case 37: // mobi
 			sendNormalTeleportSpell(player, 10, 19, new WorldTile(2413, 2848, 0), LAW_RUNE, 1, WATER_RUNE, 1, AIR_RUNE,
@@ -793,16 +780,16 @@ public class Magic {
 
 	public static void pushLeverTeleport(final Player player, final WorldTile tile, int emote, String startMessage,
 			final String endMessage) {
-		if (!player.getControllerManager().processObjectTeleport(tile))
+		if (!ControllerHandler.execute(player, controller -> controller.processObjectTeleport(player, tile)))
 			return;
 		player.setNextAnimation(new Animation(emote));
 		if (startMessage != null)
 			player.getPackets().sendGameMessage(startMessage, true);
-		player.lock();
+		player.getMovement().lock();
 		World.get().submit(new Task(1) {
 			@Override
 			protected void execute() {
-				player.unlock();
+				player.getMovement().unlock();
 				Magic.sendObjectTeleportSpell(player, false, tile);
 				if (endMessage != null)
 					player.getPackets().sendGameMessage(endMessage, true);
@@ -823,7 +810,7 @@ public class Magic {
 	public static final boolean sendTeleportSpell(final Player player, int upEmoteId, final int downEmoteId,
 			int upGraphicId, final int downGraphicId, int level, final double xp, final WorldTile tile, int delay,
 			final boolean randomize, final int teleType, int... runes) {
-		if (player.isLocked())
+		if (player.getMovement().isLocked())
 			return false;
 		if (player.getSkills().getLevel(Skills.MAGIC) < level) {
 			player.getPackets().sendGameMessage("Your Magic level is not high enough for this spell.");
@@ -832,24 +819,24 @@ public class Magic {
 		if (!checkRunes(player, false, runes))
 			return false;
 		if (teleType == MAGIC_TELEPORT) {
-			if (!player.getControllerManager().processMagicTeleport(tile))
+			if (!ControllerHandler.execute(player, controller -> controller.processMagicTeleport(player, tile)))
 				return false;
 		} else if (teleType == ITEM_TELEPORT) {
-			if (!player.getControllerManager().processItemTeleport(tile))
+			if (!ControllerHandler.execute(player, controller -> controller.processItemTeleport(player, tile)))
 				return false;
 		} else if (teleType == OBJECT_TELEPORT) {
-			if (!player.getControllerManager().processObjectTeleport(tile))
+			if (!ControllerHandler.execute(player, controller -> controller.processObjectTeleport(player, tile)))
 				return false;
 		}
 		checkRunes(player, true, runes);
-		player.stopAll();
+		player.getMovement().stopAll();
 		if (upEmoteId != -1)
 			player.setNextAnimation(new Animation(upEmoteId));
 		if (upGraphicId != -1)
 			player.setNextGraphics(new Graphics(upGraphicId));
 		if (teleType == MAGIC_TELEPORT)
 			player.getPackets().sendSound(5527, 0, 2);
-		player.lock(3 + delay);
+		player.getMovement().lock(3 + delay);
 
 		World.get().submit(new Task(delay) {
 			boolean removeDamage;
@@ -868,8 +855,8 @@ public class Magic {
 						}
 					}
 					player.safeForceMoveTile(teleTile);
-					player.getControllerManager().magicTeleported(teleType);
-					if (player.getControllerManager().getController() == null)
+					ControllerHandler.executeVoid(player, controller -> controller.magicTeleported(player, teleType));
+					if (!player.getCurrentController().isPresent())
 						teleControlersCheck(player, teleTile);
 					if (xp != 0)
 						player.getSkills().addXp(Skills.MAGIC, xp);
@@ -906,9 +893,9 @@ public class Magic {
 	}
 
 	public static boolean useTeleTab(final Player player, final WorldTile tile) {
-		if (!player.getControllerManager().processItemTeleport(tile))
+		if (!ControllerHandler.execute(player, controller -> controller.processItemTeleport(player, tile)))
 			return false;
-		player.lock();
+		player.getMovement().lock();
 		player.setNextAnimation(new Animation(9597));
 		player.setNextGraphics(new Graphics(1680));
 		World.get().submit(new Task(2) {
@@ -928,8 +915,8 @@ public class Magic {
 						teleTile = tile;
 					}
 					player.safeForceMoveTile(teleTile);
-					player.getControllerManager().magicTeleported(ITEM_TELEPORT);
-					if (player.getControllerManager().getController() == null)
+					ControllerHandler.executeVoid(player, controller -> controller.magicTeleported(player, ITEM_TELEPORT));
+					if (player.getCurrentController().isPresent())
 						teleControlersCheck(player, teleTile);
 					player.setNextFaceWorldTile(
 							new WorldTile(teleTile.getX(), teleTile.getY() - 1, teleTile.getPlane()));
@@ -938,7 +925,7 @@ public class Magic {
 					stage = 2;
 				} else if (stage == 2) {
 					player.resetReceivedHits();
-					player.unlock();
+					player.getMovement().unlock();
 					this.cancel();
 				}
 				this.cancel();
@@ -948,8 +935,8 @@ public class Magic {
 	}
 
 	public static void teleControlersCheck(Player player, WorldTile teleTile) {
-		if (Wilderness.isAtWild(teleTile))
-			player.getControllerManager().startControler("Wilderness");
+		if (WildernessController.isAtWild(teleTile))
+			new WildernessController().start(player);
 	}
 
 	private Magic() {

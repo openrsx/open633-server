@@ -1,15 +1,16 @@
 package com.rs.game.npc;
 
 import java.util.HashMap;
-import java.util.List;
 
-import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.Getter;
 
 /**
  * The static-utility class that manages all of the {@link DropTable}s
@@ -21,11 +22,13 @@ public final class DropManager {
 	/**
 	 * The {@link HashMap} that consists of the drops for {@link Mob}s.
 	 */
+	@Getter
 	private final static Int2ObjectOpenHashMap<DropTable> TABLES = new Int2ObjectOpenHashMap<>();
 	
 	/**
 	 * Mob sharing the same table drop redirects.
 	 */
+	@Getter
 	public final static Int2IntArrayMap REDIRECTS = new Int2IntArrayMap();
 	
 	/**
@@ -41,19 +44,11 @@ public final class DropManager {
 		}
 		WorldTile pos = victim.getLastWorldTile();
 		final WorldTile lastMobLocation = pos;
-		List<Item> dropItems = table.toItems(killer, victim);
+		ObjectArrayList<Item> dropItems = (ObjectArrayList<Item>) table.toItems(killer, victim);
 		for (Item drop : dropItems) {
 			if (drop == null)
 				continue;
 			FloorItem.createGroundItem(drop, lastMobLocation, killer, false, 180, true);
 		}
-	}
-	
-	public static Int2ObjectOpenHashMap<DropTable> getTables() {
-		return TABLES;
-	}
-	
-	public static Int2IntArrayMap getRedirects() {
-		return REDIRECTS;
 	}
 }

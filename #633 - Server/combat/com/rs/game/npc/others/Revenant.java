@@ -1,14 +1,13 @@
 package com.rs.game.npc.others;
 
 import com.rs.game.Animation;
-import com.rs.game.WorldTile;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 
 public class Revenant extends NPC {
 
 	public Revenant(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
 		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		setDropRateFactor(1); // duplicates
 	}
 
 	@Override

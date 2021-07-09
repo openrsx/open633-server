@@ -2,6 +2,9 @@ package com.rs.game.player.type.impl;
 
 import com.rs.utilities.MutableNumber;
 
+import lombok.Data;
+
+@Data
 public final class AntifireDetails {
 	
 	private final MutableNumber antifireDelay = new MutableNumber(600);
@@ -16,14 +19,6 @@ public final class AntifireDetails {
 		this.type = type;
 	}
 	
-	public MutableNumber getAntifireDelay() {
-		return antifireDelay;
-	}
-	
-	public AntifireType getType() {
-		return type;
-	}
-	
 	public enum AntifireType {
 		REGULAR(450), SUPER(900);
 		
@@ -31,10 +26,6 @@ public final class AntifireDetails {
 		
 		AntifireType(int reduction) {
 			this.reduction = reduction;
-		}
-		
-		public int getReduction() {
-			return reduction;
 		}
 	}
 }
