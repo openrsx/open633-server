@@ -1,6 +1,6 @@
 package com.rs.net.packets.logic.impl;
 
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.route.RouteEvent;
@@ -23,7 +23,7 @@ public class PlayerOptionThreePacket implements LogicPacket {
 			return;
 		if (forceRun)
 			player.setRun(forceRun);
-		player.getMovement().stopAll(player);
+		player.getMovement().stopAll();
 		player.setRouteEvent(new RouteEvent(p2, () ->  {
 			if (!ControllerHandler.execute(player, controller -> controller.canPlayerOption3(p2))) {
 				return;

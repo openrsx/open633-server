@@ -1,8 +1,8 @@
 package com.rs.game.npc.others;
 
-import com.rs.game.Hit;
-import com.rs.game.WorldTile;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
+import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
 

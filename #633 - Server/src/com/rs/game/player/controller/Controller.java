@@ -3,10 +3,10 @@ package com.rs.game.player.controller;
 import java.util.Optional;
 
 import com.rs.game.Entity;
-import com.rs.game.GameObject;
-import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
+import com.rs.game.map.GameObject;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Foods.Food;

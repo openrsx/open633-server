@@ -1,7 +1,7 @@
 package com.rs.game.npc.others;
 
 import com.rs.game.Animation;
-import com.rs.game.WorldTile;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 
 public class Revenant extends NPC {

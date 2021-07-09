@@ -1,7 +1,7 @@
 package com.rs.game.player.content;
 
 import com.rs.cores.CoresManager;
-import com.rs.game.GameObject;
+import com.rs.game.map.GameObject;
 import com.rs.utilities.RandomUtils;
 
 public final class LivingRockCavern {

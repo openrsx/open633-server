@@ -1,6 +1,6 @@
 package com.rs.plugin.impl.objects;
 
-import com.rs.game.GameObject;
+import com.rs.game.map.GameObject;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.WildernessObelisk;
 import com.rs.plugin.listener.ObjectType;

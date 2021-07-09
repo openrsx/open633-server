@@ -1,9 +1,9 @@
 package com.rs.net.packets.logic.impl;
 
 import com.rs.GameConstants;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.familiar.Familiar.SpecialAttack;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
@@ -44,7 +44,7 @@ public class InterfaceOnPlayerPacket implements LogicPacket {
 		if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 				|| !player.getMapRegionsIds().contains(p2.getRegionId()))
 			return;
-		player.getMovement().stopAll(player);
+		player.getMovement().stopAll();
 		if (forceRun)
 			player.setRun(forceRun);
 		switch (interfaceId) {

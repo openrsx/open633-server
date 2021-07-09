@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.rs.game.Entity;
-import com.rs.game.Hit;
 import com.rs.game.npc.NPC;
+import com.rs.game.player.Hit;
 import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;

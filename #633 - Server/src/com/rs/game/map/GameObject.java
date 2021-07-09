@@ -1,7 +1,9 @@
-package com.rs.game;
+package com.rs.game.map;
 
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.cores.CoresManager;
+import com.rs.game.Animation;
+import com.rs.game.Entity;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;

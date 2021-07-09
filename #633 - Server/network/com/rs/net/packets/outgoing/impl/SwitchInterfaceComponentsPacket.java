@@ -73,9 +73,9 @@ public class SwitchInterfaceComponentsPacket implements OutgoingPacket {
 					toComponentId);
 		} else if (fromInterfaceId == 1265
 				&& toInterfaceId == 1266
-				&& player.getTemporaryAttributes().get("is_buying") != null) {
-			if ((boolean) player.getTemporaryAttributes().get("is_buying") == true) {
-				Shop shop = (Shop) player.getTemporaryAttributes().get(
+				&& player.getAttributes().getAttributes().get("is_buying") != null) {
+			if ((boolean) player.getAttributes().getAttributes().get("is_buying") == true) {
+				Shop shop = (Shop) player.getAttributes().getAttributes().get(
 						"shop_instance");
 				if (shop == null)
 					return;

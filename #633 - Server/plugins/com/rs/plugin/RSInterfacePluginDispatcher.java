@@ -125,7 +125,7 @@ public final class RSInterfacePluginDispatcher {
 	public static void sendRemove(Player player, int slotId) {
 		if (slotId >= 15)
 			return;
-		player.getMovement().stopAll(player, false, false);
+		player.getMovement().stopAll(false, false);
 		Item item = player.getEquipment().getItem(slotId);
 		if (item == null || !player.getInventory().addItem(item.getId(), item.getAmount()))
 			return;
@@ -141,7 +141,7 @@ public final class RSInterfacePluginDispatcher {
 	}
 
 	public static boolean sendWear(Player player, int slotId, int itemId) {
-		player.getMovement().stopAll(player, false, false);
+		player.getMovement().stopAll(false, false);
 		Item item = player.getInventory().getItem(slotId);
 		if (item == null || item.getId() != itemId)
 			return false;
@@ -187,7 +187,7 @@ public final class RSInterfacePluginDispatcher {
 		if (!ControllerHandler.execute(player, controller -> controller.canEquip(player, targetSlot, itemId))) {
 			return false;
 		}
-		player.getMovement().stopAll(player, false, false);
+		player.getMovement().stopAll(false, false);
 		player.getInventory().deleteItem(slotId, item);
 		if (targetSlot == 3) {
 			if (isTwoHandedWeapon && player.getEquipment().getItem(5) != null) {
@@ -244,7 +244,7 @@ public final class RSInterfacePluginDispatcher {
 	public static boolean sendWear2(Player player, int slotId, int itemId) {
 		if (player.isFinished() || player.isDead())
 			return false;
-		player.getMovement().stopAll(player, false, false);
+		player.getMovement().stopAll(false, false);
 		Item item = player.getInventory().getItem(slotId);
 		if (item == null || item.getId() != itemId)
 			return false;
@@ -433,7 +433,7 @@ public final class RSInterfacePluginDispatcher {
 	}
 
 	public static void openEquipmentBonuses(final Player player, boolean banking) {
-		player.getMovement().stopAll(player);
+		player.getMovement().stopAll();
 		player.getInterfaceManager().closeInterface(11, 0);
 		player.getInterfaceManager().sendInventoryInterface(670);
 		player.getInterfaceManager().sendInterface(667);
@@ -445,9 +445,9 @@ public final class RSInterfacePluginDispatcher {
 		player.getPackets().sendGlobalConfig(779, player.getEquipment().getWeaponRenderEmote());
 		refreshEquipBonuses(player);
 		if (banking) {
-			player.getTemporaryAttributes().put("Banking", Boolean.TRUE);
+			player.getAttributes().getAttributes().put("Banking", Boolean.TRUE);
 			player.setCloseInterfacesEvent(() -> {
-				player.getTemporaryAttributes().remove("Banking");
+				player.getAttributes().getAttributes().remove("Banking");
 				player.getVarsManager().sendVarBit(4894, 0);
 			});
 		}

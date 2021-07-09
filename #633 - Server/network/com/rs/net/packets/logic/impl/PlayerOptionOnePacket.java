@@ -1,6 +1,6 @@
 package com.rs.net.packets.logic.impl;
 
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.controller.ControllerHandler;
@@ -21,7 +21,7 @@ public class PlayerOptionOnePacket implements LogicPacket {
 		Player p2 = World.getPlayers().get(playerIndex);
 		if (forceRun)
 			player.setRun(forceRun);
-		player.getMovement().stopAll(player);
+		player.getMovement().stopAll();
 
 		if (p2 == null || p2 == player || p2.isDead() || p2.isFinished()
 				|| !player.getMapRegionsIds().contains(p2.getRegionId()))

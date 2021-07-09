@@ -89,7 +89,7 @@ public abstract class DialogueEventListener implements DialogueFaceExpression {
 	public void complete() {
 		player.getInterfaceManager().closeChatBoxInterface();
 		onClose();
-		player.getTemporaryAttributes().remove("dialogue_event");
+		player.getAttributes().getAttributes().remove("dialogue_event");
 	}
 
 	/**
@@ -212,7 +212,7 @@ public abstract class DialogueEventListener implements DialogueFaceExpression {
 
 	public static boolean continueDialogue(Player player, int i) {
 		System.out.println("dialogue compId: " + i);
-		DialogueEventListener dialogue = (DialogueEventListener) player.getTemporaryAttributes().get("dialogue_event");
+		DialogueEventListener dialogue = (DialogueEventListener) player.getAttributes().getAttributes().get("dialogue_event");
 		if (dialogue == null)
 			return false;
 		dialogue.listenToDialogueEvent(i);

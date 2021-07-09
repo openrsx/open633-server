@@ -2,9 +2,9 @@ package com.rs.game.npc.familiar;
 
 import com.rs.game.Animation;
 import com.rs.game.Graphics;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;

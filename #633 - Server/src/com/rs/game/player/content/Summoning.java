@@ -5,8 +5,8 @@ import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Graphics;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 import com.rs.game.player.controller.ControllerHandler;
@@ -319,7 +319,7 @@ public class Summoning {
 				"Infuse-5<col=FF9040>", "Infuse-10<col=FF9040>", "Infuse-X<col=FF9040>", "Infuse-All<col=FF9040>",
 				"List<col=FF9040>");
 		player.getPackets().sendIComponentSettings(POUCHES_INTERFACE, 16, 0, 462, 190);
-		player.getTemporaryAttributes().put("infusing_scroll", false);
+		player.getAttributes().getAttributes().put("infusing_scroll", false);
 	}
 
 	public static void openScrollInfusionInterface(Player player) {
@@ -328,7 +328,7 @@ public class Summoning {
 				"Transform-5<col=FF9040>", "Transform-10<col=FF9040>", "Transform-X<col=FF9040>",
 				"Transform-All<col=FF9040>");
 		player.getPackets().sendIComponentSettings(SCROLLS_INTERFACE, 16, 0, 462, 126);
-		player.getTemporaryAttributes().put("infusing_scroll", true);
+		player.getAttributes().getAttributes().put("infusing_scroll", true);
 	}
 
 	public static void handlePouchInfusion(Player player, int slotId, int creationCount) {
@@ -336,7 +336,7 @@ public class Summoning {
 		Pouch pouch = Pouch.values()[slotValue];
 		if (pouch == null)
 			return;
-		boolean infusingScroll = (boolean) player.getTemporaryAttributes().remove("infusing_scroll"),
+		boolean infusingScroll = (boolean) player.getAttributes().getAttributes().remove("infusing_scroll"),
 				hasRequirements = false;
 		ItemDefinitions def = ItemDefinitions.getItemDefinitions(pouch.getRealPouchId());
 		ObjectArrayList<Item> itemReq = def.getCreateItemRequirements(infusingScroll);
@@ -364,7 +364,7 @@ public class Summoning {
 			}
 		}
 		if (!hasRequirements) {
-			player.getTemporaryAttributes().put("infusing_scroll", infusingScroll);
+			player.getAttributes().getAttributes().put("infusing_scroll", infusingScroll);
 			return;
 		}
 		player.getInterfaceManager().closeInterfaces();
@@ -373,7 +373,7 @@ public class Summoning {
 	}
 
 	public static void switchInfusionOption(Player player) {
-		boolean infusingScroll = (boolean) player.getTemporaryAttributes().get("infusing_scroll");
+		boolean infusingScroll = (boolean) player.getAttributes().getAttributes().get("infusing_scroll");
 		if (infusingScroll)
 			openInfusionInterface(player);
 		else

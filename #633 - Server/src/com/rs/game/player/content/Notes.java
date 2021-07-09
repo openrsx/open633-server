@@ -37,7 +37,7 @@ public final class Notes {
 	}
 
 	public int getCurrentNote() {
-		Integer note = (Integer) player.getTemporaryAttributes().get(
+		Integer note = (Integer) player.getAttributes().getAttributes().get(
 				"CURRENT_NOTE");
 		if (note == null)
 			return -1;
@@ -47,12 +47,12 @@ public final class Notes {
 	public void setCurrentNote(int id) {
 		if (id >= 30)
 			return;
-		player.getTemporaryAttributes().put("CURRENT_NOTE", id);
+		player.getAttributes().getAttributes().put("CURRENT_NOTE", id);
 		player.getVarsManager().sendVar(1439, id);
 	}
 
 	public void removeCurrentNote() {
-		player.getTemporaryAttributes().remove("CURRENT_NOTE");
+		player.getAttributes().getAttributes().remove("CURRENT_NOTE");
 		player.getVarsManager().sendVar(1439, -1);
 	}
 

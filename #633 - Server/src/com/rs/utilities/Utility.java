@@ -10,7 +10,7 @@ import java.util.Enumeration;
 
 import com.rs.GameConstants;
 import com.rs.cache.Cache;
-import com.rs.game.WorldTile;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;

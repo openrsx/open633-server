@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.rs.game.World;
 import com.rs.game.item.Item;
+import com.rs.game.map.World;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.player.controller.ControllerHandler;

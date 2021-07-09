@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 import com.rs.GameConstants;
 import com.rs.cache.loaders.ObjectDefinitions;
-import com.rs.game.GameObject;
 import com.rs.game.item.Item;
+import com.rs.game.map.GameObject;
 import com.rs.game.player.Player;
 import com.rs.game.route.RouteEvent;
 import com.rs.plugin.listener.ObjectType;

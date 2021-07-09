@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Queue;
 
 import com.google.common.base.Preconditions;
-import com.rs.game.World;
+import com.rs.game.map.World;
 
 /**
  * A sequence of {@link LinkedTask}s that are ran in <i>FIFO</i> order, and the

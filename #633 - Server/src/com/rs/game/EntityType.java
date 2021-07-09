@@ -12,7 +12,7 @@ public enum EntityType {
 	PLAYER,
 	
 	/**
-	 * The element used to represent the {@link Mob} implementation.
+	 * The element used to represent the {@link NPC} implementation.
 	 */
 	NPC,
 }

@@ -1,6 +1,6 @@
-package com.rs.game;
+package com.rs.game.player;
 
-import com.rs.game.player.Player;
+import com.rs.game.Entity;
 
 import lombok.Data;
 

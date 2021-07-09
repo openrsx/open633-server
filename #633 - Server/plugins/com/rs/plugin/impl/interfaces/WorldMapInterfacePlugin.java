@@ -16,12 +16,12 @@ public class WorldMapInterfacePlugin implements RSInterface {
 		case 750:
 			if (componentId == 1 && packetId == 11) {
 				if (player.isResting())
-					player.getMovement().stopAll(player);
+					player.getMovement().stopAll();
 				player.setRun(!player.isRun());	
 			}
 			if (componentId == 1 && packetId == 29) {
 				if (player.isResting()) {
-					player.getMovement().stopAll(player);
+					player.getMovement().stopAll();
 					return;
 				}
 				long currentTime = Utility.currentTimeMillis();
@@ -33,7 +33,7 @@ public class WorldMapInterfacePlugin implements RSInterface {
 					player.getPackets().sendGameMessage("You can't rest while perfoming an action.");
 					return;
 				}
-				player.getMovement().stopAll(player);
+				player.getMovement().stopAll();
 				player.getActionManager().setAction(new Rest(false));
 			}
 			break;

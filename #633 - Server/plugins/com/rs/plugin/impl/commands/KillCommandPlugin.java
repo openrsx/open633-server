@@ -1,10 +1,10 @@
 package com.rs.plugin.impl.commands;
 
-import com.rs.game.Hit;
-import com.rs.game.Hit.HitLook;
-import com.rs.game.World;
+import com.rs.game.map.World;
+import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
+import com.rs.game.player.Hit.HitLook;
 import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
 
@@ -22,6 +22,6 @@ public final class KillCommandPlugin implements Command {
 		if (target == null)
 			return;
 		target.applyHit(new Hit(target, player.getHitpoints(), HitLook.REGULAR_DAMAGE));
-		target.getMovement().stopAll(target);
+		target.getMovement().stopAll();
 	}
 }

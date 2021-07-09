@@ -3,8 +3,8 @@ package com.rs.game.player;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.rs.game.GameObject;
-import com.rs.game.World;
+import com.rs.game.map.GameObject;
+import com.rs.game.map.World;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utility;
 

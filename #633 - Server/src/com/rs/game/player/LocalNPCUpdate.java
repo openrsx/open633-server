@@ -4,8 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.rs.GameConstants;
-import com.rs.game.Hit;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.npc.NPC;
 import com.rs.io.OutputStream;
 import com.rs.utilities.Utility;

@@ -4,9 +4,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
 import com.rs.GameConstants;
-import com.rs.game.player.Player;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.content.TeleportType;
 import com.rs.game.task.LinkedTaskSequence;
+import com.rs.utilities.Utility;
 
 import lombok.Data;
 
@@ -18,9 +19,15 @@ import lombok.Data;
 public class EntityMovement {
 	
 	/**
+	 * Represents an Entity
+	 */
+	private final Entity entity;
+	
+	/**
 	 * Constructs a new movement for an Entity
 	 */
-	protected EntityMovement() {
+	protected EntityMovement(Entity entity) {
+		this.entity = entity;
 		walkSteps = new ConcurrentLinkedQueue<Object[]>();
 	}
 	
@@ -33,6 +40,11 @@ public class EntityMovement {
 	 * The Lock delay for an Entity
 	 */
 	private transient long lockDelay;
+	
+	/**
+	 * The Frozen block delay for an Entity
+	 */
+	private transient long frozenBlocked;
 
 	/**
 	 * Is the Entity locked?
@@ -63,6 +75,54 @@ public class EntityMovement {
 	public void unlock() {
 		setLockDelay(0);
 	}
+	
+	/**
+	 * Represents a Frozen state of Delay for an Entity
+	 */
+	private transient long freezeDelay;
+	
+	/**
+	 * Checks if the Entity is frozen
+	 * @return
+	 */
+	public boolean isFrozen() {
+		return getFreezeDelay() >= Utility.currentTimeMillis();
+	}
+
+	/**
+	 * Adds a Frozen Blocked delay to the Entity
+	 * @param time
+	 */
+	public void addFrozenBlockedDelay(int time) {
+		setFrozenBlocked(time + Utility.currentTimeMillis());
+	}
+
+	/**
+	 * Adds a Freeze delay state to the Entity
+	 * @param time
+	 */
+	public void addFreezeDelay(long time) {
+		addFreezeDelay(time, false);
+	}
+
+	/**
+	 * Adds a Freeze delay state with optional message to an Entity
+	 * @param time
+	 * @param entangleMessage
+	 */
+	public void addFreezeDelay(long time, boolean entangleMessage) {
+		long currentTime = Utility.currentTimeMillis();
+		if (currentTime > getFreezeDelay()) {
+			if (getEntity().isPlayer()) {
+				if (!entangleMessage)
+					getEntity().toPlayer().getPackets().sendGameMessage("You have been frozen.");
+				if (getEntity().toPlayer().getCurrentController().isPresent())
+					time /= 2;
+			}
+		}
+		getEntity().resetWalkSteps();
+		setFreezeDelay(time + currentTime);
+	}
 
 	/**
 	 * Queue Teleport type handling with Consumer support
@@ -70,7 +130,7 @@ public class EntityMovement {
 	 * @param type
 	 * @param player
 	 */
-	public void move(Entity entity, boolean instant, WorldTile destination, TeleportType type, Consumer<Entity> consumer) {
+	public void move(boolean instant, WorldTile destination, TeleportType type, Consumer<Entity> consumer) {
 		lock();
 		LinkedTaskSequence seq = new LinkedTaskSequence(instant ? 0 : 1, instant);
 		seq.connect(1, () -> {
@@ -91,7 +151,7 @@ public class EntityMovement {
 	 * @param type
 	 * @param entity
 	 */
-	public void move(Entity entity, boolean instant, WorldTile destination, TeleportType type) {
+	public void move(boolean instant, WorldTile destination, TeleportType type) {
 		lock();
 		LinkedTaskSequence seq = new LinkedTaskSequence(instant ? 0 : 1, instant);
 		seq.connect(1, () -> {
@@ -115,18 +175,18 @@ public class EntityMovement {
 	 * @param player
 	 * @return type
 	 */
-	public int getMovementType(Player player) {
-		if (player.getTemporaryMovementType() != -1)
-			return player.getTemporaryMovementType();
-		return player.isRun() ? RUN_MOVE_TYPE : WALK_MOVE_TYPE;
+	public int getMovementType() {
+		if (getEntity().toPlayer().getTemporaryMovementType() != -1)
+			return getEntity().toPlayer().getTemporaryMovementType();
+		return getEntity().toPlayer().isRun() ? RUN_MOVE_TYPE : WALK_MOVE_TYPE;
 	}
 	
 	/**
 	 * Stops a Player with additional specified attributes.
 	 * @param player
 	 */
-	public void stopAll(Player player) {
-		stopAll(player, true);
+	public void stopAll() {
+		stopAll(true);
 	}
 
 	/**
@@ -134,8 +194,8 @@ public class EntityMovement {
 	 * @param player
 	 * @param stopWalk
 	 */
-	public void stopAll(Player player, boolean stopWalk) {
-		stopAll(player, stopWalk, true);
+	public void stopAll(boolean stopWalk) {
+		stopAll(stopWalk, true);
 	}
 
 	/**
@@ -144,8 +204,8 @@ public class EntityMovement {
 	 * @param stopWalk
 	 * @param stopInterface
 	 */
-	public void stopAll(Player player, boolean stopWalk, boolean stopInterface) {
-		stopAll(player, stopWalk, stopInterface, true);
+	public void stopAll(boolean stopWalk, boolean stopInterface) {
+		stopAll(stopWalk, stopInterface, true);
 	}
 
 	/**
@@ -155,17 +215,17 @@ public class EntityMovement {
 	 * @param stopInterfaces
 	 * @param stopActions
 	 */
-	public void stopAll(Player player, boolean stopWalk, boolean stopInterfaces,
+	public void stopAll(boolean stopWalk, boolean stopInterfaces,
 			boolean stopActions) {
-		player.setRouteEvent(null);
+		getEntity().toPlayer().setRouteEvent(null);
 		if (stopInterfaces)
-			player.getInterfaceManager().closeInterfaces();
+			getEntity().toPlayer().getInterfaceManager().closeInterfaces();
 		if (stopWalk) {
-			player.setCoordsEvent(null);
-			player.resetWalkSteps();
+			getEntity().toPlayer().setCoordsEvent(null);
+			getEntity().toPlayer().resetWalkSteps();
 		}
 		if (stopActions)
-			player.getActionManager().forceStop();
-		player.getCombatDefinitions().resetSpells(false);
+			getEntity().toPlayer().getActionManager().forceStop();
+		getEntity().toPlayer().getCombatDefinitions().resetSpells(false);
 	}
 }

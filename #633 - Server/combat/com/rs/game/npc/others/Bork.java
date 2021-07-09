@@ -5,8 +5,8 @@ import java.util.Optional;
 import com.rs.cores.CoresManager;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.task.Task;
 
@@ -32,7 +32,7 @@ public class Bork extends NPC {
 				World.get().submit(new Task(8) {
 					@Override
 					protected void execute() {
-						player.getMovement().stopAll(player);
+						player.getMovement().stopAll();
 						this.cancel();
 					}
 				});

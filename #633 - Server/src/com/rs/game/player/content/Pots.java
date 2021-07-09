@@ -2,13 +2,13 @@ package com.rs.game.player.content;
 
 import com.rs.game.Animation;
 import com.rs.game.Graphics;
-import com.rs.game.Hit;
-import com.rs.game.Hit.HitLook;
-import com.rs.game.World;
 import com.rs.game.item.Item;
+import com.rs.game.map.World;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
+import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
+import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.task.Task;
@@ -453,7 +453,7 @@ public final class Pots {
 //					player.getPackets().sendGameMessage("You cannot drink this potion here.");
 //					return false;
 //				}
-				Long time = (Long) player.getTemporaryAttributes().get("Recover_Special_Pot");
+				Long time = (Long) player.getAttributes().getAttributes().get("Recover_Special_Pot");
 				if (time != null && Utility.currentTimeMillis() - time < 30000) {
 					player.getPackets().sendGameMessage("You may only use this pot every 30 seconds.");
 					return false;
@@ -463,7 +463,7 @@ public final class Pots {
 
 			@Override
 			public void extra(Player player) {
-				player.getTemporaryAttributes().put("Recover_Special_Pot", Utility.currentTimeMillis());
+				player.getAttributes().getAttributes().put("Recover_Special_Pot", Utility.currentTimeMillis());
 				player.getCombatDefinitions().restoreSpecialAttack(25);
 			}
 		},

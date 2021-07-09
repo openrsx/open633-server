@@ -4,10 +4,10 @@ import java.util.Optional;
 
 import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.game.Entity;
-import com.rs.game.Hit;
-import com.rs.game.Hit.HitLook;
 import com.rs.game.item.Item;
+import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
+import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.type.CombatEffect;
 import com.rs.game.player.type.PoisonType;
 

@@ -1,4 +1,4 @@
-package com.rs.game;
+package com.rs.game.map;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +10,9 @@ import com.google.common.util.concurrent.AbstractScheduledService;
 import com.rs.GameConstants;
 import com.rs.Launcher;
 import com.rs.cores.CoresManager;
-import com.rs.game.map.Region;
+import com.rs.game.Entity;
+import com.rs.game.EntityList;
+import com.rs.game.Graphics;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.dragons.KingBlackDragon;
 import com.rs.game.npc.others.Bork;

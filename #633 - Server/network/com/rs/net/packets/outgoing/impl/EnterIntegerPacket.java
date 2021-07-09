@@ -19,12 +19,12 @@ public class EnterIntegerPacket implements OutgoingPacket {
 				.getInterfaceManager().containsInterface(763))
 				|| player.getInterfaceManager().containsInterface(11)) {
 			Integer bank_item_X_Slot = (Integer) player
-					.getTemporaryAttributes().remove("bank_item_X_Slot");
+					.getAttributes().getAttributes().remove("bank_item_X_Slot");
 			if (bank_item_X_Slot == null)
 				return;
 			player.getBank().setLastX(value);
 			player.getBank().refreshLastX();
-			if (player.getTemporaryAttributes().remove("bank_isWithdraw") != null)
+			if (player.getAttributes().getAttributes().remove("bank_isWithdraw") != null)
 				player.getBank().withdrawItem(bank_item_X_Slot, value);
 			else
 				player.getBank()
@@ -37,10 +37,10 @@ public class EnterIntegerPacket implements OutgoingPacket {
 		} else if (player.getInterfaceManager().containsInterface(206)
 				&& player.getInterfaceManager().containsInterface(207)) {
 			Integer pc_item_X_Slot = (Integer) player
-					.getTemporaryAttributes().remove("pc_item_X_Slot");
+					.getAttributes().getAttributes().remove("pc_item_X_Slot");
 			if (pc_item_X_Slot == null)
 				return;
-			if (player.getTemporaryAttributes().remove("pc_isRemove") != null)
+			if (player.getAttributes().getAttributes().remove("pc_isRemove") != null)
 				player.getPriceCheckManager().removeItem(pc_item_X_Slot,
 						value);
 			else
@@ -52,10 +52,10 @@ public class EnterIntegerPacket implements OutgoingPacket {
 					|| player.getFamiliar().getBob() == null)
 				return;
 			Integer bob_item_X_Slot = (Integer) player
-					.getTemporaryAttributes().remove("bob_item_X_Slot");
+					.getAttributes().getAttributes().remove("bob_item_X_Slot");
 			if (bob_item_X_Slot == null)
 				return;
-			if (player.getTemporaryAttributes().remove("bob_isRemove") != null)
+			if (player.getAttributes().getAttributes().remove("bob_isRemove") != null)
 				player.getFamiliar().getBob()
 						.removeItem(bob_item_X_Slot, value);
 			else
@@ -64,14 +64,14 @@ public class EnterIntegerPacket implements OutgoingPacket {
 		} else if (player.getInterfaceManager().containsInterface(335)
 				&& player.getInterfaceManager().containsInterface(336)) {
 			Integer trade_item_X_Slot = (Integer) player
-					.getTemporaryAttributes().remove("trade_item_X_Slot");
+					.getAttributes().getAttributes().remove("trade_item_X_Slot");
 			if (trade_item_X_Slot == null)
 				return;
-			if (player.getTemporaryAttributes().remove("trade_isRemove") != null)
+			if (player.getAttributes().getAttributes().remove("trade_isRemove") != null)
 				player.getTrade().removeItem(trade_item_X_Slot, value);
 			else
 				player.getTrade().addItem(trade_item_X_Slot, value);
-		} else if (player.getTemporaryAttributes().remove("xformring") == Boolean.TRUE)
+		} else if (player.getAttributes().getAttributes().remove("xformring") == Boolean.TRUE)
 			player.getAppearance().transformIntoNPC(value);
 	}
 }

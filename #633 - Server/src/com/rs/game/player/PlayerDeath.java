@@ -5,9 +5,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.rs.GameConstants;
 import com.rs.game.Animation;
-import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.controller.Controller;
 import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.player.controller.Controller.ControllerSafety;
@@ -39,7 +39,7 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 		getActor().getDetails().setAntifireDetails(Optional.empty());	
 		getActor().getDetails().getSkullTimer().set(0);
 		getActor().getDetails().getWatchMap().get("TOLERANCE").reset();
-		getActor().getMovement().stopAll(getActor());
+		getActor().getMovement().stopAll();
 		if (getActor().getFamiliar() != null)
 			getActor().getFamiliar().sendDeath(Optional.of(getActor()));
 	}

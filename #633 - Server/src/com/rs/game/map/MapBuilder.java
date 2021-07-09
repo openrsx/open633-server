@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.rs.cache.Cache;
-import com.rs.game.World;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;

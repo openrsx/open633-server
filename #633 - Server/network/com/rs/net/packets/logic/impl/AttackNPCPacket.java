@@ -1,6 +1,6 @@
 package com.rs.net.packets.logic.impl;
 
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
@@ -32,7 +32,7 @@ public class AttackNPCPacket implements LogicPacket {
 		}
 		if (forceRun) // you scrwed up cutscenes
 			player.setRun(forceRun);
-		player.getMovement().stopAll(player);
+		player.getMovement().stopAll();
 		if (npc instanceof Familiar) {
 			Familiar familiar = (Familiar) npc;
 			if (familiar == player.getFamiliar()) {

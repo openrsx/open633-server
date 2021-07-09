@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import com.rs.game.Entity;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.task.impl.CombatEffectTask;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;

@@ -1,7 +1,7 @@
 package com.rs.game.player.content;
 
 import com.rs.cores.CoresManager;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utility;

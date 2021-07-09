@@ -1,9 +1,9 @@
 package com.rs.game.player;
 
-import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemsContainer;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.controller.ControllerHandler;
 import com.rs.utilities.Utility;
 

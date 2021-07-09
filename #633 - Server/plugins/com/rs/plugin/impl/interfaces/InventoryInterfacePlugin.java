@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.rs.GameConstants;
 import com.rs.cache.io.InputStream;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar.SpecialAttack;
 import com.rs.game.npc.others.Pet;
@@ -52,7 +52,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 				long time = Utility.currentTimeMillis();
 				if (player.getMovement().getLockDelay() >= time || player.getNextEmoteEnd() >= time)
 					return;
-				player.getMovement().stopAll(player, false);
+				player.getMovement().stopAll(false);
 				if (Foods.eat(player, item, slotId))
 					return;
 				if (Pots.pot(player, item, slotId))
@@ -72,7 +72,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 								slot[i] = slots.get(i);
 							player.getSwitchItemCache().clear();
 							RSInterfacePluginDispatcher.sendWear(player, slot);
-							player.getMovement().stopAll(player, false, true, false);
+							player.getMovement().stopAll(false, true, false);
 							this.cancel();
 						}
 					});
@@ -99,7 +99,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 					return;
 				if (!ControllerHandler.execute(player, controller -> controller.canDropItem(player, item)))
 					return;
-				player.getMovement().stopAll(player, false);
+				player.getMovement().stopAll(false);
 				
 				if (item.getDefinitions().isOverSized()) {
 					player.getPackets().sendGameMessage("The item appears to be oversized.");
@@ -161,7 +161,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 			if (itemUsed == null || usedWith == null || itemUsed.getId() != itemUsedId
 					|| usedWith.getId() != itemUsedWithId)
 				return;
-			player.getMovement().stopAll(player);
+			player.getMovement().stopAll();
 			
 			if (GameConstants.DEBUG)
 				Logger.log("ItemHandler", "Used:" + itemUsed.getId() + ", With:" + usedWith.getId());
@@ -206,7 +206,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 	public static boolean sendWear2(Player player, int slotId, int itemId) {
 		if (player.isFinished() || player.isDead())
 			return false;
-		player.getMovement().stopAll(player,false, false);
+		player.getMovement().stopAll(false, false);
 		Item item = player.getInventory().getItem(slotId);
 		if (item == null || item.getId() != itemId)
 			return false;

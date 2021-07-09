@@ -1,14 +1,9 @@
 package com.rs.game.npc;
 
+import lombok.Data;
+
+@Data
 public final class Transformation {
 
-    private int toNPCId;
-
-    public Transformation(int toNPCId) {
-	this.toNPCId = toNPCId;
-    }
-
-    public int getToNPCId() {
-	return toNPCId;
-    }
+    private final int toNPCId;
 }

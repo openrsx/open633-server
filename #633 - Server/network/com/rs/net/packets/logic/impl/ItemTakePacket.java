@@ -1,8 +1,8 @@
 package com.rs.net.packets.logic.impl;
 
-import com.rs.game.World;
-import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.route.RouteEvent;
@@ -36,7 +36,7 @@ public class ItemTakePacket implements LogicPacket {
 		}
 		if (forceRun)
 			player.setRun(forceRun);
-		player.getMovement().stopAll(player);
+		player.getMovement().stopAll();
 		player.setRouteEvent(new RouteEvent(item, () -> {
 			if (FloorItem.removeGroundItem(player, item))
 				Logger.globalLog(player.getUsername(), player.getSession().getIP(),

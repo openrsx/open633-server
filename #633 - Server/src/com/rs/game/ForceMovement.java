@@ -1,5 +1,6 @@
 package com.rs.game;
 
+import com.rs.game.map.WorldTile;
 import com.rs.utilities.Utility;
 
 import lombok.Data;

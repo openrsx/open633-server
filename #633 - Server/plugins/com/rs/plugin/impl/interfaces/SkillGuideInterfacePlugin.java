@@ -33,7 +33,7 @@ public class SkillGuideInterfacePlugin implements RSInterface {
         int value = SKILL_GUIDE_DATA[slot][2];
         player.getVarsManager().sendVar(965, value);
         player.getInterfaceManager().sendInterface(499);
-        player.getTemporaryAttributes().put("skillGuideMenu", value);
+        player.getAttributes().getAttributes().put("skillGuideMenu", value);
         return true;
     }
     
@@ -45,7 +45,7 @@ public class SkillGuideInterfacePlugin implements RSInterface {
      * @return {@code True} if succesful, {@code false} if not..
      */
     private boolean updateSkillGuide(Player player, int buttonId) {
-        int skillMenu = (int) player.getTemporaryAttributes().get("skillGuideMenu");
+        int skillMenu = (int) player.getAttributes().getAttributes().get("skillGuideMenu");
         if (skillMenu == -1) {
             return false;
         }

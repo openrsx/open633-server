@@ -2,7 +2,7 @@ package com.rs.game.npc.others;
 
 import java.util.Random;
 
-import com.rs.game.WorldTile;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 

@@ -17,7 +17,7 @@ public class EquipmentInterfacePlugin implements RSInterface {
 			throws Exception {
 		if (player.getInterfaceManager().containsInventoryInter())
 			return;
-		player.getMovement().stopAll(player);
+		player.getMovement().stopAll();
 
 		if (componentId == 42) {
 			if (player.getInterfaceManager().containsScreenInter() || player.getMovement().isLocked()) {
@@ -25,7 +25,7 @@ public class EquipmentInterfacePlugin implements RSInterface {
 						.sendGameMessage("Please finish what you're doing before opening the price checker.");
 				return;
 			}
-			player.getMovement().stopAll(player);
+			player.getMovement().stopAll();
 			player.getPriceCheckManager().openPriceCheck();
 
 		} else if (componentId == 39) {

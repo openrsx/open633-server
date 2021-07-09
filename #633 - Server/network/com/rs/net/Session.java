@@ -10,7 +10,7 @@ import org.jboss.netty.channel.ChannelFuture;
 
 import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
 import com.rs.game.player.content.Emotes.Emote;
@@ -206,7 +206,7 @@ public class Session {
 		if (player.isFinishing() || player.isFinished())
 			return;
 		player.setFinishing(true);
-		player.getMovement().stopAll(player, false, true, !(player.getActionManager().getAction() instanceof PlayerCombat));
+		player.getMovement().stopAll(false, true, !(player.getActionManager().getAction() instanceof PlayerCombat));
 		if (player.isDead() || (player.getCombatDefinitions().isUnderCombat() && tryCount < 6) || player.getMovement().isLocked()
 		 || Emote.isDoingEmote(player)) {
 			CoresManager.schedule(() -> {
@@ -222,7 +222,7 @@ public class Session {
 		if (player.isFinished())
 			return;
 		Logger.globalLog(player.getUsername(), getIP(), new String(" has logged out."));
-		player.getMovement().stopAll(player);
+		player.getMovement().stopAll();
 		ControllerHandler.executeVoid(player, controller -> controller.logout(player));
 		player.setRunning(false);
 		player.getFriendsIgnores().sendFriendsMyStatus(false);

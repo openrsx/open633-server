@@ -38,14 +38,14 @@ public class Shop {
 
 	public void addPlayer(final Player player) {
 		viewingPlayers.add(player);
-		player.getTemporaryAttributes().put("Shop", this);
+		player.getAttributes().getAttributes().put("Shop", this);
 		player.setCloseInterfacesEvent(() -> {
 			viewingPlayers.remove(player);
-			player.getTemporaryAttributes().remove("Shop");
-			player.getTemporaryAttributes().remove("shop_transaction");
-			player.getTemporaryAttributes().remove("isShopBuying");
-			player.getTemporaryAttributes().remove("ShopSelectedSlot");
-			player.getTemporaryAttributes().remove("ShopSelectedInventory");
+			player.getAttributes().getAttributes().remove("Shop");
+			player.getAttributes().getAttributes().remove("shop_transaction");
+			player.getAttributes().getAttributes().remove("isShopBuying");
+			player.getAttributes().getAttributes().remove("ShopSelectedSlot");
+			player.getAttributes().getAttributes().remove("ShopSelectedInventory");
 		});
 //		player.getVarsManager().sendVar(118,
 //				generalStock != null ? 139 : MAIN_STOCK_ITEMS_KEY);
@@ -78,15 +78,15 @@ public class Shop {
 	}
 
 	public int getTransaction(Player player) {
-		Integer transaction = (Integer) player.getTemporaryAttributes().get(
+		Integer transaction = (Integer) player.getAttributes().getAttributes().get(
 				"shop_transaction");
 		return transaction == null ? 1 : transaction;
 	}
 
 	public void pay(Player player) {
-		Integer selectedSlot = (Integer) player.getTemporaryAttributes().get(
+		Integer selectedSlot = (Integer) player.getAttributes().getAttributes().get(
 				"ShopSelectedSlot");
-		Boolean inventory = (Boolean) player.getTemporaryAttributes().get(
+		Boolean inventory = (Boolean) player.getAttributes().getAttributes().get(
 				"ShopSelectedInventory");
 		if (selectedSlot == null || inventory == null)
 			return;
@@ -98,9 +98,9 @@ public class Shop {
 	}
 
 	public int getSelectedMaxAmount(Player player) {
-		Integer selectedSlot = (Integer) player.getTemporaryAttributes().get(
+		Integer selectedSlot = (Integer) player.getAttributes().getAttributes().get(
 				"ShopSelectedSlot");
-		Boolean inventory = (Boolean) player.getTemporaryAttributes().get(
+		Boolean inventory = (Boolean) player.getAttributes().getAttributes().get(
 				"ShopSelectedInventory");
 		if (selectedSlot == null || inventory == null)
 			return 1;
@@ -127,17 +127,17 @@ public class Shop {
 			amount = max;
 		else if (amount < 1)
 			amount = 1;
-		player.getTemporaryAttributes().put("shop_transaction", amount);
+		player.getAttributes().getAttributes().put("shop_transaction", amount);
 		player.getVarsManager().sendVar(2564, amount);
 	}
 
 	public static void setBuying(Player player, boolean buying) {
-		player.getTemporaryAttributes().put("isShopBuying", buying);
+		player.getAttributes().getAttributes().put("isShopBuying", buying);
 		player.getVarsManager().sendVar(2565, buying ? 0 : 1);
 	}
 
 	public static boolean isBuying(Player player) {
-		Boolean isBuying = (Boolean) player.getTemporaryAttributes().get(
+		Boolean isBuying = (Boolean) player.getAttributes().getAttributes().get(
 				"isShopBuying");
 		return isBuying != null && isBuying;
 	}
@@ -345,7 +345,7 @@ public class Shop {
 	}
 
 	public void resetSelected(Player player) {
-		player.getTemporaryAttributes().remove("ShopSelectedSlot");
+		player.getAttributes().getAttributes().remove("ShopSelectedSlot");
 		player.getVarsManager().sendVar(2563, -1);
 	}
 
@@ -366,8 +366,8 @@ public class Shop {
 			return;
 		}
 		resetTransaction(player);
-		player.getTemporaryAttributes().put("ShopSelectedSlot", slotId);
-		player.getTemporaryAttributes()
+		player.getAttributes().getAttributes().put("ShopSelectedSlot", slotId);
+		player.getAttributes().getAttributes()
 				.put("ShopSelectedInventory", inventory);
 //		player.getVarsManager().sendVar(
 //				2561,

@@ -1,6 +1,6 @@
 package com.rs.game.player;
 
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.net.decoders.WorldPacketsDecoder;
 import com.rs.net.encoders.other.ChatMessage;
@@ -168,7 +168,7 @@ public class FriendsIgnores {
 							"Please close the interface you have opened before using Friends Chat setup.");
 					return;
 				}
-				player.getMovement().stopAll(player);
+				player.getMovement().stopAll();
 				openFriendChatSetup();
 			}
 		} else if (interfaceId == 1108) {

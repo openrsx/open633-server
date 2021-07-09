@@ -4,9 +4,9 @@ import java.math.BigInteger;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemNames;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
 

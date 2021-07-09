@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.rs.GameConstants;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.FriendsIgnores;
 import com.rs.game.player.Player;
 import com.rs.io.OutputStream;

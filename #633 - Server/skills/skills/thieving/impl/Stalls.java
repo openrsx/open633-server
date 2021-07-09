@@ -3,9 +3,9 @@ package skills.thieving.impl;
 import java.util.Optional;
 
 import com.rs.game.Animation;
-import com.rs.game.World;
-import com.rs.game.GameObject;
 import com.rs.game.item.Item;
+import com.rs.game.map.GameObject;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;

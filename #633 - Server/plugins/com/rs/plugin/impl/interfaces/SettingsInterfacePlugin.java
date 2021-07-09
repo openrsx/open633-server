@@ -19,7 +19,7 @@ public class SettingsInterfacePlugin implements RSInterface {
 						"Please close the interface you have open before setting your graphic options.");
 				return;
 			}
-			player.getMovement().stopAll(player);
+			player.getMovement().stopAll();
 			player.getInterfaceManager().sendInterface(742);
 		} else if (componentId == 3)
 			player.setRun(!player.isRun());

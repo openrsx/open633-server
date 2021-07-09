@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.rs.game.WorldTile;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;

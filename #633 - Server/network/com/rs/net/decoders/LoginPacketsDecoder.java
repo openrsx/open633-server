@@ -1,7 +1,7 @@
 package com.rs.net.decoders;
 
 import com.rs.GameConstants;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.net.AccountCreation;

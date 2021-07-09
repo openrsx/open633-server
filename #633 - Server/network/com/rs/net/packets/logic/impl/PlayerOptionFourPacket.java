@@ -1,6 +1,6 @@
 package com.rs.net.packets.logic.impl;
 
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.route.RouteEvent;
@@ -27,7 +27,7 @@ public class PlayerOptionFourPacket implements LogicPacket {
 			if (!ControllerHandler.execute(player, controller -> controller.canPlayerOption4(p2))) {
 				return;
 			}
-			player.getMovement().stopAll(player);
+			player.getMovement().stopAll();
 			if (player.isCantTrade() || player.getCurrentController().isPresent()) {
 				player.getPackets().sendGameMessage("You are busy.");
 				return;
@@ -43,13 +43,13 @@ public class PlayerOptionFourPacket implements LogicPacket {
 				player.getPackets().sendGameMessage("Unable to find target " + p2.getDisplayName());
 				return;
 			}
-			if (p2.getTemporaryAttributes().get("TradeTarget") == player) {
-				p2.getTemporaryAttributes().remove("TradeTarget");
+			if (p2.getAttributes().getAttributes().get("TradeTarget") == player) {
+				p2.getAttributes().getAttributes().remove("TradeTarget");
 				player.getTrade().openTrade(p2);
 				p2.getTrade().openTrade(player);
 				return;
 			}
-			player.getTemporaryAttributes().put("TradeTarget", p2);
+			player.getAttributes().getAttributes().put("TradeTarget", p2);
 			player.getPackets().sendGameMessage("Sending " + p2.getDisplayName() + " a request...");
 			p2.getPackets().sendTradeRequestMessage(player);
 		}));

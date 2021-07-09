@@ -1,6 +1,6 @@
 package com.rs.game.npc.others;
 
-import com.rs.game.WorldTile;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.utilities.Utility;
@@ -39,7 +39,7 @@ public class DreadNip extends NPC {
 	private void finish(int index) {
 		if (index != -1) {
 			owner.getPackets().sendGameMessage(DREADNIP_MESSAGES[index]);
-			owner.getTemporaryAttributes().remove("hasDN");
+			owner.getAttributes().getAttributes().remove("hasDN");
 		}
 		this.finish();
 	}

@@ -1,6 +1,6 @@
 package com.rs.net.packets.outgoing.impl;
 
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.net.Huffman;

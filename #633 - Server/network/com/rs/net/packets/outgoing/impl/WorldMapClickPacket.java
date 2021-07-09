@@ -14,13 +14,13 @@ public class WorldMapClickPacket implements OutgoingPacket {
 		int x = coordinateHash >> 14;
 		int y = coordinateHash & 0x3fff;
 		int plane = coordinateHash >> 28;
-		Integer hash = (Integer) player.getTemporaryAttributes().get(
+		Integer hash = (Integer) player.getAttributes().getAttributes().get(
 				"worldHash");
 		if (hash == null || coordinateHash != hash)
-			player.getTemporaryAttributes().put("worldHash",
+			player.getAttributes().getAttributes().put("worldHash",
 					coordinateHash);
 		else {
-			player.getTemporaryAttributes().remove("worldHash");
+			player.getAttributes().getAttributes().remove("worldHash");
 			player.getHintIconsManager().addHintIcon(x, y, plane, 20, 0, 2,
 					-1, true);
 			player.getVarsManager().sendVar(1159, coordinateHash);

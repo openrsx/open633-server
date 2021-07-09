@@ -1,8 +1,8 @@
 package com.rs.net.packets.logic.impl;
 
-import com.rs.game.GameObject;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.map.GameObject;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
@@ -45,7 +45,7 @@ public class InterfaceOnObjectPacket implements LogicPacket {
 			return;
 		if (item == null || item.getId() != itemId)
 			return;
-		player.getMovement().stopAll(player);
+		player.getMovement().stopAll();
 		if (forceRun)
 			player.setRun(forceRun);
 		switch (interfaceId) {

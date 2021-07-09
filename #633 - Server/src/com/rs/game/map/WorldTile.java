@@ -1,6 +1,7 @@
-package com.rs.game;
+package com.rs.game.map;
 
 import com.rs.GameConstants;
+import com.rs.game.Entity;
 import com.rs.utilities.RandomUtils;
 
 import lombok.Data;

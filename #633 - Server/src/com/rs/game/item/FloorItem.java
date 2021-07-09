@@ -1,9 +1,9 @@
 package com.rs.game.item;
 
 import com.rs.cores.CoresManager;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
 import com.rs.game.map.Region;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 
 import lombok.Data;

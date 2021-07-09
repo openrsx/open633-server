@@ -6,9 +6,9 @@ import java.util.concurrent.Executors;
 import com.rs.cache.Cache;
 import com.rs.cores.BlockingExecutorService;
 import com.rs.cores.CoresManager;
-import com.rs.game.World;
 import com.rs.game.dialogue.DialogueEventRepository;
 import com.rs.game.map.MapBuilder;
+import com.rs.game.map.World;
 import com.rs.game.npc.combat.NPCCombatDispatcher;
 import com.rs.game.npc.global.GenericNPCDispatcher;
 import com.rs.game.player.content.FriendChatsManager;
@@ -30,7 +30,6 @@ import com.rs.utilities.loaders.Censor;
 import com.rs.utilities.loaders.EquipData;
 import com.rs.utilities.loaders.ItemBonuses;
 import com.rs.utilities.loaders.MapArchiveKeys;
-import com.rs.utilities.loaders.MapAreas;
 import com.rs.utilities.loaders.MusicHints;
 import com.rs.utilities.loaders.NPCBonuses;
 import com.rs.utilities.loaders.NPCCombatDefinitionsL;
@@ -78,7 +77,6 @@ public class GameLoader {
 			ServerChannelHandler.init();
 			Huffman.init();
 			MapArchiveKeys.init();
-			MapAreas.init();
 			MapBuilder.init();
 		});
 		getBackgroundLoader().submit(() -> {

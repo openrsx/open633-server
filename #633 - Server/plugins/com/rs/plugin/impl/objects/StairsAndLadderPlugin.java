@@ -1,8 +1,8 @@
 package com.rs.plugin.impl.objects;
 
-import com.rs.game.GameObject;
-import com.rs.game.WorldTile;
 import com.rs.game.dialogue.DialogueEventListener;
+import com.rs.game.map.GameObject;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.TeleportType;
 import com.rs.plugin.listener.ObjectType;
@@ -19,16 +19,16 @@ public class StairsAndLadderPlugin implements ObjectType {
 				@Override
 				public void start() {
 					option("Go-Up", () -> {
-						player.getMovement().move(player, true,new WorldTile(player.getX(), player.getY(), player.getPlane() + 1), TeleportType.BLANK);
+						player.getMovement().move(true,new WorldTile(player.getX(), player.getY(), player.getPlane() + 1), TeleportType.BLANK);
 					},
 					"Go-Down", () -> {
-						player.getMovement().move(player, true,new WorldTile(player.getX(), player.getY(), player.getPlane() - 1), TeleportType.BLANK);
+						player.getMovement().move(true,new WorldTile(player.getX(), player.getY(), player.getPlane() - 1), TeleportType.BLANK);
 					});
 				}
 			});
 		else if (object.getDefinitions().getOption(optionId).equalsIgnoreCase("Climb-up"))
-			player.getMovement().move(player, true, new WorldTile(player.getX(), player.getY(), player.getPlane() + 1), TeleportType.BLANK);
+			player.getMovement().move(true, new WorldTile(player.getX(), player.getY(), player.getPlane() + 1), TeleportType.BLANK);
 		else if (object.getDefinitions().getOption(optionId).equalsIgnoreCase("Climb-down"))
-			player.getMovement().move(player, true, new WorldTile(player.getX(), player.getY(), player.getPlane() - 1), TeleportType.BLANK);
+			player.getMovement().move(true, new WorldTile(player.getX(), player.getY(), player.getPlane() - 1), TeleportType.BLANK);
 	}
 }

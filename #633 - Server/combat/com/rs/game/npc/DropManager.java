@@ -2,9 +2,9 @@ package com.rs.game.npc;
 
 import java.util.HashMap;
 
-import com.rs.game.WorldTile;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
+import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;

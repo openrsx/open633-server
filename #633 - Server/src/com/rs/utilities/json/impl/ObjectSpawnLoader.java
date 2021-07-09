@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 
 import com.google.gson.reflect.TypeToken;
-import com.rs.game.GameObject;
-import com.rs.game.WorldTile;
+import com.rs.game.map.GameObject;
+import com.rs.game.map.WorldTile;
 import com.rs.utilities.json.GsonHandler;
 import com.rs.utilities.json.GsonLoader;
 

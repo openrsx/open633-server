@@ -27,7 +27,7 @@ public class PlayerFollow extends Action {
 			return false;
 		if (player.getPlane() != target.getPlane())
 			return false;
-		if (player.isFrozen())
+		if (player.getMovement().isFrozen())
 			return true;
 		int distanceX = player.getX() - target.getX();
 		int distanceY = player.getY() - target.getY();

@@ -10,7 +10,6 @@ public class CloseInterfacePacket implements OutgoingPacket {
 
 	@Override
 	public void execute(Player player, InputStream stream) {
-		// Add condition if needed specifically.
-		player.getMovement().stopAll(player);
+		player.getMovement().stopAll();
 	}
 }

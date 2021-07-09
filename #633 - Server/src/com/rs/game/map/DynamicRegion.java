@@ -6,7 +6,6 @@ import java.util.List;
 import com.rs.GameConstants;
 import com.rs.cache.Cache;
 import com.rs.cache.loaders.ObjectDefinitions;
-import com.rs.game.GameObject;
 import com.rs.io.InputStream;
 import com.rs.utilities.Logger;
 import com.rs.utilities.loaders.MapArchiveKeys;

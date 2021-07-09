@@ -7,9 +7,9 @@ import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.Graphics;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
 import com.rs.game.item.Item;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Player;
@@ -72,7 +72,7 @@ public abstract class Familiar extends NPC implements Serializable {
 	private void sendFollow() {
 		if (getLastFaceEntity() != owner.getClientIndex())
 			setNextFaceEntity(owner);
-		if (isFrozen())
+		if (getMovement().isFrozen())
 			return;
 		int size = getSize();
 		int targetSize = owner.getSize();
@@ -429,13 +429,13 @@ public abstract class Familiar extends NPC implements Serializable {
 
 	public void setSpecial(boolean on) {
 		if (!on)
-			owner.getTemporaryAttributes().remove("FamiliarSpec");
+			owner.getAttributes().getAttributes().remove("FamiliarSpec");
 		else {
 			if (specialEnergy < getSpecialAmount()) {
 				owner.getPackets().sendGameMessage("Your special move bar is too low to use this scroll.");
 				return;
 			}
-			owner.getTemporaryAttributes().put("FamiliarSpec", Boolean.TRUE);
+			owner.getAttributes().getAttributes().put("FamiliarSpec", Boolean.TRUE);
 		}
 	}
 
@@ -453,7 +453,7 @@ public abstract class Familiar extends NPC implements Serializable {
 	}
 
 	public boolean hasSpecialOn() {
-		if (owner.getTemporaryAttributes().remove("FamiliarSpec") != null) {
+		if (owner.getAttributes().getAttributes().remove("FamiliarSpec") != null) {
 			int scrollId = Summoning.getScrollId(pouch.getRealPouchId());
 			if (!owner.getInventory().containsItem(scrollId, 1)) {
 				owner.getPackets().sendGameMessage("You don't have the scrolls to use this move.");

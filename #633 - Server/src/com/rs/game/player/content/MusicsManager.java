@@ -1,8 +1,8 @@
 package com.rs.game.player.content;
 
 import com.rs.cache.loaders.ClientScriptMap;
-import com.rs.game.World;
 import com.rs.game.map.Region;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utility;

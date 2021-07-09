@@ -1,6 +1,6 @@
 package com.rs.game.route.strategy;
 
-import com.rs.game.GameObject;
+import com.rs.game.map.GameObject;
 import com.rs.game.route.RouteStrategy;
 
 public class ObjectStrategy extends RouteStrategy {

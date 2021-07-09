@@ -1,7 +1,7 @@
 package com.rs.game.npc.combat.impl;
 
 import com.rs.game.Animation;
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.MobCombatInterface;
 import com.rs.game.npc.combat.MobCombatSignature;
@@ -97,7 +97,7 @@ public class DragonCombat extends MobCombatInterface {
 					player.getPackets().sendGameMessage("You are hit by the dragon's freezing breath!", true);
 			}
 			if (RandomUtils.random(2) == 0)
-				target.addFreezeDelay(15000);
+				target.getMovement().addFreezeDelay(15000);
 			delayHit(npc, 2, target, getRegularHit(npc, damage));
 			World.sendProjectile(npc, target, 395, 34, 16, 30, 35, 16, 0);
 			npc.setNextAnimation(new Animation(81));

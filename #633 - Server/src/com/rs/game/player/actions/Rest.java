@@ -7,10 +7,7 @@ import com.rs.utilities.RandomUtils;
 public class Rest extends Action {
 
 	private static int[][] REST_DEFS = { { 5713, 1549, 5748 },
-			{ 11786, 1550, 11788 }, { 5713, 1551, 2921 } // TODO
-	// First
-	// emote
-
+			{ 11786, 1550, 11788 }, { 5713, 1551, 2921 }
 	};
 
 	private int index;
@@ -24,7 +21,7 @@ public class Rest extends Action {
 	public boolean start(Player player) {
 		if (!process(player))
 			return false;
-		index = RandomUtils.random(REST_DEFS.length);
+		index = RandomUtils.random(REST_DEFS.length -1);
 		player.setResting((byte) (musician ? 2 : 1));
 		player.getInterfaceManager().sendRunButtonConfig();
 		player.setNextAnimation(new Animation(REST_DEFS[index][0]));

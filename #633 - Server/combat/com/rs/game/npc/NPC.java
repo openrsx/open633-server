@@ -6,9 +6,8 @@ import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.game.Entity;
 import com.rs.game.EntityType;
 import com.rs.game.Graphics;
-import com.rs.game.Hit;
-import com.rs.game.World;
-import com.rs.game.WorldTile;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
 import com.rs.game.npc.combat.NPCCombat;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.npc.corp.CorporealBeast;
@@ -38,6 +37,7 @@ import com.rs.game.npc.others.Sheep;
 import com.rs.game.npc.others.Strykewyrm;
 import com.rs.game.npc.others.TormentedDemon;
 import com.rs.game.npc.others.Werewolf;
+import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
 import com.rs.game.player.controller.impl.WildernessController;
 import com.rs.game.route.RouteFinder;
@@ -45,7 +45,6 @@ import com.rs.game.route.strategy.FixedTileStrategy;
 import com.rs.game.task.Task;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utility;
-import com.rs.utilities.loaders.MapAreas;
 import com.rs.utilities.loaders.NPCBonuses;
 import com.rs.utilities.loaders.NPCCombatDefinitionsL;
 
@@ -153,7 +152,7 @@ public class NPC extends Entity {
 			if (!isForceWalking()) {
 				if (!isCantInteract()) {
 					if (!checkAgressivity()) {
-						if (getFreezeDelay() < Utility.currentTimeMillis()) {
+						if (getMovement().getFreezeDelay() < Utility.currentTimeMillis()) {
 							if (!hasWalkSteps() && (getWalkType() & NORMAL_WALK) != 0) {
 								boolean can = false;
 								for (int i = 0; i < 2; i++) {
@@ -168,12 +167,6 @@ public class NPC extends Entity {
 									int moveY = (int) Math.round(Math.random() * 10.0 - 5.0);
 									resetWalkSteps();
 									if (getMapAreaNameHash() != -1) {
-										if (!MapAreas.isAtArea(getMapAreaNameHash(), this)) {
-											forceWalkRespawnTile();
-											return;
-										}
-										// fly walk noclips for now, nothing
-										// uses it anyway
 										addWalkSteps(getX() + moveX, getY() + moveY, 5, (getWalkType() & FLY_WALK) == 0);
 									} else
 										addWalkSteps(getRespawnTile().getX() + moveX, getRespawnTile().getY() + moveY, 5,
@@ -187,7 +180,7 @@ public class NPC extends Entity {
 			}
 		}
 		if (isForceWalking()) {
-			if (getFreezeDelay() < Utility.currentTimeMillis()) {
+			if (getMovement().getFreezeDelay() < Utility.currentTimeMillis()) {
 				if (getX() != getForceWalk().getX() || getY() != getForceWalk().getY()) {
 					if (!hasWalkSteps()) {
 						int steps = RouteFinder.findRoute(RouteFinder.WALK_ROUTEFINDER, getX(), getY(), getPlane(),

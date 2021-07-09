@@ -1,6 +1,6 @@
 package com.rs.net.encoders.other;
 
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;

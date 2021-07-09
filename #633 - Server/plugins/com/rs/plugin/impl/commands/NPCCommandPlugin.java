@@ -1,6 +1,6 @@
 package com.rs.plugin.impl.commands;
 
-import com.rs.game.World;
+import com.rs.game.map.World;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;

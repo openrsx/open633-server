@@ -10,6 +10,7 @@ import com.rs.io.InputStream;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
 import com.rs.utilities.Logger;
+import com.rs.utilities.Utility;
 
 @OutgoingPacketSignature(packetId = 33, description = "Represents an Interface being used on another Interface")
 public class InterfaceOnInterfacePacket implements OutgoingPacket {
@@ -42,9 +43,9 @@ public class InterfaceOnInterfacePacket implements OutgoingPacket {
 			if (itemUsed == null || usedWith == null || itemUsed.getId() != itemUsedId
 					|| usedWith.getId() != usedWithId)
 				return;
-			if (player.getMovement().isLocked()/* || player.getEmotesManager().isDoingEmote() */)
+			if (player.getMovement().isLocked() || player.getNextEmoteEnd() >= Utility.currentTimeMillis())
 				return;
-			player.getMovement().stopAll(player);
+			player.getMovement().stopAll();
 			if (!ControllerHandler.execute(player, controller -> controller.canUseItemOnItem(player, itemUsed, usedWith))) {
 				return;
 			}

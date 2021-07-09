@@ -2,17 +2,15 @@ package com.rs.game.player;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
 
 import com.alex.utils.VarsManager;
 import com.rs.GameConstants;
 import com.rs.game.Entity;
 import com.rs.game.EntityType;
 import com.rs.game.HintIconsManager;
-import com.rs.game.Hit;
-import com.rs.game.World;
 import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.map.Region;
+import com.rs.game.map.World;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.actions.ActionManager;
@@ -27,7 +25,6 @@ import com.rs.game.player.spells.passive.PassiveSpellDispatcher;
 import com.rs.game.player.type.CombatEffect;
 import com.rs.game.route.CoordsEvent;
 import com.rs.game.route.RouteEvent;
-import com.rs.game.task.Task;
 import com.rs.game.task.impl.CombatEffectTask;
 import com.rs.game.task.impl.SkillActionTask;
 import com.rs.net.IsaacKeyPair;
@@ -412,14 +409,6 @@ public class Player extends Entity {
 		getDetails().setRunEnergy((byte) 100);
 		getAppearance().generateAppearenceData();
 	}
-
-	/**
-	 * Resets a Player's Attributes
-	 */
-	@Override
-	public void reset() {
-		reset(true);
-	}
 	
 	/**
 	 * Handles the current Map Region state
@@ -463,38 +452,12 @@ public class Player extends Entity {
 	}
 
 	/**
-	 * Processes the Entities received/incoming Hits
-	 */
-	@Override
-	public void processReceivedHits() {
-		if (getMovement().isLocked())
-			return;
-		super.processReceivedHits();
-	}
-
-	/**
 	 * Checks if the Player needs to update their Appearance masks
 	 */
 	@Override
 	public boolean needMasksUpdate() {
 		return super.needMasksUpdate() || getTemporaryMovementType() != -1
 				|| isUpdateMovementType();
-	}
-
-	/**
-	 * Resets a Player's Mask set
-	 */
-	@Override
-	public void resetMasks() {
-		super.resetMasks();
-		setTemporaryMovementType((byte) -1);
-		setUpdateMovementType(false);
-		if (!isClientLoadedMapRegion()) {
-			// load objects and items here
-			setClientLoadedMapRegion(true);
-			World.getRegion(getRegionId()).refreshSpawnedObjects(this);
-			World.getRegion(getRegionId()).refreshSpawnedItems(this);
-		}
 	}
 
 	/**
@@ -655,34 +618,18 @@ public class Player extends Entity {
 	}
 	
 	/**
-	 * Sends a queued Task with Consumer action support
-	 * @param delay
-	 * @param action
-	 */
-	public void task(int delay, Consumer<Player> action) {
-		Player player = this;
-		new Task(delay, false) {
-			@Override
-			protected void execute() {
-				action.accept(player);
-				cancel();
-			}
-		}.submit();
-	}
-	
-	/**
 	 * Submits & executes a Dialogue event
 	 * @param listener
 	 */
 	public void dialog(DialogueEventListener listener){
-		getTemporaryAttributes().put("dialogue_event", listener.begin());
+		getAttributes().getAttributes().put("dialogue_event", listener.begin());
 	}
 	
 	/**
 	 * Gets a Dialogue event
 	 */
 	public DialogueEventListener dialog(){
-		DialogueEventListener listener = (DialogueEventListener) getTemporaryAttributes().get("dialogue_event");
+		DialogueEventListener listener = (DialogueEventListener) getAttributes().getAttributes().get("dialogue_event");
 		return listener;
 	}
 }
