@@ -22,7 +22,7 @@ public final class LoginPacketsEncoder extends Encoder {
 	public final void sendClientPacket(int opcode) {
 		OutputStream stream = new OutputStream(1);
 		stream.writeByte(opcode);
-		ChannelFuture future = session.write(stream);
+		ChannelFuture future = session.writeWithFuture(stream);
 		if (future != null) {
 			future.addListener(ChannelFutureListener.CLOSE);
 		} else {

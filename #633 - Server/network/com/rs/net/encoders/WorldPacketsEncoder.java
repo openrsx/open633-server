@@ -512,7 +512,7 @@ public class WorldPacketsEncoder extends Encoder {
 		// Highscores.highscores(player, null);
 		OutputStream stream = new OutputStream();
 		stream.writePacket(player, lobby ? 26 : 26); // idk lobby
-		ChannelFuture future = session.write(stream);
+		ChannelFuture future = session.writeWithFuture(stream);
 		if (future != null)
 			future.addListener(ChannelFutureListener.CLOSE);
 		else
