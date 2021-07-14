@@ -1,12 +1,12 @@
 package com.rs.game.player.content;
 
 import com.rs.cache.loaders.ItemDefinitions;
-import com.rs.game.Animation;
 import com.rs.game.item.Item;
 import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
 import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.controller.ControllerHandler;
+import com.rs.net.encoders.other.Animation;
 import com.rs.utilities.RandomUtils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;

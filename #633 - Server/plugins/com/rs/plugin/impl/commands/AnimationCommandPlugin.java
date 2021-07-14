@@ -1,8 +1,8 @@
 package com.rs.plugin.impl.commands;
 
-import com.rs.game.Animation;
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
+import com.rs.net.encoders.other.Animation;
 import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
 

@@ -1,8 +1,6 @@
 package com.rs.game.npc.familiar;
 
-import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.Graphics;
 import com.rs.game.item.Item;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
@@ -11,6 +9,8 @@ import com.rs.game.player.Player;
 import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 
 import skills.Skills;

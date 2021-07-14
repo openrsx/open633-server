@@ -3,12 +3,12 @@ package com.rs.game.npc.others;
 import java.util.Optional;
 
 import com.rs.cores.CoresManager;
-import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
 
 public class Bork extends NPC {
 

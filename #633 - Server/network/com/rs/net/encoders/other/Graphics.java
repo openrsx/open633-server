@@ -1,4 +1,4 @@
-package com.rs.game;
+package com.rs.net.encoders.other;
 
 import lombok.Data;
 

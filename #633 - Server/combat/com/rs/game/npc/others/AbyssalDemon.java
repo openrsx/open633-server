@@ -1,10 +1,10 @@
 package com.rs.game.npc.others;
 
 import com.rs.game.Entity;
-import com.rs.game.Graphics;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utility;
 

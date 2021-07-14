@@ -2,13 +2,13 @@ package skills.thieving.impl;
 
 import java.util.Optional;
 
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
 import com.rs.game.item.Item;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
 import com.rs.net.encoders.other.ForceTalk;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.TextUtils;
 

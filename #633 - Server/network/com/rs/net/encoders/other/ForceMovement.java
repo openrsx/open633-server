@@ -1,4 +1,4 @@
-package com.rs.game;
+package com.rs.net.encoders.other;
 
 import com.rs.game.map.WorldTile;
 import com.rs.utilities.Utility;

@@ -1,6 +1,5 @@
 package com.rs.game.npc.combat.impl;
 
-import com.rs.game.Animation;
 import com.rs.game.map.World;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.MobCombatInterface;
@@ -9,9 +8,10 @@ import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
 import com.rs.game.player.type.PoisonType;
+import com.rs.net.encoders.other.Animation;
 import com.rs.utilities.RandomUtils;
 
-@MobCombatSignature(mobId = {}, mobName = {"dragon"})
+@MobCombatSignature(mobId = {50}, mobName = {})
 public class DragonCombat extends MobCombatInterface {
 
 	@Override

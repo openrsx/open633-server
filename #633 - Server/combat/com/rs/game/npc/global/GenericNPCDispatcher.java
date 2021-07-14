@@ -20,7 +20,7 @@ public class GenericNPCDispatcher {
 	private static final Object2ObjectArrayMap<GenericNPCSignature, GenericNPC> NPC = new Object2ObjectArrayMap<>();
 	
 	@SneakyThrows(Exception.class)
-	public NPC execute(NPC npc) {
+	public NPC create(NPC npc) {
 		getVerifiedNPC(npc.getId()).ifPresent(mob -> {
 			Annotation annotation = mob.getClass().getAnnotation(GenericNPCSignature.class);
 			GenericNPCSignature signature = (GenericNPCSignature) annotation;

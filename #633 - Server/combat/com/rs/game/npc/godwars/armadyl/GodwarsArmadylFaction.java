@@ -2,7 +2,6 @@ package com.rs.game.npc.godwars.armadyl;
 
 import java.util.Optional;
 
-import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.item.Item;
 import com.rs.game.map.World;
@@ -11,6 +10,7 @@ import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 

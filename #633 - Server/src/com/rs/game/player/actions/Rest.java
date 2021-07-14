@@ -1,7 +1,7 @@
 package com.rs.game.player.actions;
 
-import com.rs.game.Animation;
 import com.rs.game.player.Player;
+import com.rs.net.encoders.other.Animation;
 import com.rs.utilities.RandomUtils;
 
 public class Rest extends Action {

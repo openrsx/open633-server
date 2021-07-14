@@ -2,8 +2,7 @@ package com.rs.plugin.impl.commands;
 
 import com.rs.game.player.Player;
 import com.rs.game.player.Rights;
-import com.rs.net.mysql.service.ServiceStore;
-import com.rs.net.mysql.service.impl.TestService;
+import com.rs.plugin.ObjectPluginDispatcher;
 import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
 
@@ -18,6 +17,6 @@ public final class TestCommandPlugin implements Command {
 
 	@Override
 	public void execute(Player player, String[] cmd, String command) throws Exception {
-		ServiceStore.executeServiceTask(new TestService());
+		ObjectPluginDispatcher.reload();
 	}
 }

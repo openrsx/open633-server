@@ -1,14 +1,14 @@
 package com.rs.game.npc.combat;
 
-import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.Graphics;
 import com.rs.game.map.World;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
 import com.rs.game.player.Hit.HitLook;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 
 import lombok.Data;

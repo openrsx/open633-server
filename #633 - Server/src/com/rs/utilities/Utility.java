@@ -6,7 +6,9 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import com.rs.GameConstants;
 import com.rs.cache.Cache;
@@ -14,7 +16,6 @@ import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import skills.Skills;
@@ -558,9 +559,9 @@ public final class Utility {
 	 * @return The list of classes
 	 */
 	@SneakyThrows({InstantiationException.class, IllegalAccessException.class, ClassNotFoundException.class})
-	public static ObjectList<Object> getClassesInDirectory(String directory) {
-		ObjectList<Object> classes = new ObjectArrayList<>();
-		for (File file : new File("./bin/" + directory.replace(".", "/")).listFiles()) {
+	public static List<Object> getClassesInDirectory(String directory) {
+		List<Object> classes = new ArrayList<>();
+		for (File file : new File("./bin/main/" + directory.replace(".", "/")).listFiles()) {
 			if (file.getName().contains("$")) {
 				continue;
 			}

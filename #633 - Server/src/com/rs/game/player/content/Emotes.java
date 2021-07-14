@@ -2,10 +2,10 @@ package com.rs.game.player.content;
 
 import java.util.Optional;
 
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
 import com.rs.game.player.Player;
 import com.rs.game.task.LinkedTaskSequence;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.Utility;
 
 import lombok.Getter;

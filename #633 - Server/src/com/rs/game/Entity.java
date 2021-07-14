@@ -36,7 +36,10 @@ import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.EntityStrategy;
 import com.rs.game.route.strategy.ObjectStrategy;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.ForceMovement;
 import com.rs.net.encoders.other.ForceTalk;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.MutableNumber;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utility;
@@ -326,7 +329,7 @@ public abstract class Entity extends WorldTile {
 			setNextWorldTile(null);
 			setTeleported(true);
 			if (isPlayer() && ((Player) this).getTemporaryMovementType() == -1)
-				((Player) this).setTemporaryMovementType(getMovement().getTELE_MOVE_TYPE());
+				((Player) this).setTemporaryMovementType(toPlayer().getMovement().getTELE_MOVE_TYPE());
 			updateEntityRegion(this);
 			if (needMapUpdate())
 				loadMapRegions();
@@ -902,15 +905,15 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public double getMagePrayerMultiplier() {
-		return 0.6;
+		return isPlayer() ? 0.6 : 0;
 	}
 
 	public double getRangePrayerMultiplier() {
-		return 0.6;
+		return isPlayer() ? 0.6 : 0;
 	}
 
 	public double getMeleePrayerMultiplier() {
-		return 0.6;
+		return isPlayer() ? 0.6 : 0;
 	}
 
 	public void checkMultiArea() {

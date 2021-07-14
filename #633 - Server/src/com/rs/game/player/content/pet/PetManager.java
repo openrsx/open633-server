@@ -4,12 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.rs.cache.loaders.ItemDefinitions;
-import com.rs.game.Animation;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.npc.others.Pet;
 import com.rs.game.player.Player;
+import com.rs.net.encoders.other.Animation;
 import com.rs.net.encoders.other.ForceTalk;
+
+import lombok.Data;
 
 /**
  * The pet manager.
@@ -17,6 +19,7 @@ import com.rs.net.encoders.other.ForceTalk;
  * @author Emperor
  * 
  */
+@Data
 public final class PetManager {
 
 	/**
@@ -157,77 +160,4 @@ public final class PetManager {
 		}
 		petDetails.remove(pets.getBabyItemId());
 	}
-
-	/**
-	 * Gets the player.
-	 * 
-	 * @return The player.
-	 */
-	public Player getPlayer() {
-		return player;
-	}
-
-	/**
-	 * Sets the player.
-	 * 
-	 * @param player The player to set.
-	 */
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
-
-	/**
-	 * Gets the npcId.
-	 * 
-	 * @return The npcId.
-	 */
-	public int getNpcId() {
-		return npcId;
-	}
-
-	/**
-	 * Sets the npcId.
-	 * 
-	 * @param npcId The npcId to set.
-	 */
-	public void setNpcId(int npcId) {
-		this.npcId = npcId;
-	}
-
-	/**
-	 * Gets the itemId.
-	 * 
-	 * @return The itemId.
-	 */
-	public int getItemId() {
-		return itemId;
-	}
-
-	/**
-	 * Sets the itemId.
-	 * 
-	 * @param itemId The itemId to set.
-	 */
-	public void setItemId(int itemId) {
-		this.itemId = itemId;
-	}
-
-	/**
-	 * Gets the trollBabyName.
-	 * 
-	 * @return The trollBabyName.
-	 */
-	public String getTrollBabyName() {
-		return trollBabyName;
-	}
-
-	/**
-	 * Sets the trollBabyName.
-	 * 
-	 * @param trollBabyName The trollBabyName to set.
-	 */
-	public void setTrollBabyName(String trollBabyName) {
-		this.trollBabyName = trollBabyName;
-	}
-
 }

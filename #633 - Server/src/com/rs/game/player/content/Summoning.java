@@ -3,13 +3,13 @@ package com.rs.game.player.content;
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.cache.loaders.NPCDefinitions;
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
 import com.rs.game.item.Item;
 import com.rs.game.map.WorldTile;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Player;
 import com.rs.game.player.controller.ControllerHandler;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;

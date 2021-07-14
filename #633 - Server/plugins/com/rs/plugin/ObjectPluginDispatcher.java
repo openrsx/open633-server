@@ -36,6 +36,9 @@ public final class ObjectPluginDispatcher {
 	 * @param parts  the string which represents a Objects.
 	 */
 	public static void execute(Player player, GameObject gamObject, int optionId) {
+		if (!getObject(gamObject, gamObject.getId()).isPresent()) {
+			System.out.println("no ");
+		}
 		getObject(gamObject, gamObject.getId()).ifPresent(object -> {
 			try {
 				object.execute(player, gamObject, optionId);
@@ -97,6 +100,7 @@ public final class ObjectPluginDispatcher {
 		List<ObjectType> objectTypes = Utility.getClassesInDirectory("com.rs.plugin.impl.objects").stream()
 				.map(clazz -> (ObjectType) clazz).collect(Collectors.toList());
 		objectTypes.forEach(objectType -> OBJECTS.put(objectType.getClass().getAnnotation(ObjectSignature.class), objectType));
+		System.out.println(OBJECTS.size());
 	}
 
 	/**
