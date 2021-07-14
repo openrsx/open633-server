@@ -1,5 +1,5 @@
 # Compiled class file
-#.class
+#*.class
 
 # Log file
 *.log
@@ -28,4 +28,3 @@ data/cache
 # Ignore Player files
 data/characters
 /.gradle/
-/bin/
