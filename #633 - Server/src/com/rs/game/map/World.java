@@ -1,5 +1,7 @@
 package com.rs.game.map;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +31,14 @@ import com.rs.game.task.impl.RestoreSkillTask;
 import com.rs.game.task.impl.RestoreSpecialTask;
 import com.rs.game.task.impl.ShopRestockTask;
 import com.rs.game.task.impl.SummoningPassiveTask;
+import com.rs.net.ServerChannelHandler;
+import com.rs.net.mysql.ConnectionPool;
+import com.rs.net.mysql.DatabaseConnection;
+import com.rs.net.mysql.ThreadedSQL;
+import com.rs.net.mysql.configuration.ConfigurationNode;
+import com.rs.net.mysql.configuration.ConfigurationParser;
+import com.rs.net.mysql.service.MySQLDatabaseConfiguration;
+import com.rs.net.mysql.service.MySQLDatabaseConnection;
 import com.rs.utilities.AntiFlood;
 import com.rs.utilities.Utility;
 
@@ -49,6 +59,11 @@ public final class World extends AbstractScheduledService {
 
 	private static final Predicate<Player> VALID_PLAYER = (player) -> player != null && player.isStarted() && !player.isFinished();
 	private static final Predicate<NPC> VALID_NPC = (npc) -> npc != null && !npc.isFinished();
+	
+	/**
+	 * The MySQL Connection pool
+	 */
+	private static ConnectionPool<? extends DatabaseConnection> connectionPool;
 
 	public static Stream<Entity> entities() {
 		return Stream.concat(players(), npcs());
@@ -77,8 +92,11 @@ public final class World extends AbstractScheduledService {
 		World.get().submit(new PlayerOwnedObjectTask());
 		World.get().submit(new RestoreSkillTask());
 		World.get().submit(new RestoreHitpoints());
-		
-//		LivingRockCavern.init(); //should check if player is in region
+		try {
+			loadConfiguration();
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static final Region getRegion(int id) {
@@ -738,10 +756,59 @@ public final class World extends AbstractScheduledService {
 		
 		World.players().forEach(player -> player.resetMasks());
 		World.npcs().forEach(npc -> npc.resetMasks());
+		
+		ServerChannelHandler.processSessionQueue();
 	}
 
 	@Override
 	protected Scheduler scheduler() {
 		return Scheduler.newFixedDelaySchedule(600, 600, TimeUnit.MILLISECONDS);
+	}
+	
+	/**
+	 * Loads server configuration.
+	 *
+	 * @throws IOException
+	 * 		if an I/O error occurs.
+	 * @throws ClassNotFoundException
+	 * 		if a class loaded through reflection was not found.
+	 * @throws IllegalAccessException
+	 * 		if a class could not be accessed.
+	 * @throws InstantiationException
+	 * 		if a class could not be created.
+	 */
+	public static void loadConfiguration() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		try (FileInputStream fis = new FileInputStream(GameConstants.SQL_FILE_PATH)) {
+			ConfigurationParser parser = new ConfigurationParser(fis);
+			ConfigurationNode mainNode = parser.parse();
+			if (mainNode.has("database")) {
+				ConfigurationNode databaseNode = mainNode.nodeFor("database");
+				MySQLDatabaseConfiguration config = new MySQLDatabaseConfiguration();
+				config.setHost(databaseNode.getString("host"));
+				config.setPort(databaseNode.getInteger("port"));
+				config.setDatabase(databaseNode.getString("database"));
+				config.setUsername(databaseNode.getString("username"));
+				config.setPassword(databaseNode.getString("password"));
+				setConnectionPool(new ConnectionPool<MySQLDatabaseConnection>(config));
+				setConnectionPool(new ThreadedSQL(config, CoresManager.serverWorkersCount).getConnectionPool());
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
+	
+	/**
+	 * @return the connectionPool
+	 */
+	public static ConnectionPool<? extends DatabaseConnection> getConnectionPool() {
+		return connectionPool;
+	}
+
+	/**
+	 * @param connectionPool
+	 * 		the connectionPool to set
+	 */
+	public static void setConnectionPool(ConnectionPool<? extends DatabaseConnection> connectionPool) {
+		World.connectionPool = connectionPool;
 	}
 }

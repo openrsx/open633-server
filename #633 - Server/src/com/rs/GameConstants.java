@@ -15,11 +15,12 @@ public final class GameConstants {
 	/**
 	 * General client and server settings.
 	 */
-	public static final String SERVER_NAME =  GameProperties.getGameProperties().getString("server_name");
+	public static final String SERVER_NAME = GameProperties.getGameProperties().getString("server_name");
 	public static final int RECEIVE_DATA_LIMIT = GameProperties.getGameProperties().getInteger("receive_data_limit");
 	public static final int PACKET_SIZE_LIMIT = GameProperties.getGameProperties().getInteger("packet_size_limit");
 	public static final int CLIENT_REVISION = GameProperties.getGameProperties().getInteger("revision");
 	public static final long CONNECTION_TIMEOUT = GameProperties.getGameProperties().getInteger("connection_timeout");
+	public static final String SQL_FILE_PATH =  GameProperties.getGameProperties().getString("sql_location");
 
 	/**
 	 * Player settings
