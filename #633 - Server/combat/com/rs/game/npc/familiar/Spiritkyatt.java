@@ -14,8 +14,6 @@ import com.rs.utilities.RandomUtils;
 
 public class Spiritkyatt extends Familiar {
 
-	private static final long serialVersionUID = -5780232636392194264L;
-
 	public Spiritkyatt(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

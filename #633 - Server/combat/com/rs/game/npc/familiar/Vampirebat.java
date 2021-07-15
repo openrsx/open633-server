@@ -14,11 +14,6 @@ import com.rs.utilities.RandomUtils;
 
 public class Vampirebat extends Familiar {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 586089784797828590L;
-
 	public Vampirebat(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

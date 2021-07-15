@@ -368,10 +368,6 @@ public class NPC extends Entity {
 		return getDefinitions().getName() + " - " + id + " - " + getX() + " " + getY() + " " + getPlane();
 	}
 
-	public boolean withinDistance(Player tile, int distance) {
-		return super.withinDistance(tile, distance);
-	}
-
 	public void transformIntoNPC(short id) {
 		setId(id);
 		setNextTransformation(new Transformation(id));

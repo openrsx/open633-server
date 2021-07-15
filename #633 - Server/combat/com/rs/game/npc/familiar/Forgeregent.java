@@ -16,8 +16,6 @@ import com.rs.utilities.RandomUtils;
 
 public class Forgeregent extends Familiar {
 
-	private static final long serialVersionUID = 7925379318994294024L;
-
 	public Forgeregent(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

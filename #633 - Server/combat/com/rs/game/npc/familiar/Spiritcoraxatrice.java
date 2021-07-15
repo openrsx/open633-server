@@ -17,10 +17,6 @@ import skills.Skills;
 
 public class Spiritcoraxatrice extends Familiar {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4532687672911847604L;
 	private int chocoTriceEgg;
 
 	public Spiritcoraxatrice(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
@@ -74,7 +70,7 @@ public class Spiritcoraxatrice extends Familiar {
 		setNextAnimation(new Animation(7766));
 		setNextGraphics(new Graphics(1467));
 		World.sendProjectile(this, target, 1468, 34, 16, 30, 35, 16, 0);
-		
+
 		target.ifPlayer(targetSelected -> {
 			int level = targetSelected.getSkills().getLevelForXp(Skills.SUMMONING);
 			int drained = 3;

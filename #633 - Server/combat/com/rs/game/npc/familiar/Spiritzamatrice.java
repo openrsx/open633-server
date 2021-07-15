@@ -17,7 +17,6 @@ import skills.Skills;
 
 public class Spiritzamatrice extends Familiar {
 
-	private static final long serialVersionUID = 9026151557574358985L;
 	private int chocoTriceEgg;
 
 	public Spiritzamatrice(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,

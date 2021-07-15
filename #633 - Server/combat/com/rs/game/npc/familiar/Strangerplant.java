@@ -18,8 +18,6 @@ import skills.Skills;
 
 public class Strangerplant extends Familiar {
 
-	private static final long serialVersionUID = 2827958223981739176L;
-
 	private int forageTicks;
 
 	public Strangerplant(Player player, Pouch pouch, WorldTile tile, int mapAreaNameHash,

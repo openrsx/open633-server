@@ -12,8 +12,6 @@ import com.rs.utilities.RandomUtils;
 
 public class Smokedevil extends Familiar {
 
-	private static final long serialVersionUID = -2734031002616044128L;
-
 	public Smokedevil(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

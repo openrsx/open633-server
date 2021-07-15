@@ -14,8 +14,6 @@ import com.rs.utilities.RandomUtils;
 
 public class Evilturnip extends Familiar {
 
-	private static final long serialVersionUID = -326631497631235701L;
-
 	public Evilturnip(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

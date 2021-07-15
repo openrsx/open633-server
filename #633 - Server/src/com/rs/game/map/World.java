@@ -15,7 +15,6 @@ import com.rs.cores.CoresManager;
 import com.rs.game.Entity;
 import com.rs.game.EntityList;
 import com.rs.game.npc.NPC;
-import com.rs.game.npc.dragons.KingBlackDragon;
 import com.rs.game.player.Player;
 import com.rs.game.route.Flags;
 import com.rs.game.task.Task;
@@ -625,6 +624,8 @@ public final class World extends AbstractScheduledService {
 		return (destX >= 3462 && destX <= 3511 && destY >= 9481 && destY <= 9521 && tile.getPlane() == 0) // kalphite
 				// queen
 				// lair
+				
+				
 				|| (destX >= 4540 && destX <= 4799 && destY >= 5052 && destY <= 5183 && tile.getPlane() == 0) // thzaar
 				// city
 				|| (destX >= 1721 && destX <= 1791 && destY >= 5123 && destY <= 5249) // mole
@@ -641,7 +642,6 @@ public final class World extends AbstractScheduledService {
 				|| (destX >= 2840 && destX <= 2950 && destY >= 5190 && destY <= 5230) // godwars
 				|| (destX >= 3547 && destX <= 3555 && destY >= 9690 && destY <= 9699) // zaros
 				// godwars
-				|| KingBlackDragon.atKBD(tile) // King Black Dragon lair
 				|| (destX >= 2970 && destX <= 3000 && destY >= 4365 && destY <= 4400)// corp
 				|| (destX >= 3195 && destX <= 3327 && destY >= 3520 && destY <= 3970
 						|| (destX >= 2376 && 5127 >= destY && destX <= 2422 && 5168 <= destY))

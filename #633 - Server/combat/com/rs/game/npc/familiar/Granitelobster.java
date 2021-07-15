@@ -19,7 +19,6 @@ public class Granitelobster extends Familiar {
 
 	@SuppressWarnings("unused")
 	private int forageTicks;
-	private static final long serialVersionUID = -8354346765099305088L;
 
 	public Granitelobster(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {

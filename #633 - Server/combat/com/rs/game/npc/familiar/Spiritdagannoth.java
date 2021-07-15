@@ -14,8 +14,6 @@ import com.rs.utilities.RandomUtils;
 
 public class Spiritdagannoth extends Familiar {
 
-	private static final long serialVersionUID = -494712406261011797L;
-
 	public Spiritdagannoth(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

@@ -1,4 +1,4 @@
-package com.rs.game.npc.global.impl;
+package com.rs.game.npc.other;
 
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;

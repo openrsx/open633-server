@@ -16,8 +16,6 @@ import skills.Skills;
 
 public class Spiritjelly extends Familiar {
 
-	private static final long serialVersionUID = 3986276126369633942L;
-
 	public Spiritjelly(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
@@ -57,7 +55,8 @@ public class Spiritjelly extends Familiar {
 		player.setNextGraphics(new Graphics(1316));
 		World.sendProjectile(this, target, 1359, 34, 16, 30, 35, 16, 0);
 		if (damage > 20)
-			target.ifPlayer(targetSelected -> targetSelected.getSkills().set(Skills.ATTACK, targetSelected.getSkills().getLevel(Skills.ATTACK) - (damage / 20)));
+			target.ifPlayer(targetSelected -> targetSelected.getSkills().set(Skills.ATTACK,
+					targetSelected.getSkills().getLevel(Skills.ATTACK) - (damage / 20)));
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {

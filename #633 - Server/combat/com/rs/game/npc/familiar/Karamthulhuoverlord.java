@@ -14,8 +14,6 @@ import com.rs.utilities.RandomUtils;
 
 public class Karamthulhuoverlord extends Familiar {
 
-	private static final long serialVersionUID = 6236333946001886534L;
-
 	public Karamthulhuoverlord(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

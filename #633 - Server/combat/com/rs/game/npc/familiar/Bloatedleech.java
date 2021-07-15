@@ -2,15 +2,13 @@ package com.rs.game.npc.familiar;
 
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Hit;
-import com.rs.game.player.Player;
 import com.rs.game.player.Hit.HitLook;
+import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 
 public class Bloatedleech extends Familiar {
-
-	private static final long serialVersionUID = -5859609994157768837L;
 
 	public Bloatedleech(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {

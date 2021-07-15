@@ -121,10 +121,10 @@ public final class LoginPacketsDecoder extends Decoder {
 				session.getLoginPackets().sendClientPacket(20);
 				return;
 			}
-			if (!password.equals(player.getDetails().getPassword())) {
-				session.getLoginPackets().sendClientPacket(3);
-				return;
-			}
+//			if (!password.equals()) {
+//				session.getLoginPackets().sendClientPacket(3);
+//				return;
+//			}
 		}
 		if ((player.getDetails().isPermBanned()
 				|| player.getDetails().getBanned() > Utility.currentTimeMillis())) {

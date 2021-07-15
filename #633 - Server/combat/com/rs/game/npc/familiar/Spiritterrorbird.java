@@ -10,11 +10,6 @@ import skills.Skills;
 
 public class Spiritterrorbird extends Familiar {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5259052583696765531L;
-
 	public Spiritterrorbird(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

@@ -10,8 +10,9 @@ import com.rs.game.EntityType;
 import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.map.Region;
 import com.rs.game.map.World;
+import com.rs.game.map.areas.AreaHandler;
 import com.rs.game.npc.familiar.Familiar;
-import com.rs.game.npc.global.impl.Pet;
+import com.rs.game.npc.other.Pet;
 import com.rs.game.player.actions.ActionManager;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.MusicsManager;
@@ -447,6 +448,7 @@ public class Player extends Entity {
 		getDetails().getCharges().process();
 		if (getMusicsManager().musicEnded())
 			getMusicsManager().replayMusic();
+		AreaHandler.processArea(this);
 	}
 
 	/**
@@ -518,7 +520,7 @@ public class Player extends Entity {
 		if (!isStarted())
 			return;
 		boolean isAtMultiArea = isForceMultiArea() ? true : World
-				.isMultiArea(this);
+				.isMultiArea(this) || AreaHandler.getArea(this).isPresent() && AreaHandler.getArea(this).get().name().equalsIgnoreCase("Multi Area");
 		if (isAtMultiArea && !isMultiArea()) {
 			setMultiArea(isAtMultiArea);
 			getPackets().sendGlobalConfig(616, 1);

@@ -13,8 +13,6 @@ import com.rs.net.encoders.other.Graphics;
 
 public class Ravenouslocust extends Familiar {
 
-	private static final long serialVersionUID = -176892505925306625L;
-
 	public Ravenouslocust(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

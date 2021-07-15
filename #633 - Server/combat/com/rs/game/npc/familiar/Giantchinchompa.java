@@ -15,11 +15,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Giantchinchompa extends Familiar {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7708802901929527088L;
-
 	public Giantchinchompa(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

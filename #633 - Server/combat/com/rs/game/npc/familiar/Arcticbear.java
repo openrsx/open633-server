@@ -14,8 +14,6 @@ import com.rs.utilities.RandomUtils;
 
 public class Arcticbear extends Familiar {
 
-	private static final long serialVersionUID = 6173794214333315091L;
-
 	public Arcticbear(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

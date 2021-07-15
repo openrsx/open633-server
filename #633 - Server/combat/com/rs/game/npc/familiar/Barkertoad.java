@@ -14,8 +14,6 @@ import com.rs.utilities.RandomUtils;
 
 public class Barkertoad extends Familiar {
 
-	private static final long serialVersionUID = 38784088080860925L;
-
 	public Barkertoad(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

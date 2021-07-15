@@ -17,7 +17,6 @@ import skills.Skills;
 
 public class Spiritcockatrice extends Familiar {
 
-	private static final long serialVersionUID = 9020621826301514346L;
 	private int chocoTriceEgg;
 
 	public Spiritcockatrice(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,

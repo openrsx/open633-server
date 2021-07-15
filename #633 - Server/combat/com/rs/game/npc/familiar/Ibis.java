@@ -15,7 +15,6 @@ import skills.Skills;
 
 public class Ibis extends Familiar {
 
-	private static final long serialVersionUID = -1499396381299006274L;
 	@SuppressWarnings("unused")
 	private int forageTicks;
 

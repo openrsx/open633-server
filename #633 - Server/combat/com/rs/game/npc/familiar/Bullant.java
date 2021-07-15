@@ -10,11 +10,6 @@ import skills.Skills;
 
 public class Bullant extends Familiar {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4667052662212699631L;
-
 	public Bullant(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
 	}

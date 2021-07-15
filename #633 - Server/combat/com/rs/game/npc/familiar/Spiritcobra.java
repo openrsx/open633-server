@@ -11,8 +11,6 @@ import com.rs.net.encoders.other.Graphics;
 
 public class Spiritcobra extends Familiar {
 
-	private static final long serialVersionUID = 5680976975276635201L;
-
 	public Spiritcobra(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

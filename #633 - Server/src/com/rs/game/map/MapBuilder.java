@@ -6,7 +6,7 @@ import java.util.List;
 import com.rs.cache.Cache;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
-import com.rs.game.npc.global.impl.Pet;
+import com.rs.game.npc.other.Pet;
 import com.rs.game.player.Player;
 
 import lombok.Synchronized;

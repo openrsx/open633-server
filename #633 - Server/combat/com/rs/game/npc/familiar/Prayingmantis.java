@@ -14,8 +14,6 @@ import com.rs.utilities.RandomUtils;
 
 public class Prayingmantis extends Familiar {
 
-	private static final long serialVersionUID = -2129621856723157961L;
-
 	public Prayingmantis(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
@@ -54,9 +52,9 @@ public class Prayingmantis extends Familiar {
 		setNextAnimation(new Animation(8071));
 		setNextGraphics(new Graphics(1422));
 		final int hitDamage = RandomUtils.random(170);
-		if (hitDamage > 0) 
+		if (hitDamage > 0)
 			target.ifPlayer(player -> player.getPrayer().drainPrayer(hitDamage));
-		
+
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {

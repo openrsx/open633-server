@@ -1,7 +1,5 @@
 package com.rs.game.npc.familiar;
 
-import java.io.Serializable;
-
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
@@ -9,11 +7,9 @@ import com.rs.game.item.ItemsContainer;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 
-public class BeastOfBurden implements Serializable {
+public class BeastOfBurden {
 
 	private static final int ITEMS_KEY = 530;
-
-	private static final long serialVersionUID = -2090871604834210257L;
 
 	private transient Player player;
 	private transient Familiar familiar;

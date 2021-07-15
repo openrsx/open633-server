@@ -10,7 +10,6 @@ import com.rs.net.encoders.other.Graphics;
 
 public class Macaw extends Familiar {
 
-	private static final long serialVersionUID = -7805271915467121215L;
 	private int specialLock = -1;
 
 	public Macaw(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {

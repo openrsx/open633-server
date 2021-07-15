@@ -18,7 +18,6 @@ public class Magpie extends Familiar {
 	private static final int[] RANDOM_ITEMS = { 1617, 1619, 1621, 1623, 1625, 1627, 1629, 1631, 1635, 1637, 1639, 1641,
 			1643, 1645, 2552, 2568, 2572, 2570, 2550 };
 
-	private static final long serialVersionUID = 1124069837190223150L;
 	private int theivingTicks;
 
 	public Magpie(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {

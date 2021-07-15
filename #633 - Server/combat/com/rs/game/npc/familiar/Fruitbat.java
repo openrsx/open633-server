@@ -13,7 +13,6 @@ import com.rs.utilities.RandomUtils;
 public class Fruitbat extends Familiar {
 
 	private static final transient int[] FRUITS = new int[] { 5972, 5974, 2102, 2120, 1963, 2108, 5982 };
-	private static final long serialVersionUID = 7999065876579183257L;
 
 	private int fruitTicks;
 
@@ -70,7 +69,8 @@ public class Fruitbat extends Familiar {
 			if (World.isTileFree(this.getPlane(), tile.getX(), tile.getY(), player.getSize()))
 				return true;
 			World.sendGraphics(player, new Graphics(1331), tile);
-			FloorItem.createGroundItem(new Item(FRUITS[RandomUtils.random(FRUITS.length)], 1), tile, player, true, 120, true);
+			FloorItem.createGroundItem(new Item(FRUITS[RandomUtils.random(FRUITS.length)], 1), tile, player, true, 120,
+					true);
 		}
 		return false;
 	}

@@ -14,8 +14,6 @@ import com.rs.utilities.RandomUtils;
 
 public class Talonbeast extends Familiar {
 
-	private static final long serialVersionUID = 7695472240241943640L;
-
 	public Talonbeast(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
@@ -56,6 +54,7 @@ public class Talonbeast extends Familiar {
 		World.sendProjectile(this, target, 1520, 34, 16, 30, 35, 16, 0);
 		World.get().submit(new Task(1) {
 			int ticks;
+
 			@Override
 			protected void execute() {
 				if (ticks++ == 3) {

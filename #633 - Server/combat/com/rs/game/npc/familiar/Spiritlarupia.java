@@ -16,8 +16,6 @@ import skills.Skills;
 
 public class Spiritlarupia extends Familiar {
 
-	private static final long serialVersionUID = 3060058918310360114L;
-
 	public Spiritlarupia(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);

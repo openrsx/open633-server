@@ -6,7 +6,7 @@ import java.util.Map;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
-import com.rs.game.npc.global.impl.Pet;
+import com.rs.game.npc.other.Pet;
 import com.rs.game.player.Player;
 import com.rs.net.encoders.other.Animation;
 import com.rs.net.encoders.other.ForceTalk;
