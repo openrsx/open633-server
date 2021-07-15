@@ -506,7 +506,7 @@ public class Magic {
 			player.getMapRegionsIds().parallelStream().filter(regionalPlayer -> regionalPlayer != null).forEach(regionalPlayer -> {
 				ObjectArrayList<Short> playersIndexes = World.getRegion(regionalPlayer).getPlayersIndexes();
 				playersIndexes.iterator().forEachRemaining(p -> {
-					World.players().filter(
+					World.get().validPlayer().filter(
 							playerIndex -> playerIndex.withinDistance(player, 4) || ControllerHandler.execute(player, controller -> controller.canHit(player, playerIndex)))
 							.forEach(worldPlayer -> {
 								if (!worldPlayer.getDetails().isAcceptAid()) {

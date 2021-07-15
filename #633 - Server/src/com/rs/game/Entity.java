@@ -785,6 +785,7 @@ public abstract class Entity extends WorldTile {
 		nextForceTalk = null;
 		nextFaceEntity = -2;
 		nextHits.clear();
+		ifNpc(npc -> npc.setNextTransformation(null));
 		ifPlayer(player -> {
 			player.setTemporaryMovementType((byte) -1);
 			player.setUpdateMovementType(false);
@@ -938,7 +939,7 @@ public abstract class Entity extends WorldTile {
 		for (int regionId : getMapRegionsIds()) {
 			ObjectArrayList<Short> playerIndexes = World.getRegion(regionId).getPlayersIndexes();
 			if (playerIndexes != null) {
-				World.players().filter(p -> !withinDistance(p))
+				World.get().validPlayer().filter(p -> !withinDistance(p))
 						.forEach(p -> p.getPackets().sendSound(soundId, 0, type));
 			}
 		}
@@ -1094,6 +1095,10 @@ public abstract class Entity extends WorldTile {
 		});
 	}
 
+	/**
+	 * TODO: Fix random tile movement
+	 * @param desination
+	 */
 	public void safeForceMoveTile(WorldTile desination) {
 		int dir = RandomUtils.random(Utility.DIRECTION_DELTA_X.length - 1);
 		if (World.checkWalkStep(desination.getPlane(), desination.getX(), desination.getY(), dir, 1)) {

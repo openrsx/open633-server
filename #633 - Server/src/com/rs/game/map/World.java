@@ -16,8 +16,6 @@ import com.rs.game.Entity;
 import com.rs.game.EntityList;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.dragons.KingBlackDragon;
-import com.rs.game.npc.others.Bork;
-import com.rs.game.npc.others.TormentedDemon;
 import com.rs.game.player.Player;
 import com.rs.game.route.Flags;
 import com.rs.game.task.Task;
@@ -52,34 +50,30 @@ public final class World extends AbstractScheduledService {
 	@Getter
 	@Setter
 	private short exiting_delay;
-	
+
 	@Getter
 	@Setter
 	private long exiting_start;
 
-	private static final Predicate<Player> VALID_PLAYER = (player) -> player != null && player.isStarted() && !player.isFinished();
-	private static final Predicate<NPC> VALID_NPC = (npc) -> npc != null && !npc.isFinished();
-	
+	private Predicate<Player> VALID_PLAYER = (player) -> player != null && player.isStarted() && !player.isFinished();
+	private Predicate<NPC> VALID_NPC = (npc) -> npc != null && !npc.isFinished();
+
 	/**
 	 * The MySQL Connection pool
 	 */
-	private static ConnectionPool<? extends DatabaseConnection> connectionPool;
+	private ConnectionPool<? extends DatabaseConnection> connectionPool;
 
-	public static Stream<Entity> entities() {
-		return Stream.concat(players(), npcs());
+	public Stream<Player> validPlayer() {
+		return playerList.stream().filter(VALID_PLAYER);
 	}
 
-	public static Stream<Player> players() {
-		return players.stream().filter(VALID_PLAYER);
+	public Stream<NPC> npcs() {
+		return npcsList.stream().filter(VALID_NPC);
 	}
 
-	public static Stream<NPC> npcs() {
-		return npcs.stream().filter(VALID_NPC);
-	}
-	
-	private static final EntityList<Player> players = new EntityList<Player>(GameConstants.PLAYERS_LIMIT);
-	private static final EntityList<NPC> npcs = new EntityList<NPC>(GameConstants.NPCS_LIMIT);
-	
+	private static EntityList<Player> playerList = new EntityList<Player>(GameConstants.PLAYERS_LIMIT);
+	private static EntityList<NPC> npcsList = new EntityList<NPC>(GameConstants.NPCS_LIMIT);
+
 	@Getter
 	private static Object2ObjectArrayMap<Integer, Region> regions = new Object2ObjectArrayMap<>();
 
@@ -93,7 +87,7 @@ public final class World extends AbstractScheduledService {
 		World.get().submit(new RestoreSkillTask());
 		World.get().submit(new RestoreHitpoints());
 		try {
-			loadConfiguration();
+			get().loadConfiguration();
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
 			e.printStackTrace();
 		}
@@ -115,23 +109,23 @@ public final class World extends AbstractScheduledService {
 	}
 
 	public static final void addPlayer(Player player) {
-		players.add(player);
+		getPlayers().add(player);
 		AntiFlood.add(player.getSession().getIP());
 	}
 
 	public static void removePlayer(Player player) {
-		players.remove(player);
+		playerList.remove(player);
 		AntiFlood.remove(player.getSession().getIP());
 	}
 
 	public static final void addNPC(NPC npc) {
-		npcs.add(npc);
+		npcsList.add(npc);
 	}
 
 	public static final void removeNPC(NPC npc) {
-		npcs.remove(npc);
+		npcsList.remove(npc);
 	}
-	
+
 	/*
 	 * checks clip
 	 */
@@ -509,26 +503,27 @@ public final class World extends AbstractScheduledService {
 		}
 		return true;
 	}
-	
+
 	public static final Optional<Player> getPlayer(String username) {
-		return players().filter(p -> p.getUsername().equals(username)).findAny();
+		return get().validPlayer().filter(p -> p.getUsername().equals(username)).findAny();
 	}
 
 	public static final Optional<Player> containsPlayer(String username) {
-		return players().filter(p -> p.getUsername().equals(username)).findAny();
+		return get().validPlayer().filter(p -> p.getUsername().equals(username)).findAny();
 	}
 
 	public static final Player getPlayerByDisplayName(String username) {
 		String formatedUsername = Utility.formatPlayerNameForDisplay(username);
-		return players().filter(p -> p.getUsername().equalsIgnoreCase(formatedUsername) || p.getDisplayName().equalsIgnoreCase(formatedUsername)).findFirst().orElse(null);
+		return get().validPlayer().filter(p -> p.getUsername().equalsIgnoreCase(formatedUsername)
+				|| p.getDisplayName().equalsIgnoreCase(formatedUsername)).findFirst().orElse(null);
 	}
 
 	public static final EntityList<Player> getPlayers() {
-		return players;
+		return playerList;
 	}
 
 	public static final EntityList<NPC> getNPCs() {
-		return npcs;
+		return npcsList;
 	}
 
 	@SneakyThrows(Throwable.class)
@@ -537,9 +532,9 @@ public final class World extends AbstractScheduledService {
 			return;
 		get().setExiting_start(Utility.currentTimeMillis());
 		get().setExiting_delay(delay);
-		World.players().forEach(player -> player.getPackets().sendSystemUpdate(delay));
+		World.get().validPlayer().forEach(player -> player.getPackets().sendSystemUpdate(delay));
 		CoresManager.schedule(() -> {
-			World.players().forEach(player -> player.getSession().realFinish(player, true));
+			World.get().validPlayer().forEach(player -> player.getSession().realFinish(player, true));
 			Launcher.shutdown();
 		}, delay);
 	}
@@ -557,7 +552,7 @@ public final class World extends AbstractScheduledService {
 				if (playersIndexes == null)
 					continue;
 				for (Short playerIndex : playersIndexes) {
-					Player player = players.get(playerIndex);
+					Player player = playerList.get(playerIndex);
 					if (player == null || !player.isStarted() || player.isFinished() || !player.withinDistance(tile))
 						continue;
 					player.getPackets().sendGraphics(graphics, tile);
@@ -574,7 +569,7 @@ public final class World extends AbstractScheduledService {
 			if (playersIndexes == null)
 				continue;
 			for (Short playerIndex : playersIndexes) {
-				Player player = players.get(playerIndex);
+				Player player = playerList.get(playerIndex);
 				if (player == null || !player.isStarted() || player.isFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
 					continue;
@@ -592,7 +587,7 @@ public final class World extends AbstractScheduledService {
 			if (playersIndexes == null)
 				continue;
 			for (Short playerIndex : playersIndexes) {
-				Player player = players.get(playerIndex);
+				Player player = playerList.get(playerIndex);
 				if (player == null || !player.isStarted() || player.isFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
 					continue;
@@ -610,7 +605,7 @@ public final class World extends AbstractScheduledService {
 			if (playersIndexes == null)
 				continue;
 			for (Short playerIndex : playersIndexes) {
-				Player player = players.get(playerIndex);
+				Player player = playerList.get(playerIndex);
 				if (player == null || !player.isStarted() || player.isFinished()
 						|| (!player.withinDistance(shooter) && !player.withinDistance(receiver)))
 					continue;
@@ -647,8 +642,6 @@ public final class World extends AbstractScheduledService {
 				|| (destX >= 3547 && destX <= 3555 && destY >= 9690 && destY <= 9699) // zaros
 				// godwars
 				|| KingBlackDragon.atKBD(tile) // King Black Dragon lair
-				|| TormentedDemon.atTD(tile) // Tormented demon's area
-				|| Bork.atBork(tile) // Bork's area
 				|| (destX >= 2970 && destX <= 3000 && destY >= 4365 && destY <= 4400)// corp
 				|| (destX >= 3195 && destX <= 3327 && destY >= 3520 && destY <= 3970
 						|| (destX >= 2376 && 5127 >= destY && destX <= 2422 && 5168 <= destY))
@@ -696,37 +689,42 @@ public final class World extends AbstractScheduledService {
 	}
 
 	public static void sendWorldMessage(String message) {
-		players().forEach(player -> player.getPackets().sendGameMessage(message));
-	}
-	
-	public static void sendIgnoreableWorldMessage(Player sender, String message, boolean forStaff) {
-		World.players().filter(p -> p == null || !p.isRunning() || p.getDetails().isYellOff() || (forStaff && !p.getDetails().getRights().isStaff())
-				|| p.getFriendsIgnores().containsIgnore(sender.getUsername()) || p.getInterfaceManager().containsReplacedChatBoxInter()).forEach(player -> player.getPackets().sendGameMessage(message));
+		get().validPlayer().forEach(player -> player.getPackets().sendGameMessage(message));
 	}
 
+	public static void sendIgnoreableWorldMessage(Player sender, String message, boolean forStaff) {
+		World.get().validPlayer()
+				.filter(p -> p == null || !p.isRunning() || p.getDetails().isYellOff()
+						|| (forStaff && !p.getDetails().getRights().isStaff())
+						|| p.getFriendsIgnores().containsIgnore(sender.getUsername())
+						|| p.getInterfaceManager().containsReplacedChatBoxInter())
+				.forEach(player -> player.getPackets().sendGameMessage(message));
+	}
 
 	/**
-	 * An implementation of the singleton pattern to prevent indirect
-	 * instantiation of this class file.
+	 * An implementation of the singleton pattern to prevent indirect instantiation
+	 * of this class file.
 	 */
 	private static final World singleton = new World();
-	
+
 	/**
 	 * Returns the singleton pattern implementation.
+	 * 
 	 * @return The returned implementation.
 	 */
 	public static World get() {
 		return singleton;
 	}
-	
+
 	/**
 	 * The manager for the queue of game tasks.
 	 */
 	@Getter
 	public final TaskManager taskManager = new TaskManager();
-	
+
 	/**
 	 * Submits {@code t} to the backing {@link TaskManager}.
+	 * 
 	 * @param task the task to submit to the queue.
 	 */
 	public void submit(Task task) {
@@ -741,21 +739,19 @@ public final class World extends AbstractScheduledService {
 	@Override
 	protected void runOneIteration() throws Exception {
 		World.get().getTaskManager().sequence();
-		
-		World.players().forEach(player -> player.processEntity());
-		World.npcs().forEach(npc -> npc.processEntity());
-		
-		World.players().forEach(player -> player.processEntityUpdate());
-		World.npcs().forEach(npc -> npc.processEntityUpdate());
 
-		World.players().forEach(player -> {
+		World.get().validPlayer().forEach(player -> {
+			player.processEntity();
+			player.processEntityUpdate();
 			player.getPackets().sendLocalPlayersUpdate();
 			player.getPackets().sendLocalNPCsUpdate();
+			player.resetMasks();
 		});
-		
-		World.players().forEach(player -> player.resetMasks());
-		World.npcs().forEach(npc -> npc.resetMasks());
-		
+		World.get().npcs().forEach(npc -> {
+			npc.processEntity();
+			npc.processEntityUpdate();
+			npc.resetMasks();
+		});
 		ServerChannelHandler.processSessionQueue();
 	}
 
@@ -763,20 +759,18 @@ public final class World extends AbstractScheduledService {
 	protected Scheduler scheduler() {
 		return Scheduler.newFixedDelaySchedule(600, 600, TimeUnit.MILLISECONDS);
 	}
-	
+
 	/**
 	 * Loads server configuration.
 	 *
-	 * @throws IOException
-	 * 		if an I/O error occurs.
-	 * @throws ClassNotFoundException
-	 * 		if a class loaded through reflection was not found.
-	 * @throws IllegalAccessException
-	 * 		if a class could not be accessed.
-	 * @throws InstantiationException
-	 * 		if a class could not be created.
+	 * @throws IOException            if an I/O error occurs.
+	 * @throws ClassNotFoundException if a class loaded through reflection was not
+	 *                                found.
+	 * @throws IllegalAccessException if a class could not be accessed.
+	 * @throws InstantiationException if a class could not be created.
 	 */
-	public static void loadConfiguration() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public void loadConfiguration()
+			throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		try (FileInputStream fis = new FileInputStream(GameConstants.SQL_FILE_PATH)) {
 			ConfigurationParser parser = new ConfigurationParser(fis);
 			ConfigurationNode mainNode = parser.parse();
@@ -788,26 +782,25 @@ public final class World extends AbstractScheduledService {
 				config.setDatabase(databaseNode.getString("database"));
 				config.setUsername(databaseNode.getString("username"));
 				config.setPassword(databaseNode.getString("password"));
-				setConnectionPool(new ConnectionPool<MySQLDatabaseConnection>(config));
-				setConnectionPool(new ThreadedSQL(config, CoresManager.serverWorkersCount).getConnectionPool());
+				get().setConnectionPool(new ConnectionPool<MySQLDatabaseConnection>(config));
+				get().setConnectionPool(new ThreadedSQL(config, CoresManager.serverWorkersCount).getConnectionPool());
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * @return the connectionPool
 	 */
-	public static ConnectionPool<? extends DatabaseConnection> getConnectionPool() {
-		return connectionPool;
+	public ConnectionPool<? extends DatabaseConnection> getConnectionPool() {
+		return get().connectionPool;
 	}
 
 	/**
-	 * @param connectionPool
-	 * 		the connectionPool to set
+	 * @param connectionPool the connectionPool to set
 	 */
-	public static void setConnectionPool(ConnectionPool<? extends DatabaseConnection> connectionPool) {
-		World.connectionPool = connectionPool;
+	public void setConnectionPool(ConnectionPool<? extends DatabaseConnection> connectionPool) {
+		World.get().connectionPool = connectionPool;
 	}
 }

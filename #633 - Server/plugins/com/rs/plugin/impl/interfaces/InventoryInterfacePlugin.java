@@ -11,7 +11,7 @@ import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar.SpecialAttack;
-import com.rs.game.npc.others.Pet;
+import com.rs.game.npc.global.impl.Pet;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;

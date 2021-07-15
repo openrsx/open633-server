@@ -17,8 +17,8 @@ public final class RestoreHitpoints extends Task {
 	@Override
 	@SneakyThrows(Throwable.class)
 	public void execute() {
-		World.players().forEach(player -> player.restoreHitPoints());
-		World.npcs().forEach(npc -> npc.restoreHitPoints());
+		World.get().validPlayer().forEach(player -> player.restoreHitPoints());
+		World.get().npcs().forEach(npc -> npc.restoreHitPoints());
 	}
 	
 	@Override

@@ -17,7 +17,7 @@ public final class RestoreSkillTask extends Task {
 
 	@Override
 	public void execute() {
-		World.players().forEach(player -> {
+		World.get().validPlayer().forEach(player -> {
 			int ammountTimes = player.getPrayer().usingPrayer(0, 8) ? 2 : 1;
 			if (player.isResting())
 				ammountTimes += 1;

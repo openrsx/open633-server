@@ -1,4 +1,4 @@
-package com.rs.game.npc.others;
+package com.rs.game.npc.global.impl;
 
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
@@ -9,12 +9,17 @@ import com.rs.game.player.content.pet.PetDetails;
 import com.rs.game.player.content.pet.Pets;
 import com.rs.utilities.Utility;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
  * Represents a pet.
  * 
  * @author Emperor
  * 
  */
+@Data
+@EqualsAndHashCode(callSuper=false)
 public final class Pet extends NPC {
 
 	/**
@@ -164,7 +169,7 @@ public final class Pet extends NPC {
 		if (teleTile == null) {
 			return;
 		}
-		safeForceMoveTile(teleTile);
+		setNextWorldTile(teleTile);
 	}
 
 	private void sendFollow() {
@@ -254,41 +259,4 @@ public final class Pet extends NPC {
 	public void lockOrb() {
 		owner.getPackets().sendHideIComponent(747, 9, true);
 	}
-
-	/**
-	 * Gets the details.
-	 * 
-	 * @return The details.
-	 */
-	public PetDetails getDetails() {
-		return details;
-	}
-
-	/**
-	 * Gets the growthRate.
-	 * 
-	 * @return The growthRate.
-	 */
-	public double getGrowthRate() {
-		return growthRate;
-	}
-
-	/**
-	 * Sets the growthRate.
-	 * 
-	 * @param growthRate The growthRate to set.
-	 */
-	public void setGrowthRate(double growthRate) {
-		this.growthRate = growthRate;
-	}
-
-	/**
-	 * Gets the item id of the pet.
-	 * 
-	 * @return The item id.
-	 */
-	public int getItemId() {
-		return itemId;
-	}
-
 }
