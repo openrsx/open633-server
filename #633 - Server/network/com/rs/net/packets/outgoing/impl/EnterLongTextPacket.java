@@ -3,9 +3,9 @@ package com.rs.net.packets.outgoing.impl;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.pet.Pets;
 import com.rs.io.InputStream;
-import com.rs.net.Encrypt;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
+import com.rs.utilities.BlowFishCryptService;
 import com.rs.utilities.Utility;
 
 //TODO: Convert this packet
@@ -28,7 +28,7 @@ public class EnterLongTextPacket implements OutgoingPacket {
 				player.getPackets().sendGameMessage("Password length is limited to 5-15 characters.");
 				return;
 			}
-			player.getDetails().setPassword(Encrypt.encryptSHA1(value));
+			player.getDetails().setPassword(BlowFishCryptService.hashpw(value, BlowFishCryptService.gensalt()));
 			player.getPackets()
 					.sendGameMessage("You have changed your password! Your new password is \"" + value + "\".");
 		} else if (player.getAttributes().getAttributes().remove("change_troll_name") == Boolean.TRUE) {
