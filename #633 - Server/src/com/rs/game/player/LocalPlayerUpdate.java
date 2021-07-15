@@ -159,7 +159,7 @@ public final class LocalPlayerUpdate {
 				stream.writeBits(6, p.getYInRegion());
 				boolean needAppearenceUpdate = needAppearenceUpdate(
 						p.getIndex(), p.getAppearance()
-								.getMD5AppeareanceDataHash());
+								.getMd5AppeareanceDataHash());
 				appendUpdateBlock(p, updateBlockData, needAppearenceUpdate,
 						true);
 				stream.writeBits(1, 1);
@@ -227,7 +227,7 @@ public final class LocalPlayerUpdate {
 			} else {
 				boolean needAppearenceUpdate = needAppearenceUpdate(
 						p.getIndex(), p.getAppearance()
-								.getMD5AppeareanceDataHash());
+								.getMd5AppeareanceDataHash());
 				boolean needUpdate = p.needMasksUpdate()
 						|| needAppearenceUpdate;
 				if (needUpdate)
@@ -307,7 +307,7 @@ public final class LocalPlayerUpdate {
 								|| p2.getNextWalkDirection() != -1
 								|| (p2.needMasksUpdate() || needAppearenceUpdate(
 										p2.getIndex(), p2.getAppearance()
-												.getMD5AppeareanceDataHash())))
+												.getMd5AppeareanceDataHash())))
 							break;
 						skip++;
 					}
@@ -556,7 +556,7 @@ public final class LocalPlayerUpdate {
 		byte[] renderData = p.getAppearance().getAppeareanceData();
 		totalRenderDataSentLength += renderData.length;
 		cachedAppearencesHashes[p.getIndex()] = p.getAppearance()
-				.getMD5AppeareanceDataHash();
+				.getMd5AppeareanceDataHash();
 		data.write128Byte(renderData.length);
 		data.writeBytes(renderData, 0, renderData.length);
 

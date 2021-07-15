@@ -367,9 +367,7 @@ public class Player extends Entity {
 		setTemporaryMovementType((byte) -1);
 		setLogicPackets(new ConcurrentLinkedQueue<LogicPacket>());
 		setSwitchItemCache(new ObjectArrayList<Byte>());
-		if (!getCurrentController().isPresent()) {
-			setCurrentController(getCurrentController());
-		}
+		setCurrentController(getCurrentController());
 		initEntity();
 		World.addPlayer(this);
 		updateEntityRegion(this);
@@ -508,7 +506,7 @@ public class Player extends Entity {
 		if (!HostManager.contains(getUsername(), HostListType.STARTER_RECEIVED)) {
 			GameConstants.STATER_KIT.forEach(getInventory()::addItem);
 			HostManager.add(this, HostListType.STARTER_RECEIVED, true);
-			World.sendWorldMessage("[New Player] " + getDisplayName() + " has just joined " + GameConstants.SERVER_NAME, canPvp);
+			World.sendWorldMessage("[New Player] " + getDisplayName() + " has just joined " + GameConstants.SERVER_NAME);
 		}
 	}
 

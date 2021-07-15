@@ -695,9 +695,8 @@ public final class World extends AbstractScheduledService {
 		// multi
 	}
 
-	public static void sendWorldMessage(String message, boolean forStaff) {
-		World.players().filter(p -> p == null || !p.isRunning() || p.getDetails().isYellOff() || (forStaff && !p.getDetails().getRights().isStaff())
-					|| p.getInterfaceManager().containsReplacedChatBoxInter()).forEach(player -> player.getPackets().sendGameMessage(message));
+	public static void sendWorldMessage(String message) {
+		players().forEach(player -> player.getPackets().sendGameMessage(message));
 	}
 	
 	public static void sendIgnoreableWorldMessage(Player sender, String message, boolean forStaff) {

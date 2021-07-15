@@ -6,12 +6,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
+import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.utilities.Chance;
 import com.rs.utilities.RandomUtils;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+import lombok.val;
 
 /**
  * A container that holds the unique and common drop tables.
@@ -93,11 +95,9 @@ public final class DropTable {
 				if(rareDrop.roll(random)) {
 					Item item = rareDrop.toItem();
 					items.add(item);
-//					int val = MarketItem.get(item.getId()) != null ? MarketItem.get(item.getId()).getPrice() * item.getAmount() : 0;
-//					if(val > 5_000_000) {//5m drop+
-////						World.getLoggingManager().write(Log.create(new MobDropLog(player, victim.getDefinition(), item)));
-////						World.get().message(player.getFormatUsername() + " just got an rare drop: " + item.getDefinition().getName());
-//					}
+					val dropPrice = item.getDefinitions().getValue();
+					if (dropPrice >= 2_000_000)
+						World.sendWorldMessage("[Drops] " + player.getDisplayName() + " has just recieved a " + item.getDefinitions().getName() + " from " + victim.getDefinitions().getName() + "!");
 				}
 			}
 		}

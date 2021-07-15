@@ -316,10 +316,6 @@ public class NPC extends Entity {
 		setNextWorldTile(tile);
 	}
 
-	public boolean hasForceWalk() {
-		return getForceWalk() != null;
-	}
-
 	public ObjectArrayList<Entity> getPossibleTargets(boolean checkNPCs, boolean checkPlayers) {
 		int size = getSize();
 		int agroRatio = 32;
@@ -331,7 +327,7 @@ public class NPC extends Entity {
 					for (int playerIndex : playerIndexes) {
 						Player player = World.getPlayers().get(playerIndex);
 						if (player.isDead() || player.isFinished() || !player.isRunning()
-								|| player.getAppearance().isHidden()
+								|| player.getAppearance().isHidePlayer()
 								|| !Utility.isOnRange(getX(), getY(), size, player.getX(), player.getY(),
 										player.getSize(),
 										getForceTargetDistance() > 0 ? getForceTargetDistance() : agroRatio)
