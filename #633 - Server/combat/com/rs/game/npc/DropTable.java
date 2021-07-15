@@ -144,13 +144,4 @@ public final class DropTable {
 		}
 		return false;
 	}
-	
-	public ObjectList<Drop> getCommon() {
-		return common;
-	}
-	
-	public ObjectList<Drop> getRare() {
-		return rare;
-	}
-	
 }

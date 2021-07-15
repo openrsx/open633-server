@@ -245,16 +245,13 @@ public class Session {
 					"Finished Player: " + player.getUsername() + ", pass: " + player.getDetails().getPassword());
 	}
 
+	@SneakyThrows(Exception.class)
 	public void processOutgoingQueue() {
-		try {
-			OutputStream outputStream;
-			if (!outgoingQueue.isEmpty()) {
-				while ((outputStream = outgoingQueue.poll()) != null) {
-					channel.write(ChannelBuffers.copiedBuffer(outputStream.getBuffer(), 0, outputStream.getOffset()));
-				}
+		OutputStream outputStream;
+		if (!outgoingQueue.isEmpty()) {
+			while ((outputStream = outgoingQueue.poll()) != null) {
+				channel.write(ChannelBuffers.copiedBuffer(outputStream.getBuffer(), 0, outputStream.getOffset()));
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 

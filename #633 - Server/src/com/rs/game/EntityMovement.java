@@ -168,18 +168,7 @@ public class EntityMovement {
 	/**
 	 * Movement Type states
 	 */
-	public final byte TELE_MOVE_TYPE = 127, WALK_MOVE_TYPE = 1, RUN_MOVE_TYPE = 2;
-	
-//	/**
-//	 * Gets the Type state
-//	 * @param player
-//	 * @return type
-//	 */
-//	public int getMovementType() {
-//		if (getEntity().toPlayer().getTemporaryMovementType() != -1)
-//			return getEntity().toPlayer().getTemporaryMovementType();
-//		return getEntity().toPlayer().isRun() ? RUN_MOVE_TYPE : WALK_MOVE_TYPE;
-//	}
+	private final byte TELE_MOVE_TYPE = 127, WALK_MOVE_TYPE = 1, RUN_MOVE_TYPE = 2;
 	
 	/**
 	 * Stops a Player with additional specified attributes.
