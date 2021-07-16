@@ -7,7 +7,11 @@ import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import com.rs.game.npc.other.Pet;
+=======
+import com.rs.game.npc.others.Pet;
+>>>>>>> parent of 03d7d9c7 (Removed Old NPC classes)
 =======
 import com.rs.game.npc.others.Pet;
 >>>>>>> parent of 03d7d9c7 (Removed Old NPC classes)

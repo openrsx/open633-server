@@ -13,7 +13,11 @@ import com.rs.game.map.World;
 import com.rs.game.map.areas.AreaHandler;
 import com.rs.game.npc.familiar.Familiar;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import com.rs.game.npc.other.Pet;
+=======
+import com.rs.game.npc.others.Pet;
+>>>>>>> parent of 03d7d9c7 (Removed Old NPC classes)
 =======
 import com.rs.game.npc.others.Pet;
 >>>>>>> parent of 03d7d9c7 (Removed Old NPC classes)
