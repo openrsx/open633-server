@@ -74,8 +74,8 @@ public final class World extends AbstractScheduledService {
 		return npcs.stream().filter(VALID_NPC);
 	}
 	
-	private static final EntityList<Player> players = new EntityList<Player>(GameConstants.PLAYERS_LIMIT);
-	private static final EntityList<NPC> npcs = new EntityList<NPC>(GameConstants.NPCS_LIMIT);
+	private static final EntityList<Player> players = new EntityList<Player>(GameConstants.PLAYERS_LIMIT, true);
+	private static final EntityList<NPC> npcs = new EntityList<NPC>(GameConstants.NPCS_LIMIT, false);
 	
 	@Getter
 	private static Object2ObjectArrayMap<Integer, Region> regions = new Object2ObjectArrayMap<>();
