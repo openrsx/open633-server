@@ -3,7 +3,6 @@ package com.rs.game;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
-import com.rs.GameConstants;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.content.TeleportType;
 import com.rs.game.task.LinkedTaskSequence;
@@ -51,7 +50,7 @@ public class EntityMovement {
 	 * @return state
 	 */
 	public boolean isLocked() {
-		return getLockDelay() > GameConstants.WORLD_CYCLE_MS;// Utils.currentTimeMillis();
+		return getLockDelay() >= Utility.currentTimeMillis();// Utils.currentTimeMillis();
 	}
 
 	/**
@@ -66,7 +65,7 @@ public class EntityMovement {
 	 * @param time
 	 */
 	public void lock(long time) {
-		setLockDelay(time == -1 ? Long.MAX_VALUE : GameConstants.WORLD_CYCLE_MS + time);
+		setLockDelay(Utility.currentTimeMillis() + (time * 600));
 	}
 
 	/**
