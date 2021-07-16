@@ -129,22 +129,24 @@ public class NPCPluginDispatcher {
 				|| !player.getMapRegionsIds().contains(npc.getRegionId()) || player.getMovement().isLocked())
 			return;
 		player.setRouteEvent(new RouteEvent(npc, () -> {
-			switch(optionId) {
-			case 1:
-				ControllerHandler.execute(player, controller -> controller.processNPCClick1(player, npc));
-				break;
-			case 2:
-				ControllerHandler.execute(player, controller -> controller.processNPCClick2(player, npc));
-				break;
-			case 3:
-				ControllerHandler.execute(player, controller -> controller.processNPCClick3(player, npc));
-				break;
-			case 4:
-				ControllerHandler.execute(player, controller -> controller.processNPCClick4(player, npc));
-				break;
+			if (!ControllerHandler.getController(player).isPresent()) {
+				switch(optionId) {
+				case 1:
+					ControllerHandler.execute(player, controller -> controller.processNPCClick1(player, npc));
+					break;
+				case 2:
+					ControllerHandler.execute(player, controller -> controller.processNPCClick2(player, npc));
+					break;
+				case 3:
+					ControllerHandler.execute(player, controller -> controller.processNPCClick3(player, npc));
+					break;
+				case 4:
+					ControllerHandler.execute(player, controller -> controller.processNPCClick4(player, npc));
+					break;
+				}
+				return;
 			}
-			if (!ControllerHandler.getController(player).isPresent())
-				NPCPluginDispatcher.execute(player, npc, optionId);
+			NPCPluginDispatcher.execute(player, npc, optionId);
 		}, npc.getDefinitions().name.contains("Banker") || npc.getDefinitions().name.contains("banker")));
 
 	}

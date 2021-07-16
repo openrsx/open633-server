@@ -27,4 +27,5 @@ public final class Multi extends Area {
 	public AreaType environment() {
 		return AreaType.NORMAL;
 	}
+	
 }

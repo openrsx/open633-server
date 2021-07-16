@@ -217,4 +217,32 @@ public class EntityMovement {
 			getEntity().toPlayer().getActionManager().forceStop();
 		getEntity().toPlayer().getCombatDefinitions().resetSpells(false);
 	}
+	
+	/**
+	 * Checks the state of the Player's Resting state
+	 * @return state
+	 */
+	public boolean isResting() {
+		return getEntity().toPlayer().getResting() != 0;
+	}
+	
+	/**
+	 * Drains the Run enery when the Player is Running
+	 */
+	public void drainRunEnergy() {
+		setRunEnergy(getEntity().toPlayer().getDetails().getRunEnergy() - 1);
+	}
+
+	/**
+	 * Sets the Player's Run enegery to a specific amount
+	 * @param runEnergy
+	 */
+	public void setRunEnergy(int runEnergy) {
+		if (runEnergy < 0)
+			runEnergy = 0;
+		else if (runEnergy > 100)
+			runEnergy = 100;
+		getEntity().toPlayer().getDetails().setRunEnergy((byte) runEnergy);
+		getEntity().toPlayer().getPackets().sendRunEnergy();
+	}
 }

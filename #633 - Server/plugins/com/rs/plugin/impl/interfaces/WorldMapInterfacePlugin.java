@@ -15,12 +15,12 @@ public class WorldMapInterfacePlugin implements RSInterface {
 		switch (interfaceId) {
 		case 750:
 			if (componentId == 1 && packetId == 11) {
-				if (player.isResting())
+				if (player.getMovement().isResting())
 					player.getMovement().stopAll();
-				player.setRun(!player.isRun());	
+				player.setRunState(!player.isRun());	
 			}
 			if (componentId == 1 && packetId == 29) {
-				if (player.isResting()) {
+				if (player.getMovement().isResting()) {
 					player.getMovement().stopAll();
 					return;
 				}

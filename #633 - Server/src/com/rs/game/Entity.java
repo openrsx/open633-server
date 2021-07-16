@@ -18,6 +18,7 @@ import com.rs.game.map.GameObject;
 import com.rs.game.map.Region;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
+import com.rs.game.map.areas.AreaHandler;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Attributes;
@@ -148,6 +149,19 @@ public abstract class Entity extends WorldTile {
 		setAttackedByDelay(0);
 		if (attributes)
 			getAttributes().getAttributes().clear();
+		ifPlayer(player -> {
+			player.getInterfaceManager().refreshHitPoints();
+			player.getHintIconsManager().removeAll();
+			player.getSkills().restoreSkills();
+			player.getCombatDefinitions().resetSpecialAttack();
+			player.getPrayer().reset();
+			player.getCombatDefinitions().resetSpells(true);
+			player.setResting((byte) 0);
+			player.getDetails().getPoisonImmunity().set(0);
+			player.getDetails().setAntifireDetails(Optional.empty());
+			player.getDetails().setRunEnergy((byte) 100);
+			player.getAppearance().generateAppearenceData();
+		});
 	}
 
 	public void reset() {
@@ -364,7 +378,7 @@ public abstract class Entity extends WorldTile {
 				setNextWalkDirection((byte) dir);
 			} else {
 				setNextRunDirection((byte) dir);
-				ifPlayer(player -> player.drainRunEnergy());
+				ifPlayer(player -> player.getMovement().drainRunEnergy());
 			}
 			moveLocation(Utility.DIRECTION_DELTA_X[dir], Utility.DIRECTION_DELTA_Y[dir], 0);
 		}
@@ -762,10 +776,18 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public boolean needMasksUpdate() {
-		return nextFaceEntity != -2 || nextAnimation != null || nextGraphics1 != null || nextGraphics2 != null
-				|| nextGraphics3 != null || nextGraphics4 != null
-				|| (nextWalkDirection == -1 && nextFaceWorldTile != null) || !nextHits.isEmpty()
-				|| nextForceMovement != null || nextForceTalk != null;
+		if (isPlayer())
+			return (toPlayer().getTemporaryMovementType() != -1)
+					|| (toPlayer().isUpdateMovementType()) || nextFaceEntity != -2 || nextAnimation != null || nextGraphics1 != null || nextGraphics2 != null
+							|| nextGraphics3 != null || nextGraphics4 != null
+							|| (nextWalkDirection == -1 && nextFaceWorldTile != null) || !nextHits.isEmpty()
+							|| nextForceMovement != null || nextForceTalk != null;
+		if (isNPC())
+			return (toNPC().getNextTransformation() != null)|| nextFaceEntity != -2 || nextAnimation != null || nextGraphics1 != null || nextGraphics2 != null
+					|| nextGraphics3 != null || nextGraphics4 != null
+					|| (nextWalkDirection == -1 && nextFaceWorldTile != null) || !nextHits.isEmpty()
+					|| nextForceMovement != null || nextForceTalk != null;
+		return false;
 	}
 
 	/**
@@ -794,9 +816,10 @@ public abstract class Entity extends WorldTile {
 				World.getRegion(getRegionId()).refreshSpawnedItems(player);
 			}
 		});
+		ifNpc(npc -> npc.setNextTransformation(null));
 	}
 
-	public abstract void finish();
+	public abstract void deregister();
 
 	public int getMaxHitpoints() {
 		return isNPC() ? toNPC().getCombatDefinitions().getHitpoints() : toPlayer().getSkills().getLevel(Skills.HITPOINTS) * 10 + toPlayer().getEquipment().getEquipmentHpIncrease();
@@ -826,6 +849,20 @@ public abstract class Entity extends WorldTile {
 				getMapRegionsIds().add(regionId);
 			}
 		setLastLoadedMapRegionTile(new WorldTile(this));
+		ifPlayer(player -> {
+			boolean wasAtDynamicRegion = isAtDynamicRegion();
+			player.setClientLoadedMapRegion(false);
+			if (isAtDynamicRegion()) {
+				player.getPackets().sendDynamicGameScene(!player.isStarted());
+				if (!wasAtDynamicRegion)
+					player.getLocalNPCUpdate().reset();
+			} else {
+				player.getPackets().sendGameScene(!player.isStarted());
+				if (wasAtDynamicRegion)
+					player.getLocalNPCUpdate().reset();
+			}
+			player.getDetails().setForceNextMapLoadRefresh(false);
+		});
 	}
 
 	public void setMapSize(int size) {
@@ -918,6 +955,19 @@ public abstract class Entity extends WorldTile {
 
 	public void checkMultiArea() {
 		setMultiArea(isForceMultiArea() ? true : World.isMultiArea(this));
+		ifPlayer(player -> {
+			if (!player.isStarted())
+				return;
+			boolean isAtMultiArea = player.isForceMultiArea() ? true : World
+					.isMultiArea(player) || AreaHandler.getArea(player).isPresent() && AreaHandler.getArea(player).get().name().equalsIgnoreCase("Multi Area");
+			if (isAtMultiArea && !player.isMultiArea()) {
+				player.setMultiArea(isAtMultiArea);
+				player.getPackets().sendGlobalConfig(616, 1);
+			} else if (!isAtMultiArea && player.isMultiArea()) {
+				player.setMultiArea(isAtMultiArea);
+				player.getPackets().sendGlobalConfig(616, 0);
+			}
+		});
 	}
 	
 	public void faceObject(GameObject object) {
@@ -1188,5 +1238,19 @@ public abstract class Entity extends WorldTile {
 				cancel();
 			}
 		}.submit();
+	}
+	
+	/**
+	 * Updates a Player's Run (movement) state 
+	 */
+	public void setRunState(boolean run) {
+		setRun(run);
+		ifPlayer(player -> {
+			if (run != isRun()) {
+				setRunState(run);
+				player.setUpdateMovementType(true);
+				player.getInterfaceManager().sendRunButtonConfig();
+			}
+		});
 	}
 }

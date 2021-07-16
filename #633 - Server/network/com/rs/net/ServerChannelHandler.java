@@ -78,7 +78,7 @@ public final class ServerChannelHandler extends SimpleChannelHandler {
 			if (session.getDecoder() == null)
 				return;
 			if (session.getDecoder() instanceof WorldPacketsDecoder)
-				session.getWorldPackets().getPlayer().finish();
+				session.getWorldPackets().getPlayer().deregister();
 		}
 	}
 

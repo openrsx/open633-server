@@ -391,45 +391,6 @@ public class Player extends Entity {
 	}
 
 	/**
-	 * Resets a Player's Attributes
-	 */
-	@Override
-	public void reset(boolean attributes) {
-		super.reset(attributes);
-		getInterfaceManager().refreshHitPoints();
-		getHintIconsManager().removeAll();
-		getSkills().restoreSkills();
-		getCombatDefinitions().resetSpecialAttack();
-		getPrayer().reset();
-		getCombatDefinitions().resetSpells(true);
-		setResting((byte) 0);
-		getDetails().getPoisonImmunity().set(0);
-		getDetails().setAntifireDetails(Optional.empty());
-		getDetails().setRunEnergy((byte) 100);
-		getAppearance().generateAppearenceData();
-	}
-	
-	/**
-	 * Handles the current Map Region state
-	 */
-	@Override
-	public void loadMapRegions() {
-		boolean wasAtDynamicRegion = isAtDynamicRegion();
-		super.loadMapRegions();
-		setClientLoadedMapRegion(false);
-		if (isAtDynamicRegion()) {
-			getPackets().sendDynamicGameScene(!isStarted());
-			if (!wasAtDynamicRegion)
-				getLocalNPCUpdate().reset();
-		} else {
-			getPackets().sendGameScene(!isStarted());
-			if (wasAtDynamicRegion)
-				getLocalNPCUpdate().reset();
-		}
-		getDetails().setForceNextMapLoadRefresh(false);
-	}
-
-	/**
 	 * Processes the Entities state
 	 */
 	@Override
@@ -449,27 +410,6 @@ public class Player extends Entity {
 		if (getMusicsManager().musicEnded())
 			getMusicsManager().replayMusic();
 		AreaHandler.processArea(this);
-	}
-
-	/**
-	 * Checks if the Player needs to update their Appearance masks
-	 */
-	@Override
-	public boolean needMasksUpdate() {
-		return super.needMasksUpdate() || getTemporaryMovementType() != -1
-				|| isUpdateMovementType();
-	}
-
-	/**
-	 * Updates a Player's Run (movement) state 
-	 */
-	@Override
-	public void setRun(boolean run) {
-		if (run != isRun()) {
-			super.setRun(run);
-			setUpdateMovementType(true);
-			getInterfaceManager().sendRunButtonConfig();
-		}
 	}
 
 	/**
@@ -513,28 +453,10 @@ public class Player extends Entity {
 	}
 
 	/**
-	 * Checks the Multi-zone state of a Player
-	 */
-	@Override
-	public void checkMultiArea() {
-		if (!isStarted())
-			return;
-		boolean isAtMultiArea = isForceMultiArea() ? true : World
-				.isMultiArea(this) || AreaHandler.getArea(this).isPresent() && AreaHandler.getArea(this).get().name().equalsIgnoreCase("Multi Area");
-		if (isAtMultiArea && !isMultiArea()) {
-			setMultiArea(isAtMultiArea);
-			getPackets().sendGlobalConfig(616, 1);
-		} else if (!isAtMultiArea && isMultiArea()) {
-			setMultiArea(isAtMultiArea);
-			getPackets().sendGlobalConfig(616, 0);
-		}
-	}
-
-	/**
 	 * Finishes the Player's Session
 	 */
 	@Override
-	public void finish() {
+	public void deregister() {
 		getSession().finish(this, 0);
 	}
 
@@ -553,14 +475,6 @@ public class Player extends Entity {
 	public WorldPacketsEncoder getPackets() {
 		return getSession().getWorldPackets();
 
-	}
-
-	/**
-	 * Checks the state of the Player's Resting state
-	 * @return state
-	 */
-	public boolean isResting() {
-		return getResting() != 0;
 	}
 
 	/**

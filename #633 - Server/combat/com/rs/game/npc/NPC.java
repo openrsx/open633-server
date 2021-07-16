@@ -97,20 +97,9 @@ public class NPC extends Entity {
 		getGenericNPC().setAttributes(this);
 	}
 
-	@Override
-	public boolean needMasksUpdate() {
-		return super.needMasksUpdate() || getNextTransformation() != null;
-	}
-
 	public void setNextNPCTransformation(short id) {
 		setId(id);
 		setNextTransformation(new Transformation(id));
-	}
-
-	@Override
-	public void resetMasks() {
-		super.resetMasks();
-		setNextTransformation(null);
 	}
 
 	public NPCDefinitions getDefinitions() {
@@ -213,7 +202,7 @@ public class NPC extends Entity {
 	}
 
 	@Override
-	public void finish() {
+	public void deregister() {
 		if (isFinished())
 			return;
 		setFinished(true);
@@ -227,7 +216,7 @@ public class NPC extends Entity {
 		if (!isFinished()) {
 			reset();
 			setLocation(getRespawnTile());
-			finish();
+			deregister();
 		}
 		World.get().submit(new Task(getCombatDefinitions().getRespawnDelay()) {
 			@Override
@@ -272,7 +261,7 @@ public class NPC extends Entity {
 	}
 
 	public boolean isForceWalking() {
-		return forceWalk != null;
+		return getForceWalk() != null;
 	}
 
 	public void setTarget(Entity entity) {

@@ -234,7 +234,7 @@ public class Session {
 		if (player.getFamiliar() != null && !player.getFamiliar().isFinished())
 			player.getFamiliar().dissmissFamiliar(true);
 		else if (player.getPet() != null)
-			player.getPet().finish();
+			player.getPet().deregister();
 		player.setFinished(true);
 		player.getSession().setDecoder(-1);
 		AccountCreation.savePlayer(player);

@@ -56,7 +56,7 @@ public class Spiritterrorbird extends Familiar {
 		player.setNextGraphics(new Graphics(1300));
 		player.setNextAnimation(new Animation(7660));
 		player.getSkills().set(Skills.AGILITY, newLevel);
-		player.setRunEnergy(runEnergy > 100 ? 100 : runEnergy);
+		player.getMovement().setRunEnergy(runEnergy > 100 ? 100 : runEnergy);
 		return true;
 	}
 }

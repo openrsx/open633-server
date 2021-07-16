@@ -29,3 +29,4 @@ data/cache
 data/characters
 /.gradle/
 /bin/main/
+/bin/

@@ -287,14 +287,14 @@ public final class Pots {
 			@Override
 			public void extra(Player player) {
 				int restoredEnergy = player.getDetails().getRunEnergy() + 20;
-				player.setRunEnergy(restoredEnergy > 100 ? 100 : restoredEnergy);
+				player.getMovement().setRunEnergy(restoredEnergy > 100 ? 100 : restoredEnergy);
 			}
 		},
 		SUPER_ENERGY() {
 			@Override
 			public void extra(Player player) {
 				int restoredEnergy = player.getDetails().getRunEnergy() + 40;
-				player.setRunEnergy(restoredEnergy > 100 ? 100 : restoredEnergy);
+				player.getMovement().setRunEnergy(restoredEnergy > 100 ? 100 : restoredEnergy);
 			}
 		},
 		ANTI_FIRE() {

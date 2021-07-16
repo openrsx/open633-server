@@ -56,7 +56,7 @@ public class PlayerDeath extends ActorDeathTask<Player> {
 		getActor().getMovement().unlock();
 		getActor().getCombatDefinitions().resetSpecialAttack();
 		getActor().getPrayer().closeAllPrayers();
-		getActor().setRunEnergy(100);
+		getActor().getMovement().setRunEnergy(100);
 		getActor().safeForceMoveTile(new WorldTile(GameConstants.START_PLAYER_LOCATION));
 		
 		Optional<Controller> controller = ControllerHandler.getController(getActor());

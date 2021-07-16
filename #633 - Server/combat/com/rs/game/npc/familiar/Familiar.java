@@ -337,7 +337,7 @@ public abstract class Familiar extends NPC {
 	}
 
 	public void dissmissFamiliar(boolean logged) {
-		finish();
+		deregister();
 		if (!logged && !isFinished()) {
 			setFinished(true);
 			switchOrb(false);

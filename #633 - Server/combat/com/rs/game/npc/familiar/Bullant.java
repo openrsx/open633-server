@@ -54,7 +54,7 @@ public class Bullant extends Familiar {
 		player.setNextAnimation(new Animation(7660));
 		setNextAnimation(new Animation(7895));
 		setNextGraphics(new Graphics(1382));
-		player.setRunEnergy(runEnergy > 100 ? 100 : runEnergy);
+		player.getMovement().setRunEnergy(runEnergy > 100 ? 100 : runEnergy);
 		return true;
 	}
 }

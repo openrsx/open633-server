@@ -38,7 +38,7 @@ public class NPCDeath extends ActorDeathTask<NPC> {
 					getActor().drop();
 					getActor().reset();
 					getActor().setLocation(getActor().getRespawnTile());
-					getActor().finish();
+					getActor().deregister();
 					this.cancel();
 				}
 				loop++;

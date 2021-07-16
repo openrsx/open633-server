@@ -57,8 +57,7 @@ public final class WorldPacketsDecoder extends Decoder {
 	private final Player player;
 
 	public static void loadPacketSizes() {
-		for (int i : PACKET_SIZES)
-			PACKET_SIZES[i] = -3;
+		IntStream.range(0, PACKET_SIZES.length).forEach(size -> PACKET_SIZES[size] = -3);
 		PACKET_SIZES[17] = -1;
 		PACKET_SIZES[76] = 3;
 		PACKET_SIZES[46] = 3;

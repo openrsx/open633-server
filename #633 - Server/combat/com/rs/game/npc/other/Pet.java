@@ -89,7 +89,7 @@ public final class Pet extends NPC {
 			owner.getInterfaceManager()
 					.removeWindowInterface(owner.getInterfaceManager().isResizableScreen() ? 128 : 188);
 			owner.getPackets().sendIComponentSettings(747, 17, 0, 0, 0);
-			finish();
+			deregister();
 			return;
 		}
 		if (growthRate > 0.000) {
@@ -127,7 +127,7 @@ public final class Pet extends NPC {
 		}
 		owner.getPetManager().setItemId(itemId);
 		owner.getPetManager().setNpcId(npcId);
-		finish();
+		deregister();
 		Pet newPet = new Pet((short) npcId, itemId, owner, owner, details);
 		newPet.growthRate = growthRate;
 		owner.setPet(newPet);
@@ -145,7 +145,7 @@ public final class Pet extends NPC {
 		switchOrb(false);
 		owner.getInterfaceManager().removeWindowInterface(owner.getInterfaceManager().isResizableScreen() ? 128 : 188);
 		owner.getPackets().sendIComponentSettings(747, 17, 0, 0, 0);
-		finish();
+		deregister();
 	}
 
 	/**

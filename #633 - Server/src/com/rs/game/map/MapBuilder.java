@@ -324,7 +324,7 @@ public final class MapBuilder {
 						// load region and loss space
 						continue;
 					}
-					npc.finish();
+					npc.deregister();
 				}
 			}
 			World.getRegions().remove(regionId);
