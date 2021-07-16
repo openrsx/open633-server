@@ -9,33 +9,8 @@ import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
 import com.rs.game.npc.combat.NPCCombat;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
-import com.rs.game.npc.corp.CorporealBeast;
-import com.rs.game.npc.dragons.KingBlackDragon;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.npc.global.GenericNPCDispatcher;
-import com.rs.game.npc.godwars.GodWarMinion;
-import com.rs.game.npc.godwars.GodWarsBosses;
-import com.rs.game.npc.godwars.armadyl.GodwarsArmadylFaction;
-import com.rs.game.npc.godwars.armadyl.KreeArra;
-import com.rs.game.npc.godwars.bandos.GeneralGraardor;
-import com.rs.game.npc.godwars.bandos.GodwarsBandosFaction;
-import com.rs.game.npc.godwars.saradomin.CommanderZilyana;
-import com.rs.game.npc.godwars.saradomin.GodwarsSaradominFaction;
-import com.rs.game.npc.godwars.zammorak.GodwarsZammorakFaction;
-import com.rs.game.npc.godwars.zammorak.KrilTstsaroth;
-import com.rs.game.npc.others.AbyssalDemon;
-import com.rs.game.npc.others.BanditCampBandits;
-import com.rs.game.npc.others.Bork;
-import com.rs.game.npc.others.Jadinko;
-import com.rs.game.npc.others.KalphiteQueen;
-import com.rs.game.npc.others.Kurask;
-import com.rs.game.npc.others.LivingRock;
-import com.rs.game.npc.others.Revenant;
-import com.rs.game.npc.others.RockCrabs;
-import com.rs.game.npc.others.Sheep;
-import com.rs.game.npc.others.Strykewyrm;
-import com.rs.game.npc.others.TormentedDemon;
-import com.rs.game.npc.others.Werewolf;
 import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
 import com.rs.game.player.controller.impl.WildernessController;
@@ -406,6 +381,7 @@ public class NPC extends Entity {
 
 	/**
 	 * TODO: REDO ALL THIS TO THE NEW SYSTEM
+	 * 
 	 * @param id
 	 * @param tile
 	 * @param mapAreaNameHash
@@ -417,77 +393,8 @@ public class NPC extends Entity {
 			boolean spawned) {
 
 		NPC npcType = null;
-
-		if (id == 1926 || id == 1931)
-			npcType = new BanditCampBandits(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 7134)
-			npcType = new Bork(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 8832 && id <= 8834)
-			npcType = new LivingRock(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 13465 && id <= 13481)
-			npcType = new Revenant(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 1158 || id == 1160)
-			npcType = new KalphiteQueen(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 6261 || id == 6263 || id == 6265)
-			npcType = GodWarsBosses.graardorMinions[(id - 6261) / 2] = new GodWarMinion(id, tile, mapAreaNameHash,
-					canBeAttackFromOutOfArea, spawned);
-		else if (id == 6260)
-			npcType = new GeneralGraardor(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 6222)
-			npcType = new KreeArra(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 6223 || id == 6225 || id == 6227 || id == 6081)
-			npcType = GodWarsBosses.armadylMinions[(id - 6223) / 2] = new GodWarMinion(id, tile, mapAreaNameHash,
-					canBeAttackFromOutOfArea, spawned);
-		else if (id == 6203)
-			npcType = new KrilTstsaroth(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 6204 || id == 6206 || id == 6208)
-			npcType = GodWarsBosses.zamorakMinions[(id - 6204) / 2] = new GodWarMinion(id, tile, mapAreaNameHash,
-					canBeAttackFromOutOfArea, spawned);
-		else if (id == 6248 || id == 6250 || id == 6252)
-			npcType = GodWarsBosses.commanderMinions[(id - 6248) / 2] = new GodWarMinion(id, tile, mapAreaNameHash,
-					canBeAttackFromOutOfArea, spawned);
-		else if (id == 6247)
-			npcType = new CommanderZilyana(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 6210 && id <= 6221)
-			npcType = new GodwarsZammorakFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 6254 && id <= 6259)
-			npcType = new GodwarsSaradominFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 6268 && id <= 6283)
-			npcType = new GodwarsBandosFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 6228 && id <= 6246)
-			npcType = new GodwarsArmadylFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 1615)
-			npcType = new AbyssalDemon(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
-		else if (id == 50 || id == 2642)
-			npcType = new KingBlackDragon(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id >= 9462 && id <= 9467)
-			npcType = new Strykewyrm(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
-		else if (id >= 6026 && id <= 6045)
-			npcType = new Werewolf(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 1266 || id == 1268 || id == 2453 || id == 2886)
-			npcType = new RockCrabs(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 8133)
-			npcType = new CorporealBeast(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-
-		else if (id == 1282) {
-			npcType = new NPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-			npcType.getMovement().lock(Short.MAX_VALUE);
-		} else if (id == 43 || (id >= 5156 && id <= 5164) || id == 5156 || id == 1765)
-			npcType = new Sheep(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
-
-		else if (id == 8349 || id == 8450 || id == 8451)
-			npcType = new TormentedDemon(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 1609 || id == 1610)
-			npcType = new Kurask(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
-		else if (id == 13820 || id == 13821 || id == 13822)
-			npcType = new Jadinko(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
-		else if (id == 1131 || id == 1132 || id == 1133 || id == 1134) {
-			npcType = new NPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-			npcType.setForceAgressive(true);
-		} else {
-			npcType = new NPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-			npcType = new GenericNPCDispatcher().create(npcType);
-		}
+		npcType = new NPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		npcType = new GenericNPCDispatcher().create(npcType);
 		return npcType;
 	}
 

@@ -15,15 +15,6 @@ import com.rs.cores.CoresManager;
 import com.rs.game.Entity;
 import com.rs.game.EntityList;
 import com.rs.game.npc.NPC;
-<<<<<<< HEAD
-=======
-import com.rs.game.npc.dragons.KingBlackDragon;
-import com.rs.game.npc.others.Bork;
-import com.rs.game.npc.others.TormentedDemon;
-<<<<<<< HEAD
->>>>>>> parent of 03d7d9c7 (Removed Old NPC classes)
-=======
->>>>>>> parent of 03d7d9c7 (Removed Old NPC classes)
 import com.rs.game.player.Player;
 import com.rs.game.route.Flags;
 import com.rs.game.task.Task;
@@ -654,15 +645,7 @@ public final class World extends AbstractScheduledService {
 				|| (destX >= 2840 && destX <= 2950 && destY >= 5190 && destY <= 5230) // godwars
 				|| (destX >= 3547 && destX <= 3555 && destY >= 9690 && destY <= 9699) // zaros
 				// godwars
-<<<<<<< HEAD
-=======
-				|| KingBlackDragon.atKBD(tile) // King Black Dragon lair
-				|| TormentedDemon.atTD(tile) // Tormented demon's area
-				|| Bork.atBork(tile) // Bork's area
-<<<<<<< HEAD
->>>>>>> parent of 03d7d9c7 (Removed Old NPC classes)
-=======
->>>>>>> parent of 03d7d9c7 (Removed Old NPC classes)
+
 				|| (destX >= 2970 && destX <= 3000 && destY >= 4365 && destY <= 4400)// corp
 				|| (destX >= 3195 && destX <= 3327 && destY >= 3520 && destY <= 3970
 						|| (destX >= 2376 && 5127 >= destY && destX <= 2422 && 5168 <= destY))

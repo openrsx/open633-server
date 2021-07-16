@@ -1,12 +1,5 @@
-<<<<<<< HEAD:#633 - Server/combat/com/rs/game/npc/other/Pet.java
-<<<<<<< HEAD:#633 - Server/combat/com/rs/game/npc/other/Pet.java
+
 package com.rs.game.npc.other;
-=======
-package com.rs.game.npc.others;
->>>>>>> parent of 03d7d9c7 (Removed Old NPC classes):#633 - Server/combat/com/rs/game/npc/others/Pet.java
-=======
-package com.rs.game.npc.others;
->>>>>>> parent of 03d7d9c7 (Removed Old NPC classes):#633 - Server/combat/com/rs/game/npc/others/Pet.java
 
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
