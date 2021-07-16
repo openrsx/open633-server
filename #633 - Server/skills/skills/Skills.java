@@ -1,28 +1,26 @@
 package skills;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.rs.GameConstants;
 import com.rs.game.player.Player;
 
 import lombok.Data;
 
 @Data
-public final class Skills {
+public class Skills {
 
 	public static final int MAXIMUM_EXP = 200000000;
-	public static final int ATTACK = 0, DEFENCE = 1, STRENGTH = 2,
-			HITPOINTS = 3, RANGE = 4, PRAYER = 5, MAGIC = 6, COOKING = 7,
-			WOODCUTTING = 8, FLETCHING = 9, FISHING = 10, FIREMAKING = 11,
-			CRAFTING = 12, SMITHING = 13, MINING = 14, HERBLORE = 15,
-			AGILITY = 16, THIEVING = 17, SLAYER = 18, FARMING = 19,
-			RUNECRAFTING = 20, CONSTRUCTION = 22, HUNTER = 21, SUMMONING = 23,
-			DUNGEONEERING = 24;
+	public static final int ATTACK = 0, DEFENCE = 1, STRENGTH = 2, HITPOINTS = 3, RANGE = 4, PRAYER = 5, MAGIC = 6,
+			COOKING = 7, WOODCUTTING = 8, FLETCHING = 9, FISHING = 10, FIREMAKING = 11, CRAFTING = 12, SMITHING = 13,
+			MINING = 14, HERBLORE = 15, AGILITY = 16, THIEVING = 17, SLAYER = 18, FARMING = 19, RUNECRAFTING = 20,
+			CONSTRUCTION = 22, HUNTER = 21, SUMMONING = 23, DUNGEONEERING = 24;
 
-	public static final String[] SKILL_NAME = { "Attack", "Defence",
-			"Strength", "Constitution", "Ranging", "Prayer", "Magic",
-			"Cooking", "Woodcutting", "Fletching", "Fishing", "Firemaking",
-			"Crafting", "Smithing", "Mining", "Herblore", "Agility",
-			"Thieving", "Slayer", "Farming", "Runecrafting", "Hunter",
-			"Construction", "Summoning", "Dungeoneering" };
+	public static final String[] SKILL_NAME = { "Attack", "Defence", "Strength", "Constitution", "Ranging", "Prayer",
+			"Magic", "Cooking", "Woodcutting", "Fletching", "Fishing", "Firemaking", "Crafting", "Smithing", "Mining",
+			"Herblore", "Agility", "Thieving", "Slayer", "Farming", "Runecrafting", "Hunter", "Construction",
+			"Summoning", "Dungeoneering" };
 
 	private byte level[];
 	private double xp[];
@@ -65,8 +63,7 @@ public final class Skills {
 	public boolean hasRequiriments(int... skills) {
 		for (int i = 0; i < skills.length; i += 2) {
 			int skillId = skills[i];
-			if (skillId == CONSTRUCTION || skillId == DUNGEONEERING
-					|| skillId == SLAYER)
+			if (skillId == CONSTRUCTION || skillId == DUNGEONEERING || skillId == SLAYER)
 				continue;
 			int skillLevel = skills[i + 1];
 			if (getLevelForXp(skillId) < skillLevel)
@@ -164,15 +161,14 @@ public final class Skills {
 			refresh(skill);
 		refreshXpCounter();
 	}
+
 	public void refresh(int skill) {
 		player.getPackets().sendSkillLevel(skill);
 	}
 
 	public double addXp(int skill, double exp) {
-		int rate = skill == ATTACK || skill == STRENGTH || skill == DEFENCE
-				|| skill == HITPOINTS || skill == MAGIC || skill == RANGE
-				|| skill == SUMMONING ? GameConstants.COMBAT_XP_RATE
-				: GameConstants.XP_RATE;
+		int rate = skill == ATTACK || skill == STRENGTH || skill == DEFENCE || skill == HITPOINTS || skill == MAGIC
+				|| skill == RANGE || skill == SUMMONING ? GameConstants.COMBAT_XP_RATE : GameConstants.XP_RATE;
 		exp *= rate;
 		return addXpNormal(skill, exp);
 	}
@@ -190,9 +186,10 @@ public final class Skills {
 		}
 		int newLevel = getLevelForXp(skill);
 		int levelDiff = newLevel - oldLevel;
+		gainedLevels = levelDiff;
 		if (newLevel > oldLevel) {
 			level[skill] += levelDiff;
-//			player.getDialogueManager().startDialogue("LevelUp", skill);
+			LevelUp.advanceLevel(player, skill, gainedLevels);
 			if (skill == SUMMONING || (skill >= ATTACK && skill <= MAGIC)) {
 				player.getAppearance().generateAppearenceData();
 				if (skill == HITPOINTS)
@@ -204,6 +201,8 @@ public final class Skills {
 		refresh(skill);
 		return exp;
 	}
+
+	private int gainedLevels;
 
 	public double addXpLamp(int skill, double exp) {
 		if (player.getDetails().isXpLocked())
@@ -256,5 +255,56 @@ public final class Skills {
 	public void resetXpCounter() {
 		xpCounter = 0;
 		refreshXpCounter();
+	}
+
+	/*
+	 * Levelup sounds 1 - 99
+	 */
+
+	public enum Musics {
+		ATTACK(29, 30, 0), STRENGTH(65, 66, 2), DEFENCE(37, 38, 1), HITPOINTS(47, 48, 3), RANGE(57, 58, 4),
+		MAGIC(51, 52, 6), PRAYER(55, 56, 5), AGILITY(28, 322, 16), HERBLORE(45, 46, 15), THIEVING(67, 68, 17),
+		CRAFTING(35, 36, 12), RUNECRAFTING(59, 60, 20), MINING(53, 54, 14), SMITHING(63, 64, 13), FISHING(41, 42, 10),
+		COOKING(33, 34, 7), FIREMAKING(39, 40, 11), WOODCUTTING(69, 70, 8), FLETCHING(43, 44, 9), SLAYER(61, 62, 18),
+		FARMING(11, 10, 19), CONSTRUCTION(31, 32, 22), HUNTER(49, 50, 21), SUMMONING(300, 301, 23),
+		DUNGEONEERING(416, 417, 24);
+
+		private int id;
+		private int id2;
+		private int skill;
+
+		private Musics(int id, int id2, int skill) {
+			this.id = id;
+			this.id2 = id2;
+			this.skill = skill;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public int getId2() {
+			return id2;
+		}
+
+		private static Map<Integer, Musics> musics = new HashMap<Integer, Musics>();
+
+		public static Musics levelup(int skill) {
+			return musics.get(skill);
+		}
+
+		static {
+			for (Musics music : Musics.values()) {
+				musics.put(music.skill, music);
+			}
+		}
+	}
+
+	public int getTotalLevel(Player player) {
+		int totallevel = 0;
+		for (int i = 0; i <= 24; i++) {
+			totallevel += player.getSkills().getLevelForXp(i);
+		}
+		return totallevel;
 	}
 }
