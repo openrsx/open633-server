@@ -141,7 +141,7 @@ public class GameObject extends WorldTile {
 
 	public static final void sendObjectAnimation(Entity creator, GameObject object, Animation animation) {
 		if (creator == null) {
-			World.get().validPlayer().filter(p -> p.withinDistance(object)).forEach(player -> player.getPackets().sendObjectAnimation(object, animation));
+			World.players().filter(p -> p.withinDistance(object)).forEach(player -> player.getPackets().sendObjectAnimation(object, animation));
 		} else {
 			for (int regionId : creator.getMapRegionsIds()) {
 				ObjectArrayList<Short> playersIndexes = World.getRegion(regionId).getPlayersIndexes();

@@ -14,7 +14,7 @@ public class TestService implements MYSQLService {
 	@Override
 	@SneakyThrows(SQLException.class)
 	public void execute() {
-		DatabaseConnection connection = World.get().getConnectionPool().nextFree();
+		DatabaseConnection connection = World.getConnectionPool().nextFree();
 		Statement statement = connection.createStatement();
 		if (statement == null) {
 			return;

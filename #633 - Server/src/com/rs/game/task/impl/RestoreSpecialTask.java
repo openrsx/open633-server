@@ -18,7 +18,7 @@ public final class RestoreSpecialTask extends Task {
 	
 	@Override
 	public void execute() {
-		World.get().validPlayer().filter(p -> p.getCombatDefinitions().getSpecialAttackPercentage() < 100).forEach(p -> p.getCombatDefinitions().restoreSpecialAttack(5));
+		World.players().filter(p -> p.getCombatDefinitions().getSpecialAttackPercentage() < 100).forEach(p -> p.getCombatDefinitions().restoreSpecialAttack(5));
 	}
 	
 	@Override

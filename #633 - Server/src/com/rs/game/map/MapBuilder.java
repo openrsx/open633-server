@@ -6,7 +6,11 @@ import java.util.List;
 import com.rs.cache.Cache;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
+<<<<<<< HEAD
 import com.rs.game.npc.other.Pet;
+=======
+import com.rs.game.npc.others.Pet;
+>>>>>>> parent of 03d7d9c7 (Removed Old NPC classes)
 import com.rs.game.player.Player;
 
 import lombok.Synchronized;

@@ -24,7 +24,7 @@ public class PublicChatMessage extends ChatMessage {
 		player.getMapRegionsIds().parallelStream().filter(regionalPlayer -> regionalPlayer != null).forEach(regionalPlayer -> {
 			ObjectArrayList<Short> playersIndexes = World.getRegion(regionalPlayer).getPlayersIndexes();
 			playersIndexes.iterator().forEachRemaining(p -> {
-				World.get().validPlayer().filter(
+				World.players().filter(
 						playerIndex -> playerIndex.getLocalPlayerUpdate().getLocalPlayers()[player.getIndex()] != null)
 						.forEach(worldPlayer -> worldPlayer.getPackets().sendPublicMessage(player, message));
 			});

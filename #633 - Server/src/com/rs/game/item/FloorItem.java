@@ -59,7 +59,7 @@ public class FloorItem extends Item {
 		final Region region = World.getRegion(tile.getRegionId());
 		region.forceGetFloorItems().add(floorItem);
 		int regionId = tile.getRegionId();
-		World.get().validPlayer().filter(p -> tile.getPlane() == p.getPlane() && p.getMapRegionsIds().contains(regionId)).forEach(p -> p.getPackets().sendGroundItem(floorItem));
+		World.players().filter(p -> tile.getPlane() == p.getPlane() && p.getMapRegionsIds().contains(regionId)).forEach(p -> p.getPackets().sendGroundItem(floorItem));
 	}
 
 	public static final void createGroundItem(final Item item, final WorldTile tile, final Player owner/* null for default */, final boolean underGrave, long hiddenTime/* default 3minutes */, boolean invisible) {
@@ -132,11 +132,6 @@ public class FloorItem extends Item {
 
 	}
 
-	/**
-	 * These need to be reworked. despawning doesn't work properly.
-	 * @param floorItem
-	 * @param publicTime
-	 */
 	@SneakyThrows(Throwable.class)
 	private static final void removeGroundItem(final FloorItem floorItem, long publicTime) {
 		if (publicTime < 0) {
@@ -148,7 +143,7 @@ public class FloorItem extends Item {
 			if (!region.forceGetFloorItems().contains(floorItem))
 				return;
 			region.forceGetFloorItems().remove(floorItem);
-			World.get().validPlayer().filter(p -> p.getPlane() != floorItem.getTile().getPlane() || !p.getMapRegionsIds().contains(regionId)) .forEach(p -> p.getPackets().sendRemoveGroundItem(floorItem));
+			World.players().filter(p -> p.getPlane() != floorItem.getTile().getPlane() || !p.getMapRegionsIds().contains(regionId)) .forEach(p -> p.getPackets().sendRemoveGroundItem(floorItem));
 		}, (int) publicTime);
 	}
 
@@ -170,7 +165,7 @@ public class FloorItem extends Item {
 			player.getPackets().sendRemoveGroundItem(floorItem);
 			return true;
 		} else {
-			World.get().validPlayer().filter(p -> p.getPlane() != floorItem.getTile().getPlane() || !p.getMapRegionsIds().contains(regionId)).forEach(p -> p.getPackets().sendRemoveGroundItem(floorItem));
+			World.players().filter(p -> p.getPlane() != floorItem.getTile().getPlane() || !p.getMapRegionsIds().contains(regionId)).forEach(p -> p.getPackets().sendRemoveGroundItem(floorItem));
 			return true;
 		}
 	}

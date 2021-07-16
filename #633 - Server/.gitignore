@@ -28,4 +28,4 @@ data/cache
 # Ignore Player files
 data/characters
 /.gradle/
-/bin/
+/bin/main/

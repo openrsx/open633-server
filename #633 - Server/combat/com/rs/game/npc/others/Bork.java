@@ -1,0 +1,84 @@
+package com.rs.game.npc.others;
+
+import java.util.Optional;
+
+import com.rs.cores.CoresManager;
+import com.rs.game.Entity;
+import com.rs.game.map.World;
+import com.rs.game.map.WorldTile;
+import com.rs.game.npc.NPC;
+import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+
+public class Bork extends NPC {
+
+	public static long deadTime;
+
+	public Bork(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea, boolean spawned) {
+		super(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		setLureDelay((short) 0);
+		setForceAgressive(true);
+	}
+
+	@Override
+	public void sendDeath(Optional<Entity> source) {
+		deadTime = System.currentTimeMillis() + (1000 * 60 * 60);
+		resetWalkSteps();
+		for (Entity e : getPossibleTargets()) {
+			e.ifPlayer(player -> {
+				player.getInterfaceManager().sendInterface(693);
+//				player.getDialogueManager().startDialogue("DagonHai", 7137, player, 1);
+				//TODO: Dialogue
+				World.get().submit(new Task(8) {
+					@Override
+					protected void execute() {
+						player.getMovement().stopAll();
+						this.cancel();
+					}
+				});
+			});
+		}
+		getCombat().removeTarget();
+		setNextAnimation(new Animation(getCombatDefinitions().getDeathAnim()));
+		World.get().submit(new Task(4) {
+			@Override
+			protected void execute() {
+				drop();
+				reset();
+				setLocation(getRespawnTile());
+				finish();
+				if (!isSpawned())
+					setRespawnTask();
+				this.cancel();
+			}
+		});
+	}
+
+	@Override
+	public void setRespawnTask() {
+		if (!isFinished()) {
+			reset();
+			setLocation(getRespawnTile());
+			finish();
+		}
+		CoresManager.schedule(() -> {
+			spawn();
+		},1);
+	}
+
+	public static String convertToTime() {
+		String time = "You have to wait " + (getTime() == 0 ? "few more seconds" : getTime() + " mins")
+				+ " to kill bork again.";
+		return time;
+	}
+
+	public static int getTime() {
+		return (int) (deadTime - System.currentTimeMillis() / 60000);
+	}
+
+	public static boolean atBork(WorldTile tile) {
+		if ((tile.getX() >= 3083 && tile.getX() <= 3120) && (tile.getY() >= 5522 && tile.getY() <= 5550))
+			return true;
+		return false;
+	}
+}
