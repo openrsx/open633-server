@@ -556,26 +556,6 @@ public class Player extends Entity {
 	}
 
 	/**
-	 * Drains the Run enery when the Player is Running
-	 */
-	public void drainRunEnergy() {
-		setRunEnergy(getDetails().getRunEnergy() - 1);
-	}
-
-	/**
-	 * Sets the Player's Run enegery to a specific amount
-	 * @param runEnergy
-	 */
-	public void setRunEnergy(int runEnergy) {
-		if (runEnergy < 0)
-			runEnergy = 0;
-		else if (runEnergy > 100)
-			runEnergy = 100;
-		getDetails().setRunEnergy((byte) runEnergy);
-		getPackets().sendRunEnergy();
-	}
-
-	/**
 	 * Checks the state of the Player's Resting state
 	 * @return state
 	 */

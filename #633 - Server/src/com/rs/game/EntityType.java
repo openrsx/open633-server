@@ -15,4 +15,4 @@ public enum EntityType {
 	 * The element used to represent the {@link NPC} implementation.
 	 */
 	NPC,
-}
+} 
