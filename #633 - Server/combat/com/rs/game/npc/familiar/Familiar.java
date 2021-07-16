@@ -51,7 +51,7 @@ public abstract class Familiar extends NPC {
 	}
 
 	public boolean canDepositOnly() {
-		return getDefinitions().hasOption("withdraw");
+		return getDefinitions().hasOptions("withdraw");
 	}
 
 	public boolean canStoreEssOnly() {

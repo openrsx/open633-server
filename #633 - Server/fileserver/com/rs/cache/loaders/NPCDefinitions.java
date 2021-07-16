@@ -475,30 +475,18 @@ public final class NPCDefinitions {
 		anInt897 = 0;
 		anInt901 = -1;
 	}
-
-	public boolean hasMarkOption() {
+	
+	public boolean hasOptions(String... op) {
 		for (String option : options) {
-			if (option != null && option.equalsIgnoreCase("mark"))
-				return true;
+			for (String options : op) {
+				if (option != null && option.equalsIgnoreCase(options))
+					return true;
+			}
 		}
 		return false;
 	}
-
-	public boolean hasOption(String op) {
-		for (String option : options) {
-			if (option != null && option.equalsIgnoreCase(op))
-				return true;
-		}
-		return false;
-	}
-
+	
 	public boolean hasAttackOption() {
-		if (id == 14899)
-			return true;
-		for (String option : options) {
-			if (option != null && option.equalsIgnoreCase("attack"))
-				return true;
-		}
-		return false;
+		return id == 14899 || hasOptions("Attack");
 	}
 }
