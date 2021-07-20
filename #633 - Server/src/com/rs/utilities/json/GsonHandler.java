@@ -1,5 +1,7 @@
 package com.rs.utilities.json;
 
+import java.lang.reflect.InvocationTargetException;
+
 import com.rs.utilities.json.impl.NPCAutoSpawn;
 import com.rs.utilities.json.impl.ObjectSpawnLoader;
 
@@ -43,10 +45,14 @@ public class GsonHandler {
 	 * 
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
 	 */
-	public static void addJsonLoaders() throws InstantiationException, IllegalAccessException {
-		CLASSES.add(NPCAutoSpawn.class.newInstance());
-		CLASSES.add(ObjectSpawnLoader.class.newInstance());
+	public static void addJsonLoaders() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		CLASSES.add(NPCAutoSpawn.class.getConstructor().newInstance());
+		CLASSES.add(ObjectSpawnLoader.class.getConstructor().newInstance());
 	}
 
 	/**

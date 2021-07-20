@@ -7,7 +7,7 @@ apply plugin: 'eclipse'
 /*
 	The target runtime for our JVM
 */
-sourceCompatibility = 1.8
+sourceCompatibility = 16
 
 /*
 	A list of repositories we're going to be using

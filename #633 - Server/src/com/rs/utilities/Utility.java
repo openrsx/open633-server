@@ -2,6 +2,7 @@ package com.rs.utilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -566,9 +567,16 @@ public final class Utility {
 			if (file.getName().contains("$")) {
 				continue;
 			}
-			Object objectEvent = (Class.forName(directory + "." + file.getName().replace(".class", ""))
-					.newInstance());
-			classes.add(objectEvent);
+			Object objectEvent;
+			try {
+				objectEvent = (Class.forName(directory + "." + file.getName().replace(".class", ""))
+						.getConstructor().newInstance());
+				classes.add(objectEvent);
+			} catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+					| SecurityException e) {
+				e.printStackTrace();
+			}
+			
 		}
 		return classes;
 	}
