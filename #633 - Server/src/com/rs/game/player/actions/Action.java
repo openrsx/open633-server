@@ -1,18 +1,50 @@
 package com.rs.game.player.actions;
 
+import java.util.Optional;
+
+import com.rs.game.Entity;
 import com.rs.game.player.Player;
 
+import lombok.Data;
+
+/**
+ * Represents an Action a Player creates
+ * @author Dennis
+ *
+ */
+@Data
 public abstract class Action {
 
-    public abstract boolean start(Player player);
+	/**
+	 * The Player
+	 */
+	private final Player player;
+	
+	/**
+	 * The Target the {@link #player} will be interacting with
+	 */
+	private final Optional<Entity> target;
+	
+	/**
+	 * Starts the Action
+	 * @return action
+	 */
+    public abstract boolean start();
 
-    public abstract boolean process(Player player);
+    /**
+     * Processes the Action in real time
+     * @return process
+     */
+    public abstract boolean process();
 
-    public abstract int processWithDelay(Player player);
+    /**
+     * Process the Action with a fixed delay
+     * @return fixed delayed process
+     */
+    public abstract int processWithDelay();
 
-    public abstract void stop(Player player);
-
-    protected final void setActionDelay(Player player, int delay) {
-	player.getActionManager().setActionDelay(delay);
-    }
+    /**
+     * Stops the Action that's currently being performed
+     */
+    public abstract void stop();
 }

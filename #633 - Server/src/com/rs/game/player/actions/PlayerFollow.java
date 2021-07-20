@@ -1,5 +1,9 @@
 package com.rs.game.player.actions;
 
+
+import java.util.Optional;
+
+import com.rs.game.Entity;
 import com.rs.game.player.Player;
 import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.EntityStrategy;
@@ -8,51 +12,52 @@ import com.rs.utilities.Utility;
 public class PlayerFollow extends Action {
 
 	private Player target;
-
-	public PlayerFollow(Player target) {
-		this.target = target;
+	
+	public PlayerFollow(Player player, Optional<Entity> target) {
+		super(player, target);
+		this.target = target.get().toPlayer();
 	}
 
 	@Override
-	public boolean start(Player player) {
-		player.setNextFaceEntity(target);
-		if (checkAll(player))
+	public boolean start() {
+		getPlayer().setNextFaceEntity(target);
+		if (checkAll())
 			return true;
-		player.setNextFaceEntity(null);
+		getPlayer().setNextFaceEntity(null);
 		return false;
 	}
 
-	private boolean checkAll(Player player) {
-		if (player.isDead() || player.isFinished() || target.isDead() || target.isFinished())
+	private boolean checkAll() {
+		if (getPlayer().isDead() || getPlayer().isFinished() || target.isDead() || target.isFinished())
 			return false;
-		if (player.getPlane() != target.getPlane())
+		if (getPlayer().getPlane() != target.getPlane())
 			return false;
-		if (player.getMovement().isFrozen())
+		if (getPlayer().getMovement().isFrozen())
 			return true;
-		int distanceX = player.getX() - target.getX();
-		int distanceY = player.getY() - target.getY();
-		int size = player.getSize();
+		int distanceX = getPlayer().getX() - target.getX();
+		int distanceY = getPlayer().getY() - target.getY();
+		int size = getPlayer().getSize();
 		int maxDistance = 16;
-		if (player.getPlane() != target.getPlane() || distanceX > size + maxDistance || distanceX < -1 - maxDistance
+		if (getPlayer().getPlane() != target.getPlane() || distanceX > size + maxDistance || distanceX < -1 - maxDistance
 				|| distanceY > size + maxDistance || distanceY < -1 - maxDistance)
 			return false;
 		int lastFaceEntity = target.getLastFaceEntity();
-		if (lastFaceEntity == player.getClientIndex() && target.getActionManager().getAction() instanceof PlayerFollow)
-			player.addWalkSteps(target.getX(), target.getY());
-		else if (!player.clipedProjectile(target, true) || !Utility.isOnRange(player.getX(), player.getY(), size,
+		if (lastFaceEntity == getPlayer().getClientIndex() && target.getActionManager().get().getAction().get() instanceof PlayerFollow)
+			getPlayer().addWalkSteps(target.getX(), target.getY());
+		else if (!getPlayer().clipedProjectile(target, true) || !Utility.isOnRange(getPlayer().getX(), getPlayer().getY(), size,
 				target.getX(), target.getY(), target.getSize(), 0)) {
-			int steps = RouteFinder.findRoute(RouteFinder.WALK_ROUTEFINDER, player.getX(), player.getY(),
-					player.getPlane(), player.getSize(), new EntityStrategy(target), true);
+			int steps = RouteFinder.findRoute(RouteFinder.WALK_ROUTEFINDER, getPlayer().getX(), getPlayer().getY(),
+					getPlayer().getPlane(), getPlayer().getSize(), new EntityStrategy(target), true);
 			if (steps == -1)
 				return false;
 
 			if (steps > 0) {
-				player.resetWalkSteps();
+				getPlayer().resetWalkSteps();
 
 				int[] bufferX = RouteFinder.getLastPathBufferX();
 				int[] bufferY = RouteFinder.getLastPathBufferY();
 				for (int step = steps - 1; step >= 0; step--) {
-					if (!player.addWalkSteps(bufferX[step], bufferY[step], 25, true))
+					if (!getPlayer().addWalkSteps(bufferX[step], bufferY[step], 25, true))
 						break;
 				}
 			}
@@ -62,17 +67,17 @@ public class PlayerFollow extends Action {
 	}
 
 	@Override
-	public boolean process(Player player) {
-		return checkAll(player);
+	public boolean process() {
+		return checkAll();
 	}
 
 	@Override
-	public int processWithDelay(Player player) {
+	public int processWithDelay() {
 		return 0;
 	}
 
 	@Override
-	public void stop(final Player player) {
-		player.setNextFaceEntity(null);
+	public void stop() {
+		getPlayer().setNextFaceEntity(null);
 	}
 }

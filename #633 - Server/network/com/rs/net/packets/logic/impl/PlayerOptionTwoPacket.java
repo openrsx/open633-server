@@ -1,5 +1,7 @@
 package com.rs.net.packets.logic.impl;
 
+import java.util.Optional;
+
 import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.game.player.actions.PlayerFollow;
@@ -29,6 +31,6 @@ public class PlayerOptionTwoPacket implements LogicPacket {
 		if (forceRun)
 			player.setRun(forceRun);
 		player.getMovement().stopAll();
-		player.getActionManager().setAction(new PlayerFollow(p2));
+		player.getActionManager().get().setAction(new PlayerFollow(player, Optional.of(p2)));
 	}
 }

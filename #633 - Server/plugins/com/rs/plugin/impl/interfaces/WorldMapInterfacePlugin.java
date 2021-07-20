@@ -1,5 +1,7 @@
 package com.rs.plugin.impl.interfaces;
 
+import java.util.Optional;
+
 import com.rs.game.player.Player;
 import com.rs.game.player.actions.Rest;
 import com.rs.plugin.listener.RSInterface;
@@ -34,7 +36,7 @@ public class WorldMapInterfacePlugin implements RSInterface {
 					return;
 				}
 				player.getMovement().stopAll();
-				player.getActionManager().setAction(new Rest(false));
+				player.getActionManager().get().setAction(new Rest(player, Optional.empty()));
 			}
 			break;
 		case 548:

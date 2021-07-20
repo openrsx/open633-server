@@ -1,5 +1,7 @@
 package com.rs.game.npc.combat;
 
+import java.util.Optional;
+
 import com.rs.game.Entity;
 import com.rs.game.map.World;
 import com.rs.game.npc.NPC;
@@ -87,9 +89,9 @@ public abstract class MobCombatInterface {
 					if (target.isPlayer()) {
 						Player targetPlayer = (Player) target;
 						targetPlayer.getInterfaceManager().closeInterfaces();
-						if (targetPlayer.getCombatDefinitions().isAutoRelatie() && !targetPlayer.getActionManager().hasSkillWorking()
-								&& !targetPlayer.hasWalkSteps())
-							targetPlayer.getActionManager().setAction(new PlayerCombat(npc));
+						if (targetPlayer.getCombatDefinitions().isAutoRelatie() && !targetPlayer.getActionManager().isPresent() && !targetPlayer.hasWalkSteps())
+							targetPlayer.getActionManager().get().setAction(new PlayerCombat(targetPlayer, Optional.of(npc)));
+						
 					} else {
 						NPC targetNPC = (NPC) target;
 						if (!targetNPC.getCombat().underCombat() || targetNPC.canBeAttackedByAutoRelatie())

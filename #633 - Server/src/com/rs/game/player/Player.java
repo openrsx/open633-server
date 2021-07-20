@@ -34,8 +34,9 @@ import com.rs.net.encoders.WorldPacketsEncoder;
 import com.rs.net.encoders.other.HintIconsManager;
 import com.rs.net.host.HostListType;
 import com.rs.net.host.HostManager;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
 import com.rs.utilities.Utility;
+import com.rs.utilities.LogUtility.LogType;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Data;
@@ -159,7 +160,7 @@ public class Player extends Entity {
 	/**
 	 * Represents a Action management system
 	 */
-	private transient ActionManager actionManager;
+	private transient Optional<ActionManager> actionManager = Optional.empty();
 	
 	/**
 	 * Represents a Player's Price Checker's system
@@ -222,14 +223,14 @@ public class Player extends Entity {
 	private transient ConcurrentLinkedQueue<LogicPacket> logicPackets;
 	
 	/**
-	 * The current skill action that is going on for this player.
-	 */
-	private Optional<SkillActionTask> skillAction = Optional.empty();
-	
-	/**
 	 * Personal details & information stored for a Player
 	 */
 	private PlayerDetails details;
+	
+	/**
+	 * The current skill action that is going on for this player.
+	 */
+	private Optional<SkillActionTask> skillAction = Optional.empty();
 	
 	/**
 	 * Represents a Player's appearance management system
@@ -348,7 +349,6 @@ public class Player extends Entity {
 		setPriceCheckManager(new PriceCheckManager(this));
 		setLocalPlayerUpdate(new LocalPlayerUpdate(this));
 		setLocalNPCUpdate(new LocalNPCUpdate(this));
-		setActionManager(new ActionManager(this));
 		setTrade(new Trade(this));
 		setVarsManager(new VarsManager(this));
 		setSpellDispatcher(new PassiveSpellDispatcher());
@@ -368,12 +368,14 @@ public class Player extends Entity {
 		setTemporaryMovementType((byte) -1);
 		setLogicPackets(new ConcurrentLinkedQueue<LogicPacket>());
 		setSwitchItemCache(new ObjectArrayList<Byte>());
-		setCurrentController(getCurrentController());
+		if (!getCurrentController().isPresent()) {
+			setCurrentController(getCurrentController());
+		}
 		initEntity();
 		World.addPlayer(this);
 		updateEntityRegion(this);
 		if (GameConstants.DEBUG)
-			Logger.log(this, "Initiated player: " + username + ", pass: "
+			LogUtility.log(LogType.INFO, "Initiated player: " + username + ", pass: "
 					+ getDetails().getPassword());
 		getSession().updateIPnPass(this);
 	}
@@ -382,7 +384,7 @@ public class Player extends Entity {
 	 * Starts ingame rendering, etc..
 	 */
 	public void start() {
-		Logger.globalLog(username, session.getIP(), new String(" has logged in."));
+		LogUtility.log(LogType.INFO, getDisplayName() + " has logged in from their IP " + getSession().getIP());
 		loadMapRegions();
 		setStarted(true);
 		login();
@@ -403,7 +405,7 @@ public class Player extends Entity {
 			setCoordsEvent(null);
 		if (getRouteEvent() != null && getRouteEvent().processEvent(this))
 			setRouteEvent(null);
-		getActionManager().process();
+		getActionManager().ifPresent(action -> action.process());
 		getPrayer().processPrayer();
 		ControllerHandler.executeVoid(this, controller -> controller.process(this));
 		getDetails().getCharges().process();

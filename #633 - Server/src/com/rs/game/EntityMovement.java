@@ -212,8 +212,8 @@ public class EntityMovement {
 			getEntity().toPlayer().setCoordsEvent(null);
 			getEntity().toPlayer().resetWalkSteps();
 		}
-		if (stopActions)
-			getEntity().toPlayer().getActionManager().forceStop();
+//		if (stopActions)
+//			getEntity().toPlayer().getActionManager().getAction().ifPresent(action -> action.stop());
 		getEntity().toPlayer().getCombatDefinitions().resetSpells(false);
 	}
 	

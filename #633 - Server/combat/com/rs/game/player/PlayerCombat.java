@@ -1,5 +1,6 @@
 package com.rs.game.player;
 
+import java.util.Optional;
 import java.util.Random;
 
 import com.rs.cache.loaders.ItemDefinitions;
@@ -28,6 +29,11 @@ import skills.Skills;
 
 public class PlayerCombat extends Action {
 
+	public PlayerCombat(Player player, Optional<Entity> target) {
+		super(player, target);
+		this.target = target.get();
+	}
+
 	private Entity target;
 	private int max_hit; // temporary constant
 	private double base_mage_xp; // temporary constant
@@ -47,69 +53,67 @@ public class PlayerCombat extends Action {
 
 	// finish client routefinder
 
-	public PlayerCombat(Entity target) {
-		this.target = target;
-	}
 
 	@Override
-	public boolean start(Player player) {
-		player.setNextFaceEntity(target);
-		if (checkAll(player))
+	public boolean start() {
+		getPlayer().setNextFaceEntity(target);
+		if (checkAll())
 			return true;
-		player.setNextFaceEntity(null);
+		
+		getPlayer().setNextFaceEntity(null);
 		return false;
 	}
 
 	@Override
-	public boolean process(Player player) {
-		return checkAll(player);
+	public boolean process() {
+		return checkAll();
 	}
 
 	@Override
-	public int processWithDelay(Player player) {
-		int isRanging = isRanging(player);
-		int spellId = player.getCombatDefinitions().getSpellId();
-		if (spellId < 1 && hasPolyporeStaff(player)) {
+	public int processWithDelay() {
+		int isRanging = isRanging(getPlayer());
+		int spellId = getPlayer().getCombatDefinitions().getSpellId();
+		if (spellId < 1 && hasPolyporeStaff(getPlayer())) {
 			spellId = 65535;
 		}
 		int maxDistance = isRanging != 0 || spellId > 0 ? 7 : 0;
 		double multiplier = 1.0;
-		if (player.getAttributes().getAttributes().get("miasmic_effect") == Boolean.TRUE)
+		if (getPlayer().getAttributes().getAttributes().get("miasmic_effect") == Boolean.TRUE)
 			multiplier = 1.5;
-		int size = player.getSize();
-		if (!player.clipedProjectile(target, maxDistance == 0))
+		int size = getPlayer().getSize();
+		if (!getPlayer().clipedProjectile(target, maxDistance == 0))
 			return 0;
-		if (player.hasWalkSteps())
-			maxDistance += player.isRun() ? 2 : 1;
-		if (!Utility.isOnRange(player.getX(), player.getY(), size, target.getX(), target.getY(), target.getSize(),
+		if (getPlayer().hasWalkSteps())
+			maxDistance += getPlayer().isRun() ? 2 : 1;
+		if (!Utility.isOnRange(getPlayer().getX(),getPlayer().getY(), size, target.getX(), target.getY(), target.getSize(),
 				maxDistance))
 			return 0;
-		if (!ControllerHandler.execute(player, controller -> controller.keepCombating(player, target))) {
+		if (!ControllerHandler.execute(getPlayer(), controller -> controller.keepCombating(getPlayer(), target))) {
 			return -1;
 		}
-		addAttackedByDelay(player);
+		addAttackedByDelay(getPlayer());
 		if (spellId > 0) {
 			boolean manualCast = spellId != 65535 && spellId >= 256;
-			Item gloves = player.getEquipment().getItem(Equipment.SLOT_HANDS);
+			Item gloves = getPlayer().getEquipment().getItem(Equipment.SLOT_HANDS);
 			spellcasterGloves = gloves != null && gloves.getDefinitions().getName().contains("Spellcaster glove")
-					&& player.getEquipment().getWeaponId() == -1 && new Random().nextInt(30) == 0 ? spellId : -1;
-			int delay = mageAttack(player, manualCast ? spellId - 256 : spellId, !manualCast);
-			if (player.getNextAnimation() != null && spellcasterGloves > 0) {
-				player.setNextAnimation(new Animation(14339));
+					&& getPlayer().getEquipment().getWeaponId() == -1 && new Random().nextInt(30) == 0 ? spellId : -1;
+			int delay = mageAttack(getPlayer(), manualCast ? spellId - 256 : spellId, !manualCast);
+			if (getPlayer().getNextAnimation() != null && spellcasterGloves > 0) {
+				getPlayer().setNextAnimation(new Animation(14339));
 				spellcasterGloves = -1;
 			}
 			return delay;
 		} else {
 			if (isRanging == 0) {
-				return (int) (meleeAttack(player) * multiplier);
+				return (int) (meleeAttack(getPlayer()) * multiplier);
 			} else if (isRanging == 1) {
-				player.getPackets().sendGameMessage("This ammo is not very effective with this weapon.");
+				getPlayer().getPackets().sendGameMessage("This ammo is not very effective with this weapon.");
 				return -1;
 			} else if (isRanging == 3) {
-				player.getPackets().sendGameMessage("You dont have any ammo in your backpack.");
+				getPlayer().getPackets().sendGameMessage("You dont have any ammo in your backpack.");
 				return -1;
 			} else {
-				return (int) (rangeAttack(player) * multiplier);
+				return (int) (rangeAttack(getPlayer()) * multiplier);
 			}
 		}
 	}
@@ -180,7 +184,7 @@ public class PlayerCombat extends Action {
 	public int mageAttack(final Player player, int spellId, boolean autocast) {
 		if (!autocast) {
 			player.getCombatDefinitions().resetSpells(false);
-			player.getActionManager().forceStop();
+//			player.getActionManager().forceStop();
 		}
 		if (!Magic.checkCombatSpell(player, spellId, -1, true)) {
 			if (autocast)
@@ -2512,9 +2516,8 @@ public class PlayerCombat extends Action {
 					if (target.isPlayer()) {
 						Player p2 = (Player) target;
 						p2.getInterfaceManager().closeInterfaces();
-						if (p2.getCombatDefinitions().isAutoRelatie() && !p2.getActionManager().hasSkillWorking()
-								&& !p2.hasWalkSteps())
-							p2.getActionManager().setAction(new PlayerCombat(player));
+						if (p2.getCombatDefinitions().isAutoRelatie() && !p2.getActionManager().isPresent() &&  !p2.hasWalkSteps())
+							p2.getActionManager().get().setAction(new PlayerCombat(p2, Optional.of(target)));
 					} else {
 						NPC n = (NPC) target;
 						if (!n.getCombat().underCombat() || n.canBeAttackedByAutoRelatie())
@@ -2796,25 +2799,25 @@ public class PlayerCombat extends Action {
 	}
 
 	@Override
-	public void stop(final Player player) {
-		player.setNextFaceEntity(null);
+	public void stop() {
+		getPlayer().setNextFaceEntity(null);
 	}
 
-	private boolean checkAll(Player player) {
-		if (player.isDead() || player.isFinished() || target.isDead() || target.isFinished()) {
+	private boolean checkAll() {
+		if (getPlayer().isDead() || getPlayer().isFinished() || target.isDead() || target.isFinished()) {
 			return false;
 		}
-		int distanceX = player.getX() - target.getX();
-		int distanceY = player.getY() - target.getY();
-		int size = player.getSize();
+		int distanceX = getPlayer().getX() - target.getX();
+		int distanceY = getPlayer().getY() - target.getY();
+		int size = getPlayer().getSize();
 		int maxDistance = 16;
-		if (player.getPlane() != target.getPlane() || distanceX > size + maxDistance || distanceX < -1 - maxDistance
+		if (getPlayer().getPlane() != target.getPlane() || distanceX > size + maxDistance || distanceX < -1 - maxDistance
 				|| distanceY > size + maxDistance || distanceY < -1 - maxDistance) {
 			return false;
 		}
 		if (target.isPlayer()) {
 			Player p2 = (Player) target;
-			if (!player.isCanPvp() || !p2.isCanPvp())
+			if (!getPlayer().isCanPvp() || !p2.isCanPvp())
 				return false;
 		} else {
 			NPC n = (NPC) target;
@@ -2830,22 +2833,22 @@ public class PlayerCombat extends Action {
 					return false;
 				}
 				if (n.getId() == 879) {
-					if (player.getEquipment().getWeaponId() != 2402
-							&& player.getCombatDefinitions().getAutoCastSpell() <= 0 && !hasPolyporeStaff(player)) {
-						player.getPackets().sendGameMessage("I'd better wield Silverlight first.");
+					if (getPlayer().getEquipment().getWeaponId() != 2402
+							&& getPlayer().getCombatDefinitions().getAutoCastSpell() <= 0 && !hasPolyporeStaff(getPlayer())) {
+						getPlayer().getPackets().sendGameMessage("I'd better wield Silverlight first.");
 						return false;
 					}
 				} else if (n.getId() >= 14084 && n.getId() <= 14139) {
-					int weaponId = player.getEquipment().getWeaponId();
+					int weaponId = getPlayer().getEquipment().getWeaponId();
 					if (!((weaponId >= 13117 && weaponId <= 13146) || (weaponId >= 21580 && weaponId <= 21582))
-							&& player.getCombatDefinitions().getAutoCastSpell() <= 0 && !hasPolyporeStaff(player)) {
-						player.getPackets().sendGameMessage("I'd better wield a silver weapon first.");
+							&& getPlayer().getCombatDefinitions().getAutoCastSpell() <= 0 && !hasPolyporeStaff(getPlayer())) {
+						getPlayer().getPackets().sendGameMessage("I'd better wield a silver weapon first.");
 						return false;
 					}
 				} else if (n.getId() == 6222 || n.getId() == 6223 || n.getId() == 6225 || n.getId() == 6227
 						|| (n.getId() >= 6232 && n.getId() <= 6246)) {
-					if (isRanging(player) == 0) {
-						player.getPackets()
+					if (isRanging(getPlayer()) == 0) {
+						getPlayer().getPackets()
 								.sendGameMessage("The Aviansie is flying too high for you to attack using melee.");
 						return false;
 					}
@@ -2854,67 +2857,67 @@ public class PlayerCombat extends Action {
 		}
 		if (!(target.isNPC() && ((NPC) target).isForceMultiAttacked())) {
 
-			if (!target.isMultiArea() || !player.isMultiArea()) {
-				if (player.getAttackedBy() != target && player.getAttackedByDelay() > Utility.currentTimeMillis()) {
-					player.getPackets().sendGameMessage("You are already in combat.");
+			if (!target.isMultiArea() || !getPlayer().isMultiArea()) {
+				if (getPlayer().getAttackedBy() != target && getPlayer().getAttackedByDelay() > Utility.currentTimeMillis()) {
+					getPlayer().getPackets().sendGameMessage("You are already in combat.");
 					return false;
 				}
-				if (target.getAttackedBy() != player && target.getAttackedByDelay() > Utility.currentTimeMillis()) {
-					player.getPackets().sendGameMessage("That "
-							+ (player.getAttackedBy().isPlayer() ? "player" : "npc") + " is already in combat.");
+				if (target.getAttackedBy() != getPlayer() && target.getAttackedByDelay() > Utility.currentTimeMillis()) {
+					getPlayer().getPackets().sendGameMessage("That "
+							+ (getPlayer().getAttackedBy().isPlayer() ? "player" : "npc") + " is already in combat.");
 					return false;
 				}
 			}
 		}
-		int isRanging = isRanging(player);
+		int isRanging = isRanging(getPlayer());
 		int targetSize = target.getSize();
-		if (player.getMovement().getFreezeDelay() >= Utility.currentTimeMillis()) {
-			if (Utility.colides(player.getX(), player.getY(), size, target.getX(), target.getY(), targetSize))// under
+		if (getPlayer().getMovement().getFreezeDelay() >= Utility.currentTimeMillis()) {
+			if (Utility.colides(getPlayer().getX(), getPlayer().getY(), size, target.getX(), target.getY(), targetSize))// under
 				// target
 				return false;
-			if (isRanging == 0 && target.getSize() == 1 && player.getCombatDefinitions().getSpellId() <= 0
-					&& !hasPolyporeStaff(player) && Math.abs(player.getX() - target.getX()) == 1
-					&& Math.abs(player.getY() - target.getY()) == 1 && !target.hasWalkSteps()) // diagonal
+			if (isRanging == 0 && target.getSize() == 1 && getPlayer().getCombatDefinitions().getSpellId() <= 0
+					&& !hasPolyporeStaff(getPlayer()) && Math.abs(getPlayer().getX() - target.getX()) == 1
+					&& Math.abs(getPlayer().getY() - target.getY()) == 1 && !target.hasWalkSteps()) // diagonal
 				return false;
 			return true;
 		}
-		if (Utility.colides(player.getX(), player.getY(), size, target.getX(), target.getY(), targetSize)
+		if (Utility.colides(getPlayer().getX(), getPlayer().getY(), size, target.getX(), target.getY(), targetSize)
 				&& !target.hasWalkSteps()) {
-			player.resetWalkSteps();
-			if (!player.addWalkSteps(target.getX() + targetSize, player.getY())) {
-				player.resetWalkSteps();
-				if (!player.addWalkSteps(target.getX() - size, player.getY())) {
-					player.resetWalkSteps();
-					if (!player.addWalkSteps(player.getX(), target.getY() + targetSize)) {
-						player.resetWalkSteps();
-						if (!player.addWalkSteps(player.getX(), target.getY() - size)) {
+			getPlayer().resetWalkSteps();
+			if (!getPlayer().addWalkSteps(target.getX() + targetSize, getPlayer().getY())) {
+				getPlayer().resetWalkSteps();
+				if (!getPlayer().addWalkSteps(target.getX() - size, getPlayer().getY())) {
+					getPlayer().resetWalkSteps();
+					if (!getPlayer().addWalkSteps(getPlayer().getX(), target.getY() + targetSize)) {
+						getPlayer().resetWalkSteps();
+						if (!getPlayer().addWalkSteps(getPlayer().getX(), target.getY() - size)) {
 							return false;
 						}
 					}
 				}
 			}
 			return true;
-		} else if (isRanging == 0 && target.getSize() == 1 && player.getCombatDefinitions().getSpellId() <= 0
-				&& !hasPolyporeStaff(player) && Math.abs(player.getX() - target.getX()) == 1
-				&& Math.abs(player.getY() - target.getY()) == 1 && !target.hasWalkSteps()) {
-			if (!player.addWalkSteps(target.getX(), player.getY(), 1))
-				player.addWalkSteps(player.getX(), target.getY(), 1);
+		} else if (isRanging == 0 && target.getSize() == 1 && getPlayer().getCombatDefinitions().getSpellId() <= 0
+				&& !hasPolyporeStaff(getPlayer()) && Math.abs(getPlayer().getX() - target.getX()) == 1
+				&& Math.abs(getPlayer().getY() - target.getY()) == 1 && !target.hasWalkSteps()) {
+			if (!getPlayer().addWalkSteps(target.getX(), getPlayer().getY(), 1))
+				getPlayer().addWalkSteps(getPlayer().getX(), target.getY(), 1);
 			return true;
 		}
-		maxDistance = isRanging != 0 || player.getCombatDefinitions().getSpellId() > 0 || hasPolyporeStaff(player) ? 7
+		maxDistance = isRanging != 0 || getPlayer().getCombatDefinitions().getSpellId() > 0 || hasPolyporeStaff(getPlayer()) ? 7
 				: 0;
-		boolean needCalc = !player.hasWalkSteps() || target.hasWalkSteps();
-		if ((!player.clipedProjectile(target, maxDistance == 0)) || !Utility.isOnRange(player.getX(), player.getY(), size,
+		boolean needCalc = !getPlayer().hasWalkSteps() || target.hasWalkSteps();
+		if ((!getPlayer().clipedProjectile(target, maxDistance == 0)) || !Utility.isOnRange(getPlayer().getX(), getPlayer().getY(), size,
 				target.getX(), target.getY(), target.getSize(), maxDistance)) {
-			// if (!player.hasWalkSteps()) {
+			// if (!getPlayer().hasWalkSteps()) {
 			if (needCalc) {
-				player.resetWalkSteps();
-				player.calcFollow(target, player.isRun() ? 2 : 1, true, true);
+				getPlayer().resetWalkSteps();
+				getPlayer().calcFollow(target, getPlayer().isRun() ? 2 : 1, true, true);
 			}
 			// }
 			return true;
 		} else {
-			player.resetWalkSteps();
+			getPlayer().resetWalkSteps();
 		}
 		return true;
 	}
@@ -3401,8 +3404,8 @@ public class PlayerCombat extends Action {
 		return weaponId == 22494 || weaponId == 22496;
 	}
 
-	public Entity getTarget() {
-		return target;
+	public Optional<Entity> getTarget() {
+		return Optional.of(target);
 	}
 
 	public static void handleIncomingHit(Player player, Hit hit) {
