@@ -10,8 +10,9 @@ import com.rs.game.map.MapBuilder;
 import com.rs.game.map.Region;
 import com.rs.game.map.World;
 import com.rs.net.ServerChannelHandler;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
 import com.rs.utilities.Utility;
+import com.rs.utilities.LogUtility.LogType;
 
 import lombok.SneakyThrows;
 
@@ -30,8 +31,8 @@ public class Launcher {
 		long currentTime = Utility.currentTimeMillis();
 		
 		GameLoader.getLOADER().getBackgroundLoader().waitForPendingTasks().shutdown();
-		
-		Logger.log("Launcher", "Server took "
+		  
+		LogUtility.log(LogType.INFO, "Server took "
 				+ (Utility.currentTimeMillis() - currentTime)
 				+ " milli seconds to launch.");
 		addCleanMemoryTask();

@@ -13,7 +13,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
 import com.rs.game.npc.NPC;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Cleanup;
@@ -51,7 +52,7 @@ public class NPCExamines {
 	}
 
 	private static void loadUnpackedNPCExamines() {
-		Logger.log("NPCExamines", "Packing npc examines...");
+		LogUtility.log(LogType.INFO, "Packing npc examines...");
 		try {
 			@Cleanup
 			BufferedReader in = new BufferedReader(new FileReader(UNPACKED_PATH));

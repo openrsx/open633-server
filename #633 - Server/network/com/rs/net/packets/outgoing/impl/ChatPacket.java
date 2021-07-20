@@ -8,8 +8,9 @@ import com.rs.net.encoders.other.PublicChatMessage;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
 import com.rs.plugin.CommandPluginDispatcher;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
 import com.rs.utilities.Utility;
+import com.rs.utilities.LogUtility.LogType;
 
 @OutgoingPacketSignature(packetId = 54, description = "Represents a public message being sent by the Player")
 public class ChatPacket implements OutgoingPacket {
@@ -51,6 +52,6 @@ public class ChatPacket implements OutgoingPacket {
 		PublicChatMessage chatMessage = new PublicChatMessage(message, effects);
 		chatMessage.sendPublicChatMessage(player, chatMessage);
 		if (GameConstants.DEBUG)
-			Logger.log(this, "Chat type: " + chatType);
+			LogUtility.log(LogType.INFO, "Chat type: " + chatType);
 	}
 }

@@ -11,7 +11,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
 import com.rs.game.npc.combat.NPCCombatDefinitions;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Cleanup;
@@ -41,7 +42,7 @@ public final class NPCCombatDefinitionsL {
 	@SneakyThrows(Throwable.class)
 	private static void loadUnpackedNPCCombatDefinitions() {
 		int count = 0;
-		Logger.log("NPCCombatDefinitionsL", "Packing npc combat definitions...");
+		LogUtility.log(LogType.INFO, "Packing npc combat definitions...");
 		@Cleanup
 		DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
 		@Cleanup
@@ -109,43 +110,40 @@ public final class NPCCombatDefinitionsL {
 		}
 	}
 
+	@SneakyThrows(Throwable.class)
 	private static void loadPackedNPCCombatDefinitions() {
-		try {
-			RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
-			FileChannel channel = in.getChannel();
-			ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
-			while (buffer.hasRemaining()) {
-				int npcId = buffer.getShort() & 0xffff;
-				int hitpoints = buffer.getShort() & 0xffff;
-				int attackAnim = buffer.getShort() & 0xffff;
-				if (attackAnim == 65535)
-					attackAnim = -1;
-				int defenceAnim = buffer.getShort() & 0xffff;
-				if (defenceAnim == 65535)
-					defenceAnim = -1;
-				int deathAnim = buffer.getShort() & 0xffff;
-				if (deathAnim == 65535)
-					deathAnim = -1;
-				int attackDelay = buffer.get() & 0xff;
-				int deathDelay = buffer.get() & 0xff;
-				int respawnDelay = buffer.getInt();
-				int maxHit = buffer.getShort() & 0xffff;
-				int attackStyle = buffer.get() & 0xff;
-				int attackGfx = buffer.getShort() & 0xffff;
-				if (attackGfx == 65535)
-					attackGfx = -1;
-				int attackProjectile = buffer.getShort() & 0xffff;
-				if (attackProjectile == 65535)
-					attackProjectile = -1;
-				int agressivenessType = buffer.get() & 0xff;
-				npcCombatDefinitions.put(npcId,
-						new NPCCombatDefinitions(hitpoints, attackAnim, defenceAnim, deathAnim, attackDelay, deathDelay,
-								respawnDelay, maxHit, attackStyle, attackGfx, attackProjectile, agressivenessType));
-			}
-			channel.close();
-			in.close();
-		} catch (Throwable e) {
-			Logger.handle(e);
+		@Cleanup
+		RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
+		@Cleanup
+		FileChannel channel = in.getChannel();
+		ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
+		while (buffer.hasRemaining()) {
+			int npcId = buffer.getShort() & 0xffff;
+			int hitpoints = buffer.getShort() & 0xffff;
+			int attackAnim = buffer.getShort() & 0xffff;
+			if (attackAnim == 65535)
+				attackAnim = -1;
+			int defenceAnim = buffer.getShort() & 0xffff;
+			if (defenceAnim == 65535)
+				defenceAnim = -1;
+			int deathAnim = buffer.getShort() & 0xffff;
+			if (deathAnim == 65535)
+				deathAnim = -1;
+			int attackDelay = buffer.get() & 0xff;
+			int deathDelay = buffer.get() & 0xff;
+			int respawnDelay = buffer.getInt();
+			int maxHit = buffer.getShort() & 0xffff;
+			int attackStyle = buffer.get() & 0xff;
+			int attackGfx = buffer.getShort() & 0xffff;
+			if (attackGfx == 65535)
+				attackGfx = -1;
+			int attackProjectile = buffer.getShort() & 0xffff;
+			if (attackProjectile == 65535)
+				attackProjectile = -1;
+			int agressivenessType = buffer.get() & 0xff;
+			npcCombatDefinitions.put(npcId,
+					new NPCCombatDefinitions(hitpoints, attackAnim, defenceAnim, deathAnim, attackDelay, deathDelay,
+							respawnDelay, maxHit, attackStyle, attackGfx, attackProjectile, agressivenessType));
 		}
 	}
 

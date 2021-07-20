@@ -5,8 +5,9 @@ import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
 import com.rs.utilities.Utility;
+import com.rs.utilities.LogUtility.LogType;
 
 @OutgoingPacketSignature(packetId = 69, description = "Represents sending a Public Quick-Chat based message")
 public class SendPublicQuickChatMessagePacket implements OutgoingPacket {
@@ -39,6 +40,6 @@ public class SendPublicQuickChatMessagePacket implements OutgoingPacket {
 //			player.sendFriendsChannelQuickMessage(new QuickChatMessage(
 //					fileId, data));
 		 if (GameConstants.DEBUG)
-			Logger.log(this, "Unknown chat type: " + chatType);
+			LogUtility.log(LogType.INFO, "Unknown chat type: " + chatType);
 	}
 }

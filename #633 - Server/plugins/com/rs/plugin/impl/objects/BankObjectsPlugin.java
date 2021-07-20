@@ -6,7 +6,7 @@ import com.rs.plugin.listener.ObjectType;
 import com.rs.plugin.wrapper.ObjectSignature;
 
 @ObjectSignature(objectId = {}, name = {"Bank booth", "Bank chest"})
-public class BankObjects implements ObjectType {
+public class BankObjectsPlugin implements ObjectType {
 
 	@Override
 	public void execute(Player player, GameObject object, int optionId) throws Exception {

@@ -12,7 +12,8 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rs.game.player.Player;
-import com.rs.utilities.Logger;
+
+import lombok.SneakyThrows;
 
 /**
 * @author Melvin 27 jan. 2020
@@ -29,14 +30,11 @@ public class GSONParser {
 				.setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create();
 	}
 
+	@SneakyThrows(IOException.class)
 	public static Player load(String dir, Type type) {
 		try (Reader reader = Files.newBufferedReader(Paths.get(dir))) {
 			return GSON.fromJson(reader, type);
-		} catch (IOException e) {
-			e.printStackTrace();
-			Logger.log("Load", e);
 		}
-		return null;
 	}
 
 	public static void save(Object src, String dir, Type type) {

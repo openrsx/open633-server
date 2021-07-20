@@ -5,7 +5,8 @@ import java.util.Arrays;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.item.ItemsContainer;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
 public class Trade {
 
@@ -25,8 +26,7 @@ public class Trade {
 	public void openTrade(Player target) {
 		synchronized (this) {
 			synchronized (target.getTrade()) {
-				Logger.globalLog(player.getUsername(), player.getSession().getIP(),
-						new String(" began trading with " + target.getUsername() + "."));
+				LogUtility.log(LogType.INFO, player.getUsername() + " " + player.getSession().getIP() + " began trading with " + target.getUsername() + ".");
 				this.target = target;
 				player.getPackets().sendIComponentText(335, 17, "Trading With: " + target.getDisplayName());
 				player.getPackets().sendGlobalString(203, target.getDisplayName());
@@ -309,13 +309,11 @@ public class Trade {
 						player.getInventory().init();
 						oldTarget.getInventory().init();
 					} else {
-						Logger.globalLog(player.getUsername(), player.getSession().getIP(),
-								new String(" completed the trade with " + oldTarget.getUsername()
-										+ " items are as follows: " + Arrays.toString(items.getShiftedItem())));
-						Logger.globalLog(oldTarget.getUsername(), oldTarget.getSession().getIP(),
-								new String(
-										" completed the trade with " + player.getUsername() + " items are as follows "
-												+ Arrays.toString(oldTarget.getTrade().items.getShiftedItem()) + "."));
+						LogUtility.log(LogType.INFO, player.getUsername() + " " + player.getSession().getIP() +
+								" completed the trade with " + oldTarget.getUsername()
+										+ " items are as follows: " + Arrays.toString(items.getShiftedItem()));
+						LogUtility.log(LogType.INFO, player.getUsername() + " " + player.getSession().getIP() +" completed the trade with " + player.getUsername() + " items are as follows "
+												+ Arrays.toString(oldTarget.getTrade().items.getShiftedItem()) + ".");
 						player.getInventory().getItems().addAll(oldTarget.getTrade().items);
 						oldTarget.getInventory().getItems().addAll(items);
 						oldTarget.getTrade().items.clear();
@@ -325,8 +323,8 @@ public class Trade {
 						player.getPackets().sendGameMessage("Accepted trade.");
 						oldTarget.getPackets().sendGameMessage("Accepted trade.");
 					}
-					Logger.globalLog(player.getUsername(), player.getSession().getIP(), new String(" trade between "
-							+ player.getUsername() + " and " + oldTarget.getUsername() + " has been finished."));
+					LogUtility.log(LogType.INFO, player.getUsername() + " " + player.getSession().getIP() + " trade between "
+							+ player.getUsername() + " and " + oldTarget.getUsername() + " has been finished.");
 					if (CloseTradeStage.CANCEL == stage)
 						oldTarget.getPackets().sendGameMessage("<col=ff0000>Other player declined trade!");
 					else if (CloseTradeStage.NO_SPACE == stage) {

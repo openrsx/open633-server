@@ -10,7 +10,6 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 
-import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
 import com.rs.game.map.World;
 import com.rs.game.player.Player;
@@ -29,7 +28,8 @@ import com.rs.net.encoders.GrabPacketsEncoder;
 import com.rs.net.encoders.LoginPacketsEncoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
 import com.rs.net.packets.logic.LogicPacketDispatcher;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.Utility;
 
 import lombok.SneakyThrows;
@@ -209,7 +209,7 @@ public class Session {
 		if (player.isFinishing() || player.isFinished())
 			return;
 		player.setFinishing(true);
-		player.getMovement().stopAll(false, true, !(player.getActionManager().getAction() instanceof PlayerCombat));
+		player.getMovement().stopAll(false, true, !(player.getActionManager().isPresent() && player.getActionManager().get().getAction().get() instanceof PlayerCombat));
 		if (player.isDead() || (player.getCombatDefinitions().isUnderCombat() && tryCount < 6)
 				|| player.getMovement().isLocked() || Emote.isDoingEmote(player)) {
 			CoresManager.schedule(() -> {
@@ -224,7 +224,7 @@ public class Session {
 	public void realFinish(Player player, boolean shutdown) {
 		if (player.isFinished())
 			return;
-		Logger.globalLog(player.getUsername(), getIP(), new String(" has logged out."));
+		LogUtility.log(LogType.INFO, player.getDisplayName() + " has logged out.");
 		player.getMovement().stopAll();
 		ControllerHandler.executeVoid(player, controller -> controller.logout(player));
 		player.setRunning(false);
@@ -240,9 +240,6 @@ public class Session {
 		AccountCreation.savePlayer(player);
 		player.updateEntityRegion(player);
 		World.removePlayer(player);
-		if (GameConstants.DEBUG)
-			Logger.log(this,
-					"Finished Player: " + player.getUsername() + ", pass: " + player.getDetails().getPassword());
 	}
 
 	@SneakyThrows(Exception.class)

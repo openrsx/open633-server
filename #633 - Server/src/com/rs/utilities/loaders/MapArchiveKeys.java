@@ -11,7 +11,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Cleanup;
@@ -49,7 +50,7 @@ public final class MapArchiveKeys {
 	}
 
 	public static final void loadUnpackedKeys() {
-		Logger.log("MapArchiveKeys", "Packing map containers xteas...");
+		LogUtility.log(LogType.INFO, "Packing map containers xteas...");
 		try {
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
 			File unpacked = new File("data/map/archiveKeys/unpacked/");

@@ -14,6 +14,7 @@ import com.rs.GameConstants;
 import com.rs.cache.Cache;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
+import com.rs.utilities.LogUtility.LogType;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
@@ -522,7 +523,7 @@ public final class Utility {
 		}
 
 		else if (GameConstants.DEBUG)
-			Logger.log("Utils", "qc: " + fileId + ", " + (data == null ? 0 : data.length));
+			LogUtility.log(LogType.TRACE, "qc: " + fileId + ", " + (data == null ? 0 : data.length));
 		return data;
 	}
 

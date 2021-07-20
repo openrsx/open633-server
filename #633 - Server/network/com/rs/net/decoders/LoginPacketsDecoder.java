@@ -9,8 +9,9 @@ import com.rs.net.IsaacKeyPair;
 import com.rs.net.Session;
 import com.rs.utilities.AntiFlood;
 import com.rs.utilities.BlowFishCryptService;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
 import com.rs.utilities.Utility;
+import com.rs.utilities.LogUtility.LogType;
 
 import lombok.Synchronized;
 
@@ -43,7 +44,7 @@ public final class LoginPacketsDecoder extends Decoder {
 			decodeWorldLogin(stream);
 		else {
 			if (GameConstants.DEBUG)
-				Logger.log(this, "PacketId " + packetId);
+				LogUtility.log(LogType.TRACE, "PacketId " + packetId);
 			session.getChannel().close();
 		}
 	}

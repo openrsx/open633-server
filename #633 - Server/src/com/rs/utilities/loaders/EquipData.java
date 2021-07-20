@@ -12,7 +12,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Cleanup;
@@ -49,7 +50,7 @@ public class EquipData {
 	}
 
 	private static void loadPackedEquips() {
-		Logger.log("EquipData", "Packing equip data...");
+		LogUtility.log(LogType.INFO, "Packing equip data...");
 		try {
 			BufferedReader in = new BufferedReader(
 					new FileReader(UNPACKED_PATH));

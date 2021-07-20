@@ -12,8 +12,9 @@ import com.rs.game.item.FloorItem;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
 import com.rs.utilities.RandomUtils;
+import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.json.GsonHandler;
 import com.rs.utilities.json.impl.NPCAutoSpawn;
 import com.rs.utilities.json.impl.ObjectSpawnLoader;
@@ -295,7 +296,7 @@ public class Region {
 					unclip(objects[plane][localX][localY][slot], localX, localY);
 			} else if (spawned == null) {
 				if (GameConstants.DEBUG)
-					Logger.log(this,
+					LogUtility.log(LogType.TRACE,
 							"Requested object to spawn is already spawned.(Shouldnt happen)");
 				return;
 			}
@@ -342,7 +343,7 @@ public class Region {
 			removedOriginalObjects.add(object);
 		} else {
 			if (GameConstants.DEBUG)
-				Logger.log(this,
+				LogUtility.log(LogType.ERROR,
 						"Requested object to remove wasnt found.(Shouldnt happen)");
 			return;
 		}
@@ -583,7 +584,7 @@ public class Region {
 		}
 		if (GameConstants.DEBUG && landContainerData == null && landArchiveId != -1
 				&& MapArchiveKeys.getMapKeys(regionId) != null)
-			Logger.log(this, "Missing xteas for region " + regionId + ".");
+			LogUtility.log(LogType.ERROR, "Missing xteas for region " + regionId + ".");
 	}
 
 

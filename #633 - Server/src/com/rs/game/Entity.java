@@ -97,9 +97,19 @@ public abstract class Entity extends WorldTile {
 	private transient short hashCode;
 	private transient EntityMovement movement;
 	private transient Attributes attributes;
+	private transient int mapSize;
+	
+	/**
+	 * The amount of poison damage this entity has.
+	 */
+	private final MutableNumber poisonDamage = new MutableNumber();
 
+	/**
+	 * The type of poison that was previously applied.
+	 */
+	private PoisonType poisonType;
+	
 	private int hitpoints;
-	private int mapSize;
 	private boolean run;
 
 	// creates Entity and saved classes
@@ -138,7 +148,11 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public abstract void handleIngoingHit(Hit hit);
+	
+	public abstract void sendDeath(Optional<Entity> source);
 
+	public abstract void deregister();
+	
 	public void reset(boolean attributes) {
 		setHitpoints(getMaxHitpoints());
 		getReceivedHits().trim();
@@ -324,8 +338,6 @@ public abstract class Entity extends WorldTile {
 	public boolean hasWalkSteps() {
 		return !getMovement().getWalkSteps().isEmpty();
 	}
-
-	public abstract void sendDeath(Optional<Entity> source);
 
 	public void processMovement() {
 		setLastWorldTile(new WorldTile(this));
@@ -819,8 +831,6 @@ public abstract class Entity extends WorldTile {
 		ifNpc(npc -> npc.setNextTransformation(null));
 	}
 
-	public abstract void deregister();
-
 	public int getMaxHitpoints() {
 		return isNPC() ? toNPC().getCombatDefinitions().getHitpoints() : toPlayer().getSkills().getLevel(Skills.HITPOINTS) * 10 + toPlayer().getEquipment().getEquipmentHpIncrease();
 	}
@@ -835,7 +845,7 @@ public abstract class Entity extends WorldTile {
 
 	public void loadMapRegions() {
 		getMapRegionsIds().clear();
-		isAtDynamicRegion = false;
+		setAtDynamicRegion(false);
 		int chunkX = getChunkX();
 		int chunkY = getChunkY();
 		int mapHash = GameConstants.MAP_SIZES[getMapSize()] >> 4;
@@ -845,7 +855,7 @@ public abstract class Entity extends WorldTile {
 			for (int yCalc = minRegionY < 0 ? 0 : minRegionY; yCalc <= ((chunkY + mapHash) / 8); yCalc++) {
 				int regionId = yCalc + (xCalc << 8);
 				if (World.getRegion(regionId, isPlayer()) instanceof DynamicRegion)
-					isAtDynamicRegion = true;
+					setAtDynamicRegion(true);
 				getMapRegionsIds().add(regionId);
 			}
 		setLastLoadedMapRegionTile(new WorldTile(this));
@@ -1045,11 +1055,6 @@ public abstract class Entity extends WorldTile {
 	}
 
 	/**
-	 * The amount of poison damage this entity has.
-	 */
-	private final MutableNumber poisonDamage = new MutableNumber();
-
-	/**
 	 * Determines if this entity is poisoned.
 	 * 
 	 * @return {@code true} if this entity is poisoned, {@code false} otherwise.
@@ -1057,11 +1062,6 @@ public abstract class Entity extends WorldTile {
 	public final boolean isPoisoned() {
 		return poisonDamage.get() > 0;
 	}
-
-	/**
-	 * The type of poison that was previously applied.
-	 */
-	private PoisonType poisonType;
 
 	/**
 	 * Applies poison with an intensity of {@code type} to the entity.
