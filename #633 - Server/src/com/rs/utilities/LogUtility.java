@@ -15,14 +15,33 @@ import com.rs.net.mysql.DatabaseConnection;
 
 import lombok.SneakyThrows;
 
+/**
+ * Represents a feature-rich Logging utility backed by TinyLog
+ * <https://tinylog.org/v2/> <https://tinylog.org/v2/logging/>
+ * 
+ * @author Dennis
+ *
+ */
 public final class LogUtility {
 
+	/**
+	 * Represents the type of the Log we're sending
+	 * 
+	 * @author Dennis
+	 *
+	 */
 	public enum LogType {
 		INFO, TRACE, DEBUG, WARN, ERROR, SQL
 	}
-	
+
+	/**
+	 * Submits a specified log to the console.
+	 * 
+	 * @param logType
+	 * @param message
+	 */
 	public static void log(LogType logType, String message) {
-		switch(logType) {
+		switch (logType) {
 		case DEBUG:
 			Logger.debug(message);
 			break;
@@ -43,7 +62,12 @@ public final class LogUtility {
 			break;
 		}
 	}
-	
+
+	/**
+	 * Submit a full length query to the database
+	 * 
+	 * @param query
+	 */
 	@SneakyThrows(SQLException.class)
 	public static void submitFullQuery(String query) {
 		if (!checkSQLState())
@@ -56,7 +80,13 @@ public final class LogUtility {
 		statement.executeUpdate(query);
 		connection.returnConnection();
 	}
-	
+
+	/**
+	 * Submit a simple Log to the database
+	 * 
+	 * @param player
+	 * @param query
+	 */
 	@SneakyThrows(SQLException.class)
 	public static void submitSQLLog(Player player, String query) {
 		if (!checkSQLState())
@@ -68,10 +98,16 @@ public final class LogUtility {
 		}
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss aa");
 		Date date = new Date();
-		statement.executeUpdate("INSERT INTO log(username, logtext, date) VALUES ('"+ player.getDisplayName()+"','" + query + "','" + dateFormat.format(date) + "');");
+		statement.executeUpdate("INSERT INTO log(username, logtext, date) VALUES ('" + player.getDisplayName() + "','"
+				+ query + "','" + dateFormat.format(date) + "');");
 		connection.returnConnection();
 	}
-	
+
+	/**
+	 * Checks the state of the SQL from startup
+	 * 
+	 * @return state
+	 */
 	private static boolean checkSQLState() {
 		if (!GameConstants.SQL_ENABLED)
 			System.out.println("Unable to process request, MYSQL services are not present.");
