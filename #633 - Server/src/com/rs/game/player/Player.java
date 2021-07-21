@@ -158,11 +158,6 @@ public class Player extends Entity {
 	private transient HintIconsManager hintIconsManager;
 	
 	/**
-	 * Represents a Action management system
-	 */
-	private transient Optional<ActionManager> actionManager = Optional.empty();
-	
-	/**
 	 * Represents a Player's Price Checker's system
 	 */
 	private transient PriceCheckManager priceCheckManager;
@@ -226,6 +221,11 @@ public class Player extends Entity {
 	 * Personal details & information stored for a Player
 	 */
 	private PlayerDetails details;
+	
+	/**
+	 * Represents a Action management system
+	 */
+	private Optional<ActionManager> actionManager = Optional.empty();
 	
 	/**
 	 * The current skill action that is going on for this player.
@@ -319,6 +319,7 @@ public class Player extends Entity {
 		setSpellDispatcher(new PassiveSpellDispatcher());
 		getDetails().setPassword(password);
 		setCurrentController(Optional.empty());
+		setActionManager(Optional.empty());
 	}
 
 	/**
@@ -368,9 +369,10 @@ public class Player extends Entity {
 		setTemporaryMovementType((byte) -1);
 		setLogicPackets(new ConcurrentLinkedQueue<LogicPacket>());
 		setSwitchItemCache(new ObjectArrayList<Byte>());
-		if (!getCurrentController().isPresent()) {
+		if (!getCurrentController().isPresent())
 			setCurrentController(getCurrentController());
-		}
+		if (!getActionManager().isPresent())
+			setActionManager(Optional.empty());
 		initEntity();
 		World.addPlayer(this);
 		updateEntityRegion(this);

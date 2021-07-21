@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 import com.google.common.base.Preconditions;
 import com.rs.GameConstants;
@@ -1145,11 +1146,8 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void safeForceMoveTile(WorldTile desination) {
-		int dir = RandomUtils.random(Utility.DIRECTION_DELTA_X.length - 1);
-		if (World.checkWalkStep(desination.getPlane(), desination.getX(), desination.getY(), dir, 1)) {
-			setNextWorldTile(new WorldTile(desination.getX() + RandomUtils.random(3),
-					desination.getY() + RandomUtils.random(3), desination.getPlane()));
-		}
+		if (World.isFloorFree(desination.getPlane(), desination.getX(), desination.getY()))
+			IntStream.range(0, 3).forEach(count -> setNextWorldTile(new WorldTile(desination, count)));
 	}
 
 	/**

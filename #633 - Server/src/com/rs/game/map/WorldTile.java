@@ -31,8 +31,8 @@ public class WorldTile {
 	}
 
 	public WorldTile(WorldTile tile, int randomize) {
-		this.x = (short) (tile.x + RandomUtils.random(randomize * 2) - randomize);
-		this.y = (short) (tile.y + RandomUtils.random(randomize * 2) - randomize);
+		this.x = (short) (tile.x + RandomUtils.inclusive(randomize * 2) - randomize);
+		this.y = (short) (tile.y + RandomUtils.inclusive(randomize * 2) - randomize);
 		this.plane = tile.plane;
 	}
 
