@@ -127,13 +127,13 @@ public class FriendsIgnores {
 		}
 		player.getPackets().sendPrivateMessage(p2.getDisplayName(), message);
 		p2.getPackets().receivePrivateMessage(Utility.formatPlayerNameForDisplay(player.getUsername()),
-				player.getDisplayName(), player.getMessageIcon(), message);
+				player.getDisplayName(), ChatMessage.getMessageIcon(player), message);
 	}
 
 	public void sendQuickChatMessage(Player p2, QuickChatMessage quickChatMessage) {
 		player.getPackets().sendPrivateQuickMessageMessage(p2.getDisplayName(), quickChatMessage);
 		p2.getPackets().receivePrivateChatQuickMessage(Utility.formatPlayerNameForDisplay(player.getUsername()),
-				player.getDisplayName(), player.getMessageIcon(), quickChatMessage);
+				player.getDisplayName(), ChatMessage.getMessageIcon(player), quickChatMessage);
 
 	}
 

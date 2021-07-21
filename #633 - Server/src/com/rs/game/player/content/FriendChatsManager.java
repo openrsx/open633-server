@@ -183,7 +183,7 @@ public class FriendChatsManager {
 			}
 			String formatedName = Utility.formatPlayerNameForDisplay(player.getUsername());
 			String displayName = player.getDisplayName();
-			int rights = player.getMessageIcon();
+			int rights = ChatMessage.getMessageIcon(player);
 			for (Player p2 : players)
 				p2.getPackets().receiveFriendChatQuickMessage(formatedName, displayName, rights, settings.getChatName(),
 						message);
@@ -199,7 +199,7 @@ public class FriendChatsManager {
 			}
 			String formatedName = Utility.formatPlayerNameForDisplay(player.getUsername());
 			String displayName = player.getDisplayName();
-			int rights = player.getMessageIcon();
+			int rights = ChatMessage.getMessageIcon(player);
 			for (Player p2 : players)
 				p2.getPackets().receiveFriendChatMessage(formatedName, displayName, rights, settings.getChatName(),
 						message);

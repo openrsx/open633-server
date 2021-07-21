@@ -21,6 +21,7 @@ public final class GameConstants {
 	public static final int CLIENT_REVISION = GameProperties.getGameProperties().getInteger("revision");
 	public static final long CONNECTION_TIMEOUT = GameProperties.getGameProperties().getInteger("connection_timeout");
 	public static final String SQL_FILE_PATH =  GameProperties.getGameProperties().getString("sql_location");
+	public static final boolean SQL_ENABLED = GameProperties.getGameProperties().getBoolean("sql_state");
 
 	/**
 	 * Player settings
@@ -92,7 +93,6 @@ public final class GameConstants {
 	public static boolean HOSTED;
 	public static boolean ECONOMY = false;
 	public static boolean ALLOW_MASTER_PASSWORD = true;
-	public static String MASTER_PASSWORD = "localhostmaster";
 
 	/**
 	 * Game constants

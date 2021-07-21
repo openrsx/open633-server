@@ -3,5 +3,5 @@ database {
 	port "5432"
 	database "open633"
 	username "postgres"
-	password "hitachi"
+	password "your_password_here"
 }

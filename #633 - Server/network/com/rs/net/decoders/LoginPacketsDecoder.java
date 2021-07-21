@@ -139,7 +139,5 @@ public final class LoginPacketsDecoder extends Decoder {
 		session.setDecoder(3, player);
 		session.setEncoder(2, player);
 		player.start();
-		System.out.println("blowfish encryption password: " + password);
 	}
-
 }

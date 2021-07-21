@@ -415,6 +415,7 @@ public class CBZip2OutputStream extends OutputStream implements BZip2Constants {
     @Override
 	protected void finalize() throws Throwable {
         close();
+        super.finalize();
     }
 
     @Override

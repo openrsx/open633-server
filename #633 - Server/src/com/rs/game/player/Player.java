@@ -463,14 +463,6 @@ public class Player extends Entity {
 	}
 
 	/**
-	 * Gets the Message Icon (Crown/Icon) for chat messages, interface displaying
-	 * @return
-	 */
-	public int getMessageIcon() {
-		return getDetails().getRights() == Rights.ADMINISTRATOR ? 2 : getDetails().getRights() == Rights.MODERATOR ? 1 : 0;
-	}
-
-	/**
 	 * Gets the Player's Encoder Packets
 	 * @return
 	 */

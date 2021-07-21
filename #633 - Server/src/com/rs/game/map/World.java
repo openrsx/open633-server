@@ -37,7 +37,9 @@ import com.rs.net.mysql.configuration.ConfigurationParser;
 import com.rs.net.mysql.service.MySQLDatabaseConfiguration;
 import com.rs.net.mysql.service.MySQLDatabaseConnection;
 import com.rs.utilities.AntiFlood;
+import com.rs.utilities.LogUtility;
 import com.rs.utilities.Utility;
+import com.rs.utilities.LogUtility.LogType;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Getter;
@@ -774,6 +776,8 @@ public final class World extends AbstractScheduledService {
 	 * 		if a class could not be created.
 	 */
 	public static void loadConfiguration() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		if (!GameConstants.SQL_ENABLED)
+			return;
 		try (FileInputStream fis = new FileInputStream(GameConstants.SQL_FILE_PATH)) {
 			ConfigurationParser parser = new ConfigurationParser(fis);
 			ConfigurationNode mainNode = parser.parse();
@@ -787,6 +791,7 @@ public final class World extends AbstractScheduledService {
 				config.setPassword(databaseNode.getString("password"));
 				setConnectionPool(new ConnectionPool<MySQLDatabaseConnection>(config));
 				setConnectionPool(new ThreadedSQL(config, CoresManager.serverWorkersCount).getConnectionPool());
+				LogUtility.log(LogType.INFO, "Database is now ready.");
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();

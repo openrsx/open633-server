@@ -527,7 +527,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writePacketVarByte(getPlayer(), 107);
 		stream.writeShort(p.getIndex());
 		stream.writeShort(message.getEffects());
-		stream.writeByte(p.getMessageIcon());
+		stream.writeByte(ChatMessage.getMessageIcon(p));
 		if (message instanceof QuickChatMessage) {
 			QuickChatMessage qcMessage = (QuickChatMessage) message;
 			stream.writeShort(qcMessage.getFileId());

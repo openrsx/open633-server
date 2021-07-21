@@ -64,6 +64,7 @@ public class Launcher {
 			index.resetCachedFiles();
 		}
 		System.gc();
+		LogUtility.log(LogType.INFO, "Game Server memory has been cleaned " + (force ? "force: true:" : "force: false"));
 	}
 
 	public static void shutdown() {
