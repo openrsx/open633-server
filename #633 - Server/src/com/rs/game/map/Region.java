@@ -682,7 +682,7 @@ public class Region {
 			return -1;
 		if (musicIds.length == 1)
 			return musicIds[0];
-		return musicIds[RandomUtils.random(musicIds.length - 1)];
+		return musicIds[RandomUtils.inclusive(musicIds.length - 1)];
 	}
 
 	public static final String getMusicName3(int regionId) {

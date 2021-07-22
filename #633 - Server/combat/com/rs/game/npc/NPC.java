@@ -343,7 +343,7 @@ public class NPC extends Entity {
 		}
 		ObjectArrayList<Entity> possibleTarget = getPossibleTargets();
 		if (!possibleTarget.isEmpty()) {
-			Entity target = possibleTarget.get(RandomUtils.random(possibleTarget.size() - 1));
+			Entity target = possibleTarget.get(RandomUtils.inclusive(possibleTarget.size() - 1));
 			setTarget(target);
 			target.setAttackedBy(target);
 			target.setFindTargetDelay(Utility.currentTimeMillis() + 10000);

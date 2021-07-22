@@ -43,7 +43,7 @@ public class Bloatedleech extends Familiar {
 	@Override
 	public boolean submitSpecial(Object object) {
 		Player player = (Player) object;
-		final int damage = RandomUtils.random(100) + 50;
+		final int damage = RandomUtils.inclusive(100) + 50;
 		if (player.getHitpoints() - damage <= 0) {
 			player.getPackets().sendGameMessage("You don't have enough life points to use this special.");
 			return false;

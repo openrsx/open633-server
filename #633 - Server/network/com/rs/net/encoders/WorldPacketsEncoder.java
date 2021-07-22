@@ -955,7 +955,7 @@ public class WorldPacketsEncoder extends Encoder {
 		if (!name.equals(display))
 			stream.writeString(name);
 		for (int i = 0; i < 5; i++)
-			stream.writeByte(RandomUtils.random(255));
+			stream.writeByte(RandomUtils.inclusive(255));
 		stream.writeByte(rights);
 		Huffman.sendEncryptMessage(stream, message.getMessage(getPlayer().getDetails().isProfanityFilter()));
 		stream.endPacketVarByte();
@@ -1236,7 +1236,7 @@ public class WorldPacketsEncoder extends Encoder {
 		if (!name.equals(display))
 			stream.writeString(name);
 		for (int i = 0; i < 5; i++)
-			stream.writeByte(RandomUtils.random(255));
+			stream.writeByte(RandomUtils.inclusive(255));
 		stream.writeByte(rights);
 		stream.writeShort(message.getFileId());
 		if (message.getMessage(false) != null)
@@ -1264,7 +1264,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeByte(myClan ? 1 : 0);
 		stream.writeString(display);
 		for (int i = 0; i < 5; i++)
-			stream.writeByte(RandomUtils.random(255));
+			stream.writeByte(RandomUtils.inclusive(255));
 		stream.writeByte(rights);
 		Huffman.sendEncryptMessage(stream, message.getMessage(getPlayer().getDetails().isProfanityFilter()));
 		stream.endPacketVarByte();
@@ -1279,7 +1279,7 @@ public class WorldPacketsEncoder extends Encoder {
 		stream.writeByte(myClan ? 1 : 0);
 		stream.writeString(display);
 		for (int i = 0; i < 5; i++)
-			stream.writeByte(RandomUtils.random(255));
+			stream.writeByte(RandomUtils.inclusive(255));
 		stream.writeByte(rights);
 		stream.writeShort(message.getFileId());
 		if (message.getMessage(false) != null)
@@ -1299,7 +1299,7 @@ public class WorldPacketsEncoder extends Encoder {
 			stream.writeString(name);
 		stream.writeLong(Utility.stringToLong(chatName));
 		for (int i = 0; i < 5; i++)
-			stream.writeByte(RandomUtils.random(255));
+			stream.writeByte(RandomUtils.inclusive(255));
 		stream.writeByte(rights);
 		Huffman.sendEncryptMessage(stream, message.getMessage(getPlayer().getDetails().isProfanityFilter()));
 		stream.endPacketVarByte();
@@ -1317,7 +1317,7 @@ public class WorldPacketsEncoder extends Encoder {
 			stream.writeString(name);
 		stream.writeLong(Utility.stringToLong(chatName));
 		for (int i = 0; i < 5; i++)
-			stream.writeByte(RandomUtils.random(255));
+			stream.writeByte(RandomUtils.inclusive(255));
 		stream.writeByte(rights);
 		stream.writeShort(message.getFileId());
 		if (message.getMessage(false) != null)

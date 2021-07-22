@@ -32,7 +32,7 @@ public class Magpie extends Familiar {
 		else
 			theivingTicks++;
 		if (theivingTicks == 30) {
-			getBob().getBeastItems().add(new Item(RANDOM_ITEMS[RandomUtils.random(RANDOM_ITEMS.length)], 1));
+			getBob().getBeastItems().add(new Item(RANDOM_ITEMS[RandomUtils.inclusive(RANDOM_ITEMS.length)], 1));
 			theivingTicks = 0;
 		} else if (theivingTicks % 50 == 0)
 			setNextForceTalk(new ForceTalk("*Tweet*"));

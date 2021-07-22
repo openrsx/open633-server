@@ -54,7 +54,7 @@ public class Evilturnip extends Familiar {
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {
-				int hitDamage = RandomUtils.random(100);
+				int hitDamage = RandomUtils.inclusive(100);
 				target.applyHit(new Hit(getOwner(), hitDamage, HitLook.MAGIC_DAMAGE));
 				target.setNextGraphics(new Graphics(1329));
 				heal(hitDamage / 5);

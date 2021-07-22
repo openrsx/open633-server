@@ -61,7 +61,7 @@ public class Talonbeast extends Familiar {
 					this.cancel();
 					return;
 				}
-				target.applyHit(new Hit(getOwner(), RandomUtils.random(80), HitLook.MAGIC_DAMAGE));
+				target.applyHit(new Hit(getOwner(), RandomUtils.inclusive(80), HitLook.MAGIC_DAMAGE));
 				this.cancel();
 			}
 		});

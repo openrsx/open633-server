@@ -214,14 +214,14 @@ public final class MusicsManager {
 		if (playListOn && playList.size() > 0) {
 			if (shuffleOn)
 				playingMusic = playList
-						.get(RandomUtils.random(playList.size() - 1));
+						.get(RandomUtils.inclusive(playList.size() - 1));
 			else {
 				if (nextPlayListMusic >= playList.size())
 					nextPlayListMusic = 0;
 				playingMusic = playList.get(nextPlayListMusic++);
 			}
 		} else if (unlockedMusics.size() > 0) // random music
-			playingMusic = unlockedMusics.get(RandomUtils.random(unlockedMusics
+			playingMusic = unlockedMusics.get(RandomUtils.inclusive(unlockedMusics
 					.size() - 1));
 		playMusic(playingMusic);
 	}

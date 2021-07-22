@@ -763,7 +763,7 @@ public abstract class Entity extends WorldTile {
 		int maxHp = getMaxHitpoints();
 		if (getHitpoints() > maxHp) {
 			ifPlayer(player -> {
-				if (player.getPrayer().usingPrayer(1, 5) && RandomUtils.random(100) <= 15)
+				if (player.getPrayer().usingPrayer(1, 5) && RandomUtils.inclusive(100) <= 15)
 					return;
 			});
 			setHitpoints(getHitpoints() - 1);

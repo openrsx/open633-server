@@ -40,13 +40,13 @@ public class Foods {
 
 		PURPLE_SWEETS(4561, 3, Effect.PURPLE_SWEET),
 
-		SLIMY_EEL(3381, 7 + RandomUtils.random(2)),
+		SLIMY_EEL(3381, 7 + RandomUtils.inclusive(2)),
 
 		RAINBOW_FISH(10136, 11),
 
-		CAVE_EEL(5003, 8 + RandomUtils.random(2)),
+		CAVE_EEL(5003, 8 + RandomUtils.inclusive(2)),
 
-		LAVA_EEL(2149, 7 + RandomUtils.random(2)),
+		LAVA_EEL(2149, 7 + RandomUtils.inclusive(2)),
 
 		HERRING(347, 5),
 
@@ -263,11 +263,11 @@ public class Foods {
 
 		CHEESE_WHEEL(18789, 2),
 
-		THIN_SNAIL_MEAT(3369, 5 + RandomUtils.random(2)),
+		THIN_SNAIL_MEAT(3369, 5 + RandomUtils.inclusive(2)),
 
 		LEAN_SNAIL_MEAT(3371, 8),
 
-		FAT_SNAIL_MEAT(3373, 8 + RandomUtils.random(2));
+		FAT_SNAIL_MEAT(3373, 8 + RandomUtils.inclusive(2));
 
 		/**
 		 * The food id
@@ -452,7 +452,7 @@ public class Foods {
 			@Override
 			public void effect(Object object) {
 				Player player = (Player) object;
-				if (RandomUtils.random(100) > 5) {
+				if (RandomUtils.inclusive(100) > 5) {
 					int level = player.getSkills().getLevel(Skills.COOKING);
 					int realLevel = player.getSkills().getLevelForXp(Skills.COOKING);
 					player.getSkills().set(Skills.COOKING, level >= realLevel ? realLevel + 6 : level + 6);

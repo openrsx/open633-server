@@ -76,8 +76,8 @@ public class Strangerplant extends Familiar {
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {
-				target.applyHit(new Hit(getOwner(), RandomUtils.random(20), HitLook.MAGIC_DAMAGE));
-				if (RandomUtils.random(1) == 0)
+				target.applyHit(new Hit(getOwner(), RandomUtils.inclusive(20), HitLook.MAGIC_DAMAGE));
+				if (RandomUtils.inclusive(1) == 0)
 					target.poison(PoisonType.STRONG_MELEE);
 				target.setNextGraphics(new Graphics(1511));
 				this.cancel();

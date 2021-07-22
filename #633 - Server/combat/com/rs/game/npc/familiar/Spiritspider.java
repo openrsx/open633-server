@@ -50,7 +50,7 @@ public class Spiritspider extends Familiar {
 		player.setNextGraphics(new Graphics(1316));
 		WorldTile tile = this;
 		// attemps to randomize tile by 4x4 area
-		for (int trycount = 0; trycount < RandomUtils.random(10); trycount++) {
+		for (int trycount = 0; trycount < RandomUtils.inclusive(10); trycount++) {
 			tile = new WorldTile(this, 2);
 			if (World.isTileFree(this.getPlane(), tile.getX(), tile.getY(), player.getSize()))
 				return true;

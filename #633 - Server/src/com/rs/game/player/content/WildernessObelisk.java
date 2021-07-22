@@ -43,7 +43,7 @@ public class WildernessObelisk {
 						World.sendGraphics(player, new Graphics(661), center.transform(x, y, 0));
 				Region region = World.getRegion(center.getRegionId());
 				List<Short> playerIndexes = region.getPlayersIndexes();
-				WorldTile newCenter = OBELISK_CENTER_TILES[RandomUtils.random(OBELISK_CENTER_TILES.length)];
+				WorldTile newCenter = OBELISK_CENTER_TILES[RandomUtils.inclusive(OBELISK_CENTER_TILES.length)];
 				if (playerIndexes != null) {
 					for (Short i : playerIndexes) {
 						Player p = World.getPlayers().get(i);

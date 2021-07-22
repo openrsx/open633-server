@@ -136,7 +136,7 @@ public abstract class Familiar extends NPC {
 		if (!getCombat().process()) {
 			if (isAgressive() && owner.getAttackedBy() != null
 					&& owner.getAttackedByDelay() > Utility.currentTimeMillis() && canAttack(owner.getAttackedBy())
-					&& RandomUtils.random(25) == 0)
+					&& RandomUtils.inclusive(25) == 0)
 				getCombat().setTarget(owner.getAttackedBy());
 			else
 				sendFollow();

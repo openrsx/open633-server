@@ -50,7 +50,7 @@ public class Spiritjelly extends Familiar {
 	public boolean submitSpecial(Object object) {// TODO get special anim
 		final Entity target = (Entity) object;
 		Player player = getOwner();
-		final int damage = RandomUtils.random(100);
+		final int damage = RandomUtils.inclusive(100);
 		player.setNextAnimation(new Animation(7660));
 		player.setNextGraphics(new Graphics(1316));
 		World.sendProjectile(this, target, 1359, 34, 16, 30, 35, 16, 0);

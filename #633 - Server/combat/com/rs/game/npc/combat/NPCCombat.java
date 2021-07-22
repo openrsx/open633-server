@@ -59,7 +59,7 @@ public final class NPCCombat {
 		// this gameticket
 		NPCCombatDefinitions defs = npc.getCombatDefinitions();
 		int attackStyle = defs.getAttackStyle();
-		if (target instanceof Familiar && RandomUtils.random(3) == 0) {
+		if (target instanceof Familiar && RandomUtils.inclusive(3) == 0) {
 			Familiar familiar = (Familiar) target;
 			Player player = familiar.getOwner();
 			if (player != null) {

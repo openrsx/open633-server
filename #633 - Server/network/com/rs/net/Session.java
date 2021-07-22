@@ -2,6 +2,7 @@ package com.rs.net;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -236,6 +237,7 @@ public class Session {
 		else if (player.getPet() != null)
 			player.getPet().deregister();
 		player.setFinished(true);
+		player.setActionManager(Optional.empty());
 		player.getSession().setDecoder(-1);
 		AccountCreation.savePlayer(player);
 		player.updateEntityRegion(player);

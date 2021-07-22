@@ -76,7 +76,7 @@ public class NPCCombatDefinitions {
 							return;
 						} else if (p2.getPrayer().usingPrayer(1, 1)) { // sap
 							// att
-							if (RandomUtils.random(4) == 0) {
+							if (RandomUtils.inclusive(4) == 0) {
 								if (p2.getPrayer().reachedMax(0)) {
 									p2.getPackets().sendGameMessage(
 											"Your opponent has been weakened so much that your sap curse has no effect.",
@@ -101,7 +101,7 @@ public class NPCCombatDefinitions {
 							}
 						} else {
 							if (p2.getPrayer().usingPrayer(1, 10)) {
-								if (RandomUtils.random(7) == 0) {
+								if (RandomUtils.inclusive(7) == 0) {
 									if (p2.getPrayer().reachedMax(3)) {
 										p2.getPackets().sendGameMessage(
 												"Your opponent has been weakened so much that your leech curse has no effect.",
@@ -125,7 +125,7 @@ public class NPCCombatDefinitions {
 								}
 							}
 							if (p2.getPrayer().usingPrayer(1, 14)) {
-								if (RandomUtils.random(7) == 0) {
+								if (RandomUtils.inclusive(7) == 0) {
 									if (p2.getPrayer().reachedMax(7)) {
 										p2.getPackets().sendGameMessage(
 												"Your opponent has been weakened so much that your leech curse has no effect.",
@@ -154,7 +154,7 @@ public class NPCCombatDefinitions {
 					}
 					if (hit.getLook() == HitLook.RANGE_DAMAGE) {
 						if (p2.getPrayer().usingPrayer(1, 2)) { // sap range
-							if (RandomUtils.random(4) == 0) {
+							if (RandomUtils.inclusive(4) == 0) {
 								if (p2.getPrayer().reachedMax(1)) {
 									p2.getPackets().sendGameMessage(
 											"Your opponent has been weakened so much that your sap curse has no effect.",
@@ -178,7 +178,7 @@ public class NPCCombatDefinitions {
 								return;
 							}
 						} else if (p2.getPrayer().usingPrayer(1, 11)) {
-							if (RandomUtils.random(7) == 0) {
+							if (RandomUtils.inclusive(7) == 0) {
 								if (p2.getPrayer().reachedMax(4)) {
 									p2.getPackets().sendGameMessage(
 											"Your opponent has been weakened so much that your leech curse has no effect.",
@@ -204,7 +204,7 @@ public class NPCCombatDefinitions {
 					}
 					if (hit.getLook() == HitLook.MAGIC_DAMAGE) {
 						if (p2.getPrayer().usingPrayer(1, 3)) { // sap mage
-							if (RandomUtils.random(4) == 0) {
+							if (RandomUtils.inclusive(4) == 0) {
 								if (p2.getPrayer().reachedMax(2)) {
 									p2.getPackets().sendGameMessage(
 											"Your opponent has been weakened so much that your sap curse has no effect.",
@@ -228,7 +228,7 @@ public class NPCCombatDefinitions {
 								return;
 							}
 						} else if (p2.getPrayer().usingPrayer(1, 12)) {
-							if (RandomUtils.random(7) == 0) {
+							if (RandomUtils.inclusive(7) == 0) {
 								if (p2.getPrayer().reachedMax(5)) {
 									p2.getPackets().sendGameMessage(
 											"Your opponent has been weakened so much that your leech curse has no effect.",
@@ -256,7 +256,7 @@ public class NPCCombatDefinitions {
 					// overall
 
 					if (p2.getPrayer().usingPrayer(1, 13)) { // leech defence
-						if (RandomUtils.random(10) == 0) {
+						if (RandomUtils.inclusive(10) == 0) {
 							if (p2.getPrayer().reachedMax(6)) {
 								p2.getPackets().sendGameMessage(
 										"Your opponent has been weakened so much that your leech curse has no effect.",

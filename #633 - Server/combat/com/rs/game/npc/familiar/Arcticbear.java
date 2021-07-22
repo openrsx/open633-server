@@ -61,7 +61,7 @@ public class Arcticbear extends Familiar {
 				World.get().submit(new Task(1) {
 					@Override
 					protected void execute() {
-						target.applyHit(new Hit(getOwner(), RandomUtils.random(150), HitLook.MAGIC_DAMAGE));
+						target.applyHit(new Hit(getOwner(), RandomUtils.inclusive(150), HitLook.MAGIC_DAMAGE));
 						target.setNextGraphics(new Graphics(1407));
 						this.cancel();
 					}

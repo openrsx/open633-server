@@ -80,7 +80,7 @@ public class Spiritcockatrice extends Familiar {
 		World.get().submit(new Task(2) {
 			@Override
 			protected void execute() {
-				target.applyHit(new Hit(getOwner(), RandomUtils.random(100), HitLook.MELEE_DAMAGE));
+				target.applyHit(new Hit(getOwner(), RandomUtils.inclusive(100), HitLook.MELEE_DAMAGE));
 				this.cancel();
 			}
 		});

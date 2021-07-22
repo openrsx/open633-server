@@ -57,7 +57,7 @@ public class Giantchinchompa extends Familiar {
 				Player p2 = World.getPlayers().get(playerIndex);
 				if (p2 == null || p2.isDead() || p2 != player || !p2.isRunning() || !p2.withinDistance(player, 2))
 					continue;
-				p2.applyHit(new Hit(this, RandomUtils.random(130), HitLook.MAGIC_DAMAGE));
+				p2.applyHit(new Hit(this, RandomUtils.inclusive(130), HitLook.MAGIC_DAMAGE));
 			}
 			return true;
 		}

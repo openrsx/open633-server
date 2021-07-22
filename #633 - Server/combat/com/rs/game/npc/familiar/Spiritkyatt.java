@@ -56,7 +56,7 @@ public class Spiritkyatt extends Familiar {
 		World.get().submit(new Task(1) {
 			@Override
 			protected void execute() {
-				target.applyHit(new Hit(getOwner(), RandomUtils.random(321), HitLook.MAGIC_DAMAGE));
+				target.applyHit(new Hit(getOwner(), RandomUtils.inclusive(321), HitLook.MAGIC_DAMAGE));
 				this.cancel();
 			}
 		});

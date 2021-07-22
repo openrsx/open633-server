@@ -56,7 +56,7 @@ public abstract class MobCombatInterface {
 			probability = 0.05;
 		if (probability < Math.random())
 			return 0;
-		return RandomUtils.random(maxHit);
+		return RandomUtils.inclusive(maxHit);
 	}
 	
 	public static Hit getRangeHit(NPC npc, int damage) {

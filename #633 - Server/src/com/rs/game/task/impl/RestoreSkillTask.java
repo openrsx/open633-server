@@ -31,7 +31,7 @@ public final class RestoreSkillTask extends Task {
 					if (currentLevel > normalLevel && time == 0) {
 						if (skill == Skills.ATTACK || skill == Skills.STRENGTH || skill == Skills.DEFENCE
 								|| skill == Skills.RANGE || skill == Skills.MAGIC) {
-							if (berserker && RandomUtils.random(100) <= 15)
+							if (berserker && RandomUtils.inclusive(100) <= 15)
 								continue c;
 						}
 						player.getSkills().set(skill, currentLevel - 1);

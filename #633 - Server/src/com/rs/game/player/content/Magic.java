@@ -724,7 +724,7 @@ public class Magic {
 				continue;
 			else if (hasSpecialRunes(player, runeId, amount))
 				continue;
-			else if (hasStaffOfLight(weaponId) && RandomUtils.random(8) == 0 && runeId != 21773)// 1
+			else if (hasStaffOfLight(weaponId) && RandomUtils.inclusive(8) == 0 && runeId != 21773)// 1
 				// in
 				// eight
 				// chance

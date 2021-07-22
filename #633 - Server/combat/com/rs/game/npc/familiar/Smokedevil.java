@@ -51,7 +51,7 @@ public class Smokedevil extends Familiar {
 		for (Entity entity : this.getPossibleTargets()) {
 			if (entity == null || entity == getOwner() || !entity.withinDistance(this, 1))
 				continue;
-			entity.applyHit(new Hit(this, RandomUtils.random(80), HitLook.MAGIC_DAMAGE));
+			entity.applyHit(new Hit(this, RandomUtils.inclusive(80), HitLook.MAGIC_DAMAGE));
 		}
 		return true;
 	}

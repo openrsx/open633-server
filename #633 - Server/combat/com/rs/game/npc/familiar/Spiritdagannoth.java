@@ -58,7 +58,7 @@ public class Spiritdagannoth extends Familiar {
 				World.get().submit(new Task(1) {
 					@Override
 					protected void execute() {
-						int hitDamage = RandomUtils.random(180);
+						int hitDamage = RandomUtils.inclusive(180);
 						if (hitDamage > 0) {
 							if (target.isPlayer())
 								((Player) target).getMovement().lock(6);

@@ -51,7 +51,7 @@ public class Prayingmantis extends Familiar {
 		getOwner().setNextAnimation(new Animation(7660));
 		setNextAnimation(new Animation(8071));
 		setNextGraphics(new Graphics(1422));
-		final int hitDamage = RandomUtils.random(170);
+		final int hitDamage = RandomUtils.inclusive(170);
 		if (hitDamage > 0)
 			target.ifPlayer(player -> player.getPrayer().drainPrayer(hitDamage));
 

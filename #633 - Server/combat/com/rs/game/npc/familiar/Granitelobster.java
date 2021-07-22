@@ -38,7 +38,7 @@ public class Granitelobster extends Familiar {
 
 	@SuppressWarnings("unused")
 	private void giveReward() {
-		boolean isShark = RandomUtils.random(3) == 0;
+		boolean isShark = RandomUtils.inclusive(3) == 0;
 		int foragedItem = isShark ? 383 : 371;
 		if (!isShark)
 			getOwner().getSkills().addXp(Skills.FISHING, 30);
@@ -85,11 +85,11 @@ public class Granitelobster extends Familiar {
 				World.get().submit(new Task(1) {
 					@Override
 					protected void execute() {
-						if (RandomUtils.random(5) == 0) {
+						if (RandomUtils.inclusive(5) == 0) {
 							target.ifPlayer(targetSelected -> targetSelected.getSkills().set(Skills.DEFENCE,
 									targetSelected.getSkills().getLevel(Skills.DEFENCE)));
 						}
-						target.applyHit(new Hit(getOwner(), RandomUtils.random(140), HitLook.MELEE_DAMAGE));
+						target.applyHit(new Hit(getOwner(), RandomUtils.inclusive(140), HitLook.MELEE_DAMAGE));
 						target.setNextGraphics(new Graphics(1353));
 						this.cancel();
 					}

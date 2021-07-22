@@ -68,7 +68,7 @@ public class Forgeregent extends Familiar {
 						RSInterfacePluginDispatcher.sendRemove(player, 5);
 					}
 					target.setNextGraphics(new Graphics(1393));
-					target.applyHit(new Hit(getOwner(), RandomUtils.random(200), HitLook.MELEE_DAMAGE));
+					target.applyHit(new Hit(getOwner(), RandomUtils.inclusive(200), HitLook.MELEE_DAMAGE));
 				});
 				this.cancel();
 			}
