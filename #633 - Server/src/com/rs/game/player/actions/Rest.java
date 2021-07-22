@@ -1,16 +1,13 @@
 package com.rs.game.player.actions;
 
-import java.util.Optional;
-
-import com.rs.game.Entity;
 import com.rs.game.player.Player;
 import com.rs.net.encoders.other.Animation;
 import com.rs.utilities.RandomUtils;
 
 public class Rest extends Action {
 
-	public Rest(Player player, Optional<Entity> target) {
-		super(player, target);
+	public Rest(Player player) {
+		super(player);
 	}
 
 	private static int[][] REST_DEFS = { { 5713, 1549, 5748 },
@@ -23,7 +20,7 @@ public class Rest extends Action {
 	public boolean start() {
 		if (!process())
 			return false;
-		index = RandomUtils.random(REST_DEFS.length -1);
+		index = RandomUtils.inclusive(REST_DEFS.length -1);
 		getPlayer().setResting((byte) 1);
 		getPlayer().getInterfaceManager().sendRunButtonConfig();
 		getPlayer().setNextAnimation(new Animation(REST_DEFS[index][0]));

@@ -339,6 +339,7 @@ public class Player extends Entity {
 			setPetManager(new PetManager());
 		if (getNotes() == null)
 			setNotes(new Notes());
+		setActionManager(Optional.of(new ActionManager()));
 		setSession(session);
 		setUsername(username);
 		setDisplayMode(displayMode);
@@ -371,8 +372,6 @@ public class Player extends Entity {
 		setSwitchItemCache(new ObjectArrayList<Byte>());
 		if (!getCurrentController().isPresent())
 			setCurrentController(getCurrentController());
-		if (!getActionManager().isPresent())
-			setActionManager(Optional.empty());
 		initEntity();
 		World.addPlayer(this);
 		updateEntityRegion(this);

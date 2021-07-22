@@ -5,25 +5,35 @@ import java.util.Optional;
 import com.rs.game.Entity;
 import com.rs.game.player.Player;
 
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * Represents an Action a Player creates
  * @author Dennis
  *
  */
-@Data
 public abstract class Action {
 
 	/**
 	 * The Player
 	 */
-	private final Player player;
+	@Getter
+	private Player player;
 	
 	/**
 	 * The Target the {@link #player} will be interacting with
 	 */
-	private final Optional<Entity> target;
+	@Getter
+	private Optional<Entity> target;
+	
+	public Action(Player player) {
+		this.player = player;
+	}
+	
+	public Action(Player player, Optional<Entity> target) {
+		this.player = player;
+		this.target = target;
+	}
 	
 	/**
 	 * Starts the Action

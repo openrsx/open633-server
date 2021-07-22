@@ -12,6 +12,10 @@ import lombok.Setter;
  */
 public final class ActionManager {
 	
+	public ActionManager() {
+		this.action = Optional.empty();
+	}
+	
 	/**
 	 * The Action the Player creates
 	 */
@@ -29,9 +33,12 @@ public final class ActionManager {
 	 * Handles the processing of an Action
 	 */
 	public void process() {
-		System.out.println("?/");
-		if (getAction().isPresent() && !getAction().get().process())
-			forceStop();
+		if (getAction().isPresent() && !getAction().get().process()) {
+			forceStop();	
+		}
+		if (!getAction().isPresent()) {
+			return;
+		}
 		if (actionDelay > 0) {
 			actionDelay--;
 		}
@@ -49,9 +56,9 @@ public final class ActionManager {
 	 * @return action
 	 */
 	public void setAction(Action actionEvent) {
-		System.out.println("??/");
-		getAction().ifPresent(action -> action.stop());
-		action = Optional.of(actionEvent);
+		if (!actionEvent.start())
+			return;
+		this.action = Optional.of(actionEvent);
 	}
 
 	/**
@@ -60,6 +67,8 @@ public final class ActionManager {
 	public void forceStop() {
 		getAction().ifPresent(presentAction ->  {
 			presentAction.stop();
+			this.action = null;
+			System.out.println("was present, removed.");
 		});
 	}
 
