@@ -8,14 +8,14 @@ import com.rs.game.map.World;
 import com.rs.game.task.Task;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class OwnedObjectManager {
 
 	public static final AtomicLong keyMaker = new AtomicLong();
 
-	static Object2ObjectArrayMap<String, OwnedObjectManager> ownedObjects = new Object2ObjectArrayMap<>();
+	static Object2ObjectOpenHashMap<String, OwnedObjectManager> ownedObjects = new Object2ObjectOpenHashMap<>();
 
 	private Player player;
 	private GameObject[] objects;

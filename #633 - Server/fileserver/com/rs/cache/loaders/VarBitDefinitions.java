@@ -5,11 +5,11 @@ import java.io.IOException;
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 public final class VarBitDefinitions {
 
-	static Object2ObjectArrayMap<Integer, VarBitDefinitions> varpbitDefs = new Object2ObjectArrayMap<>();
+	static Object2ObjectOpenHashMap<Integer, VarBitDefinitions> varpbitDefs = new Object2ObjectOpenHashMap<>();
 
 	public int id;
 	public int baseVar;

@@ -13,7 +13,7 @@ import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.SneakyThrows;
 
 /**
@@ -26,7 +26,7 @@ public final class CommandPluginDispatcher {
 	/**
 	 * The object map which contains all the commands on the world.
 	 */
-	private static final Object2ObjectArrayMap<CommandSignature, Command> COMMANDS = new Object2ObjectArrayMap<>();
+	private static final Object2ObjectOpenHashMap<CommandSignature, Command> COMMANDS = new Object2ObjectOpenHashMap<>();
 
 	/**
 	 * Executes the specified {@code string} if it's a command.

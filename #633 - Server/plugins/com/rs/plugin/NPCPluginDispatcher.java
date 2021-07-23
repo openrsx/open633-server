@@ -18,7 +18,7 @@ import com.rs.plugin.listener.NPCType;
 import com.rs.plugin.wrapper.NPCSignature;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 /**
  * @author Dennis
@@ -28,7 +28,7 @@ public class NPCPluginDispatcher {
 	/**
 	 * The NPCS map which contains all the NPCS on the world.
 	 */
-	private static final Object2ObjectArrayMap<NPCSignature, NPCType> MOBS = new Object2ObjectArrayMap<>();
+	private static final Object2ObjectOpenHashMap<NPCSignature, NPCType> MOBS = new Object2ObjectOpenHashMap<>();
 	
 	/**
 	 * Executes the specified NPCS if it's registered.

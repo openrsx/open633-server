@@ -13,7 +13,7 @@ import com.rs.utilities.json.GsonHandler;
 import com.rs.utilities.json.GsonLoader;
 import com.rs.utilities.loaders.NPCSpawning;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
 
@@ -116,7 +116,7 @@ public class NPCAutoSpawn extends GsonLoader<NPCSpawning> {
 		return (ObjectArrayList<NPCSpawning>) map.get(regionId);
 	}
 
-	private final Object2ObjectArrayMap<Integer, List<NPCSpawning>> map = new Object2ObjectArrayMap<>();
+	private final Object2ObjectOpenHashMap<Integer, List<NPCSpawning>> map = new Object2ObjectOpenHashMap<>();
 
 	public enum Direction {
 

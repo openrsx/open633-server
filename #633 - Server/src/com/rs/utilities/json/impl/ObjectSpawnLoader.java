@@ -9,7 +9,7 @@ import com.rs.game.map.WorldTile;
 import com.rs.utilities.json.GsonHandler;
 import com.rs.utilities.json.GsonLoader;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -67,7 +67,7 @@ public class ObjectSpawnLoader extends GsonLoader<ObjectSpawnLoader.ObjectSpawn>
 		return map.get(regionId);
 	}
 
-	private Object2ObjectArrayMap<Integer, ObjectArrayList<ObjectSpawn>> map = new Object2ObjectArrayMap<>();
+	private Object2ObjectOpenHashMap<Integer, ObjectArrayList<ObjectSpawn>> map = new Object2ObjectOpenHashMap<>();
 
 	public static final void loadObjectSpawns(int regionId) {
 		GsonHandler.waitForLoad();

@@ -14,13 +14,13 @@ import java.nio.channels.FileChannel.MapMode;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 
 public final class MapArchiveKeys {
 
-	private final static Object2ObjectArrayMap<Integer, int[]> keys = new Object2ObjectArrayMap<Integer, int[]>();
+	private final static Object2ObjectOpenHashMap<Integer, int[]> keys = new Object2ObjectOpenHashMap<Integer, int[]>();
 	private final static String PACKED_PATH = "data/map/archiveKeys/packed.mcx";
 
 	public static final int[] getMapKeys(int regionId) {

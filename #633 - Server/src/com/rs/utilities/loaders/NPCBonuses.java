@@ -15,12 +15,12 @@ import java.nio.channels.FileChannel.MapMode;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 
 public final class NPCBonuses {
-	private final static Object2ObjectArrayMap<Short, short[]> npcBonuses = new Object2ObjectArrayMap<Short, short[]>();
+	private final static Object2ObjectOpenHashMap<Short, short[]> npcBonuses = new Object2ObjectOpenHashMap<Short, short[]>();
 	private static final String PACKED_PATH = "data/npcs/packedBonuses.nb";
 
 	public static void init() {

@@ -9,7 +9,7 @@ import com.rs.game.player.controller.ControllerHandler;
 import com.rs.net.encoders.other.Animation;
 import com.rs.utilities.RandomUtils;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import skills.Skills;
 
 /**
@@ -294,7 +294,7 @@ public class Foods {
 		/**
 		 * A map of object ids to foods.
 		 */
-		private static Object2ObjectArrayMap<Integer, Food> foods = new Object2ObjectArrayMap<Integer, Food>();
+		private static Object2ObjectOpenHashMap<Integer, Food> foods = new Object2ObjectOpenHashMap<Integer, Food>();
 
 		/**
 		 * Gets a food by an object id.

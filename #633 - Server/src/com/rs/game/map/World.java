@@ -41,7 +41,7 @@ import com.rs.utilities.LogUtility;
 import com.rs.utilities.Utility;
 import com.rs.utilities.LogUtility.LogType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -80,7 +80,7 @@ public final class World extends AbstractScheduledService {
 	private static final EntityList<NPC> npcs = new EntityList<NPC>(GameConstants.NPCS_LIMIT, false);
 	
 	@Getter
-	private static Object2ObjectArrayMap<Integer, Region> regions = new Object2ObjectArrayMap<>();
+	private static Object2ObjectOpenHashMap<Integer, Region> regions = new Object2ObjectOpenHashMap<>();
 
 	public static final void init() {
 		World.get().submit(new RestoreRunEnergyTask());

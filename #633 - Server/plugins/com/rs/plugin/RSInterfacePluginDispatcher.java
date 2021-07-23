@@ -18,10 +18,10 @@ import com.rs.io.InputStream;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
 import com.rs.utilities.LogUtility;
-import com.rs.utilities.Utility;
 import com.rs.utilities.LogUtility.LogType;
+import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import skills.Skills;
 
 /**
@@ -32,7 +32,7 @@ public final class RSInterfacePluginDispatcher {
 	/**
 	 * The object map which contains all the interface on the world.
 	 */
-	private static final Object2ObjectArrayMap<RSInterfaceSignature, RSInterface> INTERFACES = new Object2ObjectArrayMap<>();
+	private static final Object2ObjectOpenHashMap<RSInterfaceSignature, RSInterface> INTERFACES = new Object2ObjectOpenHashMap<>();
 
 	/**
 	 * Executes the specified interface if it's registered.
@@ -162,7 +162,7 @@ public final class RSInterfacePluginDispatcher {
 			player.getPackets().sendGameMessage("Not enough free space in your inventory.");
 			return true;
 		}
-		Object2ObjectArrayMap<Integer, Integer> requiriments = item.getDefinitions().getWearingSkillRequiriments();
+		Object2ObjectOpenHashMap<Integer, Integer> requiriments = item.getDefinitions().getWearingSkillRequiriments();
 		boolean hasRequiriments = true;
 		if (requiriments != null) {
 			for (int skillId : requiriments.keySet()) {
@@ -269,7 +269,7 @@ public final class RSInterfacePluginDispatcher {
 			player.getPackets().sendGameMessage("Not enough free space in your inventory.");
 			return false;
 		}
-		Object2ObjectArrayMap<Integer, Integer> requiriments = item.getDefinitions().getWearingSkillRequiriments();
+		Object2ObjectOpenHashMap<Integer, Integer> requiriments = item.getDefinitions().getWearingSkillRequiriments();
 		boolean hasRequiriments = true;
 		if (requiriments != null) {
 			for (int skillId : requiriments.keySet()) {

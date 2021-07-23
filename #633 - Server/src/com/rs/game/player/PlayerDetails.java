@@ -8,7 +8,7 @@ import com.rs.utilities.MutableNumber;
 import com.rs.utilities.Stopwatch;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Data;
 
@@ -37,7 +37,7 @@ public final class PlayerDetails {
 		passwordList = new ObjectArrayList<String>();
 		ipList = new ObjectArrayList<String>();
 		if (watchMap == null) 
-			watchMap = new Object2ObjectArrayMap<>();
+			watchMap = new Object2ObjectOpenHashMap<>();
 	}
 
 	/**
@@ -112,7 +112,7 @@ public final class PlayerDetails {
 	 * A collection of Stopwatches
 	 */
 	
-	private Object2ObjectArrayMap<String, Stopwatch> watchMap = new Object2ObjectArrayMap<>();
+	private Object2ObjectOpenHashMap<String, Stopwatch> watchMap = new Object2ObjectOpenHashMap<>();
 
 	/**
 	 * Should the Player use Chat effects for overhead text

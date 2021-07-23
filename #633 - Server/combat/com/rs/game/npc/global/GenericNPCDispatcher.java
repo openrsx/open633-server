@@ -12,12 +12,12 @@ import com.rs.game.npc.NPC;
 import com.rs.game.player.Hit;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.SneakyThrows;
 
 public class GenericNPCDispatcher {
 
-	private static final Object2ObjectArrayMap<GenericNPCSignature, GenericNPC> NPC = new Object2ObjectArrayMap<>();
+	private static final Object2ObjectOpenHashMap<GenericNPCSignature, GenericNPC> NPC = new Object2ObjectOpenHashMap<>();
 	
 	@SneakyThrows(Exception.class)
 	public NPC create(NPC npc) {

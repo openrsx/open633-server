@@ -6,16 +6,16 @@ import java.util.Arrays;
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Data;
 
 @Data
 public final class NPCDefinitions {
 
-	private static Object2ObjectArrayMap<Integer, NPCDefinitions> npcDefinitions = new Object2ObjectArrayMap<>();
+	private static Object2ObjectOpenHashMap<Integer, NPCDefinitions> npcDefinitions = new Object2ObjectOpenHashMap<>();
 
 	private int id;
-	public Object2ObjectArrayMap<Integer, Object> clientScriptData;
+	public Object2ObjectOpenHashMap<Integer, Object> clientScriptData;
 	public int anInt833;
 	public int anInt836;
 	public int anInt837;
@@ -323,7 +323,7 @@ public final class NPCDefinitions {
 																						int i = stream
 																								.readUnsignedByte();
 																						if (clientScriptData == null) {
-																							clientScriptData = new Object2ObjectArrayMap<Integer, Object>(
+																							clientScriptData = new Object2ObjectOpenHashMap<Integer, Object>(
 																									i);
 																						}
 																						for (int i_60_ = 0; i > i_60_; i_60_++) {

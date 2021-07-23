@@ -17,13 +17,13 @@ import com.rs.game.player.content.Shop;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 
 public class ShopsHandler {
 
-	private static final Object2ObjectArrayMap<Integer, Shop> handledShops = new Object2ObjectArrayMap<Integer, Shop>();
+	private static final Object2ObjectOpenHashMap<Integer, Shop> handledShops = new Object2ObjectOpenHashMap<Integer, Shop>();
 
 	private static final String PACKED_PATH = "data/items/packedShops.s";
 	private static final String UNPACKED_PATH = "data/items/unpackedShops.txt";

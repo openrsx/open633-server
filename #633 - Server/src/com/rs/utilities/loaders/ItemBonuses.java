@@ -6,14 +6,13 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 
 public final class ItemBonuses {
 
-
-	static Object2ObjectArrayMap<Integer, int[]> itemBonuses = new Object2ObjectArrayMap<>();
+	static Object2ObjectOpenHashMap<Integer, int[]> itemBonuses = new Object2ObjectOpenHashMap<>();
 	private final static String PACKED_PATH = "data/items/bonuses.ib";
 
 	public static final void init() {
@@ -32,9 +31,8 @@ public final class ItemBonuses {
 		@Cleanup
 		RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
 		FileChannel channel = in.getChannel();
-		ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0,
-				channel.size());
-		itemBonuses = new Object2ObjectArrayMap<Integer, int[]>(buffer.remaining() / 38);
+		ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
+		itemBonuses = new Object2ObjectOpenHashMap<Integer, int[]>(buffer.remaining() / 38);
 		while (buffer.hasRemaining()) {
 			int itemId = buffer.getShort() & 0xffff;
 			int[] bonuses = new int[18];

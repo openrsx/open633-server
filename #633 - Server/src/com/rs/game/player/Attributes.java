@@ -1,6 +1,6 @@
 package com.rs.game.player;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Data;
 
 /**
@@ -14,6 +14,6 @@ public class Attributes {
 	/**
 	 * A Temporary attribute map for an Entity;
 	 */
-	private transient Object2ObjectArrayMap<Object, Object> attributes = new Object2ObjectArrayMap<>();
+	private transient Object2ObjectOpenHashMap<Object, Object> attributes = new Object2ObjectOpenHashMap<>();
 	
 }

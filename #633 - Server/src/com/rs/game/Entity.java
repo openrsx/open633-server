@@ -46,7 +46,7 @@ import com.rs.utilities.MutableNumber;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayFIFOQueue;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
@@ -73,7 +73,7 @@ public abstract class Entity extends WorldTile {
 	private transient boolean teleported;
 	// than 1thread so concurent
 	private transient ObjectArrayFIFOQueue<Hit> receivedHits;
-	private transient Object2ObjectArrayMap<Entity, Integer> receivedDamage;
+	private transient Object2ObjectOpenHashMap<Entity, Integer> receivedDamage;
 	private transient boolean finished;
 	
 	// entity masks
@@ -128,7 +128,7 @@ public abstract class Entity extends WorldTile {
 		setHashCode((short) hashCodeGenerator.getAndIncrement());
 		setMapRegionsIds(new CopyOnWriteArrayList<Integer>());
 		setReceivedHits(new ObjectArrayFIFOQueue<Hit>());
-		setReceivedDamage(new Object2ObjectArrayMap<Entity, Integer>());
+		setReceivedDamage(new Object2ObjectOpenHashMap<Entity, Integer>());
 		setNextHits(new ObjectArrayList<Hit>());
 		setNextWalkDirection((byte) (nextRunDirection - 1));
 		setLastFaceEntity(-1);

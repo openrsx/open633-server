@@ -14,13 +14,13 @@ import com.rs.game.npc.combat.NPCCombatDefinitions;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 
 public final class NPCCombatDefinitionsL {
 
-	private final static Object2ObjectArrayMap<Integer, NPCCombatDefinitions> npcCombatDefinitions = new Object2ObjectArrayMap<Integer, NPCCombatDefinitions>();
+	private final static Object2ObjectOpenHashMap<Integer, NPCCombatDefinitions> npcCombatDefinitions = new Object2ObjectOpenHashMap<Integer, NPCCombatDefinitions>();
 	private final static NPCCombatDefinitions DEFAULT_DEFINITION = new NPCCombatDefinitions(1, -1, -1, -1, 5, 1, 33, 0,
 			NPCCombatDefinitions.MELEE, -1, -1, NPCCombatDefinitions.PASSIVE);
 	private static final String PACKED_PATH = "data/npcs/packedCombatDefinitions.ncd";
