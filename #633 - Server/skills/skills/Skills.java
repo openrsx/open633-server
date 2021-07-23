@@ -2,77 +2,155 @@ package skills;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import com.rs.GameConstants;
 import com.rs.game.player.Player;
 
 import lombok.Data;
 
+/**
+ * Represents a Player's Skill attributes
+ * 
+ * @author Dennis
+ *
+ */
 @Data
 public class Skills {
 
+	/**
+	 * The maximum amount of experience a Player can achieve in a Skill
+	 */
 	public static final int MAXIMUM_EXP = 200000000;
+
+	/**
+	 * Simple Skill name with value constants
+	 */
 	public static final int ATTACK = 0, DEFENCE = 1, STRENGTH = 2, HITPOINTS = 3, RANGE = 4, PRAYER = 5, MAGIC = 6,
 			COOKING = 7, WOODCUTTING = 8, FLETCHING = 9, FISHING = 10, FIREMAKING = 11, CRAFTING = 12, SMITHING = 13,
 			MINING = 14, HERBLORE = 15, AGILITY = 16, THIEVING = 17, SLAYER = 18, FARMING = 19, RUNECRAFTING = 20,
 			CONSTRUCTION = 22, HUNTER = 21, SUMMONING = 23, DUNGEONEERING = 24;
 
+	/**
+	 * Simple Skill names
+	 */
 	public static final String[] SKILL_NAME = { "Attack", "Defence", "Strength", "Constitution", "Ranging", "Prayer",
 			"Magic", "Cooking", "Woodcutting", "Fletching", "Fishing", "Firemaking", "Crafting", "Smithing", "Mining",
 			"Herblore", "Agility", "Thieving", "Slayer", "Farming", "Runecrafting", "Hunter", "Construction",
 			"Summoning", "Dungeoneering" };
 
-	private byte level[];
+	/**
+	 * An array of the levels the Player can level-up in
+	 */
+	private int level[];
+
+	/**
+	 * An array of xp that the player can gain in the skill
+	 */
 	private double xp[];
+
+	/**
+	 * Represents the XP Counter value itself
+	 */
 	private int xpCounter;
+
+	/**
+	 * Represents the Player
+	 */
 	private transient Player player;
 
+	/**
+	 * Constructs a new Skill load-out for new Players
+	 */
 	public Skills() {
-		level = new byte[25];
+		level = new int[25];
 		xp = new double[25];
-		for (int i = 0; i < level.length; i++) {
-			level[i] = 1;
-			xp[i] = 0;
-		}
+		IntStream.range(0, 25).forEach(skills -> {
+			level[skills] = 1;
+			xp[skills] = 0;
+		});
 		level[HITPOINTS] = 10;
 		xp[HITPOINTS] = 1184;
 		level[HERBLORE] = 3;
 		xp[HERBLORE] = 250;
-
+		xpCounter = 1434;
 	}
 
+	/**
+	 * Restores all the Skills to their original state
+	 */
 	public void restoreSkills() {
-		for (int skill = 0; skill < level.length; skill++) {
+		IntStream.range(0, 25).forEach(skill -> {
 			level[skill] = (byte) getLevelForXp(skill);
 			refresh(skill);
-		}
+		});
 	}
 
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
-
+	/**
+	 * Gets the level of a Skill
+	 * 
+	 * @param skill
+	 * @return level
+	 */
 	public int getLevel(int skill) {
 		return level[skill];
 	}
 
+	/**
+	 * Gets the xp of a Skill
+	 * 
+	 * @param skill
+	 * @return xp
+	 */
 	public double getXp(int skill) {
 		return xp[skill];
 	}
 
-	public boolean hasRequiriments(int... skills) {
-		for (int i = 0; i < skills.length; i += 2) {
-			int skillId = skills[i];
-			if (skillId == CONSTRUCTION || skillId == DUNGEONEERING || skillId == SLAYER)
-				continue;
-			int skillLevel = skills[i + 1];
-			if (getLevelForXp(skillId) < skillLevel)
-				return false;
-
-		}
-		return true;
+	/**
+	 * Sets the Skill level to a new one
+	 * 
+	 * @param skill
+	 * @param newLevel
+	 */
+	public void set(int skill, int newLevel) {
+		level[skill] = (byte) newLevel;
+		refresh(skill);
 	}
 
+	/**
+	 * Sets the xp of a Skill to a new one
+	 * 
+	 * @param skill
+	 * @param exp
+	 */
+	public void setXp(int skill, double exp) {
+		xp[skill] = exp;
+		refresh(skill);
+	}
+
+	/**
+	 * Gets the combat level with summoning combat levels added
+	 * 
+	 * @return combat level
+	 */
+	public int getCombatLevelWithSummoning() {
+		return getCombatLevel() + getSummoningCombatLevel();
+	}
+
+	/**
+	 * Gets the summoning combat level itself
+	 * 
+	 * @return
+	 */
+	public int getSummoningCombatLevel() {
+		return getLevelForXp(Skills.SUMMONING) / 8;
+	}
+
+	/**
+	 * Calculates the Player's base combat level
+	 * 
+	 * @return
+	 */
 	public int getCombatLevel() {
 		int attack = getLevelForXp(0);
 		int defence = getLevelForXp(1);
@@ -96,11 +174,13 @@ public class Skills {
 		return combatLevel;
 	}
 
-	public void set(int skill, int newLevel) {
-		level[skill] = (byte) newLevel;
-		refresh(skill);
-	}
-
+	/**
+	 * Drains the Player's Level to specified amount
+	 * 
+	 * @param skill
+	 * @param drain
+	 * @return
+	 */
 	public int drainLevel(int skill, int drain) {
 		int drainLeft = drain - level[skill];
 		if (drainLeft < 0) {
@@ -114,14 +194,11 @@ public class Skills {
 		return drainLeft;
 	}
 
-	public int getCombatLevelWithSummoning() {
-		return getCombatLevel() + getSummoningCombatLevel();
-	}
-
-	public int getSummoningCombatLevel() {
-		return getLevelForXp(Skills.SUMMONING) / 8;
-	}
-
+	/**
+	 * Drains the Player's Summoning level by specified amount
+	 * 
+	 * @param amt
+	 */
 	public void drainSummoning(int amt) {
 		int level = getLevel(Skills.SUMMONING);
 		if (level == 0)
@@ -129,6 +206,12 @@ public class Skills {
 		set(Skills.SUMMONING, amt > level ? 0 : level - amt);
 	}
 
+	/**
+	 * Gets the xp for the level
+	 * 
+	 * @param level
+	 * @return xp
+	 */
 	public static int getXPForLevel(int level) {
 		int points = 0;
 		int output = 0;
@@ -142,6 +225,12 @@ public class Skills {
 		return 0;
 	}
 
+	/**
+	 * Gets the level for the xp
+	 * 
+	 * @param level
+	 * @return level
+	 */
 	public int getLevelForXp(int skill) {
 		double exp = xp[skill];
 		int points = 0;
@@ -156,16 +245,41 @@ public class Skills {
 		return skill == DUNGEONEERING ? 120 : 99;
 	}
 
+	/**
+	 * Initializes the Player's Skills on login
+	 */
 	public void init() {
-		for (int skill = 0; skill < level.length; skill++)
-			refresh(skill);
+		IntStream.range(0, 25).forEach(level -> refresh(level));
 		refreshXpCounter();
 	}
 
+	/**
+	 * Refreshes the specified Skill
+	 * 
+	 * @param skill
+	 */
 	public void refresh(int skill) {
 		player.getPackets().sendSkillLevel(skill);
 	}
 
+	/**
+	 * Determines if your level is greater than or equal to {@code level}.
+	 * 
+	 * @param level the level to compare against this one.
+	 * @return {@code true} if this level is greater than or equal to the other one,
+	 *         {@code false} otherwise.
+	 */
+	public boolean reqLevel(int level) {
+		return this.level[level] >= level;
+	}
+
+	/**
+	 * Adds experience to the specified Skill
+	 * 
+	 * @param skill
+	 * @param exp
+	 * @return
+	 */
 	public double addXp(int skill, double exp) {
 		int rate = skill == ATTACK || skill == STRENGTH || skill == DEFENCE || skill == HITPOINTS || skill == MAGIC
 				|| skill == RANGE || skill == SUMMONING ? GameConstants.COMBAT_XP_RATE : GameConstants.XP_RATE;
@@ -173,6 +287,13 @@ public class Skills {
 		return addXpNormal(skill, exp);
 	}
 
+	/**
+	 * Adds normal xp rates based on interaction (typically combat)
+	 * 
+	 * @param skill
+	 * @param exp
+	 * @return xp
+	 */
 	public double addXpNormal(int skill, double exp) {
 		if (player.getDetails().isXpLocked())
 			return 0;
@@ -202,8 +323,13 @@ public class Skills {
 		return exp;
 	}
 
-	private int gainedLevels;
-
+	/**
+	 * Adds xp via a experience lamp
+	 * 
+	 * @param skill
+	 * @param exp
+	 * @return xp
+	 */
 	public double addXpLamp(int skill, double exp) {
 		if (player.getDetails().isXpLocked())
 			return 0;
@@ -218,9 +344,10 @@ public class Skills {
 		}
 		int newLevel = getLevelForXp(skill);
 		int levelDiff = newLevel - oldLevel;
+		gainedLevels = levelDiff;
 		if (newLevel > oldLevel) {
 			level[skill] += levelDiff;
-//			player.getDialogueManager().startDialogue("LevelUp", skill);
+			LevelUp.advanceLevel(player, skill, gainedLevels);
 			if (skill == SUMMONING || (skill >= ATTACK && skill <= MAGIC)) {
 				player.getAppearance().generateAppearenceData();
 				if (skill == HITPOINTS)
@@ -233,34 +360,30 @@ public class Skills {
 		return exp;
 	}
 
-	public void addSkillXpRefresh(int skill, double xp) {
-		this.xp[skill] += xp;
-		level[skill] = (byte) getLevelForXp(skill);
-	}
+	/**
+	 * Represents the amount of gained levels when leveling up In this case xp rate
+	 * in-game is fast so we can see for example: gained 3 levels or 1 level message
+	 */
+	private int gainedLevels;
 
-	public void resetSkillNoRefresh(int skill) {
-		xp[skill] = 0;
-		level[skill] = 1;
-	}
-
-	public void setXp(int skill, double exp) {
-		xp[skill] = exp;
-		refresh(skill);
-	}
-
+	/**
+	 * Refreshes the xp counter value
+	 */
 	public void refreshXpCounter() {
 		player.getVarsManager().sendVar(1801, (int) (xpCounter * 10D));
 	}
 
+	/**
+	 * Resets the xp counter back to 0
+	 */
 	public void resetXpCounter() {
 		xpCounter = 0;
 		refreshXpCounter();
 	}
 
-	/*
+	/**
 	 * Levelup sounds 1 - 99
 	 */
-
 	public enum Musics {
 		ATTACK(29, 30, 0), STRENGTH(65, 66, 2), DEFENCE(37, 38, 1), HITPOINTS(47, 48, 3), RANGE(57, 58, 4),
 		MAGIC(51, 52, 6), PRAYER(55, 56, 5), AGILITY(28, 322, 16), HERBLORE(45, 46, 15), THIEVING(67, 68, 17),
@@ -300,11 +423,19 @@ public class Skills {
 		}
 	}
 
+	/**
+	 * Represents the total level of the player
+	 */
+	private transient int totallevel;
+
+	/**
+	 * Gets the total level of a Player note: might need to be tweaked
+	 * 
+	 * @param player
+	 * @return level
+	 */
 	public int getTotalLevel(Player player) {
-		int totallevel = 0;
-		for (int i = 0; i <= 24; i++) {
-			totallevel += player.getSkills().getLevelForXp(i);
-		}
+		IntStream.range(0, 25).forEach(level -> totallevel += player.getSkills().getLevelForXp(level));
 		return totallevel;
 	}
 }

@@ -68,7 +68,6 @@ public final class ActionManager {
 	public void forceStop() {
 		getAction().ifPresent(presentAction ->  {
 			presentAction.stop();
-			System.out.println("was present, removed.");
 		});
 		action = Optional.empty();
 	}
