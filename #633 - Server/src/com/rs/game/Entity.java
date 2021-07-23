@@ -1244,9 +1244,8 @@ public abstract class Entity extends WorldTile {
 	public void setRunState(boolean run) {
 		setRun(run);
 		ifPlayer(player -> {
+			player.setUpdateMovementType(true);
 			if (run != isRun()) {
-				setRunState(run);
-				player.setUpdateMovementType(true);
 				player.getInterfaceManager().sendRunButtonConfig();
 			}
 		});
