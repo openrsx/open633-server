@@ -35,8 +35,8 @@ import com.rs.net.encoders.other.HintIconsManager;
 import com.rs.net.host.HostListType;
 import com.rs.net.host.HostManager;
 import com.rs.utilities.LogUtility;
-import com.rs.utilities.Utility;
 import com.rs.utilities.LogUtility.LogType;
+import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Data;
@@ -225,7 +225,7 @@ public class Player extends Entity {
 	/**
 	 * Represents a Action management system
 	 */
-	private Optional<ActionManager> actionManager = Optional.empty();
+	private transient ActionManager action = new ActionManager();
 	
 	/**
 	 * The current skill action that is going on for this player.
@@ -319,7 +319,6 @@ public class Player extends Entity {
 		setSpellDispatcher(new PassiveSpellDispatcher());
 		getDetails().setPassword(password);
 		setCurrentController(Optional.empty());
-		setActionManager(Optional.empty());
 	}
 
 	/**
@@ -339,7 +338,6 @@ public class Player extends Entity {
 			setPetManager(new PetManager());
 		if (getNotes() == null)
 			setNotes(new Notes());
-		setActionManager(Optional.of(new ActionManager()));
 		setSession(session);
 		setUsername(username);
 		setDisplayMode(displayMode);
@@ -370,6 +368,8 @@ public class Player extends Entity {
 		setTemporaryMovementType((byte) -1);
 		setLogicPackets(new ConcurrentLinkedQueue<LogicPacket>());
 		setSwitchItemCache(new ObjectArrayList<Byte>());
+		if (getAction() == null)
+			setAction(new ActionManager());
 		if (!getCurrentController().isPresent())
 			setCurrentController(getCurrentController());
 		initEntity();
@@ -406,7 +406,7 @@ public class Player extends Entity {
 			setCoordsEvent(null);
 		if (getRouteEvent() != null && getRouteEvent().processEvent(this))
 			setRouteEvent(null);
-		getActionManager().ifPresent(action -> action.process());
+		getAction().process();
 		getPrayer().processPrayer();
 		ControllerHandler.executeVoid(this, controller -> controller.process(this));
 		getDetails().getCharges().process();

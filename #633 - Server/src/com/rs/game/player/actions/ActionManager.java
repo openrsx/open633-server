@@ -13,7 +13,7 @@ import lombok.Setter;
 public final class ActionManager {
 	
 	public ActionManager() {
-		this.action = Optional.empty();
+		action = Optional.empty();
 	}
 	
 	/**
@@ -58,7 +58,7 @@ public final class ActionManager {
 	public void setAction(Action actionEvent) {
 		if (!actionEvent.start())
 			return;
-		this.action = Optional.of(actionEvent);
+		action = Optional.of(actionEvent);
 	}
 
 	/**
@@ -67,9 +67,9 @@ public final class ActionManager {
 	public void forceStop() {
 		getAction().ifPresent(presentAction ->  {
 			presentAction.stop();
-			this.action = null;
 			System.out.println("was present, removed.");
 		});
+		action = Optional.empty();
 	}
 
 	/**

@@ -18,6 +18,7 @@ import com.rs.game.player.actions.Action;
 import com.rs.game.player.content.Magic;
 import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.player.type.CombatEffectType;
+import com.rs.game.player.type.PoisonType;
 import com.rs.game.task.Task;
 import com.rs.net.encoders.other.Animation;
 import com.rs.net.encoders.other.Graphics;
@@ -2509,15 +2510,15 @@ public class PlayerCombat extends Action {
 								playSound(magic_sound, player, target);
 						}
 					}
-//					if (max_poison_hit > 0 && Utils.getRandom(10) == 0) {
-//						if (!target.getPoison().isPoisoned())
-//							target.getPoison().makePoisoned(max_poison_hit);
-//					}
+					if (max_poison_hit > 0 && RandomUtils.inclusive(10) == 0) {
+						if (!target.isPoisoned())
+							target.setPoisonType(PoisonType.DEFAULT_MELEE);
+					}
 					if (target.isPlayer()) {
 						Player p2 = (Player) target;
 						p2.getInterfaceManager().closeInterfaces();
-						if (p2.getCombatDefinitions().isAutoRelatie() && !p2.getActionManager().isPresent() &&  !p2.hasWalkSteps())
-							p2.getActionManager().get().setAction(new PlayerCombat(p2, Optional.of(target)));
+						if (p2.getCombatDefinitions().isAutoRelatie() && !p2.getAction().getAction().isPresent() &&  !p2.hasWalkSteps())
+							p2.getAction().setAction(new PlayerCombat(p2, Optional.of(target)));
 					} else {
 						NPC n = (NPC) target;
 						if (!n.getCombat().underCombat() || n.canBeAttackedByAutoRelatie())

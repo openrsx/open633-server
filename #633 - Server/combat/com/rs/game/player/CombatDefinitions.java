@@ -633,14 +633,14 @@ public final class CombatDefinitions {
 			break;
 		case 4153:
 		case 14679:
-			if (!(player.getActionManager().get().getAction().get() instanceof PlayerCombat)) {
+			if (!(player.getAction().getAction().get() instanceof PlayerCombat)) {
 				player.getPackets()
 						.sendGameMessage(
 								"Warning: Since the maul's special is an instant attack, it will be wasted when used on a first strike.");
 				player.getCombatDefinitions().switchUsingSpecialAttack();
 				return;
 			}
-			PlayerCombat combat = (PlayerCombat) player.getActionManager().get().getAction().get();
+			PlayerCombat combat = (PlayerCombat) player.getAction().getAction().get();
 			Entity target = combat.getTarget().get();
 			if (!Utility.isOnRange(player.getX(), player.getY(), player.getSize(), target.getX(),
 					target.getY(), target.getSize(), 5)) {

@@ -2,7 +2,6 @@ package com.rs.net;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -210,7 +209,7 @@ public class Session {
 		if (player.isFinishing() || player.isFinished())
 			return;
 		player.setFinishing(true);
-		player.getMovement().stopAll(false, true, !(player.getActionManager().isPresent() && player.getActionManager().get().getAction().get() instanceof PlayerCombat));
+		player.getMovement().stopAll(false, true, !(player.getAction().getAction().isPresent() && player.getAction().getAction().get() instanceof PlayerCombat));
 		if (player.isDead() || (player.getCombatDefinitions().isUnderCombat() && tryCount < 6)
 				|| player.getMovement().isLocked() || Emote.isDoingEmote(player)) {
 			CoresManager.schedule(() -> {
@@ -237,7 +236,7 @@ public class Session {
 		else if (player.getPet() != null)
 			player.getPet().deregister();
 		player.setFinished(true);
-		player.setActionManager(Optional.empty());
+		player.getAction().forceStop();
 		player.getSession().setDecoder(-1);
 		AccountCreation.savePlayer(player);
 		player.updateEntityRegion(player);

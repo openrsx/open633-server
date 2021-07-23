@@ -42,7 +42,7 @@ public class PlayerFollow extends Action {
 				|| distanceY > size + maxDistance || distanceY < -1 - maxDistance)
 			return false;
 		int lastFaceEntity = target.getLastFaceEntity();
-		if (lastFaceEntity == getPlayer().getClientIndex() && target.getActionManager().get().getAction().get() instanceof PlayerFollow)
+		if (lastFaceEntity == getPlayer().getClientIndex() && target.getAction().getAction().get() instanceof PlayerFollow)
 			getPlayer().addWalkSteps(target.getX(), target.getY());
 		else if (!getPlayer().clipedProjectile(target, true) || !Utility.isOnRange(getPlayer().getX(), getPlayer().getY(), size,
 				target.getX(), target.getY(), target.getSize(), 0)) {

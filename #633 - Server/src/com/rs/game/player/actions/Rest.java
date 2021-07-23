@@ -1,13 +1,16 @@
 package com.rs.game.player.actions;
 
+import java.util.Optional;
+
+import com.rs.game.Entity;
 import com.rs.game.player.Player;
 import com.rs.net.encoders.other.Animation;
 import com.rs.utilities.RandomUtils;
 
 public class Rest extends Action {
 
-	public Rest(Player player) {
-		super(player);
+	public Rest(Player player, Optional<Entity> entity) {
+		super(player, Optional.empty());
 	}
 
 	private static int[][] REST_DEFS = { { 5713, 1549, 5748 },

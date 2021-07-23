@@ -152,7 +152,7 @@ public class InterfaceOnNPCPacket implements LogicPacket {
 							}
 						}
 					}
-					player.getActionManager().get().setAction(new PlayerCombat(player, Optional.of(npc)));
+					player.getAction().setAction(new PlayerCombat(player, Optional.of(npc)));
 				}
 				break;
 			}
@@ -215,7 +215,7 @@ public class InterfaceOnNPCPacket implements LogicPacket {
 							}
 						}
 					}
-					player.getActionManager().get().setAction(new PlayerCombat(player, Optional.of(npc)));
+					player.getAction().setAction(new PlayerCombat(player, Optional.of(npc)));
 				}
 				break;
 			}

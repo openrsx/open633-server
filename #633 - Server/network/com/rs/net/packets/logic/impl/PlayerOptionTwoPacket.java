@@ -31,6 +31,6 @@ public class PlayerOptionTwoPacket implements LogicPacket {
 		if (forceRun)
 			player.setRun(forceRun);
 		player.getMovement().stopAll();
-		player.getActionManager().get().setAction(new PlayerFollow(player, Optional.of(p2)));
+		player.getAction().setAction(new PlayerFollow(player, Optional.of(p2)));
 	}
 }
