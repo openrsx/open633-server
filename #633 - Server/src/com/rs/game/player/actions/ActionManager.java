@@ -41,6 +41,7 @@ public final class ActionManager {
 		}
 		if (actionDelay > 0) {
 			actionDelay--;
+			return;
 		}
 		int delay = getAction().get().processWithDelay();
 		if (delay == -1) {
