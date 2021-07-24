@@ -6,7 +6,7 @@ import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 public class AnimationDefinitions {
 
@@ -35,7 +35,7 @@ public class AnimationDefinitions {
 	public int[] anIntArray1362;
 	public boolean effect2Sound;
 
-	static Object2ObjectOpenHashMap<Integer, AnimationDefinitions> animDefs = new Object2ObjectOpenHashMap<>();
+	static Object2ObjectArrayMap<Integer, AnimationDefinitions> animDefs = new Object2ObjectArrayMap<>();
 
 	public static void main(String[] args) throws IOException {
 		Cache.init();

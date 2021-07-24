@@ -8,7 +8,7 @@ import com.rs.utilities.TextUtils;
 import com.rs.utilities.Utility;
 import com.rs.utilities.loaders.MusicHints;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 public final class ClientScriptMap {
 
@@ -18,9 +18,9 @@ public final class ClientScriptMap {
 	private char aChar6345;
 	private String defaultStringValue;
 	private int defaultIntValue;
-	private Object2ObjectOpenHashMap<Long, Object> values;
+	private Object2ObjectArrayMap<Long, Object> values;
 	
-	static Object2ObjectOpenHashMap<Integer, ClientScriptMap> interfaceScripts = new Object2ObjectOpenHashMap<>();
+	static Object2ObjectArrayMap<Integer, ClientScriptMap> interfaceScripts = new Object2ObjectArrayMap<>();
 
 	public static void main(String[] args) throws IOException {
 		// Cache.STORE = new Store("C:/.jagex_cache_32/runescape/");
@@ -68,7 +68,7 @@ public final class ClientScriptMap {
 		return defaultStringValue;
 	}
 
-	public Object2ObjectOpenHashMap<Long, Object> getValues() {
+	public Object2ObjectArrayMap<Long, Object> getValues() {
 		return values;
 	}
 
@@ -150,7 +150,7 @@ public final class ClientScriptMap {
 			int count = stream.readUnsignedShort();
 			int loop = opcode == 7 || opcode == 8 ? stream.readUnsignedShort() : count;
 			if (values == null)
-				values = new Object2ObjectOpenHashMap<Long, Object>(Utility.getHashMapSize(count));
+				values = new Object2ObjectArrayMap<Long, Object>(Utility.getHashMapSize(count));
 			for (int i = 0; i < loop; i++) {
 				int key = opcode == 7 || opcode == 8 ? stream.readUnsignedShort() : stream.readInt();
 				Object value = opcode == 5 || opcode == 7 ? stream.readString() : stream.readInt();

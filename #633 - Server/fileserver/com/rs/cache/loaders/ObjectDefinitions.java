@@ -8,13 +8,13 @@ import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Data;
 
 @Data
 public class ObjectDefinitions {
 
-	static Object2ObjectOpenHashMap<Integer, ObjectDefinitions> objectDefinitions = new Object2ObjectOpenHashMap<>();
+	static Object2ObjectArrayMap<Integer, ObjectDefinitions> objectDefinitions = new Object2ObjectArrayMap<>();
 
 	private short[] originalColors;
 	int[] toObjectIds;
@@ -99,7 +99,7 @@ public class ObjectDefinitions {
 	 */
 	private short[] aShortArray3920;
 	int anInt3921;
-	private Object2ObjectOpenHashMap<Integer, Object> parameters;
+	private Object2ObjectArrayMap<Integer, Object> parameters;
 	boolean aBoolean3923;
 	boolean aBoolean3924;
 	int anInt3925;
@@ -437,7 +437,7 @@ public class ObjectDefinitions {
 																																						int length = stream
 																																								.readUnsignedByte();
 																																						if (parameters == null)
-																																							parameters = new Object2ObjectOpenHashMap<Integer, Object>(
+																																							parameters = new Object2ObjectArrayMap<Integer, Object>(
 																																									length);
 																																						for (int i_60_ = 0; i_60_ < length; i_60_++) {
 																																							boolean bool = stream
@@ -742,7 +742,7 @@ public class ObjectDefinitions {
 		}
 		return def;
 	}
-	
+
 	public static void clearObjectDefinitions() {
 		objectDefinitions.clear();
 	}

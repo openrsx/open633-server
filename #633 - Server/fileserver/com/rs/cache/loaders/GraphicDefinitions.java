@@ -6,7 +6,7 @@ import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 public class GraphicDefinitions {
 
@@ -30,7 +30,7 @@ public class GraphicDefinitions {
 	// added
 	public int intValue;
 
-	static Object2ObjectOpenHashMap<Integer, GraphicDefinitions> animDefs = new Object2ObjectOpenHashMap<>();
+	static Object2ObjectArrayMap<Integer, GraphicDefinitions> animDefs = new Object2ObjectArrayMap<>();
 
 	public static final GraphicDefinitions getAnimationDefinitions(int emoteId) {
 		GraphicDefinitions defs = animDefs.get(emoteId);

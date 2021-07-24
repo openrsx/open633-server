@@ -29,7 +29,7 @@ import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import skills.Skills;
 
 @RSInterfaceSignature(interfaceId = {149})
@@ -235,7 +235,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 					"Not enough free space in your inventory.");
 			return false;
 		}
-		Object2ObjectOpenHashMap<Integer, Integer> requiriments = item.getDefinitions()
+		Object2ObjectArrayMap<Integer, Integer> requiriments = item.getDefinitions()
 				.getWearingSkillRequiriments();
 		boolean hasRequiriments = true;
 		if (requiriments != null) {

@@ -11,7 +11,7 @@ import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 public class RenderAnimDefinitions {
 
@@ -56,7 +56,7 @@ public class RenderAnimDefinitions {
     public int anInt993;
     public int anInt994;
     
-    private static Object2ObjectOpenHashMap<Integer, RenderAnimDefinitions> renderAimDefs = new Object2ObjectOpenHashMap<>();
+    private static Object2ObjectArrayMap<Integer, RenderAnimDefinitions> renderAimDefs = new Object2ObjectArrayMap<>();
 
     public static final RenderAnimDefinitions getRenderAnimDefinitions(int emoteId) {
 	RenderAnimDefinitions defs = renderAimDefs.get(emoteId);
