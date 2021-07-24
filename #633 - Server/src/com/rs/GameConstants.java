@@ -89,10 +89,8 @@ public final class GameConstants {
 	/**
 	 * Launching settings
 	 */
-	public static boolean DEBUG = true;
-	public static boolean HOSTED;
-	public static boolean ECONOMY = false;
-	public static boolean ALLOW_MASTER_PASSWORD = true;
+	public static boolean DEBUG = GameProperties.getGameProperties().getBoolean("debug_mode");
+	public static boolean HOSTED = GameProperties.getGameProperties().getBoolean("is_live");
 
 	/**
 	 * Game constants
