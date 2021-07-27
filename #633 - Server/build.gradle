@@ -32,6 +32,7 @@ dependencies {
 	implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.23'
 	runtimeOnly group: 'org.tinylog', name: 'tinylog-impl', version: '2.4.0-M1'
 	implementation group: 'org.tinylog', name: 'tinylog-api', version: '2.4.0-M1'
+	implementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
 }
 
 /*

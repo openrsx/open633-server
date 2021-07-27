@@ -13,9 +13,10 @@ import com.rs.game.map.World;
 import com.rs.net.ServerChannelHandler;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
-import com.rs.utilities.Utility;
 
-import lombok.SneakyThrows;
+import io.vavr.control.Try;
+
+import com.rs.utilities.Utility;
 
 /**
  * The Runnable source of open633
@@ -41,6 +42,7 @@ public class Launcher {
 		LogUtility.log(LogType.INFO, "Server took "
 				+ (Utility.currentTimeMillis() - currentTime)
 				+ " milli seconds to launch.");
+		
 		addCleanMemoryTask();
 	}
 
@@ -49,7 +51,6 @@ public class Launcher {
 	 * This'll help the server become more stable in a sense of not using too much power 
 	 * for the host service (PC/VPS/Dedicated Server)
 	 */
-	@SneakyThrows(Throwable.class)
 	private static void addCleanMemoryTask() {
 		CoresManager.schedule(() -> {
 			cleanMemory(Runtime.getRuntime().freeMemory() < GameConstants.MIN_FREE_MEM_ALLOWED);
@@ -81,11 +82,9 @@ public class Launcher {
 	 * The shutdown hook fore the Network, then finally terminating the Application itself.
 	 */
 	public static void shutdown() {
-		try {
+		Try.runRunnable(() -> {
 			ServerChannelHandler.shutdown();
 			CoresManager.shutdown();
-		} finally {
-			System.exit(0);
-		}
+		}).andFinally(() -> System.exit(0));
 	}
 }

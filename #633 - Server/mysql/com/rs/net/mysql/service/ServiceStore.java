@@ -21,6 +21,6 @@ public final class ServiceStore {
 	 * @param service
 	 */
 	public static void executeServiceTask(MYSQLService service) {
-		SERVICES.parallelStream().filter(services -> services == service && GameConstants.SQL_ENABLED).forEach(MYSQLService::execute);
+		SERVICES.parallelStream().filter(services -> services != service && GameConstants.SQL_ENABLED).forEach(MYSQLService::execute);
 	}
 }
