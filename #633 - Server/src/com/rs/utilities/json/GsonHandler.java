@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import com.rs.utilities.json.impl.NPCAutoSpawn;
 import com.rs.utilities.json.impl.ObjectSpawnLoader;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
@@ -18,16 +19,9 @@ public class GsonHandler {
 	/**
 	 * Initializes all json loaders
 	 */
-	@SneakyThrows(Exception.class)
 	public static void initialize() {
-		try {
-			addJsonLoaders();
-		} catch (InstantiationException | IllegalAccessException e1) {
-			e1.printStackTrace();
-		}
-		for (GsonLoader<?> loader : CLASSES) {
-			loader.initialize();
-		}
+		Try.run(() -> addJsonLoaders());
+		CLASSES.forEach(classes -> classes.initialize());
 		LOADED = Boolean.TRUE;
 	}
 

@@ -1,6 +1,6 @@
 package com.alex.utils;
 
-public final class Constants {
+public final class CacheConstants {
 
 	public static final int NO_COMPRESSION = 0;
 	public static final int BZIP2_COMPRESSION = 1;
@@ -20,7 +20,7 @@ public final class Constants {
 	public static final int CLIENT_BUILD = 634;
 	public static final boolean ENCRYPTED_CACHE = false;
 	
-	private Constants() {
+	private CacheConstants() {
 		
 	}
 }

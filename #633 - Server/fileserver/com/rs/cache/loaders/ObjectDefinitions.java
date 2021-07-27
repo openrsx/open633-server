@@ -8,6 +8,7 @@ import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.utilities.Utility;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import lombok.Data;
 
@@ -755,11 +756,7 @@ public class ObjectDefinitions {
 			if ((field.getModifiers() & 8) != 0) {
 				continue;
 			}
-			try {
-				System.out.println(field.getName() + ": " + getValue(field));
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}
+			Try.run(() -> System.out.println(field.getName() + ": " + getValue(field)));
 		}
 		System.out.println("-- end of " + getClass().getSimpleName() + " fields --");
 	}

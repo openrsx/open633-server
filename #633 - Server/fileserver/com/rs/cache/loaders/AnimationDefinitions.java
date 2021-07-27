@@ -6,6 +6,7 @@ import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.utilities.Utility;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 public class AnimationDefinitions {
@@ -74,10 +75,10 @@ public class AnimationDefinitions {
 	}
 
 	public static final AnimationDefinitions getAnimationDefinitions(int emoteId) {
-		try {
+		return (AnimationDefinitions) Try.run(() -> {
 			AnimationDefinitions defs = animDefs.get(emoteId);
 			if (defs != null)
-				return defs;
+				return;
 			byte[] data = Cache.STORE.getIndexes()[20].getFile(emoteId >>> 7,
 					emoteId & 0x7f);
 			defs = new AnimationDefinitions();
@@ -85,10 +86,7 @@ public class AnimationDefinitions {
 				defs.readValueLoop(new InputStream(data));
 			defs.method2394();
 			animDefs.put(emoteId, defs);
-			return defs;
-		} catch (Throwable t) {
-			return null;
-		}
+		});
 	}
 
 	private void readValueLoop(InputStream stream) {

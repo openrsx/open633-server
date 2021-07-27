@@ -13,6 +13,7 @@ import com.rs.plugin.listener.InventoryType;
 import com.rs.plugin.wrapper.InventoryWrapper;
 import com.rs.utilities.Utility;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 /**
@@ -32,12 +33,7 @@ public final class InventoryPluginDispatcher {
 	 */
 	public static void execute(Player player, Item item, int optionId) {
 		getItem(item.getId()).ifPresent(specifiedItem -> {
-			try {
-				specifiedItem.execute(player, item, optionId);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Try.run(() -> specifiedItem.execute(player, item, optionId));
 		});
 	}
 

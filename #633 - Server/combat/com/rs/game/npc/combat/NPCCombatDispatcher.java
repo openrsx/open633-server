@@ -13,6 +13,7 @@ import com.rs.game.npc.combat.impl.DefaultCombat;
 import com.rs.game.player.Player;
 import com.rs.utilities.Utility;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.SneakyThrows;
 
@@ -43,11 +44,7 @@ public final class NPCCombatDispatcher {
 			return defaultScript.execute(player, npc);
 		}
 		mobCombat.ifPresent(value -> {
-			try {
-				mobValue = value.execute(player, npc);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			Try.run(() -> mobValue = value.execute(player, npc));
 		});
 		return mobValue;
 	}

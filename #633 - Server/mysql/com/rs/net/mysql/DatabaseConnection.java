@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import io.vavr.control.Try;
+
 /**
  * An abstract DatabaseConnection, which can have many types
  * 
@@ -71,22 +73,14 @@ public abstract class DatabaseConnection {
 	 *            The class name
 	 */
 	public static void loadDriver(String driverName) {
-		try {
-			Class.forName(driverName);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Try.run(() -> Class.forName(driverName));
 	}
 
 	/**
 	 * Close this connection
 	 */
 	public void close() {
-		try {
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		Try.run(() -> connection.close());
 	}
 
 	/**
@@ -134,12 +128,7 @@ public abstract class DatabaseConnection {
 	 * @return True, if this connection was closed
 	 */
 	public boolean isClosed() {
-		try {
-			return connection.isClosed();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return true;
+		return Try.run(() -> connection.isClosed()) != null;
 	}
 
 	/**

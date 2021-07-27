@@ -2,7 +2,7 @@ package com.rs.cache.io;
 
 import java.math.BigInteger;
 
-import com.alex.utils.Constants;
+import com.alex.utils.CacheConstants;
 
 
 
@@ -133,7 +133,7 @@ public final class OutputStream extends Stream {
 
 	@SuppressWarnings("unused")
 	public void writeBigSmart(int i) {
-		 if(Constants.CLIENT_BUILD < 670) {
+		 if(CacheConstants.CLIENT_BUILD < 670) {
 			 writeShort(i);
 			 return;
 		 }

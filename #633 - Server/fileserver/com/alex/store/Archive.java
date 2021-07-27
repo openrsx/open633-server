@@ -8,7 +8,7 @@ import com.alex.util.crc32.CRC32HGenerator;
 import com.alex.util.gzip.GZipCompressor;
 import com.alex.util.gzip.GZipDecompressor;
 import com.alex.util.whirlpool.Whirlpool;
-import com.alex.utils.Constants;
+import com.alex.utils.CacheConstants;
 
 public class Archive {
 
@@ -37,11 +37,11 @@ public class Archive {
 		stream.writeByte(compression);
 		byte[] compressedData;
 		switch (compression) {
-		case Constants.NO_COMPRESSION: // no compression
+		case CacheConstants.NO_COMPRESSION: // no compression
 			compressedData = data;
 			stream.writeInt(data.length);
 			break;
-		case Constants.BZIP2_COMPRESSION:
+		case CacheConstants.BZIP2_COMPRESSION:
 			compressedData = null; // TODO
 			compressedData = BZip2Compressor.compress(data);
 			stream.writeInt(compressedData.length);
@@ -71,15 +71,15 @@ public class Archive {
 		compression = stream.readUnsignedByte();
 		int compressedLength = stream.readInt();
 		if (compressedLength < 0
-				|| compressedLength > Constants.MAX_VALID_ARCHIVE_LENGTH)
+				|| compressedLength > CacheConstants.MAX_VALID_ARCHIVE_LENGTH)
 			throw new RuntimeException("INVALID ARCHIVE HEADER");
 		switch (compression) {
-		case Constants.NO_COMPRESSION: // no compression
+		case CacheConstants.NO_COMPRESSION: // no compression
 			data = new byte[compressedLength];
 			checkRevision(compressedLength, archive, stream.getOffset());
 			stream.readBytes(data, 0, compressedLength);
 			break;
-		case Constants.BZIP2_COMPRESSION: // bzip2
+		case CacheConstants.BZIP2_COMPRESSION: // bzip2
 			int length = stream.readInt();
 			if (length <= 0) {
 				data = null;
@@ -117,8 +117,8 @@ public class Archive {
 
 	public Object[] editNoRevision(byte[] data, MainFile mainFile) {
 		this.data = data;
-		if (compression == Constants.BZIP2_COMPRESSION)
-			compression = Constants.GZIP_COMPRESSION;
+		if (compression == CacheConstants.BZIP2_COMPRESSION)
+			compression = CacheConstants.GZIP_COMPRESSION;
 		byte[] compressed = compress();
 		if (!mainFile.putArchiveData(id, compressed))
 			return null;

@@ -5,6 +5,8 @@ import com.rs.game.player.Rights;
 import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
 
+import io.vavr.control.Try;
+
 @CommandSignature(alias = {"int"}, rights = {Rights.ADMINISTRATOR}, syntax = "Displays an interface")
 public final class ShowInterfaceCommandPlugin implements Command {
 	
@@ -14,10 +16,6 @@ public final class ShowInterfaceCommandPlugin implements Command {
 			player.getPackets().sendPanelBoxMessage("Use: ::inter interfaceId");
 			return;
 		}
-		try {
-			player.getInterfaceManager().sendInterface(Integer.valueOf(cmd[1]));
-		} catch (NumberFormatException e) {
-			player.getPackets().sendPanelBoxMessage("Use: ::inter interfaceId");
-		}
+		Try.run(() -> player.getInterfaceManager().sendInterface(Integer.valueOf(cmd[1]))).onFailure(failure -> player.getPackets().sendPanelBoxMessage("Use: ::inter interfaceId"));
 	}
 }

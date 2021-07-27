@@ -8,8 +8,8 @@ import java.util.Arrays;
 
 import com.alex.io.OutputStream;
 import com.alex.util.whirlpool.Whirlpool;
-import com.alex.utils.Constants;
-import com.alex.utils.Utils;
+import com.alex.utils.CacheConstants;
+import com.alex.utils.CacheUtils;
 
 
 public final class Store {
@@ -20,7 +20,7 @@ public final class Store {
 	private RandomAccessFile data;
 	private boolean newProtocol;
 	public Store(String path) throws IOException {
-		this(path, Constants.CLIENT_BUILD >= 704);
+		this(path, CacheConstants.CLIENT_BUILD >= 704);
 	}
 	
 	public Store(String path, boolean newProtocol) throws IOException {
@@ -56,7 +56,7 @@ public final class Store {
 			stream.writeInt(getIndexes()[index].getCRC());
 			stream.writeInt(getIndexes()[index].getTable().getRevision());
 			stream.writeBytes(getIndexes()[index].getWhirlpool());
-			if(Constants.ENCRYPTED_CACHE) {
+			if(CacheConstants.ENCRYPTED_CACHE) {
 				//custom protection, encryption of tables addition, by me dragonkk ofc
 				if(getIndexes()[index].getKeys() != null)
 					for(int key : getIndexes()[index].getKeys()) 
@@ -75,7 +75,7 @@ public final class Store {
 		hashStream.setOffset(0);
 		hashStream.getBytes(hash, 0, hash.length);
 		if(grab_server_private_exponent != null && grab_server_modulus != null)
-			hash = Utils.cryptRSA(hash, grab_server_private_exponent, grab_server_modulus);
+			hash = CacheUtils.cryptRSA(hash, grab_server_private_exponent, grab_server_modulus);
 		stream.writeBytes(hash);
 		archive = new byte[stream.getOffset()];
 		stream.setOffset(0);
@@ -85,7 +85,7 @@ public final class Store {
 	
 	@SuppressWarnings("unused")
 	public byte[] generateIndex255Archive255() {
-		return Constants.CLIENT_BUILD < 614 ? generateIndex255Archive255Outdated() : generateIndex255Archive255Current(null, null);
+		return CacheConstants.CLIENT_BUILD < 614 ? generateIndex255Archive255Outdated() : generateIndex255Archive255Current(null, null);
 	}
 	
 	/*

@@ -18,6 +18,7 @@ import com.rs.plugin.listener.NPCType;
 import com.rs.plugin.wrapper.NPCSignature;
 import com.rs.utilities.Utility;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 /**
@@ -37,11 +38,7 @@ public class NPCPluginDispatcher {
 	 */
 	public static void execute(Player player, NPC npc, int option) {
 		getMob(npc, npc.getId()).ifPresent(mob -> {
-			try {
-				mob.execute(player, npc, option);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			Try.run(() -> mob.execute(player, npc, option));
 		});
 	}
 

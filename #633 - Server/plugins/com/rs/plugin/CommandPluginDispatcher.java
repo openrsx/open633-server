@@ -13,6 +13,7 @@ import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
 import com.rs.utilities.Utility;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.SneakyThrows;
 
@@ -41,11 +42,7 @@ public final class CommandPluginDispatcher {
 				player.getPackets().sendGameMessage("You don't have the privileges required to use this command.");
 				return;
 			}
-			try {
-				commander.execute(player, parts, command);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			Try.run(() -> commander.execute(player, parts, command));
 		});
 	}
 

@@ -1,5 +1,7 @@
 package com.rs.game.task;
 
+import io.vavr.control.Try;
+
 /**
  * An event listener is a {@link Task} implementation that executes an
  * assignment when some sort of occurrence happens. They can be configured to
@@ -51,12 +53,10 @@ public abstract class TaskListener extends Task {
 	@Override
 	public final void execute() {
 		if(canRun()) {
-			try {
-				run();
-			} finally {
+			Try.run(() -> run()).andFinally(() -> {
 				if(shutdown)
 					this.cancel();
-			}
+			});
 		}
 	}
 }

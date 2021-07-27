@@ -19,6 +19,9 @@ import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
+
+import io.vavr.control.Try;
+
 import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -42,11 +45,7 @@ public final class RSInterfacePluginDispatcher {
 	 */
 	public static void execute(Player player, int interfaceId, int componentId, int packetId, byte slotId, int slotId2) {
 		getRSInterface(interfaceId).ifPresent(inter -> {
-			try {
-				inter.execute(player, interfaceId, componentId, packetId, slotId, slotId2);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			Try.run(() -> inter.execute(player, interfaceId, componentId, packetId, slotId, slotId2));
 		});
 	}
 

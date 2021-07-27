@@ -1,11 +1,12 @@
 package com.rs.net.mysql;
 
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import io.vavr.control.Try;
 
 /**
  * A Thread-Safe connection pool, In the future, if needed a class can be a
@@ -60,12 +61,7 @@ public class ConnectionPool<T extends DatabaseConnection> {
 		Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> {
 			// Ping!
 			for (Iterator<DatabaseConnection> it$ = pool.iterator(); it$.hasNext();) {
-				DatabaseConnection connection = it$.next();
-				try {
-					connection.getConnection().createStatement().execute("/* ping */ SELECT 1");
-				} catch (SQLException e) {
-					it$.remove();
-				}
+				Try.run(() -> it$.next().getConnection().createStatement().execute("/* ping */ SELECT 1")).onFailure(failure -> it$.remove());
 			}
 		}, 0, 30000, TimeUnit.MILLISECONDS);
 	}

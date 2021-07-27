@@ -6,7 +6,7 @@ import com.alex.io.OutputStream;
 import com.alex.store.Store;
 import com.rs.cache.Cache;
 
-public final class Utils {
+public final class CacheUtils {
 
 	public static byte[] cryptRSA(byte[] data, BigInteger exponent,
 			BigInteger modulus) {

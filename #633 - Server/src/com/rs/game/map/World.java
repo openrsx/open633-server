@@ -41,6 +41,7 @@ import com.rs.utilities.LogUtility;
 import com.rs.utilities.Utility;
 import com.rs.utilities.LogUtility.LogType;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -91,11 +92,7 @@ public final class World extends AbstractScheduledService {
 		World.get().submit(new PlayerOwnedObjectTask());
 		World.get().submit(new RestoreSkillTask());
 		World.get().submit(new RestoreHitpoints());
-		try {
-			loadConfiguration();
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
-			e.printStackTrace();
-		}
+		Try.run(() -> loadConfiguration());
 	}
 
 	public static final Region getRegion(int id) {

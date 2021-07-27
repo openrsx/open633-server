@@ -4,8 +4,10 @@ import com.alex.io.InputStream;
 import com.alex.io.OutputStream;
 import com.alex.util.crc32.CRC32HGenerator;
 import com.alex.util.whirlpool.Whirlpool;
-import com.alex.utils.Constants;
-import com.alex.utils.Utils;
+import com.alex.utils.CacheConstants;
+import com.alex.utils.CacheUtils;
+
+import lombok.SneakyThrows;
 
 public final class Index {
 
@@ -68,7 +70,7 @@ public final class Index {
 	}
 
 	public int getArchiveId(String name) {
-		int nameHash = Utils.getNameHash(name);
+		int nameHash = CacheUtils.getNameHash(name);
 		ArchiveReference[] archives = table.getArchives();
 		int[] validArchiveIds = table.getValidArchiveIds();
 		for (int archiveId : validArchiveIds) {
@@ -81,7 +83,7 @@ public final class Index {
 	public int getFileId(int archiveId, String name) {
 		if (!archiveExists(archiveId))
 			return -1;
-		int nameHash = Utils.getNameHash(name);
+		int nameHash = CacheUtils.getNameHash(name);
 		FileReference[] files = table.getArchives()[archiveId].getFiles();
 		int[] validFileIds = table.getArchives()[archiveId].getValidFileIds();
 		for (int index = 0; index < validFileIds.length; index++) {
@@ -103,20 +105,16 @@ public final class Index {
 		return getFile(archiveId, fileId, null);
 	}
 
+	@SneakyThrows(Throwable.class)
 	public byte[] getFile(int archiveId, int fileId, int[] keys) {
-		try {
-			if (!fileExists(archiveId, fileId))
-				return null;
-			if (cachedFiles[archiveId] == null
-					|| cachedFiles[archiveId][fileId] == null)
-				cacheArchiveFiles(archiveId, keys);
-			byte[] file = cachedFiles[archiveId][fileId];
-			cachedFiles[archiveId][fileId] = null;
-			return file;
-		} catch (Throwable e) {
-			e.printStackTrace();
+		if (!fileExists(archiveId, fileId))
 			return null;
-		}
+		if (cachedFiles[archiveId] == null
+				|| cachedFiles[archiveId][fileId] == null)
+			cacheArchiveFiles(archiveId, keys);
+		byte[] file = cachedFiles[archiveId][fileId];
+		cachedFiles[archiveId][fileId] = null;
+		return file;
 	}
 
 	public boolean packIndex(Store originalStore) {
@@ -183,12 +181,12 @@ public final class Index {
 	
 
 	public boolean putFile(int archiveId, int fileId, byte[] data) {
-		return putFile(archiveId, fileId, Constants.GZIP_COMPRESSION, data,
+		return putFile(archiveId, fileId, CacheConstants.GZIP_COMPRESSION, data,
 				null, true, true, -1, -1);
 	}
 
 	public boolean removeFile(int archiveId, int fileId) {
-		return removeFile(archiveId, fileId, Constants.GZIP_COMPRESSION, null);
+		return removeFile(archiveId, fileId, CacheConstants.GZIP_COMPRESSION, null);
 	}
 
 	public boolean removeFile(int archiveId, int fileId, int compression,

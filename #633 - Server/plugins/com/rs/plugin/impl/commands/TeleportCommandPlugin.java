@@ -6,6 +6,8 @@ import com.rs.game.player.Rights;
 import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
 
+import io.vavr.control.Try;
+
 @CommandSignature(alias = {"tele"}, rights = {Rights.ADMINISTRATOR}, syntax = "Teleports you to a specified location")
 public final class TeleportCommandPlugin implements Command {
 	
@@ -15,12 +17,9 @@ public final class TeleportCommandPlugin implements Command {
 			player.getPackets().sendPanelBoxMessage("Use: ::tele coordX coordY");
 			return;
 		}
-		try {
+		Try.run(() -> {
 			player.resetWalkSteps();
-			player.safeForceMoveTile(new WorldTile(Integer.valueOf(cmd[1]), Integer.valueOf(cmd[2]),
-					cmd.length >= 4 ? Integer.valueOf(cmd[3]) : player.getPlane()));
-		} catch (NumberFormatException e) {
-			player.getPackets().sendPanelBoxMessage("Use: ::tele coordX coordY plane");
-		}
+			player.safeForceMoveTile(new WorldTile(Integer.valueOf(cmd[1]), Integer.valueOf(cmd[2]),cmd.length >= 4 ? Integer.valueOf(cmd[3]) : player.getPlane()));
+		});
 	}
 }

@@ -2,7 +2,6 @@ package com.rs.utilities;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -17,6 +16,7 @@ import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.utilities.LogUtility.LogType;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
@@ -560,23 +560,18 @@ public final class Utility {
 	 * @param directory The directory to iterate through
 	 * @return The list of classes
 	 */
-	@SneakyThrows({InstantiationException.class, IllegalAccessException.class, ClassNotFoundException.class})
 	public static List<Object> getClassesInDirectory(String directory) {
 		List<Object> classes = new ArrayList<>();
 		for (File file : new File("./bin/main/" + directory.replace(".", "/")).listFiles()) {
 			if (file.getName().contains("$")) {
 				continue;
 			}
-			Object objectEvent;
-			try {
+			Try.run(() -> {
+				Object objectEvent;
 				objectEvent = (Class.forName(directory + "." + file.getName().replace(".class", ""))
 						.getConstructor().newInstance());
 				classes.add(objectEvent);
-			} catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-					| SecurityException e) {
-				e.printStackTrace();
-			}
-			
+			});
 		}
 		return classes;
 	}

@@ -1,6 +1,6 @@
 package com.rs.cache.io;
 
-import com.alex.utils.Constants;
+import com.alex.utils.CacheConstants;
 
 
 public final class InputStream extends Stream {
@@ -241,7 +241,7 @@ public final class InputStream extends Stream {
 
 	@SuppressWarnings("unused")
 	public int readBigSmart() {
-		 if(Constants.CLIENT_BUILD < 670)
+		 if(CacheConstants.CLIENT_BUILD < 670)
 			 return readUnsignedShort();
 		if ((buffer[offset] ^ 0xffffffff) <= -1) {
 			int value = readUnsignedShort();

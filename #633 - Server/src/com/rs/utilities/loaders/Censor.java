@@ -3,7 +3,6 @@ package com.rs.utilities.loaders;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,7 +15,9 @@ import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.TextUtils;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.Cleanup;
 import lombok.SneakyThrows;
 
 public class Censor {
@@ -58,8 +59,10 @@ public class Censor {
 
 	private static void loadUnpackedCensoredWords() {
 		LogUtility.log(LogType.INFO, "Packing censored words...");
-		try {
+		Try.run(() -> {
+			@Cleanup
 			BufferedReader in = new BufferedReader(new FileReader(UNPACKED_PATH));
+			@Cleanup
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
 			while (true) {
 				String line = in.readLine();
@@ -70,15 +73,7 @@ public class Censor {
 				writeAlexString(out, line);
 				censoredWords.add(line);
 			}
-			in.close();
-			out.flush();
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		});
 	}
 
 	public static String readAlexString(ByteBuffer buffer) {

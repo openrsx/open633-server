@@ -3,7 +3,6 @@ package com.rs.utilities.loaders;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,6 +15,7 @@ import com.rs.game.npc.NPC;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
@@ -53,7 +53,7 @@ public class NPCExamines {
 
 	private static void loadUnpackedNPCExamines() {
 		LogUtility.log(LogType.INFO, "Packing npc examines...");
-		try {
+		Try.run(() -> {
 			@Cleanup
 			BufferedReader in = new BufferedReader(new FileReader(UNPACKED_PATH));
 			@Cleanup
@@ -77,12 +77,7 @@ public class NPCExamines {
 				writeAlexString(out, splitedLine[1]);
 				npcExamines.put(npcId, splitedLine[1]);
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		});
 	}
 
 	public static String readAlexString(ByteBuffer buffer) {

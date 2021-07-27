@@ -1,6 +1,6 @@
 package com.rs.cache.loaders;
 
-import com.alex.utils.Constants;
+import com.alex.utils.CacheConstants;
 import com.rs.cache.Cache;
 import com.rs.game.item.Item;
 import com.rs.game.player.CombatDefinitions;
@@ -124,7 +124,7 @@ public final class ItemDefinitions {
 	}
 
 	public final void loadItemDefinitions() {
-		byte[] data = Cache.STORE.getIndexes()[Constants.ITEM_DEFINITIONS_INDEX]
+		byte[] data = Cache.STORE.getIndexes()[CacheConstants.ITEM_DEFINITIONS_INDEX]
 				.getFile(getArchiveId(), getFileId());
 		if (data == null) {
 			// System.out.println("Failed loading Item " + id+".");

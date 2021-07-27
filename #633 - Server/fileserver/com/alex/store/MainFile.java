@@ -5,6 +5,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+import lombok.SneakyThrows;
 import lombok.Synchronized;
 
 /*
@@ -127,110 +128,106 @@ public final class MainFile {
 	}
 
 	@Synchronized("data")
+	@SneakyThrows(IOException.class)
 	public boolean putArchiveData(int archiveId, ByteBuffer archive, int size, boolean exists) {
-		try {
-			int block;
-			if (exists) {
-				if (archiveId * IDX_BLOCK_LEN + IDX_BLOCK_LEN > index.size()) {
-					return false;
-				}
-
-				tempBuffer.position(0).limit(IDX_BLOCK_LEN);
-				index.read(tempBuffer, archiveId * IDX_BLOCK_LEN);
-				tempBuffer.flip().position(3);
-				block = getMediumInt(tempBuffer);
-
-				if (block <= 0 || block > data.size() / TOTAL_BLOCK_LEN) {
-					return false;
-				}
-			} else {
-				block = (int) (data.size() + TOTAL_BLOCK_LEN - 1) / TOTAL_BLOCK_LEN;
-				if (block == 0) {
-					block = 1;
-				}
+		int block;
+		if (exists) {
+			if (archiveId * IDX_BLOCK_LEN + IDX_BLOCK_LEN > index.size()) {
+				return false;
 			}
 
-			tempBuffer.position(0);
-			putMediumInt(tempBuffer, size);
-			putMediumInt(tempBuffer, block);
-			tempBuffer.flip();
-			index.write(tempBuffer, archiveId * IDX_BLOCK_LEN);
+			tempBuffer.position(0).limit(IDX_BLOCK_LEN);
+			index.read(tempBuffer, archiveId * IDX_BLOCK_LEN);
+			tempBuffer.flip().position(3);
+			block = getMediumInt(tempBuffer);
 
-			int remaining = size;
-			int chunk = 0;
-			int blockLen = !newProtocol || archiveId <= 0xffff ? BLOCK_LEN : EXPANDED_BLOCK_LEN;
-			int headerLen = !newProtocol || archiveId <= 0xffff ? HEADER_LEN : EXPANDED_HEADER_LEN;
-			while (remaining > 0) {
-				int nextBlock = 0;
-				if (exists) {
-					tempBuffer.position(0).limit(headerLen);
-					data.read(tempBuffer, block * TOTAL_BLOCK_LEN);
-					tempBuffer.flip();
+			if (block <= 0 || block > data.size() / TOTAL_BLOCK_LEN) {
+				return false;
+			}
+		} else {
+			block = (int) (data.size() + TOTAL_BLOCK_LEN - 1) / TOTAL_BLOCK_LEN;
+			if (block == 0) {
+				block = 1;
+			}
+		}
 
-					int currentFile, currentChunk, currentIndex;
-					if (!newProtocol || archiveId <= 0xffff) {
-						currentFile = tempBuffer.getShort() & 0xffff;
-						currentChunk = tempBuffer.getShort() & 0xffff;
-						nextBlock = getMediumInt(tempBuffer);
-						currentIndex = tempBuffer.get() & 0xff;
-					} else {
-						currentFile = tempBuffer.getInt();
-						currentChunk = tempBuffer.getShort() & 0xffff;
-						nextBlock = getMediumInt(tempBuffer);
-						currentIndex = tempBuffer.get() & 0xff;
-					}
+		tempBuffer.position(0);
+		putMediumInt(tempBuffer, size);
+		putMediumInt(tempBuffer, block);
+		tempBuffer.flip();
+		index.write(tempBuffer, archiveId * IDX_BLOCK_LEN);
 
-					if ((archiveId != currentFile && archiveId <= 65535) || chunk != currentChunk
-							|| id != currentIndex) {
-						return false;
-					}
-					if (nextBlock < 0 || nextBlock > data.size() / TOTAL_BLOCK_LEN) {
-						return false;
-					}
-				}
-
-				if (nextBlock == 0) {
-					exists = false;
-					nextBlock = (int) ((data.size() + TOTAL_BLOCK_LEN - 1) / TOTAL_BLOCK_LEN);
-					if (nextBlock == 0) {
-						nextBlock = 1;
-					}
-					if (nextBlock == block) {
-						nextBlock++;
-					}
-				}
-
-				if (remaining <= blockLen) {
-					nextBlock = 0;
-				}
-				tempBuffer.position(0).limit(TOTAL_BLOCK_LEN);
-				if (!newProtocol || archiveId <= 0xffff) {
-					tempBuffer.putShort((short) archiveId);
-					tempBuffer.putShort((short) chunk);
-					putMediumInt(tempBuffer, nextBlock);
-					tempBuffer.put((byte) id);
-				} else {
-					tempBuffer.putInt(archiveId);
-					tempBuffer.putShort((short) chunk);
-					putMediumInt(tempBuffer, nextBlock);
-					tempBuffer.put((byte) id);
-				}
-
-				int blockSize = remaining > blockLen ? blockLen : remaining;
-				archive.limit(archive.position() + blockSize);
-				tempBuffer.put(archive);
+		int remaining = size;
+		int chunk = 0;
+		int blockLen = !newProtocol || archiveId <= 0xffff ? BLOCK_LEN : EXPANDED_BLOCK_LEN;
+		int headerLen = !newProtocol || archiveId <= 0xffff ? HEADER_LEN : EXPANDED_HEADER_LEN;
+		while (remaining > 0) {
+			int nextBlock = 0;
+			if (exists) {
+				tempBuffer.position(0).limit(headerLen);
+				data.read(tempBuffer, block * TOTAL_BLOCK_LEN);
 				tempBuffer.flip();
 
-				data.write(tempBuffer, block * TOTAL_BLOCK_LEN);
-				remaining -= blockSize;
-				block = nextBlock;
-				chunk++;
+				int currentFile, currentChunk, currentIndex;
+				if (!newProtocol || archiveId <= 0xffff) {
+					currentFile = tempBuffer.getShort() & 0xffff;
+					currentChunk = tempBuffer.getShort() & 0xffff;
+					nextBlock = getMediumInt(tempBuffer);
+					currentIndex = tempBuffer.get() & 0xff;
+				} else {
+					currentFile = tempBuffer.getInt();
+					currentChunk = tempBuffer.getShort() & 0xffff;
+					nextBlock = getMediumInt(tempBuffer);
+					currentIndex = tempBuffer.get() & 0xff;
+				}
+
+				if ((archiveId != currentFile && archiveId <= 65535) || chunk != currentChunk
+						|| id != currentIndex) {
+					return false;
+				}
+				if (nextBlock < 0 || nextBlock > data.size() / TOTAL_BLOCK_LEN) {
+					return false;
+				}
 			}
 
-			return true;
-		} catch (IOException ex) {
-			return false;
+			if (nextBlock == 0) {
+				exists = false;
+				nextBlock = (int) ((data.size() + TOTAL_BLOCK_LEN - 1) / TOTAL_BLOCK_LEN);
+				if (nextBlock == 0) {
+					nextBlock = 1;
+				}
+				if (nextBlock == block) {
+					nextBlock++;
+				}
+			}
+
+			if (remaining <= blockLen) {
+				nextBlock = 0;
+			}
+			tempBuffer.position(0).limit(TOTAL_BLOCK_LEN);
+			if (!newProtocol || archiveId <= 0xffff) {
+				tempBuffer.putShort((short) archiveId);
+				tempBuffer.putShort((short) chunk);
+				putMediumInt(tempBuffer, nextBlock);
+				tempBuffer.put((byte) id);
+			} else {
+				tempBuffer.putInt(archiveId);
+				tempBuffer.putShort((short) chunk);
+				putMediumInt(tempBuffer, nextBlock);
+				tempBuffer.put((byte) id);
+			}
+
+			int blockSize = remaining > blockLen ? blockLen : remaining;
+			archive.limit(archive.position() + blockSize);
+			tempBuffer.put(archive);
+			tempBuffer.flip();
+
+			data.write(tempBuffer, block * TOTAL_BLOCK_LEN);
+			remaining -= blockSize;
+			block = nextBlock;
+			chunk++;
 		}
+		return true;
 	}
 
 	public int getId() {

@@ -17,6 +17,7 @@ import com.rs.plugin.listener.ObjectType;
 import com.rs.plugin.wrapper.ObjectSignature;
 import com.rs.utilities.Utility;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 /**
@@ -37,11 +38,7 @@ public final class ObjectPluginDispatcher {
 	 */
 	public static void execute(Player player, GameObject gamObject, int optionId) {
 		getObject(gamObject, gamObject.getId()).ifPresent(object -> {
-			try {
-				object.execute(player, gamObject, optionId);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			Try.run(() -> object.execute(player, gamObject, optionId));
 		});
 	}
 

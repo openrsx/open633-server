@@ -10,6 +10,8 @@ import java.util.concurrent.Executors;
 
 import com.rs.net.mysql.callback.ThreadedSQLCallback;
 
+import io.vavr.control.Try;
+
 /**
  * The main class which is used for all of the central operations
  * 
@@ -77,13 +79,7 @@ public class ThreadedSQL {
 	 *            The callback to inform when the query is successful/fails
 	 */
 	public void executeQuery(final PreparedStatement statement, final ThreadedSQLCallback callback) {
-		service.execute(() -> {
-			try {
-				query(statement, callback);
-			} catch (SQLException e) {
-				callback.queryError(e);
-			}
-		});
+		service.execute(() -> Try.run(() -> query(statement, callback)));
 	}
 
 	/**
@@ -95,13 +91,7 @@ public class ThreadedSQL {
 	 *            The callback to inform when the query is successful/fails
 	 */
 	public void executeQuery(final String query, final ThreadedSQLCallback callback) {
-		service.execute(() -> {
-			try {
-				query(query, callback);
-			} catch (SQLException e) {
-				callback.queryError(e);
-			}
-		});
+		service.execute(() -> Try.run(() -> query(query, callback)));
 	}
 
 	/**
@@ -114,15 +104,7 @@ public class ThreadedSQL {
 	 *             If an error occurred while preparing
 	 */
 	public PreparedStatement prepareStatement(String string) throws SQLException {
-		DatabaseConnection conn = pool.nextFree();
-
-		Connection c = conn.getConnection();
-
-		try {
-			return c.prepareStatement(string);
-		} finally {
-			conn.returnConnection();
-		}
+		return (PreparedStatement) Try.of(pool::nextFree).onSuccess(success -> Try.run(() -> pool.nextFree().prepareStatement(string))).andFinally(() -> pool.nextFree().returnConnection());
 	}
 
 	/**
@@ -138,16 +120,7 @@ public class ThreadedSQL {
 	 */
 	private void query(PreparedStatement statement, ThreadedSQLCallback callback) throws SQLException {
 		statement.execute();
-
-		// Prepared statements don't hold a connection, they simply use it
-
-		ResultSet result = statement.getResultSet();
-		try {
-			callback.queryComplete(result);
-		} finally {
-			// Close the result set
-			result.close();
-		}
+		Try.run(() -> callback.queryComplete(statement.getResultSet())).andFinally(() -> Try.run(() -> statement.getResultSet().close()));
 	}
 
 	/**
@@ -170,14 +143,14 @@ public class ThreadedSQL {
 		statement.execute(query);
 
 		ResultSet result = statement.getResultSet();
-		try {
-			callback.queryComplete(result);
-		} finally {
-			// Close the result set
-			result.close();
-			// Return the used connection
-			conn.returnConnection();
-		}
+		Try.run(() -> callback.queryComplete(result)).andFinally(() -> {
+			Try.run(() -> {
+				// Close the result set
+				result.close();
+				// Return the used connection
+				conn.returnConnection();
+			});
+		});
 	}
 
 	/**

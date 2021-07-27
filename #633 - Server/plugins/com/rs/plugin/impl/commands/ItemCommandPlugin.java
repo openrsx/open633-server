@@ -6,18 +6,18 @@ import com.rs.game.player.Rights;
 import com.rs.plugin.listener.Command;
 import com.rs.plugin.wrapper.CommandSignature;
 
+import io.vavr.control.Try;
+
 @CommandSignature(alias = {"item"}, rights = {Rights.ADMINISTRATOR}, syntax = "Spawn an Item")
 public final class ItemCommandPlugin implements Command {
 	
 	@Override
 	public void execute(Player player, String[] cmd, String command) throws Exception {
-		@SuppressWarnings("unused")
-		String name;
 		if (cmd.length < 2) {
 			player.getPackets().sendGameMessage("Use: ::item id (optional:amount)");
 			return;
 		}
-		try {
+		Try.run(() -> {
 			int itemId = Integer.valueOf(cmd[1]);
 			ItemDefinitions defs = ItemDefinitions.getItemDefinitions(itemId);
 			if (defs.isLended())
@@ -26,10 +26,6 @@ public final class ItemCommandPlugin implements Command {
 				player.getPackets().sendGameMessage("The item appears to be oversized.");
 				return;
 			}
-			name = defs == null ? "" : defs.getName().toLowerCase();
-			player.getInventory().addItem(itemId, cmd.length >= 3 ? Integer.valueOf(cmd[2]) : 1);
-		} catch (NumberFormatException e) {
-			player.getPackets().sendGameMessage("Use: ::item id (optional:amount)");
-		}
+		}).onFailure(failure -> player.getPackets().sendGameMessage("Use: ::item id (optional:amount)"));
 	}
 }

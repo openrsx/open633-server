@@ -1,9 +1,10 @@
 package com.rs.net.mysql.service;
 
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 import com.rs.net.mysql.DatabaseConnection;
+
+import io.vavr.control.Try;
 
 /**
  * An implementation of a <code>DatabaseConnection</code> which represents a
@@ -18,11 +19,7 @@ public class MySQLDatabaseConnection extends DatabaseConnection {
 	 * Static constructor which loads our driver
 	 */
 	static {
-		try {
-			loadDriver("org.postgresql.Driver");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Try.run(() -> loadDriver("org.postgresql.Driver"));
 	}
 
 	/**
@@ -39,13 +36,9 @@ public class MySQLDatabaseConnection extends DatabaseConnection {
 	 * Connect to the database
 	 */
 	public boolean connect() {
-		try {
+		return Try.run(() -> {
 			MySQLDatabaseConfiguration configuration = (MySQLDatabaseConfiguration) this.configuration;
 			connection = DriverManager.getConnection("jdbc:postgresql://" + configuration.getHost() + ":" + configuration.getPort() + "/" + configuration.getDatabase(), configuration.getUsername(), configuration.getPassword());
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
+		}) != null;
 	}
 }

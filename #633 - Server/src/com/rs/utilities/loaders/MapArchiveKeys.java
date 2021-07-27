@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -14,6 +13,7 @@ import java.nio.channels.FileChannel.MapMode;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
@@ -51,7 +51,8 @@ public final class MapArchiveKeys {
 
 	public static final void loadUnpackedKeys() {
 		LogUtility.log(LogType.INFO, "Packing map containers xteas...");
-		try {
+		Try.run(() -> {
+			@Cleanup
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
 			File unpacked = new File("data/map/archiveKeys/unpacked/");
 			File[] xteasFiles = unpacked.listFiles();
@@ -76,15 +77,6 @@ public final class MapArchiveKeys {
 				}
 				keys.put(regionId, xteas);
 			}
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		});
 	}
-
-	private MapArchiveKeys() {
-
-	}
-
 }

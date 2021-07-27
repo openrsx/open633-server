@@ -3,10 +3,8 @@ package com.rs.utilities.loaders;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -15,6 +13,7 @@ import java.nio.channels.FileChannel.MapMode;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
@@ -37,41 +36,43 @@ public final class NPCBonuses {
 	@SneakyThrows(Throwable.class)
 	private static void loadUnpackedNPCBonuses() {
 		LogUtility.log(LogType.INFO, "Packing npc bonuses...");
-		@Cleanup
-		DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
-		@Cleanup
-		BufferedReader in = new BufferedReader(new FileReader("data/npcs/unpackedBonuses.txt"));
-		while (true) {
-			String line = in.readLine();
-			if (line == null)
-				break;
-			if (line.startsWith("//"))
-				continue;
-			String[] splitedLine = line.split(" - ", 2);
-			if (splitedLine.length != 2) {
-				in.close();
-				out.close();
-				throw new RuntimeException("Invalid NPC Bonuses line: " + line);
+		Try.run(() -> {
+			@Cleanup
+			DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
+			@Cleanup
+			BufferedReader in = new BufferedReader(new FileReader("data/npcs/unpackedBonuses.txt"));
+			while (true) {
+				String line = in.readLine();
+				if (line == null)
+					break;
+				if (line.startsWith("//"))
+					continue;
+				String[] splitedLine = line.split(" - ", 2);
+				if (splitedLine.length != 2) {
+					in.close();
+					out.close();
+					throw new RuntimeException("Invalid NPC Bonuses line: " + line);
+				}
+				short npcId = Short.parseShort(splitedLine[0]);
+				String[] splitedLine2 = splitedLine[1].split(" ", 10);
+				if (splitedLine2.length != 10) {
+					in.close();
+					out.close();
+					throw new RuntimeException("Invalid NPC Bonuses line: " + line);
+				}
+				short[] bonuses = new short[10];
+				out.writeShort(npcId);
+				for (int i = 0; i < bonuses.length; i++) {
+					bonuses[i] = Short.parseShort(splitedLine2[i]);
+					out.writeShort(bonuses[i]);
+				}
+				npcBonuses.put(npcId, bonuses);
 			}
-			short npcId = Short.parseShort(splitedLine[0]);
-			String[] splitedLine2 = splitedLine[1].split(" ", 10);
-			if (splitedLine2.length != 10) {
-				in.close();
-				out.close();
-				throw new RuntimeException("Invalid NPC Bonuses line: " + line);
-			}
-			short[] bonuses = new short[10];
-			out.writeShort(npcId);
-			for (int i = 0; i < bonuses.length; i++) {
-				bonuses[i] = Short.parseShort(splitedLine2[i]);
-				out.writeShort(bonuses[i]);
-			}
-			npcBonuses.put(npcId, bonuses);
-		}
+		});
 	}
 
 	private static void loadPackedNPCBonuses() {
-		try {
+		Try.run(() -> {
 			@Cleanup
 			RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
 			FileChannel channel = in.getChannel();
@@ -83,14 +84,6 @@ public final class NPCBonuses {
 					bonuses[i] = buffer.getShort();
 				npcBonuses.put(npcId, bonuses);
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private NPCBonuses() {
-
+		});
 	}
 }

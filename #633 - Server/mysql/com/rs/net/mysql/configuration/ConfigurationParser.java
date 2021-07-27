@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.vavr.control.Try;
+
 /**
  * A class to parse a configuration file, based on the perl configuration system
  * Azusa::Configuration s
@@ -59,11 +61,7 @@ public class ConfigurationParser {
 	 */
 	public ConfigurationNode parse() throws IOException {
 		ConfigurationNode node = new ConfigurationNode();
-		try {
-			parse(node);
-		} finally {
-			reader.close();
-		}
+		Try.run(() -> parse(node)).andFinally(() -> Try.run(() -> reader.close()));
 		return node;
 	}
 

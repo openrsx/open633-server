@@ -9,6 +9,8 @@ import java.util.Queue;
 import com.google.common.base.Preconditions;
 import com.rs.game.map.World;
 
+import io.vavr.control.Try;
+
 /**
  * A sequence of {@link LinkedTask}s that are ran in <i>FIFO</i> order, and the
  * solution to scheduling tasks in bulk. The problem with scheduling many tasks
@@ -145,12 +147,10 @@ public final class LinkedTaskSequence extends Task {
 		}
 		
 		if(++tickCounter == link.getDelay()) {
-			try {
-				link.execute();
-			} finally {
+			Try.run(() -> link.execute()).andFinally(() -> {
 				linkQueue.poll();
 				tickCounter = 0;
-			}
+			});;
 		}
 	}
 	

@@ -1,11 +1,10 @@
 package com.rs.cache.loaders;
 
-import java.io.IOException;
-
 import com.rs.cache.Cache;
 import com.rs.io.InputStream;
 import com.rs.utilities.Utility;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 public class GraphicDefinitions {
@@ -46,11 +45,7 @@ public class GraphicDefinitions {
 	}
 
 	public static final void main(String... s) {
-		try {
-			Cache.init();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Try.run(() -> Cache.init());
 		int model = NPCDefinitions.getNPCDefinitions(1).modelIds[0];
 		System.out.println(model);
 		int offset = 300;

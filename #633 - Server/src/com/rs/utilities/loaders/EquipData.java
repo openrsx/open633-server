@@ -3,10 +3,8 @@ package com.rs.utilities.loaders;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -15,6 +13,7 @@ import java.nio.channels.FileChannel.MapMode;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
 
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
@@ -51,9 +50,11 @@ public class EquipData {
 
 	private static void loadPackedEquips() {
 		LogUtility.log(LogType.INFO, "Packing equip data...");
-		try {
+		Try.run(() -> {
+			@Cleanup
 			BufferedReader in = new BufferedReader(
 					new FileReader(UNPACKED_PATH));
+			@Cleanup
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(
 					PACKED_PATH));
 			while (true) {
@@ -69,7 +70,6 @@ public class EquipData {
 					throw new RuntimeException(
 							"Invalid list for equip data line: " + line);
 				}
-
 				String[] splitedLine2 = splitedLine[1].split(" ", 3);
 
 				int id = Integer.valueOf(splitedLine[0]);
@@ -81,15 +81,7 @@ public class EquipData {
 				equipData.put(id, new Integer[] { slot, type });
 
 			}
-
-			in.close();
-			out.flush();
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		});
 	}
 
 	public static boolean canEquip(int id) {

@@ -11,15 +11,15 @@ import com.rs.cache.Cache;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
 
-import lombok.SneakyThrows;
+import lombok.Cleanup;
 
 public class ItemBonusesPacker {
 
-	@SneakyThrows(Throwable.class)
 	public static final void main(String[] args) throws IOException {
 		Cache.init();
+		@Cleanup
 		DataOutputStream out = new DataOutputStream(new FileOutputStream("data/items/bonuses.ib"));
-		for (int itemId = 0; itemId < Utils.getItemDefinitionsSize(); itemId++) {
+		for (int itemId = 0; itemId < CacheUtils.getItemDefinitionsSize(); itemId++) {
 			File file = new File("data/items/bonuses/" + itemId + ".txt");
 			LogUtility.log(LogType.TRACE, "Packing bonuses for item: " + itemId);
 			if (file.exists()) {
@@ -56,8 +56,5 @@ public class ItemBonusesPacker {
 			}
 		}
 		LogUtility.log(LogType.INFO, "Packed item bonuses.");
-		out.flush();
-		out.close();
 	}
-
 }
