@@ -2,9 +2,7 @@ package com.rs.game.player.content;
 
 import com.rs.GameConstants;
 import com.rs.cache.loaders.ItemDefinitions;
-import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.Graphics;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
 import com.rs.game.map.World;
@@ -14,6 +12,8 @@ import com.rs.game.player.Player;
 import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.player.controller.impl.WildernessController;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utility;
 
@@ -724,7 +724,7 @@ public class Magic {
 				continue;
 			else if (hasSpecialRunes(player, runeId, amount))
 				continue;
-			else if (hasStaffOfLight(weaponId) && RandomUtils.random(8) == 0 && runeId != 21773)// 1
+			else if (hasStaffOfLight(weaponId) && RandomUtils.inclusive(8) == 0 && runeId != 21773)// 1
 				// in
 				// eight
 				// chance

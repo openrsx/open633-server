@@ -9,8 +9,9 @@ import com.rs.game.player.controller.ControllerHandler;
 import com.rs.io.InputStream;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
 import com.rs.utilities.Utility;
+import com.rs.utilities.LogUtility.LogType;
 
 @OutgoingPacketSignature(packetId = 33, description = "Represents an Interface being used on another Interface")
 public class InterfaceOnInterfacePacket implements OutgoingPacket {
@@ -51,7 +52,7 @@ public class InterfaceOnInterfacePacket implements OutgoingPacket {
 			}
 		}
 		if (GameConstants.DEBUG)
-			Logger.log("ItemHandler", "ItemOnItem " + usedWithId + ", " + toSlot + ", " + interfaceId + ", "
+			LogUtility.log(LogType.INFO, "ItemOnItem " + usedWithId + ", " + toSlot + ", " + interfaceId + ", "
 					+ interfaceComponent + ", " + fromSlot + ", " + itemUsedId);
 	}
 }

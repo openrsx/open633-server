@@ -24,3 +24,9 @@ hs_err_pid*
 
 # Ignore Cache
 data/cache
+
+# Ignore Player files
+data/characters
+/.gradle/
+/bin/main/
+/bin/

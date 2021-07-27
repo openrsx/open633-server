@@ -1,9 +1,11 @@
 package com.rs.utilities.json;
 
+import java.lang.reflect.InvocationTargetException;
+
 import com.rs.utilities.json.impl.NPCAutoSpawn;
 import com.rs.utilities.json.impl.ObjectSpawnLoader;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
 
@@ -43,8 +45,12 @@ public class GsonHandler {
 	 * 
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
 	 */
-	public static void addJsonLoaders() throws InstantiationException, IllegalAccessException {
+	public static void addJsonLoaders() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		CLASSES.add(NPCAutoSpawn.class.newInstance());
 		CLASSES.add(ObjectSpawnLoader.class.newInstance());
 	}
@@ -77,7 +83,7 @@ public class GsonHandler {
 	public static boolean LOADED = Boolean.FALSE;
 
 	/** The cached loaders */
-	private static Object2ObjectArrayMap<String, GsonLoader<?>> CACHED_LOADERS = new Object2ObjectArrayMap<String, GsonLoader<?>>();
+	private static Object2ObjectOpenHashMap<String, GsonLoader<?>> CACHED_LOADERS = new Object2ObjectOpenHashMap<String, GsonLoader<?>>();
 
 	/**
 	 * Adds all of the loaders to the map

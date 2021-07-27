@@ -1,8 +1,6 @@
 package com.rs.game.npc.familiar;
 
-import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.Graphics;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Hit;
@@ -10,11 +8,11 @@ import com.rs.game.player.Player;
 import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 
 public class Spiritdagannoth extends Familiar {
-
-	private static final long serialVersionUID = -494712406261011797L;
 
 	public Spiritdagannoth(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
@@ -60,7 +58,7 @@ public class Spiritdagannoth extends Familiar {
 				World.get().submit(new Task(1) {
 					@Override
 					protected void execute() {
-						int hitDamage = RandomUtils.random(180);
+						int hitDamage = RandomUtils.inclusive(180);
 						if (hitDamage > 0) {
 							if (target.isPlayer())
 								((Player) target).getMovement().lock(6);

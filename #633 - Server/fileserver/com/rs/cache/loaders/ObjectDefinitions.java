@@ -742,7 +742,7 @@ public class ObjectDefinitions {
 		}
 		return def;
 	}
-	
+
 	public static void clearObjectDefinitions() {
 		objectDefinitions.clear();
 	}

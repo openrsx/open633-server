@@ -1,5 +1,7 @@
 package com.rs.net.packets.logic.impl;
 
+import java.util.Optional;
+
 import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.game.player.PlayerCombat;
@@ -55,6 +57,6 @@ public class PlayerOptionOnePacket implements LogicPacket {
 			}
 		}
 
-		player.getActionManager().setAction(new PlayerCombat(p2));
+		player.getAction().setAction(new PlayerCombat(player, Optional.of(p2)));
 	}
 }

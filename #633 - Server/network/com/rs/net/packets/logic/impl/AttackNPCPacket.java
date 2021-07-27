@@ -1,5 +1,7 @@
 package com.rs.net.packets.logic.impl;
 
+import java.util.Optional;
+
 import com.rs.game.map.World;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
@@ -56,6 +58,7 @@ public class AttackNPCPacket implements LogicPacket {
 			}
 		}
 		System.out.println(npc.getId());
-		player.getActionManager().setAction(new PlayerCombat(npc));
+		//bugged..hmmm
+		player.getAction().setAction(new PlayerCombat(player, Optional.of(npc)));
 	}
 }

@@ -24,6 +24,8 @@ import com.rs.plugin.InventoryPluginDispatcher;
 import com.rs.plugin.NPCPluginDispatcher;
 import com.rs.plugin.ObjectPluginDispatcher;
 import com.rs.plugin.RSInterfacePluginDispatcher;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.json.GsonHandler;
 import com.rs.utilities.json.impl.MobDropTableLoader;
 import com.rs.utilities.loaders.Censor;
@@ -69,6 +71,7 @@ public class GameLoader {
 	 */
 	@SneakyThrows(IOException.class)
 	public void load() {
+		LogUtility.log(LogType.INFO, "Loading essential startup files.");
 		Cache.init();
 		CoresManager.init();
 		World.init();
@@ -78,6 +81,7 @@ public class GameLoader {
 			Huffman.init();
 			MapArchiveKeys.init();
 			MapBuilder.init();
+			LogUtility.log(LogType.INFO, "Loading Game World.");
 		});
 		getBackgroundLoader().submit(() -> {
 			EquipData.init();
@@ -85,23 +89,25 @@ public class GameLoader {
 			Censor.init();
 			NPCCombatDefinitionsL.init();
 			NPCBonuses.init();
+			LogUtility.log(LogType.INFO, "Loading Bonuses.");
 		});
 		getBackgroundLoader().submit(() -> {
 			MusicHints.init();
 			ShopsHandler.init();
 			GsonHandler.initialize();
 			new MobDropTableLoader().load();
-		});
-		getBackgroundLoader().submit(() -> {
 			DialogueEventRepository.init();
 			FriendChatsManager.init();
+			LogUtility.log(LogType.INFO, "Loading miscellaneous files.");
 		});
 		getBackgroundLoader().submit(() -> {
+			LogUtility.log(LogType.INFO, "Loading Host files.");
 			HostManager.deserialize(HostListType.STARTER_RECEIVED);
 			HostManager.deserialize(HostListType.BANNED_IP);
 			HostManager.deserialize(HostListType.MUTED_IP);
 		});
 		getBackgroundLoader().submit(() -> {
+			LogUtility.log(LogType.INFO, "Loading Plugin handlers.");
 			RSInterfacePluginDispatcher.load();
 			InventoryPluginDispatcher.load();
 			ObjectPluginDispatcher.load();
@@ -113,5 +119,6 @@ public class GameLoader {
 			GenericNPCDispatcher.load();
 			PassiveSpellDispatcher.load();
 		});
+		LogUtility.log(LogType.INFO, "Startup completed.");
 	}
 }

@@ -13,15 +13,16 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
 import com.rs.game.npc.NPC;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 
 public class NPCExamines {
 
-	private final static Object2ObjectArrayMap<Integer, String> npcExamines = new Object2ObjectArrayMap<Integer, String>();
+	private final static Object2ObjectOpenHashMap<Integer, String> npcExamines = new Object2ObjectOpenHashMap<Integer, String>();
 	private final static String PACKED_PATH = "data/npcs/packedExamines.e";
 	private final static String UNPACKED_PATH = "data/npcs/unpackedExamines.txt";
 
@@ -51,7 +52,7 @@ public class NPCExamines {
 	}
 
 	private static void loadUnpackedNPCExamines() {
-		Logger.log("NPCExamines", "Packing npc examines...");
+		LogUtility.log(LogType.INFO, "Packing npc examines...");
 		try {
 			@Cleanup
 			BufferedReader in = new BufferedReader(new FileReader(UNPACKED_PATH));

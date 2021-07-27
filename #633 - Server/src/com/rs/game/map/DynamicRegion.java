@@ -7,7 +7,8 @@ import com.rs.GameConstants;
 import com.rs.cache.Cache;
 import com.rs.cache.loaders.ObjectDefinitions;
 import com.rs.io.InputStream;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.loaders.MapArchiveKeys;
 
 public class DynamicRegion extends Region {
@@ -176,7 +177,7 @@ public class DynamicRegion extends Region {
 
 					if (GameConstants.DEBUG && landContainerData == null && landArchiveId != -1
 							&& MapArchiveKeys.getMapKeys(mapID) != null)
-						Logger.log(this, "Missing xteas for region " + mapID + ".");
+						LogUtility.log(LogType.ERROR, "Missing xteas for region " + mapID + ".");
 				}
 			}
 		}

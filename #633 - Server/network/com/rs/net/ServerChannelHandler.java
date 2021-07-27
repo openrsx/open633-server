@@ -1,6 +1,7 @@
 package com.rs.net;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -25,6 +26,8 @@ public final class ServerChannelHandler extends SimpleChannelHandler {
 
 	private static ChannelGroup channels;
 	private static ServerBootstrap bootstrap;
+	
+	private static final CopyOnWriteArrayList<Session> connectedSessions = new CopyOnWriteArrayList<>();
 
 	public static final void init() {
 		new ServerChannelHandler();
@@ -47,16 +50,6 @@ public final class ServerChannelHandler extends SimpleChannelHandler {
 		bootstrap.setOption("child.tcpNoDelay", true);
 		bootstrap.setOption("child.connectTimeoutMillis", GameConstants.CONNECTION_TIMEOUT);
 		bootstrap.setOption("child.TcpAckFrequency", true);
-		// bootstrap.setOption("receiveBufferSizePredictorFactory", new
-		// AdaptiveReceiveBufferSizePredictorFactory(1, 1,
-		// Settings.RECEIVE_DATA_LIMIT));
-
-		/*
-		 * bootstrap.setOption("reuseAddress", true); // reuses adress for bind
-		 * bootstrap.setOption("child.tcpNoDelay", true);
-		 * bootstrap.setOption("child.TcpAckFrequency", true);
-		 * bootstrap.setOption("child.keepAlive", true);
-		 */
 
 		bootstrap.bind(new InetSocketAddress(GameProperties.getGameProperties().getInteger("port")));
 	}
@@ -81,10 +74,11 @@ public final class ServerChannelHandler extends SimpleChannelHandler {
 		Object sessionObject = ctx.getAttachment();
 		if (sessionObject != null && sessionObject instanceof Session) {
 			Session session = (Session) sessionObject;
+			connectedSessions.remove(session);
 			if (session.getDecoder() == null)
 				return;
 			if (session.getDecoder() instanceof WorldPacketsDecoder)
-				session.getWorldPackets().getPlayer().finish();
+				session.getWorldPackets().getPlayer().deregister();
 		}
 	}
 
@@ -107,6 +101,7 @@ public final class ServerChannelHandler extends SimpleChannelHandler {
 			}
 			byte[] buffer = new byte[buf.readableBytes()];
 			buf.readBytes(buffer);
+			connectedSessions.add(session);
 			session.getDecoder().decode(new InputStream(buffer));
 		}
 	}
@@ -121,4 +116,8 @@ public final class ServerChannelHandler extends SimpleChannelHandler {
 		bootstrap.releaseExternalResources();
 	}
 
+	public static void processSessionQueue() {
+		connectedSessions.forEach(Session::processOutgoingQueue);
+	}
+	
 }

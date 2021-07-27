@@ -1,19 +1,14 @@
 package com.rs.game.npc.familiar;
 
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 
 import skills.Skills;
 
 public class Spiritterrorbird extends Familiar {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5259052583696765531L;
 
 	public Spiritterrorbird(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
@@ -61,7 +56,7 @@ public class Spiritterrorbird extends Familiar {
 		player.setNextGraphics(new Graphics(1300));
 		player.setNextAnimation(new Animation(7660));
 		player.getSkills().set(Skills.AGILITY, newLevel);
-		player.setRunEnergy(runEnergy > 100 ? 100 : runEnergy);
+		player.getMovement().setRunEnergy(runEnergy > 100 ? 100 : runEnergy);
 		return true;
 	}
 }

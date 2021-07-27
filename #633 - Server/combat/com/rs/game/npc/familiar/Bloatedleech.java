@@ -1,16 +1,14 @@
 package com.rs.game.npc.familiar;
 
-import com.rs.game.Graphics;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Hit;
-import com.rs.game.player.Player;
 import com.rs.game.player.Hit.HitLook;
+import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 
 public class Bloatedleech extends Familiar {
-
-	private static final long serialVersionUID = -5859609994157768837L;
 
 	public Bloatedleech(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
@@ -45,7 +43,7 @@ public class Bloatedleech extends Familiar {
 	@Override
 	public boolean submitSpecial(Object object) {
 		Player player = (Player) object;
-		final int damage = RandomUtils.random(100) + 50;
+		final int damage = RandomUtils.inclusive(100) + 50;
 		if (player.getHitpoints() - damage <= 0) {
 			player.getPackets().sendGameMessage("You don't have enough life points to use this special.");
 			return false;

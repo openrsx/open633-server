@@ -32,7 +32,7 @@ public final class LivingRockCavern {
 		GameObject.spawnObject(rock.rock);
 		CoresManager.schedule(() -> {
 			removeRock(rock);
-		}, RandomUtils.random(8) + 3 * 60);
+		}, RandomUtils.inclusive(8) + 3 * 60);
 	}
 
 	private static void removeRock(final Rocks rock) { 

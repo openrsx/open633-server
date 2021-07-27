@@ -1,6 +1,7 @@
 package com.rs;
 
-import com.alex.store.Index;
+import java.util.Arrays;
+
 import com.rs.cache.Cache;
 import com.rs.cache.loaders.ItemDefinitions;
 import com.rs.cache.loaders.NPCDefinitions;
@@ -10,33 +11,44 @@ import com.rs.game.map.MapBuilder;
 import com.rs.game.map.Region;
 import com.rs.game.map.World;
 import com.rs.net.ServerChannelHandler;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.Utility;
 
 import lombok.SneakyThrows;
 
+/**
+ * The Runnable source of open633
+ * This is where we start our start-up services, etc.. to build our game.
+ * The Client then connects and communicates specific data with the server concurrently
+ * @author Dennis
+ *
+ */
 public class Launcher {
 
+	/**
+	 * The Runnable, we're nothing without you <3
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		GameProperties.getGameProperties().load();
 		
-		if (args.length < 3) {
-			System.out
-					.println("USE: guimode(boolean) debug(boolean) hosted(boolean)");
-			return;
-		}
-		GameConstants.HOSTED = Boolean.parseBoolean(args[2]);
-		GameConstants.DEBUG = Boolean.parseBoolean(args[1]);
 		long currentTime = Utility.currentTimeMillis();
 		
 		GameLoader.getLOADER().getBackgroundLoader().waitForPendingTasks().shutdown();
-		
-		Logger.log("Launcher", "Server took "
+		  
+		LogUtility.log(LogType.INFO, "Server took "
 				+ (Utility.currentTimeMillis() - currentTime)
 				+ " milli seconds to launch.");
 		addCleanMemoryTask();
 	}
 
+	/**
+	 * A Simple memory cleaning event that takes place is the maximum memory is exceeded.
+	 * This'll help the server become more stable in a sense of not using too much power 
+	 * for the host service (PC/VPS/Dedicated Server)
+	 */
 	@SneakyThrows(Throwable.class)
 	private static void addCleanMemoryTask() {
 		CoresManager.schedule(() -> {
@@ -44,6 +56,10 @@ public class Launcher {
 		}, 10);
 	}
 
+	/**
+	 * The memory cleaning event contents. Here you can see what's being done specifically.
+	 * @param force
+	 */
 	public static void cleanMemory(boolean force) {
 		if (force) {
 			ItemDefinitions.clearItemsDefinitions();
@@ -56,25 +72,20 @@ public class Launcher {
 				region.unloadMap();
 			}
 		}
-		for (Index index : Cache.STORE.getIndexes()) {
-			if (index == null)
-				continue;
-
-			index.resetCachedFiles();
-		}
+		Arrays.stream(Cache.STORE.getIndexes()).filter(index -> index != null).forEach(index -> index.resetCachedFiles());
 		System.gc();
+		LogUtility.log(LogType.INFO, "Game Server memory has been cleaned " + (force ? "force: true:" : "force: false"));
 	}
 
+	/**
+	 * The shutdown hook fore the Network, then finally terminating the Application itself.
+	 */
 	public static void shutdown() {
 		try {
-			closeServices();
+			ServerChannelHandler.shutdown();
+			CoresManager.shutdown();
 		} finally {
 			System.exit(0);
 		}
-	}
-
-	public static void closeServices() {
-		ServerChannelHandler.shutdown();
-		CoresManager.shutdown();
 	}
 }

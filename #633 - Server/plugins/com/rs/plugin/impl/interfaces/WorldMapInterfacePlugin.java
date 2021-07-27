@@ -1,5 +1,7 @@
 package com.rs.plugin.impl.interfaces;
 
+import java.util.Optional;
+
 import com.rs.game.player.Player;
 import com.rs.game.player.actions.Rest;
 import com.rs.plugin.listener.RSInterface;
@@ -15,12 +17,12 @@ public class WorldMapInterfacePlugin implements RSInterface {
 		switch (interfaceId) {
 		case 750:
 			if (componentId == 1 && packetId == 11) {
-				if (player.isResting())
+				if (player.getMovement().isResting())
 					player.getMovement().stopAll();
-				player.setRun(!player.isRun());	
+				player.setRunState(!player.isRun());	
 			}
 			if (componentId == 1 && packetId == 29) {
-				if (player.isResting()) {
+				if (player.getMovement().isResting()) {
 					player.getMovement().stopAll();
 					return;
 				}
@@ -34,7 +36,7 @@ public class WorldMapInterfacePlugin implements RSInterface {
 					return;
 				}
 				player.getMovement().stopAll();
-				player.getActionManager().setAction(new Rest(false));
+				player.getAction().setAction(new Rest(player, Optional.empty()));
 			}
 			break;
 		case 548:

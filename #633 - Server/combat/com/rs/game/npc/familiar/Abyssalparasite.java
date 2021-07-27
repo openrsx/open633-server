@@ -1,8 +1,6 @@
 package com.rs.game.npc.familiar;
 
-import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.Graphics;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Hit;
@@ -10,11 +8,11 @@ import com.rs.game.player.Player;
 import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 
 public class Abyssalparasite extends Familiar {
-
-	private static final long serialVersionUID = 7051216741726595486L;
 
 	public Abyssalparasite(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
@@ -49,7 +47,7 @@ public class Abyssalparasite extends Familiar {
 	@Override
 	public boolean submitSpecial(Object object) {
 		final Entity target = (Entity) object;
-		final int damage = RandomUtils.random(100);
+		final int damage = RandomUtils.inclusive(100);
 		setNextAnimation(new Animation(7675));
 		setNextGraphics(new Graphics(1422));
 		World.sendProjectile(this, target, 1423, 34, 16, 30, 35, 16, 0);

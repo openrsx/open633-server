@@ -1,19 +1,18 @@
 package com.rs.game.npc.familiar;
 
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 
 public class Fruitbat extends Familiar {
 
 	private static final transient int[] FRUITS = new int[] { 5972, 5974, 2102, 2120, 1963, 2108, 5982 };
-	private static final long serialVersionUID = 7999065876579183257L;
 
 	private int fruitTicks;
 
@@ -30,7 +29,7 @@ public class Fruitbat extends Familiar {
 	}
 
 	private void addFruitReward() {
-		getBob().getBeastItems().add(new Item(FRUITS[RandomUtils.random(FRUITS.length)], 1));
+		getBob().getBeastItems().add(new Item(FRUITS[RandomUtils.inclusive(FRUITS.length)], 1));
 		fruitTicks = 0;
 	}
 
@@ -65,12 +64,13 @@ public class Fruitbat extends Familiar {
 		player.setNextAnimation(new Animation(7660));
 		player.setNextGraphics(new Graphics(1316));
 		WorldTile tile = this;
-		for (int trycount = 0; trycount < RandomUtils.random(8); trycount++) {
+		for (int trycount = 0; trycount < RandomUtils.inclusive(8); trycount++) {
 			tile = new WorldTile(this, 2);
 			if (World.isTileFree(this.getPlane(), tile.getX(), tile.getY(), player.getSize()))
 				return true;
 			World.sendGraphics(player, new Graphics(1331), tile);
-			FloorItem.createGroundItem(new Item(FRUITS[RandomUtils.random(FRUITS.length)], 1), tile, player, true, 120, true);
+			FloorItem.createGroundItem(new Item(FRUITS[RandomUtils.inclusive(FRUITS.length)], 1), tile, player, true, 120,
+					true);
 		}
 		return false;
 	}

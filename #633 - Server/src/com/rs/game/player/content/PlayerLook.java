@@ -2,9 +2,9 @@ package com.rs.game.player.content;
 
 import com.rs.cache.loaders.ClientScriptMap;
 import com.rs.cache.loaders.GeneralRequirementMap;
-import com.rs.game.Animation;
 import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.player.Player;
+import com.rs.net.encoders.other.Animation;
 
 /**
  * TODO: Fix dialogue support for npc 

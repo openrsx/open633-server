@@ -2,13 +2,14 @@ package com.rs.net;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 
-import com.rs.GameConstants;
 import com.rs.cores.CoresManager;
 import com.rs.game.map.World;
 import com.rs.game.player.Player;
@@ -27,11 +28,11 @@ import com.rs.net.encoders.GrabPacketsEncoder;
 import com.rs.net.encoders.LoginPacketsEncoder;
 import com.rs.net.encoders.WorldPacketsEncoder;
 import com.rs.net.packets.logic.LogicPacketDispatcher;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.Utility;
 
 import lombok.SneakyThrows;
-import lombok.Synchronized;
 
 public class Session {
 
@@ -39,24 +40,26 @@ public class Session {
 	private Decoder decoder;
 	private Encoder encoder;
 
+	private Queue<OutputStream> outgoingQueue = new LinkedBlockingQueue<>();
+
 	public Session(Channel channel) {
 		this.channel = channel;
 		setDecoder(0);
 	}
 
-	@Synchronized("channel")
-	public final ChannelFuture write(OutputStream outStream) {
-		if (outStream == null || !channel.isConnected())
-			return null;
-		ChannelBuffer buffer = ChannelBuffers.copiedBuffer(outStream.getBuffer(), 0, outStream.getOffset());
-		return channel.write(buffer);
-	}
-
-	@Synchronized("channel")
-	public final ChannelFuture write(ChannelBuffer outStream) {
-		if (outStream == null || !channel.isConnected())
-			return null;
-		return channel.write(outStream);
+	@Override
+	public String toString() {
+		Player player = null;
+		if (decoder instanceof WorldPacketsDecoder) {
+			if (getWorldPackets().getPlayer() != null) {
+				player = getWorldPackets().getPlayer();
+			}
+		}
+		if (player != null) {
+			return player.toString() + "[" + getIP() + "]";
+		} else {
+			return getIP();
+		}
 	}
 
 	public final Channel getChannel() {
@@ -200,15 +203,15 @@ public class Session {
 			LogicPacketDispatcher.execute(player, stream, packet.getId());
 		}
 	}
-	
+
 	@SneakyThrows(Throwable.class)
 	public void finish(Player player, final int tryCount) {
 		if (player.isFinishing() || player.isFinished())
 			return;
 		player.setFinishing(true);
-		player.getMovement().stopAll(false, true, !(player.getActionManager().getAction() instanceof PlayerCombat));
-		if (player.isDead() || (player.getCombatDefinitions().isUnderCombat() && tryCount < 6) || player.getMovement().isLocked()
-		 || Emote.isDoingEmote(player)) {
+		player.getMovement().stopAll(false, true, !(player.getAction().getAction().isPresent() && player.getAction().getAction().get() instanceof PlayerCombat));
+		if (player.isDead() || (player.getCombatDefinitions().isUnderCombat() && tryCount < 6)
+				|| player.getMovement().isLocked() || Emote.isDoingEmote(player)) {
 			CoresManager.schedule(() -> {
 				player.setFinishing(false);
 				finish(player, tryCount + 1);
@@ -217,11 +220,11 @@ public class Session {
 		}
 		realFinish(player, false);
 	}
-	
+
 	public void realFinish(Player player, boolean shutdown) {
 		if (player.isFinished())
 			return;
-		Logger.globalLog(player.getUsername(), getIP(), new String(" has logged out."));
+		LogUtility.log(LogType.INFO, player.getDisplayName() + " has logged out.");
 		player.getMovement().stopAll();
 		ControllerHandler.executeVoid(player, controller -> controller.logout(player));
 		player.setRunning(false);
@@ -231,14 +234,43 @@ public class Session {
 		if (player.getFamiliar() != null && !player.getFamiliar().isFinished())
 			player.getFamiliar().dissmissFamiliar(true);
 		else if (player.getPet() != null)
-			player.getPet().finish();
+			player.getPet().deregister();
 		player.setFinished(true);
+		player.getAction().forceStop();
 		player.getSession().setDecoder(-1);
 		AccountCreation.savePlayer(player);
 		player.updateEntityRegion(player);
 		World.removePlayer(player);
-		if (GameConstants.DEBUG)
-			Logger.log(this, "Finished Player: " + player.getUsername() + ", pass: "
-					+ player.getDetails().getPassword());
+	}
+
+	@SneakyThrows(Exception.class)
+	public void processOutgoingQueue() {
+		OutputStream outputStream;
+		if (!outgoingQueue.isEmpty()) {
+			while ((outputStream = outgoingQueue.poll()) != null) {
+				channel.write(ChannelBuffers.copiedBuffer(outputStream.getBuffer(), 0, outputStream.getOffset()));
+			}
+		}
+	}
+
+	public final ChannelFuture writeWithFuture(OutputStream outStream) {
+		if (outStream == null || !channel.isConnected())
+			return null;
+		ChannelBuffer buffer = ChannelBuffers.copiedBuffer(outStream.getBuffer(), 0, outStream.getOffset());
+		return channel.write(buffer);
+	}
+
+	public final void write(OutputStream outStream) {
+		if (outStream == null || !channel.isOpen()) {
+			return;
+		}
+		outgoingQueue.add(outStream);
+	}
+
+	public final ChannelFuture write(ChannelBuffer outStream) {
+		if (outStream == null || !channel.isOpen()) {
+			return null;
+		}
+		return channel.write(outStream);
 	}
 }

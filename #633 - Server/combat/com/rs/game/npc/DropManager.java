@@ -3,13 +3,11 @@ package com.rs.game.npc;
 import java.util.HashMap;
 
 import com.rs.game.item.FloorItem;
-import com.rs.game.item.Item;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
 
 /**
@@ -44,11 +42,6 @@ public final class DropManager {
 		}
 		WorldTile pos = victim.getLastWorldTile();
 		final WorldTile lastMobLocation = pos;
-		ObjectArrayList<Item> dropItems = (ObjectArrayList<Item>) table.toItems(killer, victim);
-		for (Item drop : dropItems) {
-			if (drop == null)
-				continue;
-			FloorItem.createGroundItem(drop, lastMobLocation, killer, false, 180, true);
-		}
+		table.toItems(killer, victim).parallelStream().filter(drop -> drop != null).forEach(drop -> FloorItem.createGroundItem(drop, lastMobLocation, killer, false, 180, true));
 	}
 }

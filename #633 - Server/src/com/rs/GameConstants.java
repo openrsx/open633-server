@@ -15,11 +15,13 @@ public final class GameConstants {
 	/**
 	 * General client and server settings.
 	 */
-	public static final String SERVER_NAME =  GameProperties.getGameProperties().getString("server_name");
+	public static final String SERVER_NAME = GameProperties.getGameProperties().getString("server_name");
 	public static final int RECEIVE_DATA_LIMIT = GameProperties.getGameProperties().getInteger("receive_data_limit");
 	public static final int PACKET_SIZE_LIMIT = GameProperties.getGameProperties().getInteger("packet_size_limit");
 	public static final int CLIENT_REVISION = GameProperties.getGameProperties().getInteger("revision");
 	public static final long CONNECTION_TIMEOUT = GameProperties.getGameProperties().getInteger("connection_timeout");
+	public static final String SQL_FILE_PATH =  GameProperties.getGameProperties().getString("sql_location");
+	public static final boolean SQL_ENABLED = GameProperties.getGameProperties().getBoolean("sql_state");
 
 	/**
 	 * Player settings
@@ -87,11 +89,8 @@ public final class GameConstants {
 	/**
 	 * Launching settings
 	 */
-	public static boolean DEBUG = true;
-	public static boolean HOSTED;
-	public static boolean ECONOMY = false;
-	public static boolean ALLOW_MASTER_PASSWORD = true;
-	public static String MASTER_PASSWORD = "localhostmaster";
+	public static boolean DEBUG = GameProperties.getGameProperties().getBoolean("debug_mode");
+	public static boolean HOSTED = GameProperties.getGameProperties().getBoolean("is_live");
 
 	/**
 	 * Game constants

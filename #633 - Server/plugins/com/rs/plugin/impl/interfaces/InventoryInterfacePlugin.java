@@ -11,7 +11,7 @@ import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar.SpecialAttack;
-import com.rs.game.npc.others.Pet;
+import com.rs.game.npc.other.Pet;
 import com.rs.game.player.Equipment;
 import com.rs.game.player.Inventory;
 import com.rs.game.player.Player;
@@ -25,7 +25,8 @@ import com.rs.plugin.InventoryPluginDispatcher;
 import com.rs.plugin.RSInterfacePluginDispatcher;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -164,7 +165,7 @@ public class InventoryInterfacePlugin implements RSInterface {
 			player.getMovement().stopAll();
 			
 			if (GameConstants.DEBUG)
-				Logger.log("ItemHandler", "Used:" + itemUsed.getId() + ", With:" + usedWith.getId());
+				LogUtility.log(LogType.INFO, "Used:" + itemUsed.getId() + ", With:" + usedWith.getId());
 		}
 	}
 

@@ -12,15 +12,16 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 
 public class MusicHints {
 
-	private final static Object2ObjectArrayMap<Integer, String> musicHints = new Object2ObjectArrayMap<Integer, String>();
+	private final static Object2ObjectOpenHashMap<Integer, String> musicHints = new Object2ObjectOpenHashMap<Integer, String>();
 	private final static String PACKED_PATH = "data/musics/packedMusicHints.mh";
 	private final static String UNPACKED_PATH = "data/musics/unpackedMusicHints.txt";
 
@@ -49,7 +50,7 @@ public class MusicHints {
 	}
 
 	private static void loadUnpackedItemExamines() {
-		Logger.log("MusicHints", "Packing music hints...");
+		LogUtility.log(LogType.INFO, "Packing music hints...");
 		try {
 			@Cleanup
 			BufferedReader in = new BufferedReader(new FileReader(UNPACKED_PATH));

@@ -13,7 +13,7 @@ import com.rs.game.npc.combat.impl.DefaultCombat;
 import com.rs.game.player.Player;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.SneakyThrows;
 
 /**
@@ -25,9 +25,9 @@ public final class NPCCombatDispatcher {
 	/**
 	 * The object map which contains all the mob on the world.
 	 */
-	private static final Object2ObjectArrayMap<MobCombatSignature, MobCombatInterface> COMBATANTS = new Object2ObjectArrayMap<>();
+	private static final Object2ObjectOpenHashMap<MobCombatSignature, MobCombatInterface> COMBATANTS = new Object2ObjectOpenHashMap<>();
 	
-	private static int mobValue = 0;
+	private int mobValue = 600;
 	
 	/**
 	 * Executes the specified mob if it's registered.
@@ -36,7 +36,7 @@ public final class NPCCombatDispatcher {
 	 * @throws Exception 
 	 */
 	@SneakyThrows(Exception.class)
-	public static int execute(Player player, NPC npc) {
+	public int customDelay(Player player, NPC npc) {
 		Optional<MobCombatInterface> mobCombat = getMobCombatant(npc);
 		if (!mobCombat.isPresent()) {
 			DefaultCombat defaultScript = new DefaultCombat();
@@ -57,7 +57,7 @@ public final class NPCCombatDispatcher {
 	 * @param identifier the identifier to check for matches.
 	 * @return an Optional with the found value, {@link Optional#empty} otherwise.
 	 */
-	private static Optional<MobCombatInterface> getMobCombatant(NPC mob) {
+	private Optional<MobCombatInterface> getMobCombatant(NPC mob) {
 		for(Entry<MobCombatSignature, MobCombatInterface> MobCombatInterface : COMBATANTS.entrySet()) {
 			if (isMobId(MobCombatInterface.getValue(), mob.getId()) || isMobNamed(MobCombatInterface.getValue(), mob)) {
 				return Optional.of(MobCombatInterface.getValue());
@@ -66,7 +66,7 @@ public final class NPCCombatDispatcher {
 		return Optional.empty();
 	}
 	
-	private static boolean isMobId(MobCombatInterface MobCombatInterface, int mobId) {
+	private boolean isMobId(MobCombatInterface MobCombatInterface, int mobId) {
 		Annotation annotation = MobCombatInterface.getClass().getAnnotation(MobCombatSignature.class);
 		MobCombatSignature signature = (MobCombatSignature) annotation;
 		return Arrays.stream(signature.mobId()).anyMatch(id -> mobId == id);
@@ -78,7 +78,7 @@ public final class NPCCombatDispatcher {
 	 * @param objectId
 	 * @return
 	 */
-	private static boolean isMobNamed(MobCombatInterface mobType, NPC mob) {
+	private boolean isMobNamed(MobCombatInterface mobType, NPC mob) {
 		Annotation annotation = mobType.getClass().getAnnotation(MobCombatSignature.class);
 		MobCombatSignature signature = (MobCombatSignature) annotation;
 		return Arrays.stream(signature.mobName()).anyMatch(mobName -> mob.getDefinitions().getName().equalsIgnoreCase(mobName));

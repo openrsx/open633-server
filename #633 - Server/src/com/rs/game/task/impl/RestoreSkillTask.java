@@ -19,7 +19,7 @@ public final class RestoreSkillTask extends Task {
 	public void execute() {
 		World.players().forEach(player -> {
 			int ammountTimes = player.getPrayer().usingPrayer(0, 8) ? 2 : 1;
-			if (player.isResting())
+			if (player.getMovement().isResting())
 				ammountTimes += 1;
 			boolean berserker = player.getPrayer().usingPrayer(1, 5);
 			b: for (int skill = 0; skill < 25; skill++) {
@@ -31,7 +31,7 @@ public final class RestoreSkillTask extends Task {
 					if (currentLevel > normalLevel && time == 0) {
 						if (skill == Skills.ATTACK || skill == Skills.STRENGTH || skill == Skills.DEFENCE
 								|| skill == Skills.RANGE || skill == Skills.MAGIC) {
-							if (berserker && RandomUtils.random(100) <= 15)
+							if (berserker && RandomUtils.inclusive(100) <= 15)
 								continue c;
 						}
 						player.getSkills().set(skill, currentLevel - 1);

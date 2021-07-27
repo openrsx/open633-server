@@ -1,8 +1,6 @@
 package com.rs.game.npc.familiar;
 
-import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.Graphics;
 import com.rs.game.item.Item;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
@@ -11,6 +9,8 @@ import com.rs.game.player.Player;
 import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 
 import skills.Skills;
@@ -19,7 +19,6 @@ public class Granitelobster extends Familiar {
 
 	@SuppressWarnings("unused")
 	private int forageTicks;
-	private static final long serialVersionUID = -8354346765099305088L;
 
 	public Granitelobster(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
@@ -39,7 +38,7 @@ public class Granitelobster extends Familiar {
 
 	@SuppressWarnings("unused")
 	private void giveReward() {
-		boolean isShark = RandomUtils.random(3) == 0;
+		boolean isShark = RandomUtils.inclusive(3) == 0;
 		int foragedItem = isShark ? 383 : 371;
 		if (!isShark)
 			getOwner().getSkills().addXp(Skills.FISHING, 30);
@@ -86,11 +85,11 @@ public class Granitelobster extends Familiar {
 				World.get().submit(new Task(1) {
 					@Override
 					protected void execute() {
-						if (RandomUtils.random(5) == 0) {
+						if (RandomUtils.inclusive(5) == 0) {
 							target.ifPlayer(targetSelected -> targetSelected.getSkills().set(Skills.DEFENCE,
 									targetSelected.getSkills().getLevel(Skills.DEFENCE)));
 						}
-						target.applyHit(new Hit(getOwner(), RandomUtils.random(140), HitLook.MELEE_DAMAGE));
+						target.applyHit(new Hit(getOwner(), RandomUtils.inclusive(140), HitLook.MELEE_DAMAGE));
 						target.setNextGraphics(new Graphics(1353));
 						this.cancel();
 					}

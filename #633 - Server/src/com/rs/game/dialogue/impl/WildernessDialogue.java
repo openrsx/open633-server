@@ -1,7 +1,5 @@
 package com.rs.game.dialogue.impl;
 
-import com.rs.game.Animation;
-import com.rs.game.ForceMovement;
 import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.map.GameObject;
 import com.rs.game.map.World;
@@ -9,6 +7,8 @@ import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.controller.impl.WildernessController;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.ForceMovement;
 
 /**
  * TODO: Fix Object minor facing issue

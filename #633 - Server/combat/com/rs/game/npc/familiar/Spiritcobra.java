@@ -1,17 +1,15 @@
 package com.rs.game.npc.familiar;
 
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
 import com.rs.game.item.Item;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 
 public class Spiritcobra extends Familiar {
-
-	private static final long serialVersionUID = 5680976975276635201L;
 
 	public Spiritcobra(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {

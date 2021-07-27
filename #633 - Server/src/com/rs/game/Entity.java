@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 import com.google.common.base.Preconditions;
 import com.rs.GameConstants;
@@ -18,15 +19,16 @@ import com.rs.game.map.GameObject;
 import com.rs.game.map.Region;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
+import com.rs.game.map.areas.AreaHandler;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Attributes;
 import com.rs.game.player.Combat;
 import com.rs.game.player.Hit;
+import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.LocalNPCUpdate;
 import com.rs.game.player.LocalPlayerUpdate;
 import com.rs.game.player.Player;
-import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.content.TeleportType;
 import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.player.controller.impl.WildernessController;
@@ -36,12 +38,15 @@ import com.rs.game.route.RouteFinder;
 import com.rs.game.route.strategy.EntityStrategy;
 import com.rs.game.route.strategy.ObjectStrategy;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.ForceMovement;
 import com.rs.net.encoders.other.ForceTalk;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.MutableNumber;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayFIFOQueue;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
@@ -68,7 +73,7 @@ public abstract class Entity extends WorldTile {
 	private transient boolean teleported;
 	// than 1thread so concurent
 	private transient ObjectArrayFIFOQueue<Hit> receivedHits;
-	private transient Object2ObjectArrayMap<Entity, Integer> receivedDamage;
+	private transient Object2ObjectOpenHashMap<Entity, Integer> receivedDamage;
 	private transient boolean finished;
 	
 	// entity masks
@@ -93,9 +98,19 @@ public abstract class Entity extends WorldTile {
 	private transient short hashCode;
 	private transient EntityMovement movement;
 	private transient Attributes attributes;
+	private transient int mapSize;
+	
+	/**
+	 * The amount of poison damage this entity has.
+	 */
+	private final MutableNumber poisonDamage = new MutableNumber();
 
+	/**
+	 * The type of poison that was previously applied.
+	 */
+	private PoisonType poisonType;
+	
 	private int hitpoints;
-	private int mapSize;
 	private boolean run;
 
 	// creates Entity and saved classes
@@ -113,7 +128,7 @@ public abstract class Entity extends WorldTile {
 		setHashCode((short) hashCodeGenerator.getAndIncrement());
 		setMapRegionsIds(new CopyOnWriteArrayList<Integer>());
 		setReceivedHits(new ObjectArrayFIFOQueue<Hit>());
-		setReceivedDamage(new Object2ObjectArrayMap<Entity, Integer>());
+		setReceivedDamage(new Object2ObjectOpenHashMap<Entity, Integer>());
 		setNextHits(new ObjectArrayList<Hit>());
 		setNextWalkDirection((byte) (nextRunDirection - 1));
 		setLastFaceEntity(-1);
@@ -134,7 +149,11 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public abstract void handleIngoingHit(Hit hit);
+	
+	public abstract void sendDeath(Optional<Entity> source);
 
+	public abstract void deregister();
+	
 	public void reset(boolean attributes) {
 		setHitpoints(getMaxHitpoints());
 		getReceivedHits().trim();
@@ -145,6 +164,19 @@ public abstract class Entity extends WorldTile {
 		setAttackedByDelay(0);
 		if (attributes)
 			getAttributes().getAttributes().clear();
+		ifPlayer(player -> {
+			player.getInterfaceManager().refreshHitPoints();
+			player.getHintIconsManager().removeAll();
+			player.getSkills().restoreSkills();
+			player.getCombatDefinitions().resetSpecialAttack();
+			player.getPrayer().reset();
+			player.getCombatDefinitions().resetSpells(true);
+			player.setResting((byte) 0);
+			player.getDetails().getPoisonImmunity().set(0);
+			player.getDetails().setAntifireDetails(Optional.empty());
+			player.getDetails().setRunEnergy((byte) 100);
+			player.getAppearance().generateAppearenceData();
+		});
 	}
 
 	public void reset() {
@@ -308,8 +340,6 @@ public abstract class Entity extends WorldTile {
 		return !getMovement().getWalkSteps().isEmpty();
 	}
 
-	public abstract void sendDeath(Optional<Entity> source);
-
 	public void processMovement() {
 		setLastWorldTile(new WorldTile(this));
 		if (getLastFaceEntity() >= 0) {
@@ -326,7 +356,7 @@ public abstract class Entity extends WorldTile {
 			setNextWorldTile(null);
 			setTeleported(true);
 			if (isPlayer() && ((Player) this).getTemporaryMovementType() == -1)
-				((Player) this).setTemporaryMovementType(getMovement().getTELE_MOVE_TYPE());
+				((Player) this).setTemporaryMovementType(toPlayer().getMovement().getTELE_MOVE_TYPE());
 			updateEntityRegion(this);
 			if (needMapUpdate())
 				loadMapRegions();
@@ -361,7 +391,7 @@ public abstract class Entity extends WorldTile {
 				setNextWalkDirection((byte) dir);
 			} else {
 				setNextRunDirection((byte) dir);
-				ifPlayer(player -> player.drainRunEnergy());
+				ifPlayer(player -> player.getMovement().drainRunEnergy());
 			}
 			moveLocation(Utility.DIRECTION_DELTA_X[dir], Utility.DIRECTION_DELTA_Y[dir], 0);
 		}
@@ -733,7 +763,7 @@ public abstract class Entity extends WorldTile {
 		int maxHp = getMaxHitpoints();
 		if (getHitpoints() > maxHp) {
 			ifPlayer(player -> {
-				if (player.getPrayer().usingPrayer(1, 5) && RandomUtils.random(100) <= 15)
+				if (player.getPrayer().usingPrayer(1, 5) && RandomUtils.inclusive(100) <= 15)
 					return;
 			});
 			setHitpoints(getHitpoints() - 1);
@@ -759,10 +789,18 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public boolean needMasksUpdate() {
-		return nextFaceEntity != -2 || nextAnimation != null || nextGraphics1 != null || nextGraphics2 != null
-				|| nextGraphics3 != null || nextGraphics4 != null
-				|| (nextWalkDirection == -1 && nextFaceWorldTile != null) || !nextHits.isEmpty()
-				|| nextForceMovement != null || nextForceTalk != null;
+		if (isPlayer())
+			return (toPlayer().getTemporaryMovementType() != -1)
+					|| (toPlayer().isUpdateMovementType()) || nextFaceEntity != -2 || nextAnimation != null || nextGraphics1 != null || nextGraphics2 != null
+							|| nextGraphics3 != null || nextGraphics4 != null
+							|| (nextWalkDirection == -1 && nextFaceWorldTile != null) || !nextHits.isEmpty()
+							|| nextForceMovement != null || nextForceTalk != null;
+		if (isNPC())
+			return (toNPC().getNextTransformation() != null)|| nextFaceEntity != -2 || nextAnimation != null || nextGraphics1 != null || nextGraphics2 != null
+					|| nextGraphics3 != null || nextGraphics4 != null
+					|| (nextWalkDirection == -1 && nextFaceWorldTile != null) || !nextHits.isEmpty()
+					|| nextForceMovement != null || nextForceTalk != null;
+		return false;
 	}
 
 	/**
@@ -791,9 +829,8 @@ public abstract class Entity extends WorldTile {
 				World.getRegion(getRegionId()).refreshSpawnedItems(player);
 			}
 		});
+		ifNpc(npc -> npc.setNextTransformation(null));
 	}
-
-	public abstract void finish();
 
 	public int getMaxHitpoints() {
 		return isNPC() ? toNPC().getCombatDefinitions().getHitpoints() : toPlayer().getSkills().getLevel(Skills.HITPOINTS) * 10 + toPlayer().getEquipment().getEquipmentHpIncrease();
@@ -809,7 +846,7 @@ public abstract class Entity extends WorldTile {
 
 	public void loadMapRegions() {
 		getMapRegionsIds().clear();
-		isAtDynamicRegion = false;
+		setAtDynamicRegion(false);
 		int chunkX = getChunkX();
 		int chunkY = getChunkY();
 		int mapHash = GameConstants.MAP_SIZES[getMapSize()] >> 4;
@@ -819,10 +856,24 @@ public abstract class Entity extends WorldTile {
 			for (int yCalc = minRegionY < 0 ? 0 : minRegionY; yCalc <= ((chunkY + mapHash) / 8); yCalc++) {
 				int regionId = yCalc + (xCalc << 8);
 				if (World.getRegion(regionId, isPlayer()) instanceof DynamicRegion)
-					isAtDynamicRegion = true;
+					setAtDynamicRegion(true);
 				getMapRegionsIds().add(regionId);
 			}
 		setLastLoadedMapRegionTile(new WorldTile(this));
+		ifPlayer(player -> {
+			boolean wasAtDynamicRegion = isAtDynamicRegion();
+			player.setClientLoadedMapRegion(false);
+			if (isAtDynamicRegion()) {
+				player.getPackets().sendDynamicGameScene(!player.isStarted());
+				if (!wasAtDynamicRegion)
+					player.getLocalNPCUpdate().reset();
+			} else {
+				player.getPackets().sendGameScene(!player.isStarted());
+				if (wasAtDynamicRegion)
+					player.getLocalNPCUpdate().reset();
+			}
+			player.getDetails().setForceNextMapLoadRefresh(false);
+		});
 	}
 
 	public void setMapSize(int size) {
@@ -902,19 +953,32 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public double getMagePrayerMultiplier() {
-		return 0.6;
+		return isPlayer() ? 0.6 : 0;
 	}
 
 	public double getRangePrayerMultiplier() {
-		return 0.6;
+		return isPlayer() ? 0.6 : 0;
 	}
 
 	public double getMeleePrayerMultiplier() {
-		return 0.6;
+		return isPlayer() ? 0.6 : 0;
 	}
 
 	public void checkMultiArea() {
 		setMultiArea(isForceMultiArea() ? true : World.isMultiArea(this));
+		ifPlayer(player -> {
+			if (!player.isStarted())
+				return;
+			boolean isAtMultiArea = player.isForceMultiArea() ? true : World
+					.isMultiArea(player) || AreaHandler.getArea(player).isPresent() && AreaHandler.getArea(player).get().name().equalsIgnoreCase("Multi Area");
+			if (isAtMultiArea && !player.isMultiArea()) {
+				player.setMultiArea(isAtMultiArea);
+				player.getPackets().sendGlobalConfig(616, 1);
+			} else if (!isAtMultiArea && player.isMultiArea()) {
+				player.setMultiArea(isAtMultiArea);
+				player.getPackets().sendGlobalConfig(616, 0);
+			}
+		});
 	}
 	
 	public void faceObject(GameObject object) {
@@ -992,11 +1056,6 @@ public abstract class Entity extends WorldTile {
 	}
 
 	/**
-	 * The amount of poison damage this entity has.
-	 */
-	private final MutableNumber poisonDamage = new MutableNumber();
-
-	/**
 	 * Determines if this entity is poisoned.
 	 * 
 	 * @return {@code true} if this entity is poisoned, {@code false} otherwise.
@@ -1004,11 +1063,6 @@ public abstract class Entity extends WorldTile {
 	public final boolean isPoisoned() {
 		return poisonDamage.get() > 0;
 	}
-
-	/**
-	 * The type of poison that was previously applied.
-	 */
-	private PoisonType poisonType;
 
 	/**
 	 * Applies poison with an intensity of {@code type} to the entity.
@@ -1092,11 +1146,8 @@ public abstract class Entity extends WorldTile {
 	}
 
 	public void safeForceMoveTile(WorldTile desination) {
-		int dir = RandomUtils.random(Utility.DIRECTION_DELTA_X.length - 1);
-		if (World.checkWalkStep(desination.getPlane(), desination.getX(), desination.getY(), dir, 1)) {
-			setNextWorldTile(new WorldTile(desination.getX() + RandomUtils.random(3),
-					desination.getY() + RandomUtils.random(3), desination.getPlane()));
-		}
+		if (World.isFloorFree(desination.getPlane(), desination.getX(), desination.getY()))
+			IntStream.range(0, 3).forEach(count -> setNextWorldTile(new WorldTile(desination, count)));
 	}
 
 	/**
@@ -1185,5 +1236,18 @@ public abstract class Entity extends WorldTile {
 				cancel();
 			}
 		}.submit();
+	}
+	
+	/**
+	 * Updates a Player's Run (movement) state 
+	 */
+	public void setRunState(boolean run) {
+		setRun(run);
+		ifPlayer(player -> {
+			player.setUpdateMovementType(true);
+			if (run != isRun()) {
+				player.getInterfaceManager().sendRunButtonConfig();
+			}
+		});
 	}
 }

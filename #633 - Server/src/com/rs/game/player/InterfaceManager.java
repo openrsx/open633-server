@@ -3,7 +3,7 @@ package com.rs.game.player;
 import com.rs.GameConstants;
 import com.rs.game.player.controller.ControllerHandler;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Data;
 
 @Data
@@ -44,7 +44,7 @@ public class InterfaceManager {
 	}
 
 	// TODO CLOSE interface tab ids
-	private Object2ObjectArrayMap<Integer, Integer> openedinterfaces = new Object2ObjectArrayMap<>();
+	private Object2ObjectOpenHashMap<Integer, Integer> openedinterfaces = new Object2ObjectOpenHashMap<>();
 	
 
 	private boolean resizableScreen;

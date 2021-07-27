@@ -2,8 +2,8 @@ package com.rs.game.player.content;
 
 import java.util.Optional;
 
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 
 import lombok.Getter;
 

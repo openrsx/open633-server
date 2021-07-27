@@ -11,7 +11,7 @@ import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.SneakyThrows;
 
 /**
@@ -22,7 +22,7 @@ public class LogicPacketDispatcher {
 	/**
 	 * The object map which contains all the interface on the world.
 	 */
-	private static final Object2ObjectArrayMap<LogicPacketSignature, LogicPacket> PACKET = new Object2ObjectArrayMap<>();
+	private static final Object2ObjectOpenHashMap<LogicPacketSignature, LogicPacket> PACKET = new Object2ObjectOpenHashMap<>();
 
 	/**
 	 * Executes the specified interface if it's registered.
@@ -60,8 +60,6 @@ public class LogicPacketDispatcher {
 	private static boolean matchesSize(LogicPacket outgoingPacket, int size) {
 		Annotation annotation = outgoingPacket.getClass().getAnnotation(LogicPacketSignature.class);
 		LogicPacketSignature signature = (LogicPacketSignature) annotation;
-		if (signature.packetSize() == 0) 
-			System.out.println("hey");
 		return signature.packetSize() == 0 || signature.packetSize() == size;
 	}
 

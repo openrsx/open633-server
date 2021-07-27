@@ -6,16 +6,16 @@ import com.rs.game.item.ItemConstants;
 import com.rs.game.player.Player;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 public class ChargesManager {
 
 	private transient Player player;
 	
-	private Object2ObjectArrayMap<Integer, Integer> charges = new Object2ObjectArrayMap<>();
+	private Object2ObjectOpenHashMap<Integer, Integer> charges = new Object2ObjectOpenHashMap<>();
 
 	public ChargesManager() {
-		charges = new Object2ObjectArrayMap<Integer, Integer>();
+		charges = new Object2ObjectOpenHashMap<Integer, Integer>();
 	}
 
 	public void setPlayer(Player player) {

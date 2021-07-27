@@ -7,12 +7,12 @@ import com.alex.utils.VarsManager;
 import com.rs.GameConstants;
 import com.rs.game.Entity;
 import com.rs.game.EntityType;
-import com.rs.game.HintIconsManager;
 import com.rs.game.dialogue.DialogueEventListener;
 import com.rs.game.map.Region;
 import com.rs.game.map.World;
+import com.rs.game.map.areas.AreaHandler;
 import com.rs.game.npc.familiar.Familiar;
-import com.rs.game.npc.others.Pet;
+import com.rs.game.npc.other.Pet;
 import com.rs.game.player.actions.ActionManager;
 import com.rs.game.player.content.FriendChatsManager;
 import com.rs.game.player.content.MusicsManager;
@@ -31,9 +31,11 @@ import com.rs.net.IsaacKeyPair;
 import com.rs.net.LogicPacket;
 import com.rs.net.Session;
 import com.rs.net.encoders.WorldPacketsEncoder;
+import com.rs.net.encoders.other.HintIconsManager;
 import com.rs.net.host.HostListType;
 import com.rs.net.host.HostManager;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -156,11 +158,6 @@ public class Player extends Entity {
 	private transient HintIconsManager hintIconsManager;
 	
 	/**
-	 * Represents a Action management system
-	 */
-	private transient ActionManager actionManager;
-	
-	/**
 	 * Represents a Player's Price Checker's system
 	 */
 	private transient PriceCheckManager priceCheckManager;
@@ -221,14 +218,19 @@ public class Player extends Entity {
 	private transient ConcurrentLinkedQueue<LogicPacket> logicPackets;
 	
 	/**
-	 * The current skill action that is going on for this player.
-	 */
-	private Optional<SkillActionTask> skillAction = Optional.empty();
-	
-	/**
 	 * Personal details & information stored for a Player
 	 */
 	private PlayerDetails details;
+	
+	/**
+	 * Represents a Action management system
+	 */
+	private transient ActionManager action = new ActionManager();
+	
+	/**
+	 * The current skill action that is going on for this player.
+	 */
+	private Optional<SkillActionTask> skillAction = Optional.empty();
 	
 	/**
 	 * Represents a Player's appearance management system
@@ -347,7 +349,6 @@ public class Player extends Entity {
 		setPriceCheckManager(new PriceCheckManager(this));
 		setLocalPlayerUpdate(new LocalPlayerUpdate(this));
 		setLocalNPCUpdate(new LocalNPCUpdate(this));
-		setActionManager(new ActionManager(this));
 		setTrade(new Trade(this));
 		setVarsManager(new VarsManager(this));
 		setSpellDispatcher(new PassiveSpellDispatcher());
@@ -367,14 +368,15 @@ public class Player extends Entity {
 		setTemporaryMovementType((byte) -1);
 		setLogicPackets(new ConcurrentLinkedQueue<LogicPacket>());
 		setSwitchItemCache(new ObjectArrayList<Byte>());
-		if (!getCurrentController().isPresent()) {
+		if (getAction() == null)
+			setAction(new ActionManager());
+		if (!getCurrentController().isPresent())
 			setCurrentController(getCurrentController());
-		}
 		initEntity();
 		World.addPlayer(this);
 		updateEntityRegion(this);
 		if (GameConstants.DEBUG)
-			Logger.log(this, "Initiated player: " + username + ", pass: "
+			LogUtility.log(LogType.INFO, "Initiated player: " + username + ", pass: "
 					+ getDetails().getPassword());
 		getSession().updateIPnPass(this);
 	}
@@ -383,51 +385,12 @@ public class Player extends Entity {
 	 * Starts ingame rendering, etc..
 	 */
 	public void start() {
-		Logger.globalLog(username, session.getIP(), new String(" has logged in."));
+		LogUtility.log(LogType.INFO, getDisplayName() + " has logged in from their IP " + getSession().getIP());
 		loadMapRegions();
 		setStarted(true);
 		login();
 		if (isDead())
 			sendDeath(Optional.empty());
-	}
-
-	/**
-	 * Resets a Player's Attributes
-	 */
-	@Override
-	public void reset(boolean attributes) {
-		super.reset(attributes);
-		getInterfaceManager().refreshHitPoints();
-		getHintIconsManager().removeAll();
-		getSkills().restoreSkills();
-		getCombatDefinitions().resetSpecialAttack();
-		getPrayer().reset();
-		getCombatDefinitions().resetSpells(true);
-		setResting((byte) 0);
-		getDetails().getPoisonImmunity().set(0);
-		getDetails().setAntifireDetails(Optional.empty());
-		getDetails().setRunEnergy((byte) 100);
-		getAppearance().generateAppearenceData();
-	}
-	
-	/**
-	 * Handles the current Map Region state
-	 */
-	@Override
-	public void loadMapRegions() {
-		boolean wasAtDynamicRegion = isAtDynamicRegion();
-		super.loadMapRegions();
-		setClientLoadedMapRegion(false);
-		if (isAtDynamicRegion()) {
-			getPackets().sendDynamicGameScene(!isStarted());
-			if (!wasAtDynamicRegion)
-				getLocalNPCUpdate().reset();
-		} else {
-			getPackets().sendGameScene(!isStarted());
-			if (wasAtDynamicRegion)
-				getLocalNPCUpdate().reset();
-		}
-		getDetails().setForceNextMapLoadRefresh(false);
 	}
 
 	/**
@@ -443,33 +406,13 @@ public class Player extends Entity {
 			setCoordsEvent(null);
 		if (getRouteEvent() != null && getRouteEvent().processEvent(this))
 			setRouteEvent(null);
-		getActionManager().process();
+		getAction().process();
 		getPrayer().processPrayer();
 		ControllerHandler.executeVoid(this, controller -> controller.process(this));
 		getDetails().getCharges().process();
 		if (getMusicsManager().musicEnded())
 			getMusicsManager().replayMusic();
-	}
-
-	/**
-	 * Checks if the Player needs to update their Appearance masks
-	 */
-	@Override
-	public boolean needMasksUpdate() {
-		return super.needMasksUpdate() || getTemporaryMovementType() != -1
-				|| isUpdateMovementType();
-	}
-
-	/**
-	 * Updates a Player's Run (movement) state 
-	 */
-	@Override
-	public void setRun(boolean run) {
-		if (run != isRun()) {
-			super.setRun(run);
-			setUpdateMovementType(true);
-			getInterfaceManager().sendRunButtonConfig();
-		}
+		AreaHandler.processArea(this);
 	}
 
 	/**
@@ -508,25 +451,7 @@ public class Player extends Entity {
 		if (!HostManager.contains(getUsername(), HostListType.STARTER_RECEIVED)) {
 			GameConstants.STATER_KIT.forEach(getInventory()::addItem);
 			HostManager.add(this, HostListType.STARTER_RECEIVED, true);
-			World.sendWorldMessage("[New Player] " + getDisplayName() + " has just joined " + GameConstants.SERVER_NAME, canPvp);
-		}
-	}
-
-	/**
-	 * Checks the Multi-zone state of a Player
-	 */
-	@Override
-	public void checkMultiArea() {
-		if (!isStarted())
-			return;
-		boolean isAtMultiArea = isForceMultiArea() ? true : World
-				.isMultiArea(this);
-		if (isAtMultiArea && !isMultiArea()) {
-			setMultiArea(isAtMultiArea);
-			getPackets().sendGlobalConfig(616, 1);
-		} else if (!isAtMultiArea && isMultiArea()) {
-			setMultiArea(isAtMultiArea);
-			getPackets().sendGlobalConfig(616, 0);
+			World.sendWorldMessage("[New Player] " + getDisplayName() + " has just joined " + GameConstants.SERVER_NAME);
 		}
 	}
 
@@ -534,16 +459,8 @@ public class Player extends Entity {
 	 * Finishes the Player's Session
 	 */
 	@Override
-	public void finish() {
+	public void deregister() {
 		getSession().finish(this, 0);
-	}
-
-	/**
-	 * Gets the Message Icon (Crown/Icon) for chat messages, interface displaying
-	 * @return
-	 */
-	public int getMessageIcon() {
-		return getDetails().getRights() == Rights.ADMINISTRATOR ? 2 : getDetails().getRights() == Rights.MODERATOR ? 1 : 0;
 	}
 
 	/**
@@ -553,34 +470,6 @@ public class Player extends Entity {
 	public WorldPacketsEncoder getPackets() {
 		return getSession().getWorldPackets();
 
-	}
-
-	/**
-	 * Drains the Run enery when the Player is Running
-	 */
-	public void drainRunEnergy() {
-		setRunEnergy(getDetails().getRunEnergy() - 1);
-	}
-
-	/**
-	 * Sets the Player's Run enegery to a specific amount
-	 * @param runEnergy
-	 */
-	public void setRunEnergy(int runEnergy) {
-		if (runEnergy < 0)
-			runEnergy = 0;
-		else if (runEnergy > 100)
-			runEnergy = 100;
-		getDetails().setRunEnergy((byte) runEnergy);
-		getPackets().sendRunEnergy();
-	}
-
-	/**
-	 * Checks the state of the Player's Resting state
-	 * @return state
-	 */
-	public boolean isResting() {
-		return getResting() != 0;
 	}
 
 	/**

@@ -1,24 +1,19 @@
 package com.rs.game.npc.familiar;
 
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
 import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.content.Summoning.Pouch;
+import com.rs.net.encoders.other.Animation;
 import com.rs.net.encoders.other.ForceTalk;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Giantchinchompa extends Familiar {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7708802901929527088L;
 
 	public Giantchinchompa(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash,
 			boolean canBeAttackFromOutOfArea) {
@@ -62,7 +57,7 @@ public class Giantchinchompa extends Familiar {
 				Player p2 = World.getPlayers().get(playerIndex);
 				if (p2 == null || p2.isDead() || p2 != player || !p2.isRunning() || !p2.withinDistance(player, 2))
 					continue;
-				p2.applyHit(new Hit(this, RandomUtils.random(130), HitLook.MAGIC_DAMAGE));
+				p2.applyHit(new Hit(this, RandomUtils.inclusive(130), HitLook.MAGIC_DAMAGE));
 			}
 			return true;
 		}

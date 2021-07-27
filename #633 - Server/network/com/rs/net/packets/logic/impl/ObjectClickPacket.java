@@ -47,12 +47,11 @@ public class ObjectClickPacket implements LogicPacket {
 		player.getMovement().stopAll();
 		if (forceRun)
 			player.setRun(forceRun);
-
+		
 		player.setRouteEvent(new RouteEvent(worldObject, () -> {
-			player.faceObject(mapObject);
 			if (!ControllerHandler.execute(player, controller -> controller.processObjectClick1(player, worldObject)))
 				return;
 			ObjectPluginDispatcher.execute(player, worldObject, 1);
-		}, false));
+		}, true));
 	}
 }

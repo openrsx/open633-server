@@ -1,19 +1,14 @@
 package com.rs.game.npc.familiar;
 
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 
 import skills.Skills;
 
 public class Bullant extends Familiar {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4667052662212699631L;
 
 	public Bullant(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
 		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
@@ -59,7 +54,7 @@ public class Bullant extends Familiar {
 		player.setNextAnimation(new Animation(7660));
 		setNextAnimation(new Animation(7895));
 		setNextGraphics(new Graphics(1382));
-		player.setRunEnergy(runEnergy > 100 ? 100 : runEnergy);
+		player.getMovement().setRunEnergy(runEnergy > 100 ? 100 : runEnergy);
 		return true;
 	}
 }

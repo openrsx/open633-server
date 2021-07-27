@@ -12,14 +12,15 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 
 public final class NPCBonuses {
-	private final static Object2ObjectArrayMap<Short, short[]> npcBonuses = new Object2ObjectArrayMap<Short, short[]>();
+	private final static Object2ObjectOpenHashMap<Short, short[]> npcBonuses = new Object2ObjectOpenHashMap<Short, short[]>();
 	private static final String PACKED_PATH = "data/npcs/packedBonuses.nb";
 
 	public static void init() {
@@ -35,7 +36,7 @@ public final class NPCBonuses {
 
 	@SneakyThrows(Throwable.class)
 	private static void loadUnpackedNPCBonuses() {
-		Logger.log("NPCBonuses", "Packing npc bonuses...");
+		LogUtility.log(LogType.INFO, "Packing npc bonuses...");
 		@Cleanup
 		DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));
 		@Cleanup

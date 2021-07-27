@@ -17,7 +17,8 @@ import com.rs.game.player.controller.ControllerHandler;
 import com.rs.io.InputStream;
 import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.Utility;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -115,7 +116,7 @@ public final class RSInterfacePluginDispatcher {
 		RSInterfacePluginDispatcher.execute(player, interfaceId, componentId, packetId, (byte) slotId, slotId2);
 
 		if (GameConstants.DEBUG)
-			Logger.log("ButtonHandler",
+			LogUtility.log(LogType.INFO,
 					"Interface ID: " + interfaceId + " - Comonent: " + componentId + " - PacketId: " + packetId);
 	}
 

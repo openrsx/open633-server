@@ -1,7 +1,8 @@
 package com.rs.cache.io;
 
 import com.rs.GameConstants;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
 public abstract class Stream {
 
@@ -35,7 +36,7 @@ public abstract class Stream {
 		}
 		if (k == keys.length) {
 			if (GameConstants.DEBUG)
-				Logger.log("DecodeXTEA", "Key is ENCRYPED!" + " key: " + k);
+				LogUtility.log(LogType.INFO, "Key is ENCRYPED!" + " key: " + k);
 			return;
 		}
 		int i_54_ = offset;

@@ -9,7 +9,8 @@ import com.rs.game.route.RouteEvent;
 import com.rs.io.InputStream;
 import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
 @LogicPacketSignature(packetId = 30, packetSize = 7, description = "Takes an Item from the Ground tile")
 public class ItemTakePacket implements LogicPacket {
@@ -39,10 +40,9 @@ public class ItemTakePacket implements LogicPacket {
 		player.getMovement().stopAll();
 		player.setRouteEvent(new RouteEvent(item, () -> {
 			if (FloorItem.removeGroundItem(player, item))
-				Logger.globalLog(player.getUsername(), player.getSession().getIP(),
-						new String(" has picked up item [ id: " + item.getId() + ", amount: " + item.getAmount()
+				LogUtility.log(LogType.INFO, player.getUsername() + " " + player.getSession().getIP() + "has picked up item [ id: " + item.getId() + ", amount: " + item.getAmount()
 								+ " ] originally owned to " + (item.getOwner() == null ? "no owner" : item.getOwner())
-								+ "."));
+								+ ".");
 		}));
 	}
 }

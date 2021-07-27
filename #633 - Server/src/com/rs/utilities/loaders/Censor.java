@@ -12,7 +12,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.TextUtils;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -56,7 +57,7 @@ public class Censor {
 	}
 
 	private static void loadUnpackedCensoredWords() {
-		Logger.log("Censor", "Packing censored words...");
+		LogUtility.log(LogType.INFO, "Packing censored words...");
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(UNPACKED_PATH));
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(PACKED_PATH));

@@ -17,7 +17,7 @@ import com.rs.plugin.listener.ObjectType;
 import com.rs.plugin.wrapper.ObjectSignature;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 /**
  * @author Dennis
@@ -27,7 +27,7 @@ public final class ObjectPluginDispatcher {
 	/**
 	 * The object map which contains all the Objects on the world.
 	 */
-	private static final Object2ObjectArrayMap<ObjectSignature, ObjectType> OBJECTS = new Object2ObjectArrayMap<>();
+	private static final Object2ObjectOpenHashMap<ObjectSignature, ObjectType> OBJECTS = new Object2ObjectOpenHashMap<>();
 
 	/**
 	 * Executes the specified Objects if it's registered.

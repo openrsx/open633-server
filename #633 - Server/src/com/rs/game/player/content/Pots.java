@@ -1,7 +1,5 @@
 package com.rs.game.player.content;
 
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
 import com.rs.game.item.Item;
 import com.rs.game.map.World;
 import com.rs.game.npc.familiar.Familiar;
@@ -12,6 +10,8 @@ import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.player.type.CombatEffectType;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.Utility;
 
 import skills.Skills;
@@ -287,14 +287,14 @@ public final class Pots {
 			@Override
 			public void extra(Player player) {
 				int restoredEnergy = player.getDetails().getRunEnergy() + 20;
-				player.setRunEnergy(restoredEnergy > 100 ? 100 : restoredEnergy);
+				player.getMovement().setRunEnergy(restoredEnergy > 100 ? 100 : restoredEnergy);
 			}
 		},
 		SUPER_ENERGY() {
 			@Override
 			public void extra(Player player) {
 				int restoredEnergy = player.getDetails().getRunEnergy() + 40;
-				player.setRunEnergy(restoredEnergy > 100 ? 100 : restoredEnergy);
+				player.getMovement().setRunEnergy(restoredEnergy > 100 ? 100 : restoredEnergy);
 			}
 		},
 		ANTI_FIRE() {

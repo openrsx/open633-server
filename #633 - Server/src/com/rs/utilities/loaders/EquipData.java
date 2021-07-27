@@ -12,9 +12,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 
@@ -22,7 +23,7 @@ public class EquipData {
 
 	public static final byte SLOT = 0, TYPE = 1;
 
-	static Object2ObjectArrayMap<Integer, Integer[]> equipData = new Object2ObjectArrayMap<>();
+	static Object2ObjectOpenHashMap<Integer, Integer[]> equipData = new Object2ObjectOpenHashMap<>();
 	private final static String PACKED_PATH = "data/items/packedEquipData.e";
 	private final static String UNPACKED_PATH = "data/items/unpackedEquipData.txt";
 
@@ -49,7 +50,7 @@ public class EquipData {
 	}
 
 	private static void loadPackedEquips() {
-		Logger.log("EquipData", "Packing equip data...");
+		LogUtility.log(LogType.INFO, "Packing equip data...");
 		try {
 			BufferedReader in = new BufferedReader(
 					new FileReader(UNPACKED_PATH));

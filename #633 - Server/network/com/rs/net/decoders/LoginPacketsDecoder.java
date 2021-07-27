@@ -5,12 +5,13 @@ import com.rs.game.map.World;
 import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.net.AccountCreation;
-import com.rs.net.Encrypt;
 import com.rs.net.IsaacKeyPair;
 import com.rs.net.Session;
 import com.rs.utilities.AntiFlood;
-import com.rs.utilities.Logger;
+import com.rs.utilities.BlowFishCryptService;
+import com.rs.utilities.LogUtility;
 import com.rs.utilities.Utility;
+import com.rs.utilities.LogUtility.LogType;
 
 import lombok.Synchronized;
 
@@ -43,7 +44,7 @@ public final class LoginPacketsDecoder extends Decoder {
 			decodeWorldLogin(stream);
 		else {
 			if (GameConstants.DEBUG)
-				Logger.log(this, "PacketId " + packetId);
+				LogUtility.log(LogType.TRACE, "PacketId " + packetId);
 			session.getChannel().close();
 		}
 	}
@@ -79,7 +80,7 @@ public final class LoginPacketsDecoder extends Decoder {
 			return;
 		}
 
-		password = Encrypt.encryptSHA1(password);
+		password = BlowFishCryptService.hashpw(password, BlowFishCryptService.gensalt());
 		rsaStream.readLong(); // random value
 		rsaStream.readLong(); // random value
 
@@ -100,15 +101,12 @@ public final class LoginPacketsDecoder extends Decoder {
 			return;
 		}
 
-		boolean isMasterPassword = GameConstants.ALLOW_MASTER_PASSWORD
-				&& password.equals(Encrypt.encryptSHA1(GameConstants.MASTER_PASSWORD));
-
 		Player player;
 		if (World.getPlayers().size() >= GameConstants.PLAYERS_LIMIT - 10) {
 			session.getLoginPackets().sendClientPacket(7);
 			return;
 		}
-		if (!isMasterPassword && World.containsPlayer(username).isPresent()) {
+		if (World.containsPlayer(username).isPresent()) {
 			session.getLoginPackets().sendClientPacket(5);
 			return;
 		}
@@ -124,12 +122,12 @@ public final class LoginPacketsDecoder extends Decoder {
 				session.getLoginPackets().sendClientPacket(20);
 				return;
 			}
-			if (!password.equals(player.getDetails().getPassword())) {
-				session.getLoginPackets().sendClientPacket(3);
-				return;
-			}
+//			if (!password.equals()) {
+//				session.getLoginPackets().sendClientPacket(3);
+//				return;
+//			}
 		}
-		if (!isMasterPassword && (player.getDetails().isPermBanned()
+		if ((player.getDetails().isPermBanned()
 				|| player.getDetails().getBanned() > Utility.currentTimeMillis())) {
 			session.getLoginPackets().sendClientPacket(4);
 			return;
@@ -142,5 +140,4 @@ public final class LoginPacketsDecoder extends Decoder {
 		session.setEncoder(2, player);
 		player.start();
 	}
-
 }

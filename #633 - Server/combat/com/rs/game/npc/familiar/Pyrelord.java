@@ -6,41 +6,39 @@ import com.rs.game.player.content.Summoning.Pouch;
 
 public class Pyrelord extends Familiar {
 
-    private static final long serialVersionUID = -5514524709014168988L;
+	public Pyrelord(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
+		super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
+	}
 
-    public Pyrelord(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
-	super(owner, pouch, tile, mapAreaNameHash, canBeAttackFromOutOfArea);
-    }
+	@Override
+	public String getSpecialName() {
+		return "Immense Heat";
+	}
 
-    @Override
-    public String getSpecialName() {
-	return "Immense Heat";
-    }
+	@Override
+	public String getSpecialDescription() {
+		return "Craft a gold bar (and a gem if one wishes) into an item of Jewellery without using a furnace.";
+	}
 
-    @Override
-    public String getSpecialDescription() {
-	return "Craft a gold bar (and a gem if one wishes) into an item of Jewellery without using a furnace.";
-    }
+	@Override
+	public int getBOBSize() {
+		return 0;
+	}
 
-    @Override
-    public int getBOBSize() {
-	return 0;
-    }
+	@Override
+	public int getSpecialAmount() {
+		return 5;
+	}
 
-    @Override
-    public int getSpecialAmount() {
-	return 5;
-    }
+	@Override
+	public SpecialAttack getSpecialAttack() {
+		return SpecialAttack.ITEM;
+	}
 
-    @Override
-    public SpecialAttack getSpecialAttack() {
-	return SpecialAttack.ITEM;
-    }
-
-    @Override
-    public boolean submitSpecial(Object object) {
-	return false;
-    }
+	@Override
+	public boolean submitSpecial(Object object) {
+		return false;
+	}
 
 //    public static boolean lightLog(final Familiar familiar, final Item item) {
 //	final Player player = familiar.getOwner();

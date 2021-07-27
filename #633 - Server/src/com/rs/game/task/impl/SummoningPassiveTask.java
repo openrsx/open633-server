@@ -1,8 +1,8 @@
 package com.rs.game.task.impl;
 
-import com.rs.game.Graphics;
 import com.rs.game.map.World;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Graphics;
 
 public final class SummoningPassiveTask extends Task {
 	

@@ -14,7 +14,7 @@ public final class Combat {
 			return false;
 		if (def < 0) // wont happen unless low def lv plus negative bonus
 			return true;
-		return RandomUtils.random((int) (att + def)) >= def;
+		return RandomUtils.inclusive((int) (att + def)) >= def;
 	}
 
 	public static boolean hasAntiDragProtection(Entity target) {

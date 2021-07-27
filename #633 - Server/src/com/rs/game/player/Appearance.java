@@ -5,19 +5,28 @@ import com.rs.game.item.Item;
 import com.rs.io.OutputStream;
 import com.rs.utilities.Utility;
 
+import lombok.Getter;
+
 public class Appearance {
 
 	private transient int renderEmote;
 	private int title;
 	private short[] lookI;
 	private byte[] colour;
+	
+	@Getter
 	private boolean male;
-	private transient boolean glowRed;
+	@Getter
 	private transient byte[] appeareanceData;
+	@Getter
 	private transient byte[] md5AppeareanceDataHash;
+	
 	private transient short transformedNpcId;
+	
+	@Getter
 	private transient boolean hidePlayer;
 
+	@Getter
 	private transient int forcedWeapon, forcedShield, forcedAmulet;
 
 	private transient Player player;
@@ -28,12 +37,7 @@ public class Appearance {
 		title = -1;
 		resetAppearence();
 	}
-
-	public void setGlowRed(boolean glowRed) {
-		this.glowRed = glowRed;
-		generateAppearenceData();
-	}
-
+	
 	public void setPlayer(Player player) {
 		this.player = player;
 		transformedNpcId = -1;
@@ -64,15 +68,7 @@ public class Appearance {
 		hidePlayer = hidden;
 		generateAppearenceData();
 	}
-
-	public boolean isHidden() {
-		return hidePlayer;
-	}
-
-	public boolean isGlowRed() {
-		return glowRed;
-	}
-
+	
 	public void generateAppearenceData() {
 		OutputStream stream = new OutputStream();
 		int flag = 0;
@@ -225,18 +221,6 @@ public class Appearance {
 		male = false;
 	}
 
-	public byte[] getAppeareanceData() {
-		return appeareanceData;
-	}
-
-	public byte[] getMD5AppeareanceDataHash() {
-		return md5AppeareanceDataHash;
-	}
-
-	public boolean isMale() {
-		return male;
-	}
-
 	public void setLook(int i, short i2) {
 		lookI[i] = i2;
 	}
@@ -330,26 +314,14 @@ public class Appearance {
 		return transformedNpcId != -1;
 	}
 
-	public int getForcedWeapon() {
-		return forcedWeapon;
-	}
-
 	public void setForcedWeapon(int forcedWeapon) {
 		this.forcedWeapon = forcedWeapon;
 		generateAppearenceData();
 	}
-
-	public int getForcedShield() {
-		return forcedShield;
-	}
-
+	
 	public void setForcedShield(int forcedShield) {
 		this.forcedShield = forcedShield;
 		generateAppearenceData();
-	}
-
-	public int getForcedAmulet() {
-		return forcedAmulet;
 	}
 
 	public void setForcedAmulet(int forcedAmulet) {

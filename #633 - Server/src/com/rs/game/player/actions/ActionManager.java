@@ -1,66 +1,82 @@
 package com.rs.game.player.actions;
 
-import com.rs.game.player.Player;
+import java.util.Optional;
 
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Handles an Action that a Player creates
+ * @author Dennis
+ *
+ */
 public final class ActionManager {
-
-	private transient Player player;
-	private Action action;
+	
+	public ActionManager() {
+		action = Optional.empty();
+	}
+	
+	/**
+	 * The Action the Player creates
+	 */
+	@Getter
+	private Optional<Action> action;
+	
+	/**
+	 * The Action delay
+	 */
+	@Getter
+	@Setter
 	private int actionDelay;
 
-	public ActionManager(Player player) {
-		this.player = player;
-	}
-
+	/**
+	 * Handles the processing of an Action
+	 */
 	public void process() {
-		if (action != null && !action.process(player))
-			forceStop();
+		if (getAction().isPresent() && !getAction().get().process()) {
+			forceStop();	
+		}
+		if (!getAction().isPresent()) {
+			return;
+		}
 		if (actionDelay > 0) {
 			actionDelay--;
 			return;
 		}
-		if (action == null)
-			return;
-		int delay = action.processWithDelay(player);
+		int delay = getAction().get().processWithDelay();
 		if (delay == -1) {
 			forceStop();
 			return;
 		}
-		actionDelay += delay;
+		addActionDelay(actionDelay += delay);
 	}
 
-	public boolean setAction(Action skill) {
-		forceStop();
-		if (!skill.start(player))
-			return false;
-		this.action = skill;
-		return true;
-	}
-
-	public void forceStop() {
-		if (action == null)
+	/**
+	 * Sets the Action that the Player has requested
+	 * @param actionEvent
+	 * @return action
+	 */
+	public void setAction(Action actionEvent) {
+		if (!actionEvent.start())
 			return;
-		action.stop(player);
-		action = null;
+		action = Optional.of(actionEvent);
 	}
 
-	public int getActionDelay() {
-		return actionDelay;
+	/**
+	 * Forcivly stops the Players current Action
+	 */
+	public void forceStop() {
+		getAction().ifPresent(presentAction ->  {
+			presentAction.stop();
+		});
+		action = Optional.empty();
 	}
 
-	public void addActionDelay(int skillDelay) {
-		this.actionDelay += skillDelay;
-	}
-
-	public void setActionDelay(int skillDelay) {
-		this.actionDelay = skillDelay;
-	}
-
-	public boolean hasSkillWorking() {
-		return action != null;
-	}
-
-	public Action getAction() {
-		return action;
+	/**
+	 * Adds an additional delay to the action delay
+	 * @param delay
+	 */
+	public void addActionDelay(int delay) {
+		this.actionDelay += delay;
 	}
 }

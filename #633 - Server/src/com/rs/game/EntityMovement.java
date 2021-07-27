@@ -3,7 +3,6 @@ package com.rs.game;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
-import com.rs.GameConstants;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.content.TeleportType;
 import com.rs.game.task.LinkedTaskSequence;
@@ -51,7 +50,7 @@ public class EntityMovement {
 	 * @return state
 	 */
 	public boolean isLocked() {
-		return getLockDelay() > GameConstants.WORLD_CYCLE_MS;// Utils.currentTimeMillis();
+		return getLockDelay() >= Utility.currentTimeMillis();// Utils.currentTimeMillis();
 	}
 
 	/**
@@ -66,7 +65,7 @@ public class EntityMovement {
 	 * @param time
 	 */
 	public void lock(long time) {
-		setLockDelay(time == -1 ? Long.MAX_VALUE : GameConstants.WORLD_CYCLE_MS + time);
+		setLockDelay(Utility.currentTimeMillis() + (time * 600));
 	}
 
 	/**
@@ -168,18 +167,7 @@ public class EntityMovement {
 	/**
 	 * Movement Type states
 	 */
-	public final byte TELE_MOVE_TYPE = 127, WALK_MOVE_TYPE = 1, RUN_MOVE_TYPE = 2;
-	
-	/**
-	 * Gets the Type state
-	 * @param player
-	 * @return type
-	 */
-	public int getMovementType() {
-		if (getEntity().toPlayer().getTemporaryMovementType() != -1)
-			return getEntity().toPlayer().getTemporaryMovementType();
-		return getEntity().toPlayer().isRun() ? RUN_MOVE_TYPE : WALK_MOVE_TYPE;
-	}
+	private final byte TELE_MOVE_TYPE = 127, WALK_MOVE_TYPE = 1, RUN_MOVE_TYPE = 2;
 	
 	/**
 	 * Stops a Player with additional specified attributes.
@@ -225,7 +213,35 @@ public class EntityMovement {
 			getEntity().toPlayer().resetWalkSteps();
 		}
 		if (stopActions)
-			getEntity().toPlayer().getActionManager().forceStop();
+			getEntity().toPlayer().getAction().forceStop();
 		getEntity().toPlayer().getCombatDefinitions().resetSpells(false);
+	}
+	
+	/**
+	 * Checks the state of the Player's Resting state
+	 * @return state
+	 */
+	public boolean isResting() {
+		return getEntity().toPlayer().getResting() != 0;
+	}
+	
+	/**
+	 * Drains the Run enery when the Player is Running
+	 */
+	public void drainRunEnergy() {
+		setRunEnergy(getEntity().toPlayer().getDetails().getRunEnergy() - 1);
+	}
+
+	/**
+	 * Sets the Player's Run enegery to a specific amount
+	 * @param runEnergy
+	 */
+	public void setRunEnergy(int runEnergy) {
+		if (runEnergy < 0)
+			runEnergy = 0;
+		else if (runEnergy > 100)
+			runEnergy = 100;
+		getEntity().toPlayer().getDetails().setRunEnergy((byte) runEnergy);
+		getEntity().toPlayer().getPackets().sendRunEnergy();
 	}
 }

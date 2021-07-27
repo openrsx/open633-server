@@ -7,14 +7,14 @@ import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class FriendsIgnores {
 
 	// friends chat
 	private String chatName;
-	private Object2ObjectArrayMap<String, Integer> friendsChatRanks = new Object2ObjectArrayMap<>();
+	private Object2ObjectOpenHashMap<String, Integer> friendsChatRanks = new Object2ObjectOpenHashMap<>();
 	private byte whoCanEnterChat;
 	private byte whoCanTalkOnChat;
 	private byte whoCanKickOnChat;
@@ -32,10 +32,10 @@ public class FriendsIgnores {
 
 	private transient Player player;
 
-	public Object2ObjectArrayMap<String, Integer> getFriendsChatRanks() {
+	public Object2ObjectOpenHashMap<String, Integer> getFriendsChatRanks() {
 		if (friendsChatRanks == null) {// temporary
 			whoCanKickOnChat = 7;
-			friendsChatRanks = new Object2ObjectArrayMap<String, Integer>(200);
+			friendsChatRanks = new Object2ObjectOpenHashMap<String, Integer>(200);
 			for (String friend : friends)
 				friendsChatRanks.put(friend, 0);
 		}
@@ -84,7 +84,7 @@ public class FriendsIgnores {
 	public FriendsIgnores() {
 		friends = new ObjectArrayList<String>(200);
 		ignores = new ObjectArrayList<String>(100);
-		friendsChatRanks = new Object2ObjectArrayMap<String, Integer>(200);
+		friendsChatRanks = new Object2ObjectOpenHashMap<String, Integer>(200);
 		whoCanKickOnChat = 7;
 		whoCanShareloot = -1;
 	}
@@ -127,13 +127,13 @@ public class FriendsIgnores {
 		}
 		player.getPackets().sendPrivateMessage(p2.getDisplayName(), message);
 		p2.getPackets().receivePrivateMessage(Utility.formatPlayerNameForDisplay(player.getUsername()),
-				player.getDisplayName(), player.getMessageIcon(), message);
+				player.getDisplayName(), ChatMessage.getMessageIcon(player), message);
 	}
 
 	public void sendQuickChatMessage(Player p2, QuickChatMessage quickChatMessage) {
 		player.getPackets().sendPrivateQuickMessageMessage(p2.getDisplayName(), quickChatMessage);
 		p2.getPackets().receivePrivateChatQuickMessage(Utility.formatPlayerNameForDisplay(player.getUsername()),
-				player.getDisplayName(), player.getMessageIcon(), quickChatMessage);
+				player.getDisplayName(), ChatMessage.getMessageIcon(player), quickChatMessage);
 
 	}
 

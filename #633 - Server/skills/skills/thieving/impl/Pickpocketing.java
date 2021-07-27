@@ -2,13 +2,13 @@ package skills.thieving.impl;
 
 import java.util.Optional;
 
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
 import com.rs.game.item.Item;
 import com.rs.game.npc.NPC;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
 import com.rs.net.encoders.other.ForceTalk;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.TextUtils;
 
@@ -72,6 +72,9 @@ public final class Pickpocketing extends Thieving {
 	
 	@Override
 	public boolean failure() {
+		if (getPlayer().getSkills().getLevel(Skills.THIEVING) == 1) {
+			return false;
+		}
 		if(mob.getDefinitions().getName().contains("Master")) {
 			return !RandomUtils.success(((((double) 5 / 833) * getPlayer().getSkills().getLevel(Skills.THIEVING)) + ((double) 17 / 49)));
 		}
@@ -128,7 +131,7 @@ public final class Pickpocketing extends Thieving {
 //			getPlayer().damage(new Hit(hit, Hitsplat.NORMAL, HitIcon.NONE));
 			getPlayer().setNextAnimation(STUN_ANIMATION);
 			getPlayer().setNextGraphics(STUN_GRAPHIC);
-			getPlayer().getMovement().lock(definition.seconds);
+			getPlayer().getMovement().lock(definition.seconds + 2);
 		} else {
 			getPlayer().getInventory().addItem(loot);
 			getPlayer().getPackets().sendGameMessage("You pick the victims pocket.");

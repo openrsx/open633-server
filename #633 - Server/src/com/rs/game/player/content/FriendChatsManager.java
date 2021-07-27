@@ -13,7 +13,7 @@ import com.rs.net.encoders.other.ChatMessage;
 import com.rs.net.encoders.other.QuickChatMessage;
 import com.rs.utilities.Utility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 public class FriendChatsManager {
 
@@ -21,7 +21,7 @@ public class FriendChatsManager {
 	private String ownerDisplayName;
 	private FriendsIgnores settings;
 	private CopyOnWriteArrayList<Player> players;
-	private Object2ObjectArrayMap<String, Long> bannedPlayers;
+	private Object2ObjectOpenHashMap<String, Long> bannedPlayers;
 	private byte[] dataBlock;
 
 	/**
@@ -29,10 +29,10 @@ public class FriendChatsManager {
 	 */
 //    private ClanWars clanWars;
 
-	private static Object2ObjectArrayMap<String, FriendChatsManager> cachedFriendChats;
+	private static Object2ObjectOpenHashMap<String, FriendChatsManager> cachedFriendChats;
 
 	public static void init() {
-		cachedFriendChats = new Object2ObjectArrayMap<String, FriendChatsManager>();
+		cachedFriendChats = new Object2ObjectOpenHashMap<String, FriendChatsManager>();
 	}
 
 	public int getRank(int rights, String username) {
@@ -183,7 +183,7 @@ public class FriendChatsManager {
 			}
 			String formatedName = Utility.formatPlayerNameForDisplay(player.getUsername());
 			String displayName = player.getDisplayName();
-			int rights = player.getMessageIcon();
+			int rights = ChatMessage.getMessageIcon(player);
 			for (Player p2 : players)
 				p2.getPackets().receiveFriendChatQuickMessage(formatedName, displayName, rights, settings.getChatName(),
 						message);
@@ -199,7 +199,7 @@ public class FriendChatsManager {
 			}
 			String formatedName = Utility.formatPlayerNameForDisplay(player.getUsername());
 			String displayName = player.getDisplayName();
-			int rights = player.getMessageIcon();
+			int rights = ChatMessage.getMessageIcon(player);
 			for (Player p2 : players)
 				p2.getPackets().receiveFriendChatMessage(formatedName, displayName, rights, settings.getChatName(),
 						message);
@@ -262,7 +262,7 @@ public class FriendChatsManager {
 		ownerDisplayName = player.getDisplayName();
 		settings = player.getFriendsIgnores();
 		players = new CopyOnWriteArrayList<Player>();
-		bannedPlayers = new Object2ObjectArrayMap<String, Long>();
+		bannedPlayers = new Object2ObjectOpenHashMap<String, Long>();
 	}
 
 	public static void destroyChat(Player player) {

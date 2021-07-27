@@ -1,12 +1,9 @@
 package com.rs.game.npc.familiar;
 
-import java.io.Serializable;
 import java.util.Optional;
 
 import com.rs.cache.loaders.ItemDefinitions;
-import com.rs.game.Animation;
 import com.rs.game.Entity;
-import com.rs.game.Graphics;
 import com.rs.game.item.Item;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
@@ -17,12 +14,12 @@ import com.rs.game.player.content.Summoning;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.player.controller.ControllerHandler;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utility;
 
-public abstract class Familiar extends NPC implements Serializable {
-
-	private static final long serialVersionUID = -3255206534594320406L;
+public abstract class Familiar extends NPC {
 
 	private transient Player owner;
 	private int ticks;
@@ -35,7 +32,8 @@ public abstract class Familiar extends NPC implements Serializable {
 	private Pouch pouch;
 
 	public Familiar(Player owner, Pouch pouch, WorldTile tile, int mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
-		super((short) Summoning.getNPCId(pouch.getRealPouchId()), tile, (byte) mapAreaNameHash, canBeAttackFromOutOfArea, false);
+		super((short) Summoning.getNPCId(pouch.getRealPouchId()), tile, (byte) mapAreaNameHash,
+				canBeAttackFromOutOfArea, false);
 		this.owner = owner;
 		this.pouch = pouch;
 		resetTickets();
@@ -53,7 +51,7 @@ public abstract class Familiar extends NPC implements Serializable {
 	}
 
 	public boolean canDepositOnly() {
-		return getDefinitions().hasOption("withdraw");
+		return getDefinitions().hasOptions("withdraw");
 	}
 
 	public boolean canStoreEssOnly() {
@@ -136,8 +134,9 @@ public abstract class Familiar extends NPC implements Serializable {
 			return;
 		}
 		if (!getCombat().process()) {
-			if (isAgressive() && owner.getAttackedBy() != null && owner.getAttackedByDelay() > Utility.currentTimeMillis()
-					&& canAttack(owner.getAttackedBy()) && RandomUtils.random(25) == 0)
+			if (isAgressive() && owner.getAttackedBy() != null
+					&& owner.getAttackedByDelay() > Utility.currentTimeMillis() && canAttack(owner.getAttackedBy())
+					&& RandomUtils.inclusive(25) == 0)
 				getCombat().setTarget(owner.getAttackedBy());
 			else
 				sendFollow();
@@ -338,7 +337,7 @@ public abstract class Familiar extends NPC implements Serializable {
 	}
 
 	public void dissmissFamiliar(boolean logged) {
-		finish();
+		deregister();
 		if (!logged && !isFinished()) {
 			setFinished(true);
 			switchOrb(false);
@@ -370,6 +369,7 @@ public abstract class Familiar extends NPC implements Serializable {
 		setNextAnimation(null);
 		World.get().submit(new Task(1) {
 			int loop;
+
 			@Override
 			protected void execute() {
 				if (loop == 0) {

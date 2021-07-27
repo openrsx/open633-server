@@ -1,5 +1,7 @@
 package com.rs.net.packets.logic.impl;
 
+import java.util.Optional;
+
 import com.rs.GameConstants;
 import com.rs.game.item.Item;
 import com.rs.game.map.World;
@@ -139,7 +141,7 @@ public class InterfaceOnPlayerPacket implements LogicPacket {
 							}
 						}
 					}
-					player.getActionManager().setAction(new PlayerCombat(p2));
+					player.getAction().setAction(new PlayerCombat(player, Optional.of(p2)));
 				}
 				break;
 			}
@@ -205,7 +207,7 @@ public class InterfaceOnPlayerPacket implements LogicPacket {
 							}
 						}
 					}
-					player.getActionManager().setAction(new PlayerCombat(p2));
+					player.getAction().setAction(new PlayerCombat(player, Optional.of(p2)));
 				}
 				break;
 			}

@@ -6,7 +6,7 @@ import java.util.List;
 import com.rs.cache.Cache;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
-import com.rs.game.npc.others.Pet;
+import com.rs.game.npc.other.Pet;
 import com.rs.game.player.Player;
 
 import lombok.Synchronized;
@@ -324,7 +324,7 @@ public final class MapBuilder {
 						// load region and loss space
 						continue;
 					}
-					npc.finish();
+					npc.deregister();
 				}
 			}
 			World.getRegions().remove(regionId);

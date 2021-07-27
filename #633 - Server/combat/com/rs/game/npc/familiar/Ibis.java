@@ -1,7 +1,5 @@
 package com.rs.game.npc.familiar;
 
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
 import com.rs.game.item.FloorItem;
 import com.rs.game.item.Item;
 import com.rs.game.map.World;
@@ -9,13 +7,14 @@ import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Summoning.Pouch;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 
 import skills.Skills;
 
 public class Ibis extends Familiar {
 
-	private static final long serialVersionUID = -1499396381299006274L;
 	@SuppressWarnings("unused")
 	private int forageTicks;
 
@@ -36,7 +35,7 @@ public class Ibis extends Familiar {
 
 	@SuppressWarnings("unused")
 	private void giveReward() {
-		boolean isSwordFish = RandomUtils.random(3) == 0;
+		boolean isSwordFish = RandomUtils.inclusive(3) == 0;
 		int foragedItem = isSwordFish ? 371 : 359;
 		if (isSwordFish)
 			getOwner().getSkills().addXp(Skills.FISHING, 10);

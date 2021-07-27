@@ -3,12 +3,12 @@ package com.rs.game.npc.combat;
 import java.util.concurrent.TimeUnit;
 
 import com.rs.GameConstants;
-import com.rs.game.Animation;
 import com.rs.game.Entity;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.familiar.Familiar;
 import com.rs.game.player.Combat;
 import com.rs.game.player.Player;
+import com.rs.net.encoders.other.Animation;
 import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utility;
 
@@ -20,9 +20,11 @@ public final class NPCCombat {
 	private NPC npc;
 	private int combatDelay;
 	private Entity target;
+	private NPCCombatDispatcher dispatcher;
 
 	public NPCCombat(NPC npc) {
 		this.npc = npc;
+		setDispatcher(new NPCCombatDispatcher());
 	}
 
 	/*
@@ -57,7 +59,7 @@ public final class NPCCombat {
 		// this gameticket
 		NPCCombatDefinitions defs = npc.getCombatDefinitions();
 		int attackStyle = defs.getAttackStyle();
-		if (target instanceof Familiar && RandomUtils.random(3) == 0) {
+		if (target instanceof Familiar && RandomUtils.inclusive(3) == 0) {
 			Familiar familiar = (Familiar) target;
 			Player player = familiar.getOwner();
 			if (player != null) {
@@ -81,7 +83,7 @@ public final class NPCCombat {
 		if (Utility.colides(npc.getX(), npc.getY(), size, target.getX(), target.getY(), targetSize))
 			return 0;
 		addAttackedByDelay(target);
-		return NPCCombatDispatcher.execute((Player) target, npc);
+		return getDispatcher().customDelay(target.toPlayer(), npc);
 	}
 
 	protected void doDefenceEmote(Entity target) {

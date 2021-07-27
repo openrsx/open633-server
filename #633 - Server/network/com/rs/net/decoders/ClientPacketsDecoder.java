@@ -3,7 +3,8 @@ package com.rs.net.decoders;
 import com.rs.GameConstants;
 import com.rs.io.InputStream;
 import com.rs.net.Session;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
 public final class ClientPacketsDecoder extends Decoder {
 
@@ -24,7 +25,7 @@ public final class ClientPacketsDecoder extends Decoder {
 			break;
 		default:
 			if (GameConstants.DEBUG)
-				Logger.log(this, "PacketId " + packetId);
+				LogUtility.log(LogType.TRACE, "PacketId " + packetId);
 			session.getChannel().close();
 			break;
 		}

@@ -4,6 +4,7 @@ import com.rs.game.player.Player;
 import com.rs.io.InputStream;
 import com.rs.net.packets.outgoing.OutgoingPacket;
 import com.rs.net.packets.outgoing.OutgoingPacketSignature;
+import com.rs.utilities.IntegerInputAction;
 
 @OutgoingPacketSignature(packetId = 81, description = "Represents an Input of Integer values only.")
 public class EnterIntegerPacket implements OutgoingPacket {
@@ -15,6 +16,13 @@ public class EnterIntegerPacket implements OutgoingPacket {
 		int value = stream.readInt();
 		if (value < 0)
 			return;
+		
+		if (player.getAttributes().getAttributes().get("integer_input_action") != null) {
+			IntegerInputAction action = (IntegerInputAction) player.getAttributes().getAttributes().remove("integer_input_action");
+			action.handle(value);
+			return;
+		}
+		
 		if ((player.getInterfaceManager().containsInterface(762) && player
 				.getInterfaceManager().containsInterface(763))
 				|| player.getInterfaceManager().containsInterface(11)) {

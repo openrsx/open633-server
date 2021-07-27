@@ -2,14 +2,14 @@ package com.rs.game.player.content;
 
 import java.util.List;
 
-import com.rs.game.Animation;
-import com.rs.game.Graphics;
 import com.rs.game.map.GameObject;
 import com.rs.game.map.Region;
 import com.rs.game.map.World;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.game.task.Task;
+import com.rs.net.encoders.other.Animation;
+import com.rs.net.encoders.other.Graphics;
 import com.rs.utilities.RandomUtils;
 
 public class WildernessObelisk {
@@ -43,7 +43,7 @@ public class WildernessObelisk {
 						World.sendGraphics(player, new Graphics(661), center.transform(x, y, 0));
 				Region region = World.getRegion(center.getRegionId());
 				List<Short> playerIndexes = region.getPlayersIndexes();
-				WorldTile newCenter = OBELISK_CENTER_TILES[RandomUtils.random(OBELISK_CENTER_TILES.length)];
+				WorldTile newCenter = OBELISK_CENTER_TILES[RandomUtils.inclusive(OBELISK_CENTER_TILES.length)];
 				if (playerIndexes != null) {
 					for (Short i : playerIndexes) {
 						Player p = World.getPlayers().get(i);

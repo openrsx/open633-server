@@ -1,15 +1,15 @@
 package com.rs.game.player.content;
 
 import com.rs.cache.loaders.ItemDefinitions;
-import com.rs.game.Animation;
 import com.rs.game.item.Item;
 import com.rs.game.player.Hit;
 import com.rs.game.player.Player;
 import com.rs.game.player.Hit.HitLook;
 import com.rs.game.player.controller.ControllerHandler;
+import com.rs.net.encoders.other.Animation;
 import com.rs.utilities.RandomUtils;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import skills.Skills;
 
 /**
@@ -40,13 +40,13 @@ public class Foods {
 
 		PURPLE_SWEETS(4561, 3, Effect.PURPLE_SWEET),
 
-		SLIMY_EEL(3381, 7 + RandomUtils.random(2)),
+		SLIMY_EEL(3381, 7 + RandomUtils.inclusive(2)),
 
 		RAINBOW_FISH(10136, 11),
 
-		CAVE_EEL(5003, 8 + RandomUtils.random(2)),
+		CAVE_EEL(5003, 8 + RandomUtils.inclusive(2)),
 
-		LAVA_EEL(2149, 7 + RandomUtils.random(2)),
+		LAVA_EEL(2149, 7 + RandomUtils.inclusive(2)),
 
 		HERRING(347, 5),
 
@@ -263,11 +263,11 @@ public class Foods {
 
 		CHEESE_WHEEL(18789, 2),
 
-		THIN_SNAIL_MEAT(3369, 5 + RandomUtils.random(2)),
+		THIN_SNAIL_MEAT(3369, 5 + RandomUtils.inclusive(2)),
 
 		LEAN_SNAIL_MEAT(3371, 8),
 
-		FAT_SNAIL_MEAT(3373, 8 + RandomUtils.random(2));
+		FAT_SNAIL_MEAT(3373, 8 + RandomUtils.inclusive(2));
 
 		/**
 		 * The food id
@@ -294,7 +294,7 @@ public class Foods {
 		/**
 		 * A map of object ids to foods.
 		 */
-		private static Object2ObjectArrayMap<Integer, Food> foods = new Object2ObjectArrayMap<Integer, Food>();
+		private static Object2ObjectOpenHashMap<Integer, Food> foods = new Object2ObjectOpenHashMap<Integer, Food>();
 
 		/**
 		 * Gets a food by an object id.
@@ -394,7 +394,7 @@ public class Foods {
 				int runEnergy = (int) (player.getDetails().getRunEnergy() * 1.1);
 				if (runEnergy > 100)
 					runEnergy = 100;
-				player.setRunEnergy(runEnergy);
+				player.getMovement().setRunEnergy(runEnergy);
 				int level = player.getSkills().getLevel(Skills.AGILITY);
 				int realLevel = player.getSkills().getLevelForXp(Skills.AGILITY);
 				player.getSkills().set(Skills.AGILITY, level >= realLevel ? realLevel + 5 : level + 5);
@@ -452,7 +452,7 @@ public class Foods {
 			@Override
 			public void effect(Object object) {
 				Player player = (Player) object;
-				if (RandomUtils.random(100) > 5) {
+				if (RandomUtils.inclusive(100) > 5) {
 					int level = player.getSkills().getLevel(Skills.COOKING);
 					int realLevel = player.getSkills().getLevelForXp(Skills.COOKING);
 					player.getSkills().set(Skills.COOKING, level >= realLevel ? realLevel + 6 : level + 6);
@@ -518,7 +518,7 @@ public class Foods {
 			@Override
 			public void effect(Object object) {
 				Player player = (Player) object;
-				player.setRunEnergy((int) (.20 * player.getDetails().getRunEnergy()));
+				player.getMovement().setRunEnergy((int) (.20 * player.getDetails().getRunEnergy()));
 			}
 		};
 
@@ -542,8 +542,7 @@ public class Foods {
 		player.getPackets().sendGameMessage("You eat the " + name + ".");
 		player.setNextAnimationNoPriority(EAT_ANIM);
 		long foodDelay = name.contains("half") ? 600 : 1800;
-		player.getActionManager().addActionDelay(3);
-		player.getActionManager().setActionDelay((int) foodDelay / 1000);
+		player.getAction().setActionDelay((int) foodDelay / 1000);
 		player.getDetails().getWatchMap().get("FOOD").reset();
 		player.getInventory().getItems().set(slot, food.getNewId() == 0 ? null : new Item(food.getNewId(), 1));
 		player.getInventory().refresh(slot);

@@ -14,15 +14,16 @@ import java.nio.channels.FileChannel.MapMode;
 import com.rs.game.item.Item;
 import com.rs.game.player.Player;
 import com.rs.game.player.content.Shop;
-import com.rs.utilities.Logger;
+import com.rs.utilities.LogUtility;
+import com.rs.utilities.LogUtility.LogType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 
 public class ShopsHandler {
 
-	private static final Object2ObjectArrayMap<Integer, Shop> handledShops = new Object2ObjectArrayMap<Integer, Shop>();
+	private static final Object2ObjectOpenHashMap<Integer, Shop> handledShops = new Object2ObjectOpenHashMap<Integer, Shop>();
 
 	private static final String PACKED_PATH = "data/items/packedShops.s";
 	private static final String UNPACKED_PATH = "data/items/unpackedShops.txt";
@@ -36,7 +37,7 @@ public class ShopsHandler {
 
 	@SneakyThrows(Throwable.class)
 	private static void loadUnpackedShops() {
-		Logger.log("ShopsHandler", "Packing shops...");
+		LogUtility.log(LogType.INFO, "Packing shops...");
 		@Cleanup
 		BufferedReader in = new BufferedReader(new FileReader(UNPACKED_PATH));
 		@Cleanup
@@ -75,25 +76,22 @@ public class ShopsHandler {
 		}
 	}
 
+	@SneakyThrows(Throwable.class)
 	private static void loadPackedShops() {
-		try {
-			RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
-			FileChannel channel = in.getChannel();
-			ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
-			while (buffer.hasRemaining()) {
-				int key = buffer.getInt();
-				String name = readAlexString(buffer);
-				int money = buffer.getShort() & 0xffff;
-				boolean generalStore = buffer.get() == 1;
-				Item[] items = new Item[buffer.get() & 0xff];
-				for (int i = 0; i < items.length; i++)
-					items[i] = new Item(buffer.getShort() & 0xffff, buffer.getInt(), true);
-				addShop(key, new Shop(name, money, items, generalStore));
-			}
-			channel.close();
-			in.close();
-		} catch (Throwable e) {
-			Logger.handle(e);
+		@Cleanup
+		RandomAccessFile in = new RandomAccessFile(PACKED_PATH, "r");
+		@Cleanup
+		FileChannel channel = in.getChannel();
+		ByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());
+		while (buffer.hasRemaining()) {
+			int key = buffer.getInt();
+			String name = readAlexString(buffer);
+			int money = buffer.getShort() & 0xffff;
+			boolean generalStore = buffer.get() == 1;
+			Item[] items = new Item[buffer.get() & 0xff];
+			for (int i = 0; i < items.length; i++)
+				items[i] = new Item(buffer.getShort() & 0xffff, buffer.getInt(), true);
+			addShop(key, new Shop(name, money, items, generalStore));
 		}
 	}
 
