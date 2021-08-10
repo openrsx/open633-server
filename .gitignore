@@ -1,5 +1,41 @@
-# Compiled class file
+# ide files
+/target
+*.iml
+*.project
+*.classpath
+.idea/*
+build/*
+build
+rebel.xml
+rebel-remote.xml
+
+# cache
+*.idx*
+*.dylib
+*.dll
+*.dat*
+*.jct
+
+# class files
 *.class
+/bin
+/bin/*
+/out
+**/out/
+
+# error logs
+hs_err_pid*
+data/logs/error.log
+
+### Gradle ###
+.gradle
+/build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
 
 # Log file
 *.log
