@@ -553,7 +553,7 @@ public final class Utility {
     }
 
     /**
-     * Gets all of the classes in a directory
+     * Gets all the classes in a directory
      *
      * @param directory The directory to iterate through
      * @return The list of classes
@@ -564,7 +564,7 @@ public final class Utility {
         File folderFile = new File("./bin/main/" + directory.replace(".", "/"));
         File[] folderFiles = folderFile.listFiles();
         if (folderFiles == null) {
-            System.out.println("Attempted to read from " + folderFile + " which did not exist.");
+            System.err.println("Attempted to read from " + folderFile + " which did not exist.");
             return classes;
         }
         for (File file : folderFiles) {
