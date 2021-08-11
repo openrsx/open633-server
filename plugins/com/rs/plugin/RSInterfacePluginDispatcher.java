@@ -1,12 +1,5 @@
 package com.rs.plugin;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.rs.GameConstants;
 import com.rs.game.item.Item;
 import com.rs.game.item.ItemConstants;
@@ -19,10 +12,16 @@ import com.rs.plugin.listener.RSInterface;
 import com.rs.plugin.wrapper.RSInterfaceSignature;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
+import com.rs.utilities.ReflectionUtils;
 import com.rs.utilities.Utility;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import skills.Skills;
+
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 /**
  * @author Dennis
@@ -78,8 +77,7 @@ public final class RSInterfacePluginDispatcher {
 	 * <b>Method should only be called once on start-up.</b>
 	 */
 	public static void load() {
-		List<RSInterface> interfaces = Utility.getClassesInDirectory("com.rs.plugin.impl.interfaces").stream()
-				.map(clazz -> (RSInterface) clazz).collect(Collectors.toList());
+		List<RSInterface> interfaces = ReflectionUtils.getImplementersOf(RSInterface.class);
 		interfaces.forEach(inter -> INTERFACES.put(inter.getClass().getAnnotation(RSInterfaceSignature.class), inter));
 	}
 

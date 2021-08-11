@@ -66,3 +66,4 @@ data/characters
 /.gradle/
 /bin/main/
 /bin/
+data/host/*
