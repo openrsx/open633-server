@@ -9,6 +9,9 @@ import java.util.List;
 
 public class ReflectionUtils {
 
+    /**
+     * Gets the subclasses of a generic class type and collects them into a [list][List]
+     */
     @SuppressWarnings("unchecked")
     public static <T> List<T> getSubclassesOf(Class<T> clazz) {
         val name = clazz.getName();
@@ -18,7 +21,6 @@ public class ReflectionUtils {
         val subclasses = result.getSubclasses(name);
 
         for (ClassInfo subclass : subclasses) {
-
             try {
                 val subClazz = result.loadClass(subclass.getName(), true).newInstance();
                 classes.add((T) subClazz);
