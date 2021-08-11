@@ -1,26 +1,22 @@
 package com.rs.utilities;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigInteger;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-
 import com.rs.GameConstants;
 import com.rs.cache.Cache;
 import com.rs.game.map.WorldTile;
 import com.rs.game.player.Player;
 import com.rs.utilities.LogUtility.LogType;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import skills.Skills;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.URL;
+import java.security.MessageDigest;
+import java.text.DecimalFormat;
+import java.util.Enumeration;
 
 public final class Utility {
 
@@ -550,39 +546,6 @@ public final class Utility {
         if (distanceX > sizeX || distanceX < -1 || distanceY > sizeY || distanceY < -1)
             return false;
         return true;
-    }
-
-    /**
-     * Gets all the classes in a directory
-     *
-     * @param directory The directory to iterate through
-     * @return The list of classes
-     */
-    @SneakyThrows({InstantiationException.class, IllegalAccessException.class, ClassNotFoundException.class})
-    public static List<Object> getClassesInDirectory(String directory) {
-        List<Object> classes = new ArrayList<>();
-        File folderFile = new File("./bin/main/" + directory.replace(".", "/"));
-        File[] folderFiles = folderFile.listFiles();
-        if (folderFiles == null) {
-            System.err.println("Attempted to read from " + folderFile + " which did not exist.");
-            return classes;
-        }
-        for (File file : folderFiles) {
-            if (file.getName().contains("$")) {
-                continue;
-            }
-            Object objectEvent;
-            try {
-                objectEvent = (Class.forName(directory + "." + file.getName().replace(".class", ""))
-                        .getConstructor().newInstance());
-                classes.add(objectEvent);
-            } catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-                    | SecurityException e) {
-                e.printStackTrace();
-            }
-
-        }
-        return classes;
     }
 
     public static final int getAngleTo(WorldTile fromTile, WorldTile toTile) {
