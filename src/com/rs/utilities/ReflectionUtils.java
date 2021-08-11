@@ -7,6 +7,10 @@ import lombok.val;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Tyluur <itstyluur@icloud.com>
+ * @since August 10, 2021
+ */
 public class ReflectionUtils {
 
     /**
