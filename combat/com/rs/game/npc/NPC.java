@@ -1,7 +1,5 @@
 package com.rs.game.npc;
 
-import java.util.Optional;
-
 import com.rs.cache.loaders.NPCDefinitions;
 import com.rs.game.Entity;
 import com.rs.game.EntityType;
@@ -22,12 +20,13 @@ import com.rs.utilities.RandomUtils;
 import com.rs.utilities.Utility;
 import com.rs.utilities.loaders.NPCBonuses;
 import com.rs.utilities.loaders.NPCCombatDefinitionsL;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+
+import java.util.Optional;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -65,11 +64,6 @@ public class NPC extends Entity {
 
 	public NPC(short id, WorldTile tile, byte mapAreaNameHash, boolean canBeAttackFromOutOfArea) {
 		this(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, false);
-	}
-
-	public NPC(short id, WorldTile tile) {
-		super(tile, EntityType.NPC);
-		new NPC(id, tile, (byte) -1, false);
 	}
 
 	/*

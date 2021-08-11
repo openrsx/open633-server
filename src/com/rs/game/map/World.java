@@ -1,13 +1,5 @@
 package com.rs.game.map;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.rs.GameConstants;
 import com.rs.Launcher;
@@ -19,14 +11,7 @@ import com.rs.game.player.Player;
 import com.rs.game.route.Flags;
 import com.rs.game.task.Task;
 import com.rs.game.task.TaskManager;
-import com.rs.game.task.impl.DrainPrayerTask;
-import com.rs.game.task.impl.PlayerOwnedObjectTask;
-import com.rs.game.task.impl.RestoreHitpoints;
-import com.rs.game.task.impl.RestoreRunEnergyTask;
-import com.rs.game.task.impl.RestoreSkillTask;
-import com.rs.game.task.impl.RestoreSpecialTask;
-import com.rs.game.task.impl.ShopRestockTask;
-import com.rs.game.task.impl.SummoningPassiveTask;
+import com.rs.game.task.impl.*;
 import com.rs.net.ServerChannelHandler;
 import com.rs.net.encoders.other.Graphics;
 import com.rs.net.mysql.ConnectionPool;
@@ -38,13 +23,20 @@ import com.rs.net.mysql.service.MySQLDatabaseConfiguration;
 import com.rs.net.mysql.service.MySQLDatabaseConnection;
 import com.rs.utilities.AntiFlood;
 import com.rs.utilities.LogUtility;
-import com.rs.utilities.Utility;
 import com.rs.utilities.LogUtility.LogType;
-
+import com.rs.utilities.Utility;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public final class World extends AbstractScheduledService {
 
@@ -738,24 +730,28 @@ public final class World extends AbstractScheduledService {
 	}
 
 	@Override
-	protected void runOneIteration() throws Exception {
-		World.get().getTaskManager().sequence();
-		
-		World.players().forEach(player -> player.processEntity());
-		World.npcs().forEach(npc -> npc.processEntity());
-		
-		World.players().forEach(player -> player.processEntityUpdate());
-		World.npcs().forEach(npc -> npc.processEntityUpdate());
+	protected void runOneIteration() {
+		try {
+			World.get().getTaskManager().sequence();
 
-		World.players().forEach(player -> {
-			player.getPackets().sendLocalPlayersUpdate();
-			player.getPackets().sendLocalNPCsUpdate();
-		});
-		
-		World.players().forEach(player -> player.resetMasks());
-		World.npcs().forEach(npc -> npc.resetMasks());
-		
-		ServerChannelHandler.processSessionQueue();
+			World.players().forEach(Player::processEntity);
+			World.npcs().forEach(NPC::processEntity);
+
+			World.players().forEach(Entity::processEntityUpdate);
+			World.npcs().forEach(Entity::processEntityUpdate);
+
+			World.players().forEach(player -> {
+				player.getPackets().sendLocalPlayersUpdate();
+				player.getPackets().sendLocalNPCsUpdate();
+			});
+
+			World.players().forEach(Entity::resetMasks);
+			World.npcs().forEach(Entity::resetMasks);
+
+			ServerChannelHandler.processSessionQueue();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
