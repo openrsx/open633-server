@@ -36,4 +36,27 @@ public class ReflectionUtils {
         return classes;
     }
 
+    /**
+     * Gets all the classes which implement the parameterized type.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> getImplementersOf(Class<T> clazz) {
+        val name = clazz.getName();
+
+        val classes = new ArrayList<T>();
+        val result = new ClassGraph().enableClassInfo().blacklistClasses(name).scan();
+        val subclasses = result.getClassesImplementing(name);
+
+        for (ClassInfo subclass : subclasses) {
+            try {
+                val subClazz = result.loadClass(subclass.getName(), true).newInstance();
+                classes.add((T) subClazz);
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return classes;
+    }
+
 }
