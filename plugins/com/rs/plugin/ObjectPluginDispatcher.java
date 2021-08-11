@@ -9,6 +9,7 @@ import com.rs.game.route.RouteEvent;
 import com.rs.plugin.listener.ObjectType;
 import com.rs.plugin.wrapper.ObjectSignature;
 import com.rs.utilities.ReflectionUtils;
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.lang.annotation.Annotation;
@@ -34,13 +35,7 @@ public final class ObjectPluginDispatcher {
      * @param parts  the string which represents a Objects.
      */
     public static void execute(Player player, GameObject gamObject, int optionId) {
-        getObject(gamObject, gamObject.getId()).ifPresent(object -> {
-            try {
-                object.execute(player, gamObject, optionId);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        getObject(gamObject, gamObject.getId()).ifPresent(object -> Try.run(() -> object.execute(player, gamObject, optionId)));
     }
 
     /**

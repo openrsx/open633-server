@@ -5,6 +5,7 @@ import com.rs.game.player.Player;
 import com.rs.plugin.listener.InventoryType;
 import com.rs.plugin.wrapper.InventoryWrapper;
 import com.rs.utilities.ReflectionUtils;
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.lang.annotation.Annotation;
@@ -30,14 +31,7 @@ public final class InventoryPluginDispatcher {
      * @param parts  the string which represents a item.
      */
     public static void execute(Player player, Item item, int optionId) {
-        getItem(item.getId()).ifPresent(specifiedItem -> {
-            try {
-                specifiedItem.execute(player, item, optionId);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        });
+        getItem(item.getId()).ifPresent(specifiedItem -> Try.run(() -> specifiedItem.execute(player, item, optionId)));
     }
 
     /**

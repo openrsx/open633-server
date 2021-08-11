@@ -13,7 +13,6 @@ import lombok.SneakyThrows;
 public class TestService implements MYSQLService {
 
 	@Override
-	@SneakyThrows(SQLException.class)
 	public void execute() {
 		Try.run(World.getConnectionPool()::nextFree).onSuccess(success -> {
 			Try.of(() -> World.getConnectionPool().nextFree().createStatement().executeUpdate("INSERT INTO public.starter(username) values ('vavr');"));

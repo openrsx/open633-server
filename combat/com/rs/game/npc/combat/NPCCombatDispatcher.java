@@ -3,8 +3,11 @@ package com.rs.game.npc.combat;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.impl.DefaultCombat;
 import com.rs.game.player.Player;
+import com.rs.plugin.listener.NPCType;
+import com.rs.plugin.wrapper.NPCSignature;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.ReflectionUtils;
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.SneakyThrows;
 
@@ -42,13 +45,7 @@ public final class NPCCombatDispatcher {
             DefaultCombat defaultScript = new DefaultCombat();
             return defaultScript.execute(player, npc);
         }
-        mobCombat.ifPresent(value -> {
-            try {
-                mobValue = value.execute(player, npc);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        mobCombat.ifPresent(value -> Try.run(() -> mobValue = value.execute(player, npc)));
         return mobValue;
     }
 
@@ -89,14 +86,8 @@ public final class NPCCombatDispatcher {
      * <b>Method should only be called once on start-up.</b>
      */
     public static void load() {
-        List<MobCombatInterface> interfaceList = ReflectionUtils.getSubclassesOf(MobCombatInterface.class);
-
-        for (MobCombatInterface MobCombatInterface : interfaceList) {
-            if (MobCombatInterface.getClass().getAnnotation(MobCombatSignature.class) == null) {
-                throw new IncompleteAnnotationException(MobCombatSignature.class, MobCombatInterface.getClass().getName() + " has no annotation.");
-            }
-            COMBATANTS.put(MobCombatInterface.getClass().getAnnotation(MobCombatSignature.class), MobCombatInterface);
-        }
+        List<MobCombatInterface> mobTypes = ReflectionUtils.getImplementersOf(MobCombatInterface.class);
+        mobTypes.forEach(npc -> COMBATANTS.put(npc.getClass().getAnnotation(MobCombatSignature.class), npc));
 
         LogUtility.log(LogUtility.LogType.INFO, "Registered " + COMBATANTS.size() + " mob combatants.");
     }
@@ -111,5 +102,4 @@ public final class NPCCombatDispatcher {
         COMBATANTS.clear();
         load();
     }
-
 }
