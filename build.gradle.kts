@@ -38,6 +38,7 @@ allprojects {
         implementation(group = "com.google.code.gson", name = "gson", version = "2.8.2")
         implementation(group = "com.google.guava", name = "guava", version = "30.1.1-jre")
         implementation(group = "it.unimi.dsi", name = "fastutil", version = "8.2.1")
+        implementation(group = "io.vavr", name =  "vavr", version = "0.10.4")
 
         // performance
         implementation(group = "io.github.classgraph", name = "classgraph", version = "4.8.78")
