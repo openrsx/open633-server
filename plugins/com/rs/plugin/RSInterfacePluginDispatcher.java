@@ -14,6 +14,7 @@ import com.rs.utilities.LogUtility;
 import com.rs.utilities.LogUtility.LogType;
 import com.rs.utilities.ReflectionUtils;
 import com.rs.utilities.Utility;
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import skills.Skills;
 
@@ -40,13 +41,7 @@ public final class RSInterfacePluginDispatcher {
 	 * @param parts  the string which represents a interface.
 	 */
 	public static void execute(Player player, int interfaceId, int componentId, int packetId, byte slotId, int slotId2) {
-		getRSInterface(interfaceId).ifPresent(inter -> {
-			try {
-				inter.execute(player, interfaceId, componentId, packetId, slotId, slotId2);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+		getRSInterface(interfaceId).ifPresent(inter -> Try.run(() -> inter.execute(player, interfaceId, componentId, packetId, slotId, slotId2)));
 	}
 
 	/**

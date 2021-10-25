@@ -10,6 +10,7 @@ import com.rs.io.InputStream;
 import com.rs.plugin.listener.NPCType;
 import com.rs.plugin.wrapper.NPCSignature;
 import com.rs.utilities.ReflectionUtils;
+import io.vavr.control.Try;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.lang.annotation.Annotation;
@@ -35,13 +36,7 @@ public class NPCPluginDispatcher {
      * @param parts  the string which represents a NPCS.
      */
     public static void execute(Player player, NPC npc, int option) {
-        getMob(npc, npc.getId()).ifPresent(mob -> {
-            try {
-                mob.execute(player, npc, option);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        getMob(npc, npc.getId()).ifPresent(mob -> Try.run(() -> mob.execute(player, npc, option)));
     }
 
     /**
