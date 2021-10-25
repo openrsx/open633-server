@@ -12,8 +12,8 @@ import com.rs.net.packets.logic.LogicPacket;
 import com.rs.net.packets.logic.LogicPacketSignature;
 import com.rs.plugin.ObjectPluginDispatcher;
 
-@LogicPacketSignature(packetId = 75, packetSize = 7, description = "First click packet")
-public class ObjectClickPacket implements LogicPacket {
+@LogicPacketSignature(packetId = 13, packetSize = 7, description = "Fourth click packet")
+public class ObjectFourthClickPacket implements LogicPacket {
 
 	@Override
 	public void execute(Player player, InputStream input) {
