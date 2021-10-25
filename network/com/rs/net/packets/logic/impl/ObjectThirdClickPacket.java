@@ -17,10 +17,10 @@ public class ObjectThirdClickPacket implements LogicPacket {
 
 	@Override
 	public void execute(Player player, InputStream input) {
-		int x = input.readUnsignedShortLE();
-		int y = input.readUnsignedShortLE();
-		boolean forceRun = input.readUnsignedByte128() == 1;
-		int id = input.readUnsignedShortLE();
+		int x = input.readUnsignedShort128();
+		int y = input.readUnsignedShort128();
+		boolean forceRun = input.readUnsignedByte() == 1;
+		int id = input.readUnsignedShort128();
 
 		if (GameConstants.DEBUG)
 			System.out.println("id " + id + " x " + x + " y " + y + " run? " + forceRun);
@@ -49,9 +49,9 @@ public class ObjectThirdClickPacket implements LogicPacket {
 			player.setRun(forceRun);
 		
 		player.setRouteEvent(new RouteEvent(worldObject, () -> {
-			if (!ControllerHandler.execute(player, controller -> controller.processObjectClick1(player, worldObject)))
+			if (!ControllerHandler.execute(player, controller -> controller.processObjectClick3(player, worldObject)))
 				return;
-			ObjectPluginDispatcher.execute(player, worldObject, 1);
+			ObjectPluginDispatcher.execute(player, worldObject, 3);
 		}, true));
 	}
 }

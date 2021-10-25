@@ -3,8 +3,6 @@ package com.rs.game.npc.combat;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.impl.DefaultCombat;
 import com.rs.game.player.Player;
-import com.rs.plugin.listener.NPCType;
-import com.rs.plugin.wrapper.NPCSignature;
 import com.rs.utilities.LogUtility;
 import com.rs.utilities.ReflectionUtils;
 import io.vavr.control.Try;
@@ -12,7 +10,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.SneakyThrows;
 
 import java.lang.annotation.Annotation;
-import java.lang.annotation.IncompleteAnnotationException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -86,7 +83,7 @@ public final class NPCCombatDispatcher {
      * <b>Method should only be called once on start-up.</b>
      */
     public static void load() {
-        List<MobCombatInterface> mobTypes = ReflectionUtils.getImplementersOf(MobCombatInterface.class);
+        List<MobCombatInterface> mobTypes = ReflectionUtils.getSubclassesOf(MobCombatInterface.class);
         mobTypes.forEach(npc -> COMBATANTS.put(npc.getClass().getAnnotation(MobCombatSignature.class), npc));
 
         LogUtility.log(LogUtility.LogType.INFO, "Registered " + COMBATANTS.size() + " mob combatants.");

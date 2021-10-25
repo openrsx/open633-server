@@ -17,10 +17,11 @@ public class ObjectFourthClickPacket implements LogicPacket {
 
 	@Override
 	public void execute(Player player, InputStream input) {
+		// TODO: verify this with an object using 4 options
 		int x = input.readUnsignedShortLE();
-		int y = input.readUnsignedShortLE();
-		boolean forceRun = input.readUnsignedByte128() == 1;
-		int id = input.readUnsignedShortLE();
+		int y = input.readUnsignedShort128();
+		int id = input.readUnsignedShortLE128();
+		boolean forceRun = input.readUnsignedByteC() == 1;
 
 		if (GameConstants.DEBUG)
 			System.out.println("id " + id + " x " + x + " y " + y + " run? " + forceRun);
@@ -49,9 +50,9 @@ public class ObjectFourthClickPacket implements LogicPacket {
 			player.setRun(forceRun);
 		
 		player.setRouteEvent(new RouteEvent(worldObject, () -> {
-			if (!ControllerHandler.execute(player, controller -> controller.processObjectClick1(player, worldObject)))
+			if (!ControllerHandler.execute(player, controller -> controller.processObjectClick4(player, worldObject)))
 				return;
-			ObjectPluginDispatcher.execute(player, worldObject, 1);
+			ObjectPluginDispatcher.execute(player, worldObject, 4);
 		}, true));
 	}
 }
